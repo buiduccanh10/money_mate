@@ -44,7 +44,7 @@ dependencies:
   flutter_launcher_icons: ^0.13.1
   flutter_native_splash: ^2.3.9
   firebase_core: ^2.24.2
-  # cloud_firestore: ^4.14.0
+  cloud_firestore: ^4.14.0
 
 flutter_launcher_icons:
   android: "launcher_icon"
@@ -57,9 +57,9 @@ flutter_native_splash:
   image: assets/logo.png
   branding: assets/MoneyMate.png
   android_12:
-    # color: "#FFFFFF"
-    # image: assets/logo.png
-    # branding: assets/MoneyMate.png
+    color: "#FFFFFF"
+    image: assets/logo.png
+    branding: assets/MoneyMate.png
 
 dev_dependencies:
   flutter_test:
