@@ -50,19 +50,19 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBiGM4ge8DX4Vz1lYqpSmXb4m6CvxkmyfM',
-    appId: '1:1088655516485:android:cde04af6e4ebafc02d542c',
-    messagingSenderId: '1088655516485',
-    projectId: 'moneymate-7050b',
-    storageBucket: 'moneymate-7050b.appspot.com',
+    apiKey: 'AIzaSyCVFoQFrDwXxFNmDcw_y_s1OxSCqWj1dYI',
+    appId: '1:688324388451:android:8d0293e881b984d4af7a56',
+    messagingSenderId: '688324388451',
+    projectId: 'moneymate-9712d',
+    storageBucket: 'moneymate-9712d.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCxDeKymIYR5xTeGq2XvzeBavvT79jkj_g',
-    appId: '1:1088655516485:ios:a517abe7720c1a4a2d542c',
-    messagingSenderId: '1088655516485',
-    projectId: 'moneymate-7050b',
-    storageBucket: 'moneymate-7050b.appspot.com',
-    iosBundleId: 'com.example.sMoneyApp',
+    apiKey: 'AIzaSyD58GrYc9MOOgfaqblUnbRvJzDoa3RsLFA',
+    appId: '1:688324388451:ios:84ec47b2bbea6005af7a56',
+    messagingSenderId: '688324388451',
+    projectId: 'moneymate-9712d',
+    storageBucket: 'moneymate-9712d.appspot.com',
+    iosBundleId: 'com.example.moneyMate',
   );
 }
