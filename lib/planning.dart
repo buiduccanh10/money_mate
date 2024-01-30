@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:money_mate/category_manage.dart';
 import 'package:money_mate/model/outcome_cat.dart';
-import 'package:money_mate/widget/planning_content.dart';
+import 'package:money_mate/widget/planning/planning_content.dart';
 
 class planning extends StatefulWidget {
   planning({super.key});

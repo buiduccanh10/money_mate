@@ -1,7 +1,7 @@
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:money_mate/widget/chart_widget.dart';
+import 'package:money_mate/widget/chart/chart_widget.dart';
 
 class chart extends StatefulWidget {
   const chart({super.key});

@@ -7,8 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:money_mate/model/income_cat.dart';
 import 'package:money_mate/model/outcome_cat.dart';
-import 'package:money_mate/widget/cat_add_dialog.dart';
-import 'package:money_mate/widget/cat_edit.dart';
+import 'package:money_mate/widget/category/cat_add_dialog.dart';
+import 'package:money_mate/widget/category/cat_edit.dart';
 
 class category_manage extends StatefulWidget {
   bool is_income;
