@@ -26,6 +26,7 @@ class _planningState extends State<planning>
       duration: const Duration(seconds: 3),
       vsync: this,
     );
+
     // ..forward()
     // ..repeat(reverse: true);
     animation = Tween<double>(begin: 0.0, end: 1.0).animate(controller);

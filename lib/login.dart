@@ -16,6 +16,8 @@ class _loginState extends State<login> {
   final admin_email = 'admin';
   final admin_password = 'admin';
   bool? is_show;
+  double width = 350.0;
+  double height = 50.0;
 
   TextEditingController email_controller = TextEditingController();
   TextEditingController password_controller = TextEditingController();
@@ -166,6 +168,16 @@ class _loginState extends State<login> {
                             ),
                             InkWell(
                               onTap: () {
+                                setState(() {
+                                  width = 345.0;
+                                  height = 45.0;
+                                });
+                                Future.delayed(Duration(milliseconds: 100), () {
+                                  setState(() {
+                                    width = 350.0;
+                                    height = 50.0;
+                                  });
+                                });
                                 if (email_controller.text == admin_email &&
                                     password_controller.text ==
                                         admin_password) {
@@ -192,7 +204,8 @@ class _loginState extends State<login> {
                                   trigFail!.change(true);
 
                                   Fluttertoast.showToast(
-                                      msg: 'Wrong email or password!',
+                                      msg:
+                                          'Please try email or password again!',
                                       toastLength: Toast.LENGTH_SHORT,
                                       gravity: ToastGravity.CENTER,
                                       timeInSecForIosWeb: 1,
@@ -201,7 +214,8 @@ class _loginState extends State<login> {
                                       fontSize: 16.0);
                                 }
                               },
-                              child: Container(
+                              child: AnimatedContainer(
+                                duration: Duration(milliseconds: 200),
                                 decoration: BoxDecoration(
                                   color: Colors.blue,
                                   gradient: const LinearGradient(
@@ -214,8 +228,8 @@ class _loginState extends State<login> {
                                   ),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                height: 50,
-                                width: 380,
+                                height: height,
+                                width: width,
                                 child: const Center(
                                   child: Text(
                                     'Login',
@@ -230,9 +244,6 @@ class _loginState extends State<login> {
                             Row(
                               children: [
                                 const Text("Don't you have account?"),
-                                const SizedBox(
-                                  width: 5,
-                                ),
                                 TextButton(
                                   child: const Text(
                                     'Sign up',

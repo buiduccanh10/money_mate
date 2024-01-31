@@ -50,10 +50,10 @@ class _MainState extends State<Main> {
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.blue.withOpacity(0.35),
+                  color: Colors.black.withOpacity(0.2),
                   spreadRadius: 7,
                   blurRadius: 8,
-                  offset: const Offset(0, 3),
+                  offset: const Offset(0, 7),
                 ),
               ],
               gradient: const LinearGradient(
