@@ -17,12 +17,9 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      child: Scaffold(
-        body: Column(
-          children: [home_appbar(), home_list_item()],
-        ),
+    return Scaffold(
+      body: Column(
+        children: [home_appbar(), home_list_item()],
       ),
     );
   }
