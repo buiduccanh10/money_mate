@@ -362,7 +362,7 @@ class _setting_contentState extends State<setting_content> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'Sign out',
+                              'Log out',
                               style: TextStyle(
                                   fontWeight: FontWeight.w500,
                                   fontSize: 18,
@@ -394,7 +394,7 @@ class _setting_contentState extends State<setting_content> {
               Navigator.push(
                   context, MaterialPageRoute(builder: (context) => login()));
             },
-            child: const Text('Sign out'),
+            child: const Text('Log out'),
           ),
           CupertinoActionSheetAction(
             isDefaultAction: true,

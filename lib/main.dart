@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:money_mate/chart.dart';
 import 'package:money_mate/home.dart';
@@ -14,11 +15,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'MoneyMate',
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.system,
-      home: Main(),
+      home: const Main(),
+      builder: FToastBuilder(),
     );
   }
 }
