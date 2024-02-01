@@ -13,37 +13,16 @@ class planning extends StatefulWidget {
   State<planning> createState() => _planningState();
 }
 
-class _planningState extends State<planning>
-    with SingleTickerProviderStateMixin {
-  late AnimationController controller;
-  late Animation<double> animation;
+class _planningState extends State<planning> {
   bool? is_income;
+  double width = 110;
+  double height = 60;
 
   @override
   void initState() {
     super.initState();
-    controller = AnimationController(
-      duration: const Duration(seconds: 3),
-      vsync: this,
-    );
-
-    // ..forward()
-    // ..repeat(reverse: true);
-    animation = Tween<double>(begin: 0.0, end: 1.0).animate(controller);
-
-    controller.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        controller.reset();
-      }
-    });
 
     is_income = true;
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
   }
 
   @override
@@ -159,21 +138,30 @@ class _planningState extends State<planning>
           ),
         ),
       ]),
-      floatingActionButton: SizedBox(
-        width: 110,
-        height: 60,
+      floatingActionButton: AnimatedContainer(
+        duration: Duration(milliseconds: 200),
+        width: width,
+        height: height,
         child: FloatingActionButton.extended(
           backgroundColor: const Color.fromARGB(255, 63, 148, 66),
           onPressed: () {
-            controller.forward();
+            setState(() {
+              width = 115;
+              height = 65;
+            });
+            Future.delayed(Duration(milliseconds: 200), () {
+              setState(() {
+                width = 110;
+                height = 60;
+              });
+            });
           },
           label: Row(
             children: [
-              AnimatedIcon(
-                icon: AnimatedIcons.add_event,
+              Icon(
+                Icons.add,
                 size: 35,
                 color: Colors.white,
-                progress: animation,
               ),
               const SizedBox(
                 width: 5,

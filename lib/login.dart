@@ -172,7 +172,7 @@ class _loginState extends State<login> {
                                   width = 345.0;
                                   height = 45.0;
                                 });
-                                Future.delayed(Duration(milliseconds: 100), () {
+                                Future.delayed(Duration(milliseconds: 200), () {
                                   setState(() {
                                     width = 350.0;
                                     height = 50.0;

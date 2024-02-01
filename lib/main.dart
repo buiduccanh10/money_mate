@@ -47,21 +47,25 @@ class _MainState extends State<Main> {
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 0),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  spreadRadius: 7,
-                  blurRadius: 8,
-                  offset: const Offset(0, 7),
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    spreadRadius: 7,
+                    blurRadius: 8,
+                    offset: const Offset(0, 7),
+                  ),
+                ],
+                color: Colors.grey[400]
+                // gradient: const LinearGradient(
+                //   begin: Alignment.topRight,
+                //   end: Alignment.bottomLeft,
+                //   colors: [
+                //     Colors.blue,
+                //     Colors.blue,
+                //   ],
+                // ),
                 ),
-              ],
-              gradient: const LinearGradient(
-                begin: Alignment.topRight,
-                end: Alignment.bottomLeft,
-                colors: [Colors.blue, Colors.orange],
-              ),
-            ),
             child: GNav(
                 selectedIndex: index,
                 onTabChange: (index) {
@@ -78,11 +82,16 @@ class _MainState extends State<Main> {
                     });
                   }
                 },
+                tabBackgroundGradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [Colors.orange, Colors.blue],
+                ),
                 padding: const EdgeInsets.all(20),
-                gap: 8,
+                gap: 5,
                 activeColor: Colors.white,
                 tabBorderRadius: 20,
-                curve: Curves.easeInToLinear,
+                curve: Curves.linearToEaseOut,
                 color: Colors.white,
                 textStyle: const TextStyle(
                     fontWeight: FontWeight.w700,
@@ -91,12 +100,24 @@ class _MainState extends State<Main> {
                 tabs: const [
                   GButton(
                     icon: Icons.home,
+                    iconColor: Colors.black54,
                     text: 'Home',
                   ),
                   GButton(
-                      icon: Icons.mode_edit_outline_rounded, text: 'Planning'),
-                  GButton(icon: Icons.pie_chart, text: 'Chart'),
-                  GButton(icon: Icons.settings, text: 'Setting'),
+                    icon: Icons.mode_edit_outline_rounded,
+                    text: 'Planning',
+                    iconColor: Colors.black54,
+                  ),
+                  GButton(
+                    icon: Icons.pie_chart,
+                    text: 'Chart',
+                    iconColor: Colors.black54,
+                  ),
+                  GButton(
+                    icon: Icons.settings,
+                    text: 'Setting',
+                    iconColor: Colors.black54,
+                  ),
                 ]),
           ),
         ),
