@@ -56,7 +56,7 @@ class _MainState extends State<Main> {
                   offset: const Offset(0, 7),
                 ),
               ],
-              color: Colors.grey[400],
+              color: Colors.grey[500],
               // gradient: const LinearGradient(
               //   begin: Alignment.topRight,
               //   end: Alignment.bottomLeft,
@@ -99,23 +99,23 @@ class _MainState extends State<Main> {
                 tabs: const [
                   GButton(
                     icon: Icons.home,
-                    iconColor: Colors.black54,
+                    iconColor: Colors.black87,
                     text: 'Home',
                   ),
                   GButton(
                     icon: Icons.mode_edit_outline_rounded,
                     text: 'Planning',
-                    iconColor: Colors.black54,
+                    iconColor: Colors.black87,
                   ),
                   GButton(
                     icon: Icons.pie_chart,
                     text: 'Chart',
-                    iconColor: Colors.black54,
+                    iconColor: Colors.black87,
                   ),
                   GButton(
                     icon: Icons.settings,
                     text: 'Setting',
-                    iconColor: Colors.black54,
+                    iconColor: Colors.black87,
                   ),
                 ]),
           ),
