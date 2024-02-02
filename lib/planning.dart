@@ -15,8 +15,7 @@ class planning extends StatefulWidget {
 
 class _planningState extends State<planning> {
   bool? is_income;
-  double width = 110;
-  double height = 60;
+  double scale = 1.0;
 
   @override
   void initState() {
@@ -138,42 +137,43 @@ class _planningState extends State<planning> {
           ),
         ),
       ]),
-      floatingActionButton: AnimatedContainer(
-        duration: Duration(milliseconds: 200),
-        width: width,
-        height: height,
-        child: FloatingActionButton.extended(
-          backgroundColor: const Color.fromARGB(255, 63, 148, 66),
-          onPressed: () {
-            setState(() {
-              width = 115;
-              height = 65;
-            });
-            Future.delayed(Duration(milliseconds: 200), () {
+      floatingActionButton: AnimatedScale(
+        scale: scale,
+        duration: const Duration(milliseconds: 200),
+        child: SizedBox(
+          width: 110,
+          height: 60,
+          child: FloatingActionButton.extended(
+            backgroundColor: const Color.fromARGB(255, 63, 148, 66),
+            onPressed: () {
               setState(() {
-                width = 110;
-                height = 60;
+                scale = 1.1;
               });
-            });
-          },
-          label: Row(
-            children: [
-              Icon(
-                Icons.add,
-                size: 35,
-                color: Colors.white,
-              ),
-              const SizedBox(
-                width: 5,
-              ),
-              const Text(
-                'Save',
-                style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white),
-              )
-            ],
+              Future.delayed(const Duration(milliseconds: 200), () {
+                setState(() {
+                  scale = 1.0;
+                });
+              });
+            },
+            label: const Row(
+              children: [
+                Icon(
+                  Icons.add,
+                  size: 35,
+                  color: Colors.white,
+                ),
+                SizedBox(
+                  width: 5,
+                ),
+                Text(
+                  'Save',
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white),
+                )
+              ],
+            ),
           ),
         ),
       ),

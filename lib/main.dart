@@ -47,25 +47,25 @@ class _MainState extends State<Main> {
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 0),
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    spreadRadius: 7,
-                    blurRadius: 8,
-                    offset: const Offset(0, 7),
-                  ),
-                ],
-                color: Colors.grey[400]
-                // gradient: const LinearGradient(
-                //   begin: Alignment.topRight,
-                //   end: Alignment.bottomLeft,
-                //   colors: [
-                //     Colors.blue,
-                //     Colors.blue,
-                //   ],
-                // ),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  spreadRadius: 7,
+                  blurRadius: 8,
+                  offset: const Offset(0, 7),
                 ),
+              ],
+              color: Colors.grey[400],
+              // gradient: const LinearGradient(
+              //   begin: Alignment.topRight,
+              //   end: Alignment.bottomLeft,
+              //   colors: [
+              //     Colors.blue,
+              //     Colors.orange,
+              //   ],
+              // ),
+            ),
             child: GNav(
                 selectedIndex: index,
                 onTabChange: (index) {
@@ -82,7 +82,7 @@ class _MainState extends State<Main> {
                     });
                   }
                 },
-                tabBackgroundGradient: LinearGradient(
+                tabBackgroundGradient: const LinearGradient(
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
                   colors: [Colors.orange, Colors.blue],
@@ -91,8 +91,7 @@ class _MainState extends State<Main> {
                 gap: 5,
                 activeColor: Colors.white,
                 tabBorderRadius: 20,
-                curve: Curves.linearToEaseOut,
-                color: Colors.white,
+                curve: Curves.easeInToLinear,
                 textStyle: const TextStyle(
                     fontWeight: FontWeight.w700,
                     color: Colors.white,

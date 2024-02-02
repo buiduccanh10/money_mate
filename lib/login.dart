@@ -16,8 +16,7 @@ class _loginState extends State<login> {
   final admin_email = 'admin';
   final admin_password = 'admin';
   bool? is_show;
-  double width = 350.0;
-  double height = 50.0;
+  double scale = 1.0;
 
   TextEditingController email_controller = TextEditingController();
   TextEditingController password_controller = TextEditingController();
@@ -58,7 +57,7 @@ class _loginState extends State<login> {
     return PopScope(
       canPop: false,
       child: Scaffold(
-        backgroundColor: Color(0xffD6E2EA),
+        backgroundColor: const Color(0xffD6E2EA),
         body: SingleChildScrollView(
           child: SafeArea(
             child: Padding(
@@ -146,7 +145,7 @@ class _loginState extends State<login> {
                                         is_show = !is_show!;
                                       });
                                     },
-                                    icon: Icon(Icons.remove_red_eye),
+                                    icon: const Icon(Icons.remove_red_eye),
                                     color:
                                         is_show! ? Colors.black : Colors.blue,
                                   ),
@@ -169,13 +168,12 @@ class _loginState extends State<login> {
                             InkWell(
                               onTap: () {
                                 setState(() {
-                                  width = 345.0;
-                                  height = 45.0;
+                                  scale = 1.03;
                                 });
-                                Future.delayed(Duration(milliseconds: 200), () {
+                                Future.delayed(
+                                    const Duration(milliseconds: 200), () {
                                   setState(() {
-                                    width = 350.0;
-                                    height = 50.0;
+                                    scale = 1.0;
                                   });
                                 });
                                 if (email_controller.text == admin_email &&
@@ -214,29 +212,32 @@ class _loginState extends State<login> {
                                       fontSize: 16.0);
                                 }
                               },
-                              child: AnimatedContainer(
-                                duration: Duration(milliseconds: 200),
-                                decoration: BoxDecoration(
-                                  color: Colors.blue,
-                                  gradient: const LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [
-                                      Colors.blueAccent,
-                                      Colors.orangeAccent
-                                    ],
+                              child: AnimatedScale(
+                                duration: const Duration(milliseconds: 200),
+                                scale: scale,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue,
+                                    gradient: const LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: [
+                                        Colors.blueAccent,
+                                        Colors.orangeAccent
+                                      ],
+                                    ),
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                height: height,
-                                width: width,
-                                child: const Center(
-                                  child: Text(
-                                    'Login',
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w500),
+                                  height: 50,
+                                  width: 350,
+                                  child: const Center(
+                                    child: Text(
+                                      'Login',
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w500),
+                                    ),
                                   ),
                                 ),
                               ),
