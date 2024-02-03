@@ -1,5 +1,5 @@
 class outcome_cat {
-  int? cat_id;
+  String? cat_id;
   String? name;
   String? icon;
   bool? is_income;
