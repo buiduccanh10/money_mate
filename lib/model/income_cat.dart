@@ -9,6 +9,4 @@ class income_cat {
       required this.name,
       required this.icon,
       required this.is_income});
-
-  
 }
