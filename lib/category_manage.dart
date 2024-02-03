@@ -111,8 +111,8 @@ class _category_manageState extends State<category_manage> {
               IconButton(
                   padding: const EdgeInsets.all(15),
                   onPressed: () {
-                    widget.cat_reload_callback();
                     Navigator.pop(context);
+                    widget.cat_reload_callback();
                   },
                   icon: const Icon(
                     Icons.arrow_back_ios,
