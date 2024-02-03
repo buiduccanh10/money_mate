@@ -95,7 +95,7 @@ class _MainState extends State<Main> {
                 textStyle: const TextStyle(
                     fontWeight: FontWeight.w700,
                     color: Colors.white,
-                    fontSize: 14),
+                    fontSize: 16),
                 tabs: const [
                   GButton(
                     icon: Icons.home,
