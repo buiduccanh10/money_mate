@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:money_mate/model/income_cat.dart';
 import 'package:money_mate/model/outcome_cat.dart';
 import 'package:money_mate/widget/category/cat_add_dialog.dart';
@@ -44,9 +45,9 @@ class _category_manageState extends State<category_manage> {
               .where('is_income', isEqualTo: true)
               .get();
 
-      income_snapshot.docs.forEach((doc) {
+      for (var doc in income_snapshot.docs) {
         income_temp.add(doc.data());
-      });
+      }
 
       setState(() {
         income_categories = income_temp;
@@ -58,14 +59,14 @@ class _category_manageState extends State<category_manage> {
               .where('is_income', isEqualTo: false)
               .get();
 
-      outcome_snapshot.docs.forEach((doc) {
+      for (var doc in outcome_snapshot.docs) {
         outcome_temp.add(doc.data());
-      });
+      }
       setState(() {
         outcome_categories = outcome_temp;
       });
     } catch (error) {
-      print("Failed to fetch data: $error");
+      const CircularProgressIndicator();
     }
   }
 
@@ -148,16 +149,20 @@ class _category_manageState extends State<category_manage> {
                     return Slidable(
                       closeOnScroll: true,
                       startActionPane:
-                          const ActionPane(motion: BehindMotion(), children: [
+                          ActionPane(motion: ScrollMotion(), children: [
                         SlidableAction(
-                          onPressed: _handleEdit,
+                          onPressed: (context) {
+                            edit_cat(context, index);
+                          },
                           backgroundColor: Colors.white,
                           foregroundColor: Colors.green,
                           icon: Icons.edit,
                           label: 'Edit',
                         ),
                         SlidableAction(
-                          onPressed: _handleDelete,
+                          onPressed: (context) {
+                            delete_cat(context, index);
+                          },
                           backgroundColor: Colors.white,
                           foregroundColor: Colors.red,
                           icon: Icons.delete,
@@ -210,11 +215,53 @@ class _category_manageState extends State<category_manage> {
       ]),
     );
   }
-}
 
-void _handleEdit(BuildContext context) {
-  // Implement your edit logic here
-}
-void _handleDelete(BuildContext context) {
-  // Implement your edit logic here
+  void edit_cat(BuildContext context, int index) {}
+
+  void delete_cat(BuildContext context, int index) async {
+    try {
+      if (widget.is_income) {
+        await FirebaseFirestore.instance
+            .collection("category")
+            .doc(income_categories[index]['cat_id'])
+            .delete();
+        setState(() {
+          income_categories.removeAt(index);
+        });
+        Fluttertoast.showToast(
+            msg: 'Delete category successful!',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else {
+        await FirebaseFirestore.instance
+            .collection("category")
+            .doc(outcome_categories[index]['cat_id'])
+            .delete();
+        setState(() {
+          outcome_categories.removeAt(index);
+        });
+        Fluttertoast.showToast(
+            msg: 'Delete category successful!',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    } catch (error) {
+      Fluttertoast.showToast(
+          msg: 'Fail at delete category',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+  }
 }

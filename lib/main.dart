@@ -18,12 +18,12 @@ Future<void> main() async {
 
 Future<void> add_initial_category() async {
   FirebaseFirestore db = FirebaseFirestore.instance;
-  CollectionReference categoryCollection = db.collection('category');
+  CollectionReference cat_collection = db.collection('category');
 
-  QuerySnapshot snapshot = await categoryCollection.limit(1).get();
+  QuerySnapshot snapshot = await cat_collection.limit(1).get();
 
   if (snapshot.docs.isEmpty) {
-    List<Map<String, dynamic>> initialData = [
+    List<Map<String, dynamic>> cat_default = [
       {'name': 'Salary', 'icon': '💵', 'is_income': true},
       {'name': 'Business', 'icon': '🤝🏻', 'is_income': true},
       {'name': 'Others', 'icon': '🗒️', 'is_income': true},
@@ -36,8 +36,8 @@ Future<void> add_initial_category() async {
       {"name": "Others", "icon": "🗒️", "is_income": false}
     ];
 
-    for (var data in initialData) {
-      DocumentReference docRef = categoryCollection.doc();
+    for (var data in cat_default) {
+      DocumentReference docRef = cat_collection.doc();
       await docRef.set({
         ...data,
         'cat_id': docRef.id,

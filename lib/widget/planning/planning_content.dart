@@ -38,9 +38,9 @@ class _planning_contentState extends State<planning_content> {
               .where('is_income', isEqualTo: true)
               .get();
 
-      income_snapshot.docs.forEach((doc) {
+      for (var doc in income_snapshot.docs) {
         income_temp.add(doc.data());
-      });
+      }
 
       setState(() {
         income_categories = income_temp;
@@ -52,9 +52,9 @@ class _planning_contentState extends State<planning_content> {
               .where('is_income', isEqualTo: false)
               .get();
 
-      outcome_snapshot.docs.forEach((doc) {
+      for (var doc in outcome_snapshot.docs) {
         outcome_temp.add(doc.data());
-      });
+      }
       setState(() {
         outcome_categories = outcome_temp;
       });
