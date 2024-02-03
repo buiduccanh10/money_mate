@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -6,7 +7,10 @@ import 'package:money_mate/home.dart';
 import 'package:money_mate/planning.dart';
 import 'package:money_mate/setting.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
   runApp(const MyApp());
 }
 

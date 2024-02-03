@@ -37,7 +37,7 @@ class _category_manageState extends State<category_manage> {
             showDialog(
                 context: context,
                 builder: (BuildContext context) {
-                  return cat_add_dialog();
+                  return cat_add_dialog(is_income : widget.is_income);
                 });
           },
           backgroundColor: const Color.fromARGB(255, 63, 148, 66),

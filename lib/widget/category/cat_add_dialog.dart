@@ -1,9 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class cat_add_dialog extends StatefulWidget {
-  const cat_add_dialog({super.key});
+  bool is_income;
+
+  cat_add_dialog({super.key, required this.is_income});
 
   @override
   State<cat_add_dialog> createState() => _cat_add_dialogState();
@@ -11,6 +15,10 @@ class cat_add_dialog extends StatefulWidget {
 
 class _cat_add_dialogState extends State<cat_add_dialog> {
   TextEditingController icon_controller = TextEditingController();
+  TextEditingController cat_controller = TextEditingController();
+
+  var db = FirebaseFirestore.instance;
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -62,6 +70,7 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
             ),
             TextField(
               keyboardType: TextInputType.text,
+              controller: cat_controller,
               decoration: InputDecoration(
                 enabledBorder: OutlineInputBorder(
                   borderSide: const BorderSide(color: Colors.blue),
@@ -104,7 +113,9 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
               border: Border.all(color: Colors.green),
               borderRadius: BorderRadius.circular(10)),
           child: TextButton(
-              onPressed: () {},
+              onPressed: () {
+                add_category(icon_controller, cat_controller, widget.is_income);
+              },
               child: const Text(
                 'Save',
                 style: TextStyle(
@@ -150,5 +161,37 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
         );
       },
     );
+  }
+
+  Future<void> add_category(TextEditingController icon_controller,
+      TextEditingController cat_controller, bool is_income) async {
+    final cat = <String, dynamic>{
+      "icon": icon_controller.text,
+      "cat_name": cat_controller.text,
+      "is_income": is_income,
+    };
+
+    await db
+        .collection("category")
+        .add(cat)
+        .then((value) => Fluttertoast.showToast(
+            msg: 'Add category successful!',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0))
+        .then((value) => Navigator.of(context).pop())
+        .catchError((onError) {
+      Fluttertoast.showToast(
+          msg: 'Fail at add category',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    });
   }
 }
