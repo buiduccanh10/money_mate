@@ -2,8 +2,7 @@ import 'package:custom_sliding_segmented_control/custom_sliding_segmented_contro
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:money_mate/model/income_cat.dart';
-import 'package:money_mate/model/outcome_cat.dart';
+
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
@@ -131,7 +130,7 @@ class _chart_widgetState extends State<chart_widget> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     const Text(
-                                      'Spending: ',
+                                      'Expense: ',
                                       style: TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500),
@@ -201,7 +200,7 @@ class _chart_widgetState extends State<chart_widget> {
                                       fontSize: 16),
                                 ),
                                 2: Text(
-                                  'Spending',
+                                  'Expense',
                                   style: TextStyle(
                                       color: is_income == 2
                                           ? Colors.black

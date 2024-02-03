@@ -7,8 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:money_mate/model/income_cat.dart';
-import 'package:money_mate/model/outcome_cat.dart';
+
 import 'package:money_mate/widget/category/cat_add_dialog.dart';
 import 'package:money_mate/widget/category/cat_edit.dart';
 
@@ -25,7 +24,7 @@ class category_manage extends StatefulWidget {
 }
 
 class _category_manageState extends State<category_manage> {
-  List<Map<String, dynamic>> outcome_categories = [];
+  List<Map<String, dynamic>> expense_categories = [];
   List<Map<String, dynamic>> income_categories = [];
 
   @override
@@ -37,7 +36,7 @@ class _category_manageState extends State<category_manage> {
   Future<void> fetchData() async {
     try {
       List<Map<String, dynamic>> income_temp = [];
-      List<Map<String, dynamic>> outcome_temp = [];
+      List<Map<String, dynamic>> expense_temp = [];
 
       QuerySnapshot<Map<String, dynamic>> income_snapshot =
           await FirebaseFirestore.instance
@@ -60,10 +59,10 @@ class _category_manageState extends State<category_manage> {
               .get();
 
       for (var doc in outcome_snapshot.docs) {
-        outcome_temp.add(doc.data());
+        expense_temp.add(doc.data());
       }
       setState(() {
-        outcome_categories = outcome_temp;
+        expense_categories = expense_temp;
       });
     } catch (error) {
       const CircularProgressIndicator();
@@ -140,11 +139,11 @@ class _category_manageState extends State<category_manage> {
                   padding: const EdgeInsets.all(8),
                   itemCount: widget.is_income
                       ? income_categories.length
-                      : outcome_categories.length,
+                      : expense_categories.length,
                   itemBuilder: (BuildContext context, int index) {
                     final cat_item = widget.is_income
                         ? income_categories[index]
-                        : outcome_categories[index] as Map<String, dynamic>;
+                        : expense_categories[index] as Map<String, dynamic>;
 
                     return Slidable(
                       closeOnScroll: true,
@@ -239,10 +238,10 @@ class _category_manageState extends State<category_manage> {
       } else {
         await FirebaseFirestore.instance
             .collection("category")
-            .doc(outcome_categories[index]['cat_id'])
+            .doc(expense_categories[index]['cat_id'])
             .delete();
         setState(() {
-          outcome_categories.removeAt(index);
+          expense_categories.removeAt(index);
         });
         Fluttertoast.showToast(
             msg: 'Delete category successful!',

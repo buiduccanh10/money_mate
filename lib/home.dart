@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:money_mate/chart.dart';
-import 'package:money_mate/planning.dart';
+import 'package:money_mate/input.dart';
 import 'package:money_mate/setting.dart';
 import 'package:money_mate/widget/chart/chart_widget.dart';
 import 'package:money_mate/widget/home/home_appbar.dart';

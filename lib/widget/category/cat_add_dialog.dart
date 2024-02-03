@@ -3,7 +3,7 @@ import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:money_mate/category_manage.dart';
+import 'package:money_mate/widget/category/category_manage.dart';
 
 typedef void cat_callback();
 

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:money_mate/model/income_cat.dart';
-import 'package:money_mate/model/outcome_cat.dart';
+
 import 'package:money_mate/widget/setting/setting_content.dart';
 
 class setting extends StatefulWidget {

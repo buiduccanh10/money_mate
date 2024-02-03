@@ -2,20 +2,18 @@ import 'package:custom_sliding_segmented_control/custom_sliding_segmented_contro
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:money_mate/category_manage.dart';
-import 'package:money_mate/model/outcome_cat.dart';
-import 'package:money_mate/widget/planning/planning_content.dart';
+import 'package:money_mate/widget/category/category_manage.dart';
+import 'package:money_mate/widget/input/input_content.dart';
 
-class planning extends StatefulWidget {
-  planning({super.key});
+class input extends StatefulWidget {
+  input({super.key});
 
   @override
-  State<planning> createState() => _planningState();
+  State<input> createState() => _inputState();
 }
 
-class _planningState extends State<planning> {
+class _inputState extends State<input> {
   bool? is_income;
-  double scale = 1.0;
 
   @override
   void initState() {
@@ -28,7 +26,7 @@ class _planningState extends State<planning> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(children: [
-        planning_content(
+        input_content(
           is_income: is_income!,
         ),
         Container(
@@ -85,7 +83,7 @@ class _planningState extends State<planning> {
                           color: Colors.red,
                         ),
                         Text(
-                          'Spending',
+                          'Expense',
                           style: TextStyle(
                               color: is_income! ? Colors.white : Colors.black,
                               fontWeight: FontWeight.w500,
@@ -137,46 +135,6 @@ class _planningState extends State<planning> {
           ),
         ),
       ]),
-      floatingActionButton: AnimatedScale(
-        scale: scale,
-        duration: const Duration(milliseconds: 200),
-        child: SizedBox(
-          width: 110,
-          height: 60,
-          child: FloatingActionButton.extended(
-            backgroundColor: const Color.fromARGB(255, 63, 148, 66),
-            onPressed: () {
-              setState(() {
-                scale = 1.1;
-              });
-              Future.delayed(const Duration(milliseconds: 200), () {
-                setState(() {
-                  scale = 1.0;
-                });
-              });
-            },
-            label: const Row(
-              children: [
-                Icon(
-                  Icons.add,
-                  size: 35,
-                  color: Colors.white,
-                ),
-                SizedBox(
-                  width: 5,
-                ),
-                Text(
-                  'Save',
-                  style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white),
-                )
-              ],
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

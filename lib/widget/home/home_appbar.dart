@@ -168,7 +168,7 @@ class home_appbar extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Spending',
+                          'Expense',
                           style: TextStyle(
                               fontSize: 18,
                               color: Colors.grey,

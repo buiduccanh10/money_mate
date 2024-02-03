@@ -5,8 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:money_mate/chart.dart';
 import 'package:money_mate/home.dart';
-import 'package:money_mate/model/income_cat.dart';
-import 'package:money_mate/planning.dart';
+import 'package:money_mate/input.dart';
 import 'package:money_mate/setting.dart';
 
 Future<void> main() async {
@@ -71,7 +70,7 @@ class Main extends StatefulWidget {
 class _MainState extends State<Main> {
   int index = 0;
   bool extendBody = true;
-  final page = [const Home(), planning(), const chart(), const setting()];
+  final page = [const Home(), input(), const chart(), const setting()];
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -140,7 +139,7 @@ class _MainState extends State<Main> {
                   ),
                   GButton(
                     icon: Icons.mode_edit_outline_rounded,
-                    text: 'Planning',
+                    text: 'Input',
                     iconColor: Colors.black87,
                   ),
                   GButton(

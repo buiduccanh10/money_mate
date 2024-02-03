@@ -2,25 +2,24 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:money_mate/category_manage.dart';
-import 'package:money_mate/model/income_cat.dart';
-import 'package:money_mate/model/outcome_cat.dart';
+import 'package:money_mate/widget/category/category_manage.dart';
+
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
-class planning_content extends StatefulWidget {
+class input_content extends StatefulWidget {
   bool is_income;
-  planning_content({super.key, required this.is_income});
+  input_content({super.key, required this.is_income});
 
   @override
-  State<planning_content> createState() => _planning_contentState();
+  State<input_content> createState() => _input_contentState();
 }
 
-class _planning_contentState extends State<planning_content> {
-  List<Map<String, dynamic>> outcome_categories = [];
+class _input_contentState extends State<input_content> {
+  List<Map<String, dynamic>> expense_categories = [];
   List<Map<String, dynamic>> income_categories = [];
   DateRangePickerController date_controller = DateRangePickerController();
   int? selectedIndex;
-
+  double scale = 1.0;
   @override
   void initState() {
     fetchData();
@@ -30,7 +29,7 @@ class _planning_contentState extends State<planning_content> {
   Future<void> fetchData() async {
     try {
       List<Map<String, dynamic>> income_temp = [];
-      List<Map<String, dynamic>> outcome_temp = [];
+      List<Map<String, dynamic>> expense_temp = [];
 
       QuerySnapshot<Map<String, dynamic>> income_snapshot =
           await FirebaseFirestore.instance
@@ -53,10 +52,10 @@ class _planning_contentState extends State<planning_content> {
               .get();
 
       for (var doc in outcome_snapshot.docs) {
-        outcome_temp.add(doc.data());
+        expense_temp.add(doc.data());
       }
       setState(() {
-        outcome_categories = outcome_temp;
+        expense_categories = expense_temp;
       });
     } catch (error) {
       print("Failed to fetch data: $error");
@@ -79,7 +78,7 @@ class _planning_contentState extends State<planning_content> {
                   ),
                   child: SfDateRangePicker(
                     showNavigationArrow: true,
-                    selectionColor: Colors.transparent,
+                    selectionColor: Colors.deepOrangeAccent,
                     selectionMode: DateRangePickerSelectionMode.single,
                     headerHeight: 60,
                     todayHighlightColor: Colors.red,
@@ -95,42 +94,43 @@ class _planning_contentState extends State<planning_content> {
                                 fontWeight: FontWeight.w600, fontSize: 16))),
                     onSelectionChanged:
                         (DateRangePickerSelectionChangedArgs args) {
-                      print(date_controller.displayDate);
+                      print(date_controller.selectedDate);
                     },
-                    cellBuilder: (BuildContext context,
-                        DateRangePickerCellDetails cellDetails) {
-                      DateTime date = cellDetails.date;
-                      bool is_selected = date_controller.selectedDate != null &&
-                          date.isAtSameMomentAs(date_controller.selectedDate!);
+                    // cellBuilder: (BuildContext context,
+                    //     DateRangePickerCellDetails cellDetails) {
+                    //   DateTime date = cellDetails.date;
 
-                      bool is_today = date.year == DateTime.now().year &&
-                          date.month == DateTime.now().month &&
-                          date.day == DateTime.now().day;
+                    //   bool is_selected = date_controller.selectedDate != null &&
+                    //       date.isAtSameMomentAs(date_controller.selectedDate!);
 
-                      return Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: is_today ? Colors.red : Colors.transparent,
-                          ),
-                          shape: BoxShape.circle,
-                          gradient: is_selected
-                              ? const LinearGradient(
-                                  colors: [Colors.blue, Colors.orange],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                )
-                              : null,
-                        ),
-                        child: Center(
-                          child: Text(
-                            date.day.toString(),
-                            style: TextStyle(
-                              color: is_selected ? Colors.white : null,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
+                    //   bool is_today = date.year == DateTime.now().year &&
+                    //       date.month == DateTime.now().month &&
+                    //       date.day == DateTime.now().day;
+
+                    //   return Container(
+                    //     decoration: BoxDecoration(
+                    //       border: Border.all(
+                    //         color: is_today ? Colors.red : Colors.transparent,
+                    //       ),
+                    //       shape: BoxShape.circle,
+                    //       gradient: is_selected
+                    //           ? const LinearGradient(
+                    //               colors: [Colors.blue, Colors.orange],
+                    //               begin: Alignment.topLeft,
+                    //               end: Alignment.bottomRight,
+                    //             )
+                    //           : null,
+                    //     ),
+                    //     child: Center(
+                    //       child: Text(
+                    //         date.day.toString(),
+                    //         style: TextStyle(
+                    //           color: is_selected ? Colors.white : null,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   );
+                    // },
                   ),
                 ),
                 const SizedBox(
@@ -189,7 +189,7 @@ class _planning_contentState extends State<planning_content> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  widget.is_income ? 'Income category' : 'Outcome category',
+                  widget.is_income ? 'Income category' : 'Expense category',
                   style: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.w700),
                 ),
@@ -221,17 +221,18 @@ class _planning_contentState extends State<planning_content> {
               ),
               itemCount: widget.is_income
                   ? income_categories.length
-                  : outcome_categories.length,
+                  : expense_categories.length,
               itemBuilder: (BuildContext context, int index) {
-                bool isSelected = index == selectedIndex;
+                bool is_selected = index == selectedIndex;
                 final cat_item = widget.is_income
                     ? income_categories[index]
-                    : outcome_categories[index] as Map<String, dynamic>;
+                    : expense_categories[index] as Map<String, dynamic>;
                 return InkWell(
                   borderRadius: BorderRadius.circular(10),
                   onTap: () {
                     setState(() {
                       selectedIndex = index;
+                      print(cat_item['cat_id']);
                     });
                   },
                   child: AnimatedContainer(
@@ -241,7 +242,7 @@ class _planning_contentState extends State<planning_content> {
                       border: Border.all(color: Colors.amber),
                       borderRadius: BorderRadius.circular(10),
                       gradient: LinearGradient(
-                          colors: isSelected
+                          colors: is_selected
                               ? [Colors.blue, Colors.orange]
                               : [Colors.white, Colors.white],
                           begin: Alignment.topLeft,
@@ -256,7 +257,7 @@ class _planning_contentState extends State<planning_content> {
                           cat_item['name'],
                           style: TextStyle(
                               fontSize: 16,
-                              color: isSelected ? Colors.white : Colors.black),
+                              color: is_selected ? Colors.white : Colors.black),
                         ),
                       ],
                     ),
@@ -266,6 +267,46 @@ class _planning_contentState extends State<planning_content> {
             ),
           )
         ]),
+      ),
+      floatingActionButton: AnimatedScale(
+        scale: scale,
+        duration: const Duration(milliseconds: 200),
+        child: SizedBox(
+          width: 110,
+          height: 60,
+          child: FloatingActionButton.extended(
+            backgroundColor: const Color.fromARGB(255, 63, 148, 66),
+            onPressed: () {
+              setState(() {
+                scale = 1.1;
+              });
+              Future.delayed(const Duration(milliseconds: 200), () {
+                setState(() {
+                  scale = 1.0;
+                });
+              });
+            },
+            label: const Row(
+              children: [
+                Icon(
+                  Icons.add,
+                  size: 35,
+                  color: Colors.white,
+                ),
+                SizedBox(
+                  width: 5,
+                ),
+                Text(
+                  'Save',
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white),
+                )
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
