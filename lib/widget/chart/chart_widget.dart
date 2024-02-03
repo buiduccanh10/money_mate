@@ -16,8 +16,8 @@ class chart_widget extends StatefulWidget {
 }
 
 class _chart_widgetState extends State<chart_widget> {
-  List<outcome_cat> outcome_categories = outcome_cat.list_outcome_cat();
-  List<income_cat> income_categories = income_cat.list_income_cat();
+  List<Map<String, dynamic>> outcome_categories = [];
+  List<Map<String, dynamic>> income_categories = [];
   late TooltipBehavior tooltipBehavior;
   DateTime now = DateTime.now();
   String? month_format_date;
@@ -29,14 +29,14 @@ class _chart_widgetState extends State<chart_widget> {
 
   @override
   void initState() {
-    total_income =
-        income_categories.fold(0, (int previousValue, income_cat cat) {
-      return previousValue + (cat.total ?? 0);
-    });
-    total_outcome =
-        outcome_categories.fold(0, (int previousValue, outcome_cat cat) {
-      return previousValue + (cat.total ?? 0);
-    });
+    // total_income =
+    //     income_categories.fold(0, (int previousValue, income_cat cat) {
+    //   return previousValue + (cat.total ?? 0);
+    // });
+    // total_outcome =
+    //     outcome_categories.fold(0, (int previousValue, outcome_cat cat) {
+    //   return previousValue + (cat.total ?? 0);
+    // });
 
     total_in_out = total_income - total_outcome;
 
@@ -237,46 +237,46 @@ class _chart_widgetState extends State<chart_widget> {
                         ],
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 190.0),
-                      child: SizedBox(
-                        height: 280,
-                        child: SfCircularChart(
-                          tooltipBehavior: tooltipBehavior,
-                          series: <CircularSeries>[
-                            is_income!
-                                ? DoughnutSeries<income_cat, String>(
-                                    dataSource: income_categories,
-                                    xValueMapper: (income_cat data, _) =>
-                                        data.name,
-                                    yValueMapper: (income_cat data, _) =>
-                                        data.total,
-                                    dataLabelMapper: (income_cat data, _) =>
-                                        data.name,
-                                    dataLabelSettings: const DataLabelSettings(
-                                        isVisible: true),
-                                    enableTooltip: true,
-                                    animationDuration: 1200,
-                                    explode: true,
-                                  )
-                                : DoughnutSeries<outcome_cat, String>(
-                                    dataSource: outcome_categories,
-                                    xValueMapper: (outcome_cat data, _) =>
-                                        data.name,
-                                    yValueMapper: (outcome_cat data, _) =>
-                                        data.total,
-                                    dataLabelMapper: (outcome_cat data, _) =>
-                                        data.name,
-                                    dataLabelSettings: const DataLabelSettings(
-                                        isVisible: true),
-                                    enableTooltip: true,
-                                    animationDuration: 1200,
-                                    explode: true,
-                                  ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    // Padding(
+                    //   padding: const EdgeInsets.only(top: 190.0),
+                    //   child: SizedBox(
+                    //     height: 280,
+                    //     child: SfCircularChart(
+                    //       tooltipBehavior: tooltipBehavior,
+                    //       series: <CircularSeries>[
+                    //         is_income!
+                    //             ? DoughnutSeries<income_cat, String>(
+                    //                 dataSource: income_categories,
+                    //                 xValueMapper: (income_cat data, _) =>
+                    //                     data.name,
+                    //                 yValueMapper: (income_cat data, _) =>
+                    //                     data.total,
+                    //                 dataLabelMapper: (income_cat data, _) =>
+                    //                     data.name,
+                    //                 dataLabelSettings: const DataLabelSettings(
+                    //                     isVisible: true),
+                    //                 enableTooltip: true,
+                    //                 animationDuration: 1200,
+                    //                 explode: true,
+                    //               )
+                    //             : DoughnutSeries<outcome_cat, String>(
+                    //                 dataSource: outcome_categories,
+                    //                 xValueMapper: (outcome_cat data, _) =>
+                    //                     data.name,
+                    //                 yValueMapper: (outcome_cat data, _) =>
+                    //                     data.total,
+                    //                 dataLabelMapper: (outcome_cat data, _) =>
+                    //                     data.name,
+                    //                 dataLabelSettings: const DataLabelSettings(
+                    //                     isVisible: true),
+                    //                 enableTooltip: true,
+                    //                 animationDuration: 1200,
+                    //                 explode: true,
+                    //               ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
                     Padding(
                       padding: const EdgeInsets.only(top: 430),
                       child: SizedBox(

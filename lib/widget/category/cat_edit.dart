@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class cat_edit extends StatelessWidget {
-  int cat_id;
+  String cat_id;
   cat_edit({super.key, required this.cat_id});
 
   @override

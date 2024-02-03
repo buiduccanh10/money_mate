@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,10 +16,52 @@ class planning_content extends StatefulWidget {
 }
 
 class _planning_contentState extends State<planning_content> {
-  List<outcome_cat> outcome_categories = outcome_cat.list_outcome_cat();
-  List<income_cat> income_categories = income_cat.list_income_cat();
+  List<Map<String, dynamic>> outcome_categories = [];
+  List<Map<String, dynamic>> income_categories = [];
   DateRangePickerController date_controller = DateRangePickerController();
   int? selectedIndex;
+
+  @override
+  void initState() {
+    fetchData();
+    super.initState();
+  }
+
+  Future<void> fetchData() async {
+    try {
+      List<Map<String, dynamic>> income_temp = [];
+      List<Map<String, dynamic>> outcome_temp = [];
+
+      QuerySnapshot<Map<String, dynamic>> income_snapshot =
+          await FirebaseFirestore.instance
+              .collection("category")
+              .where('is_income', isEqualTo: true)
+              .get();
+
+      income_snapshot.docs.forEach((doc) {
+        income_temp.add(doc.data());
+      });
+
+      setState(() {
+        income_categories = income_temp;
+      });
+
+      QuerySnapshot<Map<String, dynamic>> outcome_snapshot =
+          await FirebaseFirestore.instance
+              .collection("category")
+              .where('is_income', isEqualTo: false)
+              .get();
+
+      outcome_snapshot.docs.forEach((doc) {
+        outcome_temp.add(doc.data());
+      });
+      setState(() {
+        outcome_categories = outcome_temp;
+      });
+    } catch (error) {
+      print("Failed to fetch data: $error");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -156,8 +199,10 @@ class _planning_contentState extends State<planning_content> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => category_manage(
-                                  is_income: widget.is_income,
-                                )),
+                                is_income: widget.is_income,
+                                cat_reload_callback: () {
+                                  fetchData();
+                                })),
                       );
                     },
                     child: const Text('More...'))
@@ -181,7 +226,7 @@ class _planning_contentState extends State<planning_content> {
                 bool isSelected = index == selectedIndex;
                 final cat_item = widget.is_income
                     ? income_categories[index]
-                    : outcome_categories[index];
+                    : outcome_categories[index] as Map<String, dynamic>;
                 return InkWell(
                   borderRadius: BorderRadius.circular(10),
                   onTap: () {
@@ -205,10 +250,10 @@ class _planning_contentState extends State<planning_content> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text((cat_item as dynamic).icon!,
+                        Text(cat_item['icon'],
                             style: const TextStyle(fontSize: 20)),
                         Text(
-                          (cat_item as dynamic).name!,
+                          cat_item['name'],
                           style: TextStyle(
                               fontSize: 16,
                               color: isSelected ? Colors.white : Colors.black),

@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,21 +11,62 @@ import 'package:money_mate/model/outcome_cat.dart';
 import 'package:money_mate/widget/category/cat_add_dialog.dart';
 import 'package:money_mate/widget/category/cat_edit.dart';
 
+typedef void cat_callback();
+
 class category_manage extends StatefulWidget {
   bool is_income;
-  category_manage({super.key, required this.is_income});
+  final cat_callback cat_reload_callback;
+  category_manage(
+      {super.key, required this.is_income, required this.cat_reload_callback});
 
   @override
   State<category_manage> createState() => _category_manageState();
 }
 
 class _category_manageState extends State<category_manage> {
-  List<outcome_cat> outcome_categories = outcome_cat.list_outcome_cat();
-  List<income_cat> income_categories = income_cat.list_income_cat();
+  List<Map<String, dynamic>> outcome_categories = [];
+  List<Map<String, dynamic>> income_categories = [];
 
   @override
   void initState() {
+    fetchData();
     super.initState();
+  }
+
+  Future<void> fetchData() async {
+    try {
+      List<Map<String, dynamic>> income_temp = [];
+      List<Map<String, dynamic>> outcome_temp = [];
+
+      QuerySnapshot<Map<String, dynamic>> income_snapshot =
+          await FirebaseFirestore.instance
+              .collection("category")
+              .where('is_income', isEqualTo: true)
+              .get();
+
+      income_snapshot.docs.forEach((doc) {
+        income_temp.add(doc.data());
+      });
+
+      setState(() {
+        income_categories = income_temp;
+      });
+
+      QuerySnapshot<Map<String, dynamic>> outcome_snapshot =
+          await FirebaseFirestore.instance
+              .collection("category")
+              .where('is_income', isEqualTo: false)
+              .get();
+
+      outcome_snapshot.docs.forEach((doc) {
+        outcome_temp.add(doc.data());
+      });
+      setState(() {
+        outcome_categories = outcome_temp;
+      });
+    } catch (error) {
+      print("Failed to fetch data: $error");
+    }
   }
 
   @override
@@ -37,7 +79,12 @@ class _category_manageState extends State<category_manage> {
             showDialog(
                 context: context,
                 builder: (BuildContext context) {
-                  return cat_add_dialog(is_income : widget.is_income);
+                  return cat_add_dialog(
+                    is_income: widget.is_income,
+                    cat_reload_callback: () {
+                      fetchData();
+                    },
+                  );
                 });
           },
           backgroundColor: const Color.fromARGB(255, 63, 148, 66),
@@ -64,6 +111,7 @@ class _category_manageState extends State<category_manage> {
               IconButton(
                   padding: const EdgeInsets.all(15),
                   onPressed: () {
+                    widget.cat_reload_callback();
                     Navigator.pop(context);
                   },
                   icon: const Icon(
@@ -95,7 +143,7 @@ class _category_manageState extends State<category_manage> {
                   itemBuilder: (BuildContext context, int index) {
                     final cat_item = widget.is_income
                         ? income_categories[index]
-                        : outcome_categories[index];
+                        : outcome_categories[index] as Map<String, dynamic>;
 
                     return Slidable(
                       closeOnScroll: true,
@@ -121,7 +169,8 @@ class _category_manageState extends State<category_manage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => cat_edit(cat_id : (cat_item as dynamic).cat_id)),
+                                builder: (context) =>
+                                    cat_edit(cat_id: (cat_item['cat_id']))),
                           );
                         },
                         child: Container(
@@ -137,14 +186,14 @@ class _category_manageState extends State<category_manage> {
                                 Row(
                                   children: [
                                     Text(
-                                      (cat_item as dynamic).icon!,
+                                      cat_item['icon'],
                                       style: const TextStyle(fontSize: 28),
                                     ),
                                     const SizedBox(
                                       width: 15,
                                     ),
                                     Text(
-                                      (cat_item as dynamic).name!,
+                                      cat_item['name'],
                                       style: const TextStyle(fontSize: 18),
                                     ),
                                   ],
