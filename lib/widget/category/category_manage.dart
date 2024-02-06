@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:money_mate/service/firestore_helper.dart';
+import 'package:money_mate/services/firestore_helper.dart';
 
 import 'package:money_mate/widget/category/cat_add_dialog.dart';
 import 'package:money_mate/widget/category/cat_edit.dart';

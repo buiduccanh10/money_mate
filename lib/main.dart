@@ -6,7 +6,7 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:money_mate/chart.dart';
 import 'package:money_mate/home.dart';
 import 'package:money_mate/input.dart';
-import 'package:money_mate/service/firestore_helper.dart';
+import 'package:money_mate/services/firestore_helper.dart';
 import 'package:money_mate/setting.dart';
 
 Future<void> main() async {

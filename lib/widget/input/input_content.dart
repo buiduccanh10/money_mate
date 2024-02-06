@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
-import 'package:money_mate/service/firestore_helper.dart';
+import 'package:money_mate/services/firestore_helper.dart';
 import 'package:money_mate/widget/category/category_manage.dart';
 
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
