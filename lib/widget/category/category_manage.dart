@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:money_mate/service/firestore_helper.dart';
 
 import 'package:money_mate/widget/category/cat_add_dialog.dart';
 import 'package:money_mate/widget/category/cat_edit.dart';
@@ -26,6 +27,7 @@ class category_manage extends StatefulWidget {
 class _category_manageState extends State<category_manage> {
   List<Map<String, dynamic>> expense_categories = [];
   List<Map<String, dynamic>> income_categories = [];
+  firestore_helper db_helper = firestore_helper();
 
   @override
   void initState() {
@@ -34,39 +36,16 @@ class _category_manageState extends State<category_manage> {
   }
 
   Future<void> fetchData() async {
-    try {
-      List<Map<String, dynamic>> income_temp = [];
-      List<Map<String, dynamic>> expense_temp = [];
+    List<Map<String, dynamic>> temp =
+        await db_helper.fetch_categories(widget.is_income);
 
-      QuerySnapshot<Map<String, dynamic>> income_snapshot =
-          await FirebaseFirestore.instance
-              .collection("category")
-              .where('is_income', isEqualTo: true)
-              .get();
-
-      for (var doc in income_snapshot.docs) {
-        income_temp.add(doc.data());
+    setState(() {
+      if (widget.is_income) {
+        income_categories = temp;
+      } else {
+        expense_categories = temp;
       }
-
-      setState(() {
-        income_categories = income_temp;
-      });
-
-      QuerySnapshot<Map<String, dynamic>> outcome_snapshot =
-          await FirebaseFirestore.instance
-              .collection("category")
-              .where('is_income', isEqualTo: false)
-              .get();
-
-      for (var doc in outcome_snapshot.docs) {
-        expense_temp.add(doc.data());
-      }
-      setState(() {
-        expense_categories = expense_temp;
-      });
-    } catch (error) {
-      const CircularProgressIndicator();
-    }
+    });
   }
 
   @override

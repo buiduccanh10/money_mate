@@ -2,6 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
+import 'package:money_mate/service/firestore_helper.dart';
 import 'package:money_mate/widget/category/category_manage.dart';
 
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -18,8 +21,15 @@ class _input_contentState extends State<input_content> {
   List<Map<String, dynamic>> expense_categories = [];
   List<Map<String, dynamic>> income_categories = [];
   DateRangePickerController date_controller = DateRangePickerController();
+  TextEditingController description_controller = TextEditingController();
+  TextEditingController money_controller = TextEditingController();
+  String? cat_id;
+  firestore_helper db_helper = firestore_helper();
   int? selectedIndex;
   double scale = 1.0;
+  bool des_validate = false;
+  bool money_validate = false;
+
   @override
   void initState() {
     fetchData();
@@ -27,39 +37,19 @@ class _input_contentState extends State<input_content> {
   }
 
   Future<void> fetchData() async {
-    try {
-      List<Map<String, dynamic>> income_temp = [];
-      List<Map<String, dynamic>> expense_temp = [];
+    List<Map<String, dynamic>> income_temp =
+        await db_helper.fetch_categories(true);
 
-      QuerySnapshot<Map<String, dynamic>> income_snapshot =
-          await FirebaseFirestore.instance
-              .collection("category")
-              .where('is_income', isEqualTo: true)
-              .get();
+    List<Map<String, dynamic>> outcome_temp =
+        await db_helper.fetch_categories(false);
 
-      for (var doc in income_snapshot.docs) {
-        income_temp.add(doc.data());
-      }
+    setState(() {
+      income_categories = income_temp;
+    });
 
-      setState(() {
-        income_categories = income_temp;
-      });
-
-      QuerySnapshot<Map<String, dynamic>> outcome_snapshot =
-          await FirebaseFirestore.instance
-              .collection("category")
-              .where('is_income', isEqualTo: false)
-              .get();
-
-      for (var doc in outcome_snapshot.docs) {
-        expense_temp.add(doc.data());
-      }
-      setState(() {
-        expense_categories = expense_temp;
-      });
-    } catch (error) {
-      print("Failed to fetch data: $error");
-    }
+    setState(() {
+      expense_categories = outcome_temp;
+    });
   }
 
   @override
@@ -92,10 +82,7 @@ class _input_contentState extends State<input_content> {
                         viewHeaderStyle: DateRangePickerViewHeaderStyle(
                             textStyle: TextStyle(
                                 fontWeight: FontWeight.w600, fontSize: 16))),
-                    onSelectionChanged:
-                        (DateRangePickerSelectionChangedArgs args) {
-                      print(date_controller.selectedDate);
-                    },
+
                     // cellBuilder: (BuildContext context,
                     //     DateRangePickerCellDetails cellDetails) {
                     //   DateTime date = cellDetails.date;
@@ -140,7 +127,10 @@ class _input_contentState extends State<input_content> {
                   minLines: 1,
                   maxLines: 2,
                   keyboardType: TextInputType.text,
+                  controller: description_controller,
                   decoration: InputDecoration(
+                      errorText:
+                          des_validate ? 'Descrition can not be blank' : null,
                       enabledBorder: OutlineInputBorder(
                         borderSide: const BorderSide(color: Colors.amber),
                         borderRadius: BorderRadius.circular(10),
@@ -165,7 +155,10 @@ class _input_contentState extends State<input_content> {
                   inputFormatters: [
                     FilteringTextInputFormatter.digitsOnly,
                   ],
+                  controller: money_controller,
                   decoration: InputDecoration(
+                      errorText:
+                          money_validate ? 'Money can not be blank' : null,
                       enabledBorder: OutlineInputBorder(
                         borderSide: const BorderSide(color: Colors.amber),
                         borderRadius: BorderRadius.circular(10),
@@ -232,7 +225,7 @@ class _input_contentState extends State<input_content> {
                   onTap: () {
                     setState(() {
                       selectedIndex = index;
-                      print(cat_item['cat_id']);
+                      cat_id = cat_item['cat_id'];
                     });
                   },
                   child: AnimatedContainer(
@@ -277,6 +270,20 @@ class _input_contentState extends State<input_content> {
           child: FloatingActionButton.extended(
             backgroundColor: const Color.fromARGB(255, 63, 148, 66),
             onPressed: () {
+              if (description_controller.text.isEmpty ||
+                  money_controller.text.isEmpty) {
+                setState(() {
+                  des_validate = description_controller.text.isEmpty;
+                  money_validate = money_controller.text.isEmpty;
+                });
+              } else {
+                add_input(
+                    date_controller.selectedDate.toString(),
+                    description_controller.text,
+                    money_controller.text,
+                    cat_id!);
+              }
+
               setState(() {
                 scale = 1.1;
               });
@@ -309,5 +316,35 @@ class _input_contentState extends State<input_content> {
         ),
       ),
     );
+  }
+
+  Future<void> add_input(
+      String date, String description, String money, String cat_id) async {
+    try {
+      if (date_controller.selectedDate == null) {
+        await db_helper.add_input(
+            date_controller.displayDate.toString(), description, money, cat_id);
+      } else {
+        await db_helper.add_input(date, description, money, cat_id);
+      }
+
+      Fluttertoast.showToast(
+          msg: 'Input successful!',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    } catch (err) {
+      Fluttertoast.showToast(
+          msg: 'Fail to input',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
   }
 }

@@ -6,43 +6,15 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:money_mate/chart.dart';
 import 'package:money_mate/home.dart';
 import 'package:money_mate/input.dart';
+import 'package:money_mate/service/firestore_helper.dart';
 import 'package:money_mate/setting.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  await add_initial_category();
+  firestore_helper db_helper = firestore_helper();
+  db_helper.init_database();
   runApp(const MyApp());
-}
-
-Future<void> add_initial_category() async {
-  FirebaseFirestore db = FirebaseFirestore.instance;
-  CollectionReference cat_collection = db.collection('category');
-
-  QuerySnapshot snapshot = await cat_collection.limit(1).get();
-
-  if (snapshot.docs.isEmpty) {
-    List<Map<String, dynamic>> cat_default = [
-      {'name': 'Salary', 'icon': '💵', 'is_income': true},
-      {'name': 'Business', 'icon': '🤝🏻', 'is_income': true},
-      {'name': 'Others', 'icon': '🗒️', 'is_income': true},
-      {"name": "Shopping", "icon": "🛒", "is_income": false},
-      {"name": "Food", "icon": "🍔", "is_income": false},
-      {"name": "Vegetable", "icon": "🥬", "is_income": false},
-      {"name": "Clothes", "icon": "👕", "is_income": false},
-      {"name": "Travel", "icon": "🏖️", "is_income": false},
-      {"name": "Moving", "icon": "🚘", "is_income": false},
-      {"name": "Others", "icon": "🗒️", "is_income": false}
-    ];
-
-    for (var data in cat_default) {
-      DocumentReference docRef = cat_collection.doc();
-      await docRef.set({
-        ...data,
-        'cat_id': docRef.id,
-      });
-    }
-  }
 }
 
 class MyApp extends StatelessWidget {

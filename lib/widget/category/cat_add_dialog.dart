@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:money_mate/widget/category/category_manage.dart';
+import 'package:money_mate/service/firestore_helper.dart';
 
 typedef void cat_callback();
 
@@ -22,7 +23,7 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
   TextEditingController cat_controller = TextEditingController();
   bool icon_validate = false;
   bool cat_validate = false;
-  FirebaseFirestore db = FirebaseFirestore.instance;
+  firestore_helper db_helper = firestore_helper();
 
   @override
   Widget build(BuildContext context) {
@@ -128,8 +129,8 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
                     cat_validate = cat_controller.text.isEmpty;
                   });
                 } else {
-                  add_category(
-                      icon_controller, cat_controller, widget.is_income);
+                  add_category(icon_controller.text, cat_controller.text,
+                      widget.is_income);
                 }
               },
               child: const Text(
@@ -179,20 +180,9 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
     );
   }
 
-  Future<void> add_category(TextEditingController icon_controller,
-      TextEditingController cat_controller, bool is_income) async {
+  Future<void> add_category(String icon, String name, bool is_income) async {
     try {
-      DocumentReference doc_ref = db.collection("category").doc();
-      String cat_id = doc_ref.id;
-
-      final cat = <String, dynamic>{
-        "cat_id": cat_id,
-        "icon": icon_controller.text,
-        "name": cat_controller.text,
-        "is_income": is_income
-      };
-
-      await doc_ref.set(cat);
+      await db_helper.add_category(icon, name, is_income);
 
       Fluttertoast.showToast(
           msg: 'Add category successful!',
