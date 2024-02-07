@@ -130,7 +130,7 @@ class _input_contentState extends State<input_content> {
                   controller: description_controller,
                   decoration: InputDecoration(
                       errorText:
-                          des_validate ? 'Descrition can not be blank' : null,
+                          des_validate ? 'Description can not be blank' : null,
                       enabledBorder: OutlineInputBorder(
                         borderSide: const BorderSide(color: Colors.amber),
                         borderRadius: BorderRadius.circular(10),
@@ -278,7 +278,7 @@ class _input_contentState extends State<input_content> {
                 });
               } else {
                 add_input(
-                    date_controller.selectedDate.toString(),
+                    date_controller.selectedDate,
                     description_controller.text,
                     money_controller.text,
                     cat_id!);
@@ -319,14 +319,21 @@ class _input_contentState extends State<input_content> {
   }
 
   Future<void> add_input(
-      String date, String description, String money, String cat_id) async {
+      DateTime? date, String description, String money, String cat_id) async {
     try {
+      String format_date;
       if (date_controller.selectedDate == null) {
-        await db_helper.add_input(
-            date_controller.displayDate.toString(), description, money, cat_id);
+        format_date =
+            DateFormat('dd/MM/yyyy').format(date_controller.displayDate!);
+        await db_helper.add_input(format_date, description, money, cat_id);
       } else {
-        await db_helper.add_input(date, description, money, cat_id);
+        format_date =
+            DateFormat('dd/MM/yyyy').format(date_controller.selectedDate!);
+        await db_helper.add_input(format_date, description, money, cat_id);
       }
+
+      description_controller.clear();
+      money_controller.clear();
 
       Fluttertoast.showToast(
           msg: 'Input successful!',

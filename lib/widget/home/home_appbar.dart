@@ -24,7 +24,7 @@ class home_appbar extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Total saving',
+                  'Saving this month ',
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: 30,

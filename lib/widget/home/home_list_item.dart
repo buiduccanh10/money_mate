@@ -1,16 +1,42 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:money_mate/services/firestore_helper.dart';
 
-class home_list_item extends StatelessWidget {
+class home_list_item extends StatefulWidget {
   const home_list_item({super.key});
+
+  @override
+  State<home_list_item> createState() => _home_list_itemState();
+}
+
+class _home_list_itemState extends State<home_list_item> {
+  firestore_helper db_helper = firestore_helper();
+  List<Map<String, dynamic>> input_data = [];
+
+  @override
+  void initState() {
+    fetchData();
+    super.initState();
+  }
+
+  Future<void> fetchData() async {
+    List<Map<String, dynamic>> temp = await db_helper.fetch_input();
+
+    setState(() {
+      input_data = temp;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: ListView.builder(
-          padding: const EdgeInsets.only(top: 25, bottom: 100),
-          itemCount: 10,
+          padding: const EdgeInsets.only(top: 10, bottom: 100),
+          itemCount: input_data.length,
           itemBuilder: (BuildContext context, int index) {
+            final Map<String, dynamic> input_item = input_data[index];
+
             return Slidable(
               closeOnScroll: true,
               endActionPane:
@@ -30,11 +56,13 @@ class home_list_item extends StatelessWidget {
                   label: 'Delete',
                 ),
               ]),
-              child: Padding(
-                padding: const EdgeInsets.all(18.0),
-                child: Container(
+              child: InkWell(
+                onTap: () {},
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      top: 18, bottom: 18.0, left: 24, right: 24),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
                         decoration: BoxDecoration(boxShadow: [
@@ -45,30 +73,29 @@ class home_list_item extends StatelessWidget {
                             offset: const Offset(-5, 5),
                           )
                         ], borderRadius: BorderRadius.circular(50)),
-                        child: const CircleAvatar(
-                          backgroundColor: Colors.amber,
-                          radius: 28,
-                          child: Icon(
-                            Icons.fastfood,
-                            color: Colors.white,
-                          ),
-                        ),
+                        child: CircleAvatar(
+                            backgroundColor: Colors
+                                .primaries[
+                                    Random().nextInt(Colors.primaries.length)]
+                                .shade100,
+                            radius: 28,
+                            child: Text(
+                              input_item['icon'],
+                              style: const TextStyle(fontSize: 32),
+                            )),
                       ),
-                      const SizedBox(
-                        width: 15,
-                      ),
-                      const Column(
+                      Column(
                         children: [
                           Text(
-                            'Double coffee',
-                            style: TextStyle(
+                            input_item['description'],
+                            style: const TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.w700),
                           ),
                           Row(
                             children: [
                               Text(
-                                '15 July',
-                                style: TextStyle(
+                                input_item['date'],
+                                style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w700,
                                     color: Colors.grey),
@@ -78,20 +105,22 @@ class home_list_item extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(
-                        width: 100,
+                        width: 50,
                       ),
-                      const Column(
+                      Column(
                         children: [
                           Text(
-                            '-3',
+                            '${input_item['is_income'] ? '+' : '-'} ${input_item['money']} đ',
                             style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w700,
-                                color: Colors.red),
+                                color: input_item['is_income']
+                                    ? Colors.green
+                                    : Colors.red),
                           ),
                           Text(
-                            'Food',
-                            style: TextStyle(
+                            input_item['name'],
+                            style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w700,
                                 color: Colors.grey),

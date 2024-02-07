@@ -53,6 +53,39 @@ class firestore_helper {
     }
   }
 
+  Future<List<Map<String, dynamic>>> fetch_input() async {
+    try {
+      List<Map<String, dynamic>> inputData = [];
+
+      QuerySnapshot<Map<String, dynamic>> snapshot =
+          await FirebaseFirestore.instance.collection('input').get();
+
+      for (var inputDoc in snapshot.docs) {
+        String catId = inputDoc.data()['cat_id'];
+
+        DocumentSnapshot<Map<String, dynamic>> categorySnapshot =
+            await FirebaseFirestore.instance
+                .collection('category')
+                .doc(catId)
+                .get();
+
+        if (categorySnapshot.exists) {
+          Map<String, dynamic> inputDataWithIcon = {
+            'icon': categorySnapshot.data()!['icon'],
+            'name': categorySnapshot.data()!['name'],
+            'is_income': categorySnapshot.data()!['is_income'],
+            ...inputDoc.data(),
+          };
+          inputData.add(inputDataWithIcon);
+        }
+      }
+
+      return inputData;
+    } catch (error) {
+      return [];
+    }
+  }
+
   Future<void> add_category(String icon, String name, bool is_income) async {
     DocumentReference doc_ref = db.collection("category").doc();
     String cat_id = doc_ref.id;
@@ -67,7 +100,8 @@ class firestore_helper {
     await doc_ref.set(cat);
   }
 
-  Future<void> add_input(String date, String description, String money, String cat_id) async {
+  Future<void> add_input(
+      String date, String description, String money, String cat_id) async {
     DocumentReference doc_ref = db.collection("input").doc();
     String id = doc_ref.id;
 
