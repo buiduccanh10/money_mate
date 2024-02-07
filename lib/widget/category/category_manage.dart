@@ -28,24 +28,37 @@ class _category_manageState extends State<category_manage> {
   List<Map<String, dynamic>> expense_categories = [];
   List<Map<String, dynamic>> income_categories = [];
   firestore_helper db_helper = firestore_helper();
+  bool is_loading = true;
+  bool is_mounted = false;
 
   @override
   void initState() {
+    is_mounted = true;
     fetchData();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    is_mounted = false;
+    super.dispose();
   }
 
   Future<void> fetchData() async {
     List<Map<String, dynamic>> temp =
         await db_helper.fetch_categories(widget.is_income);
 
-    setState(() {
-      if (widget.is_income) {
-        income_categories = temp;
-      } else {
-        expense_categories = temp;
-      }
-    });
+    if (is_mounted) {
+      setState(() {
+        if (widget.is_income) {
+          income_categories = temp;
+          is_loading = false;
+        } else {
+          expense_categories = temp;
+          is_loading = false;
+        }
+      });
+    }
   }
 
   @override
@@ -85,6 +98,7 @@ class _category_manageState extends State<category_manage> {
             ),
           ),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               IconButton(
@@ -97,16 +111,20 @@ class _category_manageState extends State<category_manage> {
                     Icons.arrow_back_ios,
                     color: Colors.white,
                   )),
-              const SizedBox(
-                width: 30,
-              ),
+              // const SizedBox(
+              //   width: 30,
+              // ),
               const Padding(
                 padding: EdgeInsets.all(15.0),
                 child: Text(
-                  'Swipe right to take action',
+                  'Swipe left to take action',
                   style: TextStyle(color: Colors.white, fontSize: 18),
                 ),
               ),
+              IconButton(
+                  padding: const EdgeInsets.all(15),
+                  onPressed: () {},
+                  icon: const Icon(Icons.delete_sweep, color: Colors.red, size: 28))
             ],
           ),
         ),
@@ -114,81 +132,93 @@ class _category_manageState extends State<category_manage> {
             padding: const EdgeInsets.only(top: 100.0),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: ListView.builder(
-                  padding: const EdgeInsets.all(8),
-                  itemCount: widget.is_income
-                      ? income_categories.length
-                      : expense_categories.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final cat_item = widget.is_income
-                        ? income_categories[index]
-                        : expense_categories[index] as Map<String, dynamic>;
+              child: is_loading
+                  ? const Center(
+                      child: SizedBox(
+                          height: 100.0,
+                          width: 100.0,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              CircularProgressIndicator(),
+                              Text('Loading...')
+                            ],
+                          )),
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.all(8),
+                      itemCount: widget.is_income
+                          ? income_categories.length
+                          : expense_categories.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final cat_item = widget.is_income
+                            ? income_categories[index]
+                            : expense_categories[index] as Map<String, dynamic>;
 
-                    return Slidable(
-                      closeOnScroll: true,
-                      startActionPane:
-                          ActionPane(motion: ScrollMotion(), children: [
-                        SlidableAction(
-                          onPressed: (context) {
-                            edit_cat(context, index);
-                          },
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.green,
-                          icon: Icons.edit,
-                          label: 'Edit',
-                        ),
-                        SlidableAction(
-                          onPressed: (context) {
-                            delete_cat(context, index);
-                          },
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.red,
-                          icon: Icons.delete,
-                          label: 'Delete',
-                        ),
-                      ]),
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    cat_edit(cat_id: (cat_item['cat_id']))),
-                          );
-                        },
-                        child: Container(
-                          decoration: const BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(
-                                      color: Colors.black, width: 0))),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
+                        return Slidable(
+                          closeOnScroll: true,
+                          endActionPane:
+                              ActionPane(motion: const ScrollMotion(), children: [
+                            SlidableAction(
+                              onPressed: (context) {
+                                edit_cat(context, index);
+                              },
+                              foregroundColor: Colors.blue,
+                              icon: Icons.edit,
+                              label: 'Edit',
+                            ),
+                            SlidableAction(
+                              onPressed: (context) {
+                                delete_cat(context, index);
+                              },
+                              foregroundColor: Colors.red,
+                              icon: Icons.delete,
+                              label: 'Delete',
+                            ),
+                          ]),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        cat_edit(cat_id: (cat_item['cat_id']))),
+                              );
+                            },
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                  border: Border(
+                                      bottom: BorderSide(
+                                          color: Colors.black, width: 0))),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(
-                                      cat_item['icon'],
-                                      style: const TextStyle(fontSize: 28),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          cat_item['icon'],
+                                          style: const TextStyle(fontSize: 28),
+                                        ),
+                                        const SizedBox(
+                                          width: 15,
+                                        ),
+                                        Text(
+                                          cat_item['name'],
+                                          style: const TextStyle(fontSize: 18),
+                                        ),
+                                      ],
                                     ),
-                                    const SizedBox(
-                                      width: 15,
-                                    ),
-                                    Text(
-                                      cat_item['name'],
-                                      style: const TextStyle(fontSize: 18),
-                                    ),
+                                    const Icon(Icons.navigate_next)
                                   ],
                                 ),
-                                const Icon(Icons.navigate_next)
-                              ],
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                    );
-                  }),
+                        );
+                      }),
             )),
       ]),
     );

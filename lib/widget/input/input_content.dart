@@ -29,27 +29,36 @@ class _input_contentState extends State<input_content> {
   double scale = 1.0;
   bool des_validate = false;
   bool money_validate = false;
+  bool is_loading = true;
+  bool is_mounted = false;
 
   @override
   void initState() {
+    is_mounted = true;
     fetchData();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    is_mounted = false;
+    super.dispose();
   }
 
   Future<void> fetchData() async {
     List<Map<String, dynamic>> income_temp =
         await db_helper.fetch_categories(true);
 
-    List<Map<String, dynamic>> outcome_temp =
+    List<Map<String, dynamic>> expense_temp =
         await db_helper.fetch_categories(false);
 
-    setState(() {
-      income_categories = income_temp;
-    });
-
-    setState(() {
-      expense_categories = outcome_temp;
-    });
+    if (is_mounted) {
+      setState(() {
+        income_categories = income_temp;
+        expense_categories = expense_temp;
+        is_loading = false;
+      });
+    }
   }
 
   @override
@@ -204,60 +213,77 @@ class _input_contentState extends State<input_content> {
           ),
           SizedBox(
             height: 320,
-            child: GridView.builder(
-              padding: const EdgeInsets.only(left: 15, right: 15, bottom: 85),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                childAspectRatio: 16 / 10,
-                crossAxisCount: 4,
-                crossAxisSpacing: 8.0,
-                mainAxisSpacing: 8.0,
-              ),
-              itemCount: widget.is_income
-                  ? income_categories.length
-                  : expense_categories.length,
-              itemBuilder: (BuildContext context, int index) {
-                bool is_selected = index == selectedIndex;
-                final cat_item = widget.is_income
-                    ? income_categories[index]
-                    : expense_categories[index] as Map<String, dynamic>;
-                return InkWell(
-                  borderRadius: BorderRadius.circular(10),
-                  onTap: () {
-                    setState(() {
-                      selectedIndex = index;
-                      cat_id = cat_item['cat_id'];
-                    });
-                  },
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.easeInOut,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.amber),
-                      borderRadius: BorderRadius.circular(10),
-                      gradient: LinearGradient(
-                          colors: is_selected
-                              ? [Colors.blue, Colors.orange]
-                              : [Colors.white, Colors.white],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight),
+            child: is_loading
+                ? const Center(
+                    child: SizedBox(
+                        height: 100.0,
+                        width: 100.0,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            CircularProgressIndicator(),
+                            Text('Loading...')
+                          ],
+                        )),
+                  )
+                : GridView.builder(
+                    padding:
+                        const EdgeInsets.only(left: 15, right: 15, bottom: 85),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      childAspectRatio: 16 / 10,
+                      crossAxisCount: 4,
+                      crossAxisSpacing: 8.0,
+                      mainAxisSpacing: 8.0,
                     ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(cat_item['icon'],
-                            style: const TextStyle(fontSize: 20)),
-                        Text(
-                          cat_item['name'],
-                          style: TextStyle(
-                              fontSize: 16,
-                              color: is_selected ? Colors.white : Colors.black),
+                    itemCount: widget.is_income
+                        ? income_categories.length
+                        : expense_categories.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      bool is_selected = index == selectedIndex;
+                      final cat_item = widget.is_income
+                          ? income_categories[index]
+                          : expense_categories[index] as Map<String, dynamic>;
+                      return InkWell(
+                        borderRadius: BorderRadius.circular(10),
+                        onTap: () {
+                          setState(() {
+                            selectedIndex = index;
+                            cat_id = cat_item['cat_id'];
+                          });
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.easeInOut,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.amber),
+                            borderRadius: BorderRadius.circular(10),
+                            gradient: LinearGradient(
+                                colors: is_selected
+                                    ? [Colors.blue, Colors.orange]
+                                    : [Colors.white, Colors.white],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(cat_item['icon'],
+                                  style: const TextStyle(fontSize: 20)),
+                              Text(
+                                cat_item['name'],
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    color: is_selected
+                                        ? Colors.white
+                                        : Colors.black),
+                              ),
+                            ],
+                          ),
                         ),
-                      ],
-                    ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
           )
         ]),
       ),

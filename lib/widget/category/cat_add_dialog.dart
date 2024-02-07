@@ -131,6 +131,7 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
                 } else {
                   add_category(icon_controller.text, cat_controller.text,
                       widget.is_income);
+                  Navigator.of(context).pop();
                 }
               },
               child: const Text(
@@ -193,7 +194,6 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
           textColor: Colors.white,
           fontSize: 16.0);
       widget.cat_reload_callback();
-      Navigator.of(context).pop();
     } catch (err) {
       Fluttertoast.showToast(
           msg: 'Fail at add category',

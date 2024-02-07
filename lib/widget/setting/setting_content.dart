@@ -19,10 +19,6 @@ class _setting_contentState extends State<setting_content> {
         padding:
             const EdgeInsets.only(left: 18, top: 260, right: 18, bottom: 150),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Text(
-            'Appearance',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-          ),
           Material(
             color: Colors.grey[200],
             borderRadius: BorderRadius.circular(10),
@@ -149,18 +145,107 @@ class _setting_contentState extends State<setting_content> {
               )
             ]),
           ),
-          const Padding(
-            padding: EdgeInsets.only(top: 16.0),
-            child: Text(
-              'Security & Privacy',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+          Padding(
+            padding: const EdgeInsets.only(top: 18.0),
+            child: Material(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(10),
+              child: Column(
+                children: [
+                  InkWell(
+                    borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10)),
+                    onTap: () {},
+                    child: const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(left: 10.0, right: 18),
+                                child: Icon(
+                                  Icons.lock,
+                                  color: Colors.green,
+                                  size: 26,
+                                ),
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Application lock',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 16),
+                                  ),
+                                  Text(
+                                    'Use Password or FaceID to unlock app',
+                                    style: TextStyle(color: Colors.grey),
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
+                          Icon(Icons.navigate_next)
+                        ],
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(10),
+                        bottomRight: Radius.circular(10)),
+                    onTap: () {},
+                    child: const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(left: 10.0, right: 18),
+                                child: Icon(
+                                  Icons.privacy_tip,
+                                  color: Colors.red,
+                                  size: 26,
+                                ),
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Privacy',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 16),
+                                  ),
+                                  Text(
+                                    'More privacy options',
+                                    style: TextStyle(color: Colors.grey),
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
+                          Icon(Icons.navigate_next)
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          Material(
-            color: Colors.grey[200],
-            borderRadius: BorderRadius.circular(10),
-            child: Column(
-              children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 18.0),
+            child: Material(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(10),
+              child: Column(children: [
                 InkWell(
                   borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(10),
@@ -176,8 +261,8 @@ class _setting_contentState extends State<setting_content> {
                             Padding(
                               padding: EdgeInsets.only(left: 10.0, right: 18),
                               child: Icon(
-                                Icons.lock,
-                                color: Colors.green,
+                                Icons.info,
+                                color: Colors.orange,
                                 size: 26,
                               ),
                             ),
@@ -185,13 +270,13 @@ class _setting_contentState extends State<setting_content> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Application lock',
+                                  'About',
                                   style: TextStyle(
                                       fontWeight: FontWeight.w500,
                                       fontSize: 16),
                                 ),
                                 Text(
-                                  'Use Password or FaceID to unlock app',
+                                  'Learn more about Money Mate',
                                   style: TextStyle(color: Colors.grey),
                                 )
                               ],
@@ -218,22 +303,22 @@ class _setting_contentState extends State<setting_content> {
                             Padding(
                               padding: EdgeInsets.only(left: 10.0, right: 18),
                               child: Icon(
-                                Icons.privacy_tip,
-                                color: Colors.red,
+                                Icons.feedback,
                                 size: 26,
+                                color: Colors.brown,
                               ),
                             ),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Privacy',
+                                  'Send feedback',
                                   style: TextStyle(
                                       fontWeight: FontWeight.w500,
                                       fontSize: 16),
                                 ),
                                 Text(
-                                  'More privacy options',
+                                  'Let us know your experience about app',
                                   style: TextStyle(color: Colors.grey),
                                 )
                               ],
@@ -245,103 +330,8 @@ class _setting_contentState extends State<setting_content> {
                     ),
                   ),
                 ),
-              ],
+              ]),
             ),
-          ),
-          const Padding(
-            padding: EdgeInsets.only(top: 16.0),
-            child: Text(
-              'Help',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-            ),
-          ),
-          Material(
-            color: Colors.grey[200],
-            borderRadius: BorderRadius.circular(10),
-            child: Column(children: [
-              InkWell(
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    topRight: Radius.circular(10)),
-                onTap: () {},
-                child: const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(left: 10.0, right: 18),
-                            child: Icon(
-                              Icons.info,
-                              color: Colors.orange,
-                              size: 26,
-                            ),
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'About',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w500, fontSize: 16),
-                              ),
-                              Text(
-                                'Learn more about Money Mate',
-                                style: TextStyle(color: Colors.grey),
-                              )
-                            ],
-                          ),
-                        ],
-                      ),
-                      Icon(Icons.navigate_next)
-                    ],
-                  ),
-                ),
-              ),
-              InkWell(
-                borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(10),
-                    bottomRight: Radius.circular(10)),
-                onTap: () {},
-                child: const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(left: 10.0, right: 18),
-                            child: Icon(
-                              Icons.feedback,
-                              size: 26,
-                              color: Colors.brown,
-                            ),
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Send feedback',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w500, fontSize: 16),
-                              ),
-                              Text(
-                                'Let us know your experience about app',
-                                style: TextStyle(color: Colors.grey),
-                              )
-                            ],
-                          ),
-                        ],
-                      ),
-                      Icon(Icons.navigate_next)
-                    ],
-                  ),
-                ),
-              ),
-            ]),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 28.0),
