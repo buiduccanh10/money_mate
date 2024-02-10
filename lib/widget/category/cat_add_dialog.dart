@@ -24,6 +24,14 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
   bool icon_validate = false;
   bool cat_validate = false;
   firestore_helper db_helper = firestore_helper();
+  FToast toast = FToast();
+
+  @override
+  void initState() {
+    toast = FToast();
+    toast.init(context);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -184,25 +192,47 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
   Future<void> add_category(String icon, String name, bool is_income) async {
     try {
       await db_helper.add_category(icon, name, is_income);
-
-      Fluttertoast.showToast(
-          msg: 'Add category successful!',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.green,
-          textColor: Colors.white,
-          fontSize: 16.0);
       widget.cat_reload_callback();
+
+      toast.showToast(
+        child: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10.0),
+            color: Colors.greenAccent,
+          ),
+          child: const Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Icon(Icons.check),
+              Text("Create success!"),
+            ],
+          ),
+        ),
+        gravity: ToastGravity.CENTER,
+        toastDuration: const Duration(seconds: 2),
+      );
     } catch (err) {
-      Fluttertoast.showToast(
-          msg: 'Fail at add category',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
+      toast.showToast(
+        child: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10.0),
+            color: Colors.redAccent,
+          ),
+          child: const Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Icon(Icons.do_disturb),
+              Text("Create fail!"),
+            ],
+          ),
+        ),
+        gravity: ToastGravity.CENTER,
+        toastDuration: const Duration(seconds: 2),
+      );
     }
   }
 }

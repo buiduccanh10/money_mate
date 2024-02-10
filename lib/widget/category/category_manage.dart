@@ -11,6 +11,7 @@ import 'package:money_mate/services/firestore_helper.dart';
 
 import 'package:money_mate/widget/category/cat_add_dialog.dart';
 import 'package:money_mate/widget/category/cat_edit.dart';
+import 'package:shimmer/shimmer.dart';
 
 typedef void cat_callback();
 
@@ -30,10 +31,12 @@ class _category_manageState extends State<category_manage> {
   firestore_helper db_helper = firestore_helper();
   bool is_loading = true;
   bool is_mounted = false;
+  FToast toast = FToast();
 
   @override
   void initState() {
     is_mounted = true;
+    toast.init(context);
     fetchData();
     super.initState();
   }
@@ -124,7 +127,8 @@ class _category_manageState extends State<category_manage> {
               IconButton(
                   padding: const EdgeInsets.all(15),
                   onPressed: () {},
-                  icon: const Icon(Icons.delete_sweep, color: Colors.red, size: 28))
+                  icon: const Icon(Icons.delete_sweep,
+                      color: Colors.red, size: 28))
             ],
           ),
         ),
@@ -133,17 +137,23 @@ class _category_manageState extends State<category_manage> {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: is_loading
-                  ? const Center(
-                      child: SizedBox(
-                          height: 100.0,
-                          width: 100.0,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              CircularProgressIndicator(),
-                              Text('Loading...')
-                            ],
-                          )),
+                  ? ListView.builder(
+                      padding: const EdgeInsets.all(8),
+                      itemCount: 12,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Shimmer.fromColors(
+                          baseColor: Colors.grey[300]!,
+                          highlightColor: Colors.grey[100]!,
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(vertical: 7.0),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                            height: 50.0,
+                          ),
+                        );
+                      },
                     )
                   : ListView.builder(
                       padding: const EdgeInsets.all(8),
@@ -157,25 +167,26 @@ class _category_manageState extends State<category_manage> {
 
                         return Slidable(
                           closeOnScroll: true,
-                          endActionPane:
-                              ActionPane(motion: const ScrollMotion(), children: [
-                            SlidableAction(
-                              onPressed: (context) {
-                                edit_cat(context, index);
-                              },
-                              foregroundColor: Colors.blue,
-                              icon: Icons.edit,
-                              label: 'Edit',
-                            ),
-                            SlidableAction(
-                              onPressed: (context) {
-                                delete_cat(context, index);
-                              },
-                              foregroundColor: Colors.red,
-                              icon: Icons.delete,
-                              label: 'Delete',
-                            ),
-                          ]),
+                          endActionPane: ActionPane(
+                              motion: const ScrollMotion(),
+                              children: [
+                                SlidableAction(
+                                  onPressed: (context) {
+                                    edit_cat(context, index);
+                                  },
+                                  foregroundColor: Colors.blue,
+                                  icon: Icons.edit,
+                                  label: 'Edit',
+                                ),
+                                SlidableAction(
+                                  onPressed: (context) {
+                                    delete_cat(context, index);
+                                  },
+                                  foregroundColor: Colors.red,
+                                  icon: Icons.delete,
+                                  label: 'Delete',
+                                ),
+                              ]),
                           child: InkWell(
                             onTap: () {
                               Navigator.push(
@@ -236,14 +247,6 @@ class _category_manageState extends State<category_manage> {
         setState(() {
           income_categories.removeAt(index);
         });
-        Fluttertoast.showToast(
-            msg: 'Delete category successful!',
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.green,
-            textColor: Colors.white,
-            fontSize: 16.0);
       } else {
         await FirebaseFirestore.instance
             .collection("category")
@@ -252,24 +255,46 @@ class _category_manageState extends State<category_manage> {
         setState(() {
           expense_categories.removeAt(index);
         });
-        Fluttertoast.showToast(
-            msg: 'Delete category successful!',
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.green,
-            textColor: Colors.white,
-            fontSize: 16.0);
       }
+      toast.showToast(
+        child: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10.0),
+            color: Colors.greenAccent,
+          ),
+          child: const Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Icon(Icons.check),
+              Text("Delete success!"),
+            ],
+          ),
+        ),
+        gravity: ToastGravity.CENTER,
+        toastDuration: const Duration(seconds: 2),
+      );
     } catch (error) {
-      Fluttertoast.showToast(
-          msg: 'Fail at delete category',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
+      toast.showToast(
+        child: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10.0),
+            color: Colors.redAccent,
+          ),
+          child: const Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Icon(Icons.do_disturb),
+              Text("Fail delete!"),
+            ],
+          ),
+        ),
+        gravity: ToastGravity.CENTER,
+        toastDuration: const Duration(seconds: 2),
+      );
     }
   }
 }

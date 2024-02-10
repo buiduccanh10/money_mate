@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:money_mate/services/firestore_helper.dart';
+import 'package:shimmer/shimmer.dart';
 
 class home_list_item extends StatefulWidget {
   const home_list_item({super.key});
@@ -44,14 +45,42 @@ class _home_list_itemState extends State<home_list_item> {
   Widget build(BuildContext context) {
     return Expanded(
       child: is_loading
-          ? const Center(
-              child: SizedBox(
-                  height: 100.0,
-                  width: 100.0,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [CircularProgressIndicator(), Text('Loading...')],
-                  )),
+          ? ListView.builder(
+              padding: const EdgeInsets.only(top: 10, bottom: 100),
+              itemCount: 5,
+              itemBuilder: (BuildContext context, int index) {
+                return Shimmer.fromColors(
+                  baseColor: Colors.grey[300]!,
+                  highlightColor: Colors.grey[100]!,
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        top: 10, bottom: 10, left: 24, right: 24),
+                    child: ListTile(
+                      title: Container(
+                        height: 20,
+                        color: Colors.white,
+                      ),
+                      subtitle: Container(
+                        height: 15,
+                        color: Colors.white,
+                      ),
+                      leading: Container(
+                        width: 50,
+                        height: 50,
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      trailing: Container(
+                        width: 60,
+                        height: 20,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                );
+              },
             )
           : ListView.builder(
               padding: const EdgeInsets.only(top: 10, bottom: 100),

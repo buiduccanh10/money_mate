@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:money_mate/services/firestore_helper.dart';
 import 'package:money_mate/widget/category/category_manage.dart';
+import 'package:shimmer/shimmer.dart';
 
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
@@ -31,10 +32,12 @@ class _input_contentState extends State<input_content> {
   bool money_validate = false;
   bool is_loading = true;
   bool is_mounted = false;
+  FToast toast = FToast();
 
   @override
   void initState() {
     is_mounted = true;
+    toast.init(context);
     fetchData();
     super.initState();
   }
@@ -214,17 +217,31 @@ class _input_contentState extends State<input_content> {
           SizedBox(
             height: 320,
             child: is_loading
-                ? const Center(
-                    child: SizedBox(
-                        height: 100.0,
-                        width: 100.0,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            CircularProgressIndicator(),
-                            Text('Loading...')
-                          ],
-                        )),
+                ? GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      childAspectRatio: 16 / 10,
+                      crossAxisCount: 4,
+                      crossAxisSpacing: 8.0,
+                      mainAxisSpacing: 8.0,
+                    ),
+                    padding:
+                        const EdgeInsets.only(left: 15, right: 15, bottom: 85),
+                    itemCount: 5,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Shimmer.fromColors(
+                        baseColor: Colors.grey[300]!,
+                        highlightColor: Colors.grey[100]!,
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(vertical: 7.0),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(5.0),
+                          ),
+                          height: 50.0,
+                        ),
+                      );
+                    },
                   )
                 : GridView.builder(
                     padding:
@@ -361,23 +378,45 @@ class _input_contentState extends State<input_content> {
       description_controller.clear();
       money_controller.clear();
 
-      Fluttertoast.showToast(
-          msg: 'Input successful!',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.green,
-          textColor: Colors.white,
-          fontSize: 16.0);
+      toast.showToast(
+        child: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10.0),
+            color: Colors.greenAccent,
+          ),
+          child: const Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Icon(Icons.check),
+              Text("Create success!"),
+            ],
+          ),
+        ),
+        gravity: ToastGravity.CENTER,
+        toastDuration: const Duration(seconds: 2),
+      );
     } catch (err) {
-      Fluttertoast.showToast(
-          msg: 'Fail to input',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
+      toast.showToast(
+        child: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10.0),
+            color: Colors.redAccent,
+          ),
+          child: const Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Icon(Icons.do_disturb),
+              Text("Create fail!"),
+            ],
+          ),
+        ),
+        gravity: ToastGravity.CENTER,
+        toastDuration: const Duration(seconds: 2),
+      );
     }
   }
 }
