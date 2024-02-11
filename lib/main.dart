@@ -25,7 +25,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'MoneyMate',
       debugShowCheckedModeBanner: false,
-      themeMode: ThemeMode.system,
       home: const Main(),
       builder: FToastBuilder(),
     );
@@ -43,6 +42,7 @@ class _MainState extends State<Main> {
   int index = 0;
   bool extendBody = true;
   final page = [const Home(), input(), const chart(), const setting()];
+
   @override
   Widget build(BuildContext context) {
     return PopScope(

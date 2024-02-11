@@ -28,130 +28,131 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
 
   @override
   void initState() {
-    toast = FToast();
     toast.init(context);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      backgroundColor: Colors.white,
-      title: const Text(
-        'Add a new category',
-        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-      ),
-      elevation: 100,
-      scrollable: true,
-      content: SizedBox(
-        width: BouncingScrollSimulation.maxSpringTransferVelocity,
-        child: Column(
-          children: [
-            TextField(
-              readOnly: true,
-              controller: icon_controller,
-              keyboardType: TextInputType.text,
-              onTap: () {
-                showEmojiPicker(context);
-              },
-              decoration: InputDecoration(
-                errorText: icon_validate ? 'Please choose an icon' : null,
-                enabledBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.blue),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                focusedBorder: OutlineInputBorder(
+    return Builder(builder: (context) {
+      return AlertDialog(
+        backgroundColor: Colors.white,
+        title: const Text(
+          'Add a new category',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+        ),
+        elevation: 100,
+        scrollable: true,
+        content: SizedBox(
+          width: BouncingScrollSimulation.maxSpringTransferVelocity,
+          child: Column(
+            children: [
+              TextField(
+                readOnly: true,
+                controller: icon_controller,
+                keyboardType: TextInputType.text,
+                onTap: () {
+                  showEmojiPicker(context);
+                },
+                decoration: InputDecoration(
+                  errorText: icon_validate ? 'Please choose an icon' : null,
+                  enabledBorder: OutlineInputBorder(
                     borderSide: const BorderSide(color: Colors.blue),
-                    borderRadius: BorderRadius.circular(10)),
-                label: const Text('Choose an icon'),
-                labelStyle: TextStyle(color: Colors.grey.withOpacity(1)),
-                prefixIcon: const Icon(Icons.insert_emoticon),
-                prefixIconColor: Colors.orange,
-                suffixIcon: TextButton(
-                  onPressed: () {
-                    setState(() {
-                      icon_controller.clear();
-                    });
-                  },
-                  child: const Icon(
-                    Icons.clear,
-                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Colors.blue),
+                      borderRadius: BorderRadius.circular(10)),
+                  label: const Text('Choose an icon'),
+                  labelStyle: TextStyle(color: Colors.grey.withOpacity(1)),
+                  prefixIcon: const Icon(Icons.insert_emoticon),
+                  prefixIconColor: Colors.orange,
+                  suffixIcon: TextButton(
+                    onPressed: () {
+                      setState(() {
+                        icon_controller.clear();
+                      });
+                    },
+                    child: const Icon(
+                      Icons.clear,
+                      color: Colors.red,
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            TextField(
-              keyboardType: TextInputType.text,
-              controller: cat_controller,
-              decoration: InputDecoration(
-                errorText: cat_validate ? 'Please enter name of icon' : null,
-                enabledBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.blue),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.blue),
-                    borderRadius: BorderRadius.circular(10)),
-                label: const Text('Category name'),
-                labelStyle: TextStyle(color: Colors.grey.withOpacity(1)),
-                floatingLabelStyle: const TextStyle(color: Colors.black),
-                prefixIcon: const Icon(Icons.new_label),
-                prefixIconColor: Colors.blueAccent,
+              const SizedBox(
+                height: 10,
               ),
-            ),
-          ],
-        ),
-      ),
-      actions: [
-        Container(
-          width: 80,
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey),
-              borderRadius: BorderRadius.circular(10)),
-          child: TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text(
-                'Cancel',
-                style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    color: Color.fromARGB(255, 127, 127, 127)),
-              )),
-        ),
-        Container(
-          width: 80,
-          decoration: BoxDecoration(
-              color: Colors.green,
-              border: Border.all(color: Colors.green),
-              borderRadius: BorderRadius.circular(10)),
-          child: TextButton(
-              onPressed: () {
-                if (icon_controller.text.isEmpty ||
-                    cat_controller.text.isEmpty) {
-                  setState(() {
-                    icon_validate = icon_controller.text.isEmpty;
-                    cat_validate = cat_controller.text.isEmpty;
-                  });
-                } else {
-                  add_category(icon_controller.text, cat_controller.text,
-                      widget.is_income);
-                  Navigator.of(context).pop();
-                }
-              },
-              child: const Text(
-                'Save',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w700,
+              TextField(
+                keyboardType: TextInputType.text,
+                controller: cat_controller,
+                decoration: InputDecoration(
+                  errorText: cat_validate ? 'Please enter name of icon' : null,
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.blue),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Colors.blue),
+                      borderRadius: BorderRadius.circular(10)),
+                  label: const Text('Category name'),
+                  labelStyle: TextStyle(color: Colors.grey.withOpacity(1)),
+                  floatingLabelStyle: const TextStyle(color: Colors.black),
+                  prefixIcon: const Icon(Icons.new_label),
+                  prefixIconColor: Colors.blueAccent,
                 ),
-              )),
-        )
-      ],
-    );
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          Container(
+            width: 80,
+            decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(10)),
+            child: TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text(
+                  'Cancel',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      color: Color.fromARGB(255, 127, 127, 127)),
+                )),
+          ),
+          Container(
+            width: 80,
+            decoration: BoxDecoration(
+                color: Colors.green,
+                border: Border.all(color: Colors.green),
+                borderRadius: BorderRadius.circular(10)),
+            child: TextButton(
+                onPressed: () {
+                  if (icon_controller.text.isEmpty ||
+                      cat_controller.text.isEmpty) {
+                    setState(() {
+                      icon_validate = icon_controller.text.isEmpty;
+                      cat_validate = cat_controller.text.isEmpty;
+                    });
+                  } else {
+                    add_category(icon_controller.text, cat_controller.text,
+                        widget.is_income);
+                    Navigator.of(context).pop();
+                  }
+                },
+                child: const Text(
+                  'Save',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
+                )),
+          )
+        ],
+      );
+    });
   }
 
   void showEmojiPicker(BuildContext context) {

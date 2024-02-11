@@ -8,7 +8,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:money_mate/services/firestore_helper.dart';
-
 import 'package:money_mate/widget/category/cat_add_dialog.dart';
 import 'package:money_mate/widget/category/cat_edit.dart';
 import 'package:shimmer/shimmer.dart';
@@ -36,7 +35,6 @@ class _category_manageState extends State<category_manage> {
   @override
   void initState() {
     is_mounted = true;
-    toast.init(context);
     fetchData();
     super.initState();
   }
@@ -66,6 +64,8 @@ class _category_manageState extends State<category_manage> {
 
   @override
   Widget build(BuildContext context) {
+    toast.init(context);
+    
     return Scaffold(
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(right: 15),

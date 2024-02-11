@@ -94,42 +94,6 @@ class _input_contentState extends State<input_content> {
                         viewHeaderStyle: DateRangePickerViewHeaderStyle(
                             textStyle: TextStyle(
                                 fontWeight: FontWeight.w600, fontSize: 16))),
-
-                    // cellBuilder: (BuildContext context,
-                    //     DateRangePickerCellDetails cellDetails) {
-                    //   DateTime date = cellDetails.date;
-
-                    //   bool is_selected = date_controller.selectedDate != null &&
-                    //       date.isAtSameMomentAs(date_controller.selectedDate!);
-
-                    //   bool is_today = date.year == DateTime.now().year &&
-                    //       date.month == DateTime.now().month &&
-                    //       date.day == DateTime.now().day;
-
-                    //   return Container(
-                    //     decoration: BoxDecoration(
-                    //       border: Border.all(
-                    //         color: is_today ? Colors.red : Colors.transparent,
-                    //       ),
-                    //       shape: BoxShape.circle,
-                    //       gradient: is_selected
-                    //           ? const LinearGradient(
-                    //               colors: [Colors.blue, Colors.orange],
-                    //               begin: Alignment.topLeft,
-                    //               end: Alignment.bottomRight,
-                    //             )
-                    //           : null,
-                    //     ),
-                    //     child: Center(
-                    //       child: Text(
-                    //         date.day.toString(),
-                    //         style: TextStyle(
-                    //           color: is_selected ? Colors.white : null,
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   );
-                    // },
                   ),
                 ),
                 const SizedBox(
