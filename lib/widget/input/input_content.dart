@@ -178,94 +178,91 @@ class _input_contentState extends State<input_content> {
               ],
             ),
           ),
-          SizedBox(
-            height: 320,
-            child: is_loading
-                ? GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      childAspectRatio: 16 / 10,
-                      crossAxisCount: 4,
-                      crossAxisSpacing: 8.0,
-                      mainAxisSpacing: 8.0,
-                    ),
-                    padding:
-                        const EdgeInsets.only(left: 15, right: 15, bottom: 85),
-                    itemCount: 5,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Shimmer.fromColors(
-                        baseColor: Colors.grey[300]!,
-                        highlightColor: Colors.grey[100]!,
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(vertical: 7.0),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
-                          height: 50.0,
-                        ),
-                      );
-                    },
-                  )
-                : GridView.builder(
-                    padding:
-                        const EdgeInsets.only(left: 15, right: 15, bottom: 85),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      childAspectRatio: 16 / 10,
-                      crossAxisCount: 4,
-                      crossAxisSpacing: 8.0,
-                      mainAxisSpacing: 8.0,
-                    ),
-                    itemCount: widget.is_income
-                        ? income_categories.length
-                        : expense_categories.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      bool is_selected = index == selectedIndex;
-                      final cat_item = widget.is_income
-                          ? income_categories[index]
-                          : expense_categories[index] as Map<String, dynamic>;
-                      return InkWell(
-                        borderRadius: BorderRadius.circular(10),
-                        onTap: () {
-                          setState(() {
-                            selectedIndex = index;
-                            cat_id = cat_item['cat_id'];
-                          });
-                        },
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 500),
-                          curve: Curves.easeInOut,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.amber),
-                            borderRadius: BorderRadius.circular(10),
-                            gradient: LinearGradient(
-                                colors: is_selected
-                                    ? [Colors.blue, Colors.orange]
-                                    : [Colors.white, Colors.white],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(cat_item['icon'],
-                                  style: const TextStyle(fontSize: 20)),
-                              Text(
-                                cat_item['name'],
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    color: is_selected
-                                        ? Colors.white
-                                        : Colors.black),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
+          is_loading
+              ? GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    childAspectRatio: 16 / 10,
+                    crossAxisCount: 4,
+                    crossAxisSpacing: 8.0,
+                    mainAxisSpacing: 8.0,
                   ),
-          )
+                  padding:
+                      const EdgeInsets.only(left: 15, right: 15, bottom: 85),
+                  itemCount: 5,
+                  shrinkWrap: true, // Adjusts the height based on content
+                  itemBuilder: (BuildContext context, int index) {
+                    return Shimmer.fromColors(
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(vertical: 7.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                        height: 50.0,
+                      ),
+                    );
+                  },
+                )
+              : GridView.builder(
+                  shrinkWrap: true,
+                  padding:
+                      const EdgeInsets.only(left: 15, right: 15, bottom: 85),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    childAspectRatio: 16 / 10,
+                    crossAxisCount: 4,
+                    crossAxisSpacing: 8.0,
+                    mainAxisSpacing: 8.0,
+                  ),
+                  itemCount: widget.is_income
+                      ? income_categories.length
+                      : expense_categories.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    bool is_selected = index == selectedIndex;
+                    final cat_item = widget.is_income
+                        ? income_categories[index]
+                        : expense_categories[index] as Map<String, dynamic>;
+                    return InkWell(
+                      borderRadius: BorderRadius.circular(10),
+                      onTap: () {
+                        setState(() {
+                          selectedIndex = index;
+                          cat_id = cat_item['cat_id'];
+                        });
+                      },
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.easeInOut,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.amber),
+                          borderRadius: BorderRadius.circular(10),
+                          gradient: LinearGradient(
+                              colors: is_selected
+                                  ? [Colors.blue, Colors.orange]
+                                  : [Colors.white, Colors.white],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(cat_item['icon'],
+                                style: const TextStyle(fontSize: 20)),
+                            Text(
+                              cat_item['name'],
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: is_selected
+                                      ? Colors.white
+                                      : Colors.black),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
         ]),
       ),
       floatingActionButton: AnimatedScale(

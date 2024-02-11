@@ -87,8 +87,9 @@ class _home_list_itemState extends State<home_list_item> {
                     child: Text('No input data yet!'),
                   )
                 : ListView.builder(
-                    padding: const EdgeInsets.only(top: 10, bottom: 100),
+                    padding: const EdgeInsets.only(top: 10, bottom: 0),
                     itemCount: input_data.length,
+                    shrinkWrap: true,
                     itemBuilder: (BuildContext context, int index) {
                       final Map<String, dynamic> input_item = input_data[index];
 
@@ -117,46 +118,57 @@ class _home_list_itemState extends State<home_list_item> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Container(
-                                  decoration: BoxDecoration(boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.withOpacity(0.3),
-                                      spreadRadius: 2,
-                                      blurRadius: 7,
-                                      offset: const Offset(-5, 5),
-                                    )
-                                  ], borderRadius: BorderRadius.circular(50)),
-                                  child: CircleAvatar(
-                                      backgroundColor: Colors
-                                          .primaries[Random()
-                                              .nextInt(Colors.primaries.length)]
-                                          .shade100
-                                          .withOpacity(0.35),
-                                      radius: 28,
-                                      child: Text(
-                                        input_item['icon'],
-                                        style: const TextStyle(fontSize: 38),
-                                      )),
-                                ),
-                                Column(
+                                Row(
                                   children: [
-                                    Text(
-                                      input_item['description'],
-                                      style: const TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w700),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color:
+                                                  Colors.grey.withOpacity(0.3),
+                                              spreadRadius: 2,
+                                              blurRadius: 7,
+                                              offset: const Offset(-5, 5),
+                                            )
+                                          ],
+                                          borderRadius:
+                                              BorderRadius.circular(50)),
+                                      child: CircleAvatar(
+                                          backgroundColor: Colors
+                                              .primaries[Random().nextInt(
+                                                  Colors.primaries.length)]
+                                              .shade100
+                                              .withOpacity(0.35),
+                                          radius: 28,
+                                          child: Text(
+                                            input_item['icon'],
+                                            style:
+                                                const TextStyle(fontSize: 38),
+                                          )),
                                     ),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          input_item['date'],
-                                          style: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w700,
-                                              color: Colors.grey),
-                                        ),
-                                      ],
-                                    )
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(left: 12.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            input_item['description'],
+                                            style: const TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w700),
+                                          ),
+                                          Text(
+                                            input_item['date'],
+                                            style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w700,
+                                                color: Colors.grey),
+                                          )
+                                        ],
+                                      ),
+                                    ),
                                   ],
                                 ),
                                 const SizedBox(

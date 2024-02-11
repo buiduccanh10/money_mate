@@ -65,7 +65,7 @@ class _category_manageState extends State<category_manage> {
   @override
   Widget build(BuildContext context) {
     toast.init(context);
-    
+
     return Scaffold(
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(right: 15),
@@ -156,6 +156,7 @@ class _category_manageState extends State<category_manage> {
                       },
                     )
                   : ListView.builder(
+                      shrinkWrap: true,
                       padding: const EdgeInsets.all(8),
                       itemCount: widget.is_income
                           ? income_categories.length
