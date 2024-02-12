@@ -17,27 +17,20 @@ class chart_widget extends StatefulWidget {
 
 class _chart_widgetState extends State<chart_widget> {
   firestore_helper db_helper = firestore_helper();
-  late List<Map<String, dynamic>> outcome_categories;
-  late List<Map<String, dynamic>> income_categories;
+  List<Map<String, dynamic>> outcome_categories = [];
+  List<Map<String, dynamic>> income_categories = [];
   late TooltipBehavior tooltipBehavior;
   DateTime now = DateTime.now();
   String? month_format_date;
   String? year_format_date;
   bool? is_income;
-  late int total_income;
-  late int total_outcome;
-  late int total_in_out;
+  int total_income = 0;
+  int total_outcome = 0;
+  int total_in_out = 0;
   bool is_mounted = false;
 
   @override
   void initState() {
-    outcome_categories = [];
-    income_categories = [];
-    total_income = 0;
-    total_outcome = 0;
-    total_in_out = 0;
-    total_in_out = total_income - total_outcome;
-
     is_income = true;
     is_mounted = true;
     month_format_date = DateFormat('MMMM yyyy').format(now);
