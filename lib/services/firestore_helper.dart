@@ -63,17 +63,17 @@ class firestore_helper {
       for (var inputDoc in snapshot.docs) {
         String catId = inputDoc.data()['cat_id'];
 
-        DocumentSnapshot<Map<String, dynamic>> categorySnapshot =
+        DocumentSnapshot<Map<String, dynamic>> cat_snapshot =
             await FirebaseFirestore.instance
                 .collection('category')
                 .doc(catId)
                 .get();
 
-        if (categorySnapshot.exists) {
+        if (cat_snapshot.exists) {
           Map<String, dynamic> inputDataWithIcon = {
-            'icon': categorySnapshot.data()!['icon'],
-            'name': categorySnapshot.data()!['name'],
-            'is_income': categorySnapshot.data()!['is_income'],
+            'icon': cat_snapshot.data()!['icon'],
+            'name': cat_snapshot.data()!['name'],
+            'is_income': cat_snapshot.data()!['is_income'],
             ...inputDoc.data(),
           };
           inputData.add(inputDataWithIcon);
@@ -82,6 +82,44 @@ class firestore_helper {
 
       return inputData;
     } catch (error) {
+      return [];
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> fetch_data_by_cat(
+      {required bool isIncome}) async {
+    try {
+      List<Map<String, dynamic>> inputData = [];
+
+      QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+          .instance
+          .collection('category')
+          .where('is_income', isEqualTo: isIncome)
+          .get();
+
+      for (var catDoc in snapshot.docs) {
+        String catId = catDoc.id;
+
+        QuerySnapshot<Map<String, dynamic>> inputSnapshot =
+            await FirebaseFirestore.instance
+                .collection('input')
+                .where('cat_id', isEqualTo: catId)
+                .get();
+
+        for (var inputDoc in inputSnapshot.docs) {
+          Map<String, dynamic> inputDataWithIcon = {
+            'icon': catDoc.data()['icon'],
+            'name': catDoc.data()['name'],
+            'is_income': catDoc.data()['is_income'],
+            ...inputDoc.data(),
+          };
+          inputData.add(inputDataWithIcon);
+        }
+      }
+
+      return inputData;
+    } catch (error) {
+      print('Error fetching input: $error');
       return [];
     }
   }

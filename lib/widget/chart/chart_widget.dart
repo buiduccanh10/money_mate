@@ -2,6 +2,7 @@ import 'package:custom_sliding_segmented_control/custom_sliding_segmented_contro
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:money_mate/services/firestore_helper.dart';
 
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -15,35 +16,68 @@ class chart_widget extends StatefulWidget {
 }
 
 class _chart_widgetState extends State<chart_widget> {
-  List<Map<String, dynamic>> outcome_categories = [];
-  List<Map<String, dynamic>> income_categories = [];
+  firestore_helper db_helper = firestore_helper();
+  late List<Map<String, dynamic>> outcome_categories;
+  late List<Map<String, dynamic>> income_categories;
   late TooltipBehavior tooltipBehavior;
   DateTime now = DateTime.now();
   String? month_format_date;
   String? year_format_date;
   bool? is_income;
-  int total_income = 0;
-  int total_outcome = 0;
-  int total_in_out = 0;
+  late int total_income;
+  late int total_outcome;
+  late int total_in_out;
+  bool is_mounted = false;
 
   @override
   void initState() {
-    // total_income =
-    //     income_categories.fold(0, (int previousValue, income_cat cat) {
-    //   return previousValue + (cat.total ?? 0);
-    // });
-    // total_outcome =
-    //     outcome_categories.fold(0, (int previousValue, outcome_cat cat) {
-    //   return previousValue + (cat.total ?? 0);
-    // });
-
+    outcome_categories = [];
+    income_categories = [];
+    total_income = 0;
+    total_outcome = 0;
+    total_in_out = 0;
     total_in_out = total_income - total_outcome;
 
     is_income = true;
+    is_mounted = true;
     month_format_date = DateFormat('MMMM yyyy').format(now);
     year_format_date = DateFormat('yyyy').format(now);
     tooltipBehavior = TooltipBehavior(enable: true);
+    fetchData();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    is_mounted = false;
+    super.dispose();
+  }
+
+  Future<void> fetchData() async {
+    List<Map<String, dynamic>> income_temp =
+        await db_helper.fetch_data_by_cat(isIncome: true);
+    List<Map<String, dynamic>> outcome_temp =
+        await db_helper.fetch_data_by_cat(isIncome: false);
+
+    if (is_mounted) {
+      setState(() {
+        income_categories = income_temp;
+        outcome_categories = outcome_temp;
+        calculateTotals();
+      });
+    }
+  }
+
+  void calculateTotals() {
+    total_income = income_categories
+        .map<int>((catItem) => int.parse(catItem['money']))
+        .fold<int>(0, (prev, amount) => prev + amount);
+
+    total_outcome = outcome_categories
+        .map<int>((catItem) => int.parse(catItem['money']))
+        .fold<int>(0, (prev, amount) => prev + amount);
+
+    total_in_out = total_income - total_outcome;
   }
 
   @override
@@ -202,9 +236,9 @@ class _chart_widgetState extends State<chart_widget> {
                                 2: Text(
                                   'Expense',
                                   style: TextStyle(
-                                      color: is_income == 2
-                                          ? Colors.black
-                                          : Colors.grey,
+                                      color: is_income!
+                                          ? Colors.grey
+                                          : Colors.black,
                                       fontWeight: FontWeight.w500,
                                       fontSize: 16),
                                 ),
@@ -236,114 +270,109 @@ class _chart_widgetState extends State<chart_widget> {
                         ],
                       ),
                     ),
-                    // Padding(
-                    //   padding: const EdgeInsets.only(top: 190.0),
-                    //   child: SizedBox(
-                    //     height: 280,
-                    //     child: SfCircularChart(
-                    //       tooltipBehavior: tooltipBehavior,
-                    //       series: <CircularSeries>[
-                    //         is_income!
-                    //             ? DoughnutSeries<income_cat, String>(
-                    //                 dataSource: income_categories,
-                    //                 xValueMapper: (income_cat data, _) =>
-                    //                     data.name,
-                    //                 yValueMapper: (income_cat data, _) =>
-                    //                     data.total,
-                    //                 dataLabelMapper: (income_cat data, _) =>
-                    //                     data.name,
-                    //                 dataLabelSettings: const DataLabelSettings(
-                    //                     isVisible: true),
-                    //                 enableTooltip: true,
-                    //                 animationDuration: 1200,
-                    //                 explode: true,
-                    //               )
-                    //             : DoughnutSeries<outcome_cat, String>(
-                    //                 dataSource: outcome_categories,
-                    //                 xValueMapper: (outcome_cat data, _) =>
-                    //                     data.name,
-                    //                 yValueMapper: (outcome_cat data, _) =>
-                    //                     data.total,
-                    //                 dataLabelMapper: (outcome_cat data, _) =>
-                    //                     data.name,
-                    //                 dataLabelSettings: const DataLabelSettings(
-                    //                     isVisible: true),
-                    //                 enableTooltip: true,
-                    //                 animationDuration: 1200,
-                    //                 explode: true,
-                    //               ),
-                    //       ],
-                    //     ),
-                    //   ),
-                    // ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 190.0),
+                      child: SizedBox(
+                        height: 280,
+                        child: SfCircularChart(
+                          tooltipBehavior: tooltipBehavior,
+                          series: <CircularSeries>[
+                            is_income!
+                                ? DoughnutSeries<Map<String, dynamic>, String>(
+                                    dataSource: income_categories,
+                                    xValueMapper: (datum, _) => datum['name'],
+                                    yValueMapper: (datum, _) =>
+                                        int.parse(datum['money']),
+                                    dataLabelMapper: (datum, _) =>
+                                        datum['name'],
+                                    dataLabelSettings: const DataLabelSettings(
+                                        isVisible: true),
+                                    enableTooltip: true,
+                                    animationDuration: 1200,
+                                    explode: true,
+                                  )
+                                : DoughnutSeries<Map<String, dynamic>, String>(
+                                    dataSource: outcome_categories,
+                                    xValueMapper: (datum, _) => datum['name'],
+                                    yValueMapper: (datum, _) =>
+                                        int.parse(datum['money']),
+                                    dataLabelMapper: (datum, _) =>
+                                        datum['name'],
+                                    dataLabelSettings: const DataLabelSettings(
+                                        isVisible: true),
+                                    enableTooltip: true,
+                                    animationDuration: 1200,
+                                    explode: true,
+                                  ),
+                          ],
+                        ),
+                      ),
+                    ),
                     Padding(
                       padding: const EdgeInsets.only(top: 430),
-                      child: SizedBox(
-                        height: 400,
-                        child: ListView.builder(
-                          padding: const EdgeInsets.all(8),
-                          itemCount: is_income!
-                              ? income_categories.length
-                              : outcome_categories.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            final cat_item = is_income!
-                                ? income_categories[index]
-                                : outcome_categories[index];
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        padding: const EdgeInsets.all(8),
+                        itemCount: is_income!
+                            ? income_categories.length
+                            : outcome_categories.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final cat_item = is_income!
+                              ? income_categories[index]
+                              : outcome_categories[index]
+                                  as Map<String, dynamic>;
 
-                            return InkWell(
-                              onTap: () {},
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  border: Border(
-                                      bottom: BorderSide(
-                                          color: Colors.black, width: 0)),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 15.0, right: 15, top: 8, bottom: 8),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Text(
-                                            (cat_item as dynamic).icon!,
-                                            style:
-                                                const TextStyle(fontSize: 28),
+                          return InkWell(
+                            onTap: () {},
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                border: Border(
+                                    bottom: BorderSide(
+                                        color: Colors.black, width: 0)),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 15.0, right: 15, top: 8, bottom: 8),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          cat_item['icon'],
+                                          style: const TextStyle(fontSize: 28),
+                                        ),
+                                        const SizedBox(
+                                          width: 20,
+                                        ),
+                                        Text(
+                                          cat_item['name'],
+                                          style: const TextStyle(fontSize: 18),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              right: 25.0),
+                                          child: Text(
+                                            '${is_income! ? '+' : '-'} ${cat_item['money']} đ',
+                                            style: const TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w400),
                                           ),
-                                          const SizedBox(
-                                            width: 20,
-                                          ),
-                                          Text(
-                                            (cat_item as dynamic).name!,
-                                            style:
-                                                const TextStyle(fontSize: 18),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                right: 25.0),
-                                            child: Text(
-                                              '${is_income! ? '+' : '-'} ${(cat_item as dynamic).total} đ',
-                                              style: const TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.w400),
-                                            ),
-                                          ),
-                                          const Icon(Icons.navigate_next)
-                                        ],
-                                      )
-                                    ],
-                                  ),
+                                        ),
+                                        const Icon(Icons.navigate_next)
+                                      ],
+                                    )
+                                  ],
                                 ),
                               ),
-                            );
-                          },
-                        ),
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ],
