@@ -1,6 +1,10 @@
+import 'dart:ffi';
 import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import 'package:money_mate/services/firestore_helper.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -16,6 +20,7 @@ class _home_list_itemState extends State<home_list_item> {
   List<Map<String, dynamic>> input_data = [];
   bool is_loading = true;
   bool is_mounted = false;
+  FToast toast = FToast();
 
   @override
   void initState() {
@@ -43,169 +48,264 @@ class _home_list_itemState extends State<home_list_item> {
 
   @override
   Widget build(BuildContext context) {
+    input_data.sort((a, b) {
+      final format_date = DateFormat("dd/MM/yyyy");
+      final aDate = format_date.parse(a['date']);
+      final bDate = format_date.parse(b['date']);
+      return bDate.compareTo(aDate);
+    });
+    final date_group = <String, List<Map<String, dynamic>>>{};
+    for (final item in input_data) {
+      final date = item['date'] as String;
+      date_group.putIfAbsent(date, () => []);
+      date_group[date]!.add(item);
+    }
+    toast.init(context);
     return Expanded(
-        child: is_loading
-            ? ListView.builder(
-                padding: const EdgeInsets.only(top: 10, bottom: 100),
-                itemCount: 5,
-                itemBuilder: (BuildContext context, int index) {
-                  return Shimmer.fromColors(
-                    baseColor: Colors.grey[300]!,
-                    highlightColor: Colors.grey[100]!,
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          top: 10, bottom: 10, left: 24, right: 24),
-                      child: ListTile(
-                        title: Container(
-                          height: 20,
+      child: is_loading
+          ? ListView.builder(
+              padding: const EdgeInsets.only(top: 10, bottom: 100),
+              itemCount: 5,
+              itemBuilder: (BuildContext context, int index) {
+                return Shimmer.fromColors(
+                  baseColor: Colors.grey[300]!,
+                  highlightColor: Colors.grey[100]!,
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        top: 10, bottom: 10, left: 24, right: 24),
+                    child: ListTile(
+                      title: Container(
+                        height: 20,
+                        color: Colors.white,
+                      ),
+                      subtitle: Container(
+                        height: 15,
+                        color: Colors.white,
+                      ),
+                      leading: Container(
+                        width: 50,
+                        height: 50,
+                        decoration: const BoxDecoration(
                           color: Colors.white,
-                        ),
-                        subtitle: Container(
-                          height: 15,
-                          color: Colors.white,
-                        ),
-                        leading: Container(
-                          width: 50,
-                          height: 50,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        trailing: Container(
-                          width: 60,
-                          height: 20,
-                          color: Colors.white,
+                          shape: BoxShape.circle,
                         ),
                       ),
+                      trailing: Container(
+                        width: 60,
+                        height: 20,
+                        color: Colors.white,
+                      ),
                     ),
-                  );
-                },
-              )
-            : input_data.isEmpty
-                ? const Center(
-                    child: Text('No input data yet!'),
-                  )
-                : ListView.builder(
-                    padding: const EdgeInsets.only(top: 10, bottom: 100),
-                    itemCount: input_data.length,
-                    shrinkWrap: true,
-                    itemBuilder: (BuildContext context, int index) {
-                      final Map<String, dynamic> input_item = input_data[index];
-
-                      return Slidable(
-                        closeOnScroll: true,
-                        endActionPane:
-                            const ActionPane(motion: BehindMotion(), children: [
-                          SlidableAction(
-                            onPressed: _handleEdit,
-                            foregroundColor: Colors.blue,
-                            icon: Icons.edit,
-                            label: 'Edit',
+                  ),
+                );
+              },
+            )
+          : input_data.isEmpty
+              ? const Center(
+                  child: Text('No input data yet!'),
+                )
+              : ListView.builder(
+                  padding: const EdgeInsets.only(top: 22, bottom: 100),
+                  itemCount: date_group.length,
+                  shrinkWrap: true,
+                  itemBuilder: (BuildContext context, int index) {
+                    final date = date_group.keys.elementAt(index);
+                    final list_item = date_group[date]!;
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width,
+                          padding: const EdgeInsets.only(
+                              left: 10, top: 8, bottom: 8),
+                          decoration: BoxDecoration(color: Colors.grey[200]),
+                          child: Text(
+                            date,
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
                           ),
-                          SlidableAction(
-                            onPressed: _handleDelete,
-                            foregroundColor: Colors.red,
-                            icon: Icons.delete,
-                            label: 'Delete',
-                          ),
-                        ]),
-                        child: InkWell(
-                          onTap: () {},
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                top: 18, bottom: 18.0, left: 24, right: 24),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color:
-                                                  Colors.grey.withOpacity(0.3),
-                                              spreadRadius: 2,
-                                              blurRadius: 7,
-                                              offset: const Offset(-5, 5),
-                                            )
-                                          ],
-                                          borderRadius:
-                                              BorderRadius.circular(50)),
-                                      child: CircleAvatar(
-                                          backgroundColor: Colors
-                                              .primaries[Random().nextInt(
-                                                  Colors.primaries.length)]
-                                              .shade100
-                                              .withOpacity(0.35),
-                                          radius: 28,
-                                          child: Text(
-                                            input_item['icon'],
-                                            style:
-                                                const TextStyle(fontSize: 38),
-                                          )),
-                                    ),
-                                    Padding(
-                                      padding:
-                                          const EdgeInsets.only(left: 12.0),
-                                      child: Column(
+                        ),
+                        Column(
+                          children: list_item.reversed.map((input_item) {
+                            return Slidable(
+                              endActionPane: ActionPane(
+                                motion: const ScrollMotion(),
+                                children: [
+                                  SlidableAction(
+                                    onPressed: (context) {
+                                      _handleEdit(context, index);
+                                    },
+                                    foregroundColor: Colors.blue,
+                                    icon: Icons.edit,
+                                    label: 'Edit',
+                                  ),
+                                  SlidableAction(
+                                    onPressed: (context) {
+                                      _handleDelete(context, index);
+                                    },
+                                    foregroundColor: Colors.red,
+                                    icon: Icons.delete,
+                                    label: 'Delete',
+                                  ),
+                                ],
+                              ),
+                              child: InkWell(
+                                onTap: () {},
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 18,
+                                      bottom: 18.0,
+                                      left: 24,
+                                      right: 24),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.grey
+                                                        .withOpacity(0.3),
+                                                    spreadRadius: 2,
+                                                    blurRadius: 7,
+                                                    offset: const Offset(-5, 5),
+                                                  )
+                                                ],
+                                                borderRadius:
+                                                    BorderRadius.circular(50)),
+                                            child: CircleAvatar(
+                                                backgroundColor: Colors
+                                                    .primaries[Random().nextInt(
+                                                        Colors
+                                                            .primaries.length)]
+                                                    .shade100
+                                                    .withOpacity(0.35),
+                                                radius: 28,
+                                                child: Text(
+                                                  input_item['icon'],
+                                                  style: const TextStyle(
+                                                      fontSize: 38),
+                                                )),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 12.0),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  input_item['description'],
+                                                  style: const TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.w700),
+                                                ),
+                                                Text(
+                                                  input_item['date'],
+                                                  style: const TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      color: Colors.grey),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        width: 50,
+                                      ),
+                                      Column(
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                            CrossAxisAlignment.end,
                                         children: [
                                           Text(
-                                            input_item['description'],
-                                            style: const TextStyle(
+                                            '${input_item['is_income'] ? '+' : '-'} ${input_item['money']} đ',
+                                            style: TextStyle(
                                                 fontSize: 20,
-                                                fontWeight: FontWeight.w700),
+                                                fontWeight: FontWeight.w700,
+                                                color: input_item['is_income']
+                                                    ? Colors.green
+                                                    : Colors.red),
                                           ),
                                           Text(
-                                            input_item['date'],
+                                            input_item['name'],
                                             style: const TextStyle(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.w700,
                                                 color: Colors.grey),
                                           )
                                         ],
-                                      ),
-                                    ),
-                                  ],
+                                      )
+                                    ],
+                                  ),
                                 ),
-                                const SizedBox(
-                                  width: 50,
-                                ),
-                                Column(
-                                  children: [
-                                    Text(
-                                      '${input_item['is_income'] ? '+' : '-'} ${input_item['money']} đ',
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w700,
-                                          color: input_item['is_income']
-                                              ? Colors.green
-                                              : Colors.red),
-                                    ),
-                                    Text(
-                                      input_item['name'],
-                                      style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w700,
-                                          color: Colors.grey),
-                                    )
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
+                              ),
+                            );
+                          }).toList(),
                         ),
-                      );
-                    }));
+                      ],
+                    );
+                  },
+                ),
+    );
   }
-}
 
-void _handleEdit(BuildContext context) {
-  // Implement your edit logic here
-}
-void _handleDelete(BuildContext context) {
-  // Implement your edit logic here
+  void _handleEdit(BuildContext context, int index) async {}
+
+  void _handleDelete(BuildContext context, int index) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection("input")
+          .doc(input_data[index]['id'])
+          .delete();
+      setState(() {
+        input_data.removeAt(index);
+      });
+      toast.showToast(
+        child: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10.0),
+            color: Colors.greenAccent,
+          ),
+          child: const Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Icon(Icons.check),
+              Text("Delete success!"),
+            ],
+          ),
+        ),
+        gravity: ToastGravity.CENTER,
+        toastDuration: const Duration(seconds: 2),
+      );
+    } catch (err) {
+      toast.showToast(
+        child: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10.0),
+            color: Colors.redAccent,
+          ),
+          child: const Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Icon(Icons.do_disturb),
+              Text("Fail delete!"),
+            ],
+          ),
+        ),
+        gravity: ToastGravity.CENTER,
+        toastDuration: const Duration(seconds: 2),
+      );
+    }
+  }
 }

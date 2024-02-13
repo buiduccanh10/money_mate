@@ -140,6 +140,7 @@ class _category_manageState extends State<category_manage> {
                   ? ListView.builder(
                       padding: const EdgeInsets.all(8),
                       itemCount: 12,
+                      shrinkWrap: true,
                       itemBuilder: (BuildContext context, int index) {
                         return Shimmer.fromColors(
                           baseColor: Colors.grey[300]!,

@@ -98,7 +98,7 @@ class firestore_helper {
           .get();
 
       for (var catDoc in snapshot.docs) {
-        String catId = catDoc.id;
+        String catId = catDoc.data()['cat_id'];
 
         QuerySnapshot<Map<String, dynamic>> inputSnapshot =
             await FirebaseFirestore.instance
@@ -119,7 +119,6 @@ class firestore_helper {
 
       return inputData;
     } catch (error) {
-      print('Error fetching input: $error');
       return [];
     }
   }
