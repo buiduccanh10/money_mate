@@ -6,6 +6,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:money_mate/services/firestore_helper.dart';
+import 'package:money_mate/widget/home/home_appbar.dart';
 import 'package:shimmer/shimmer.dart';
 
 class home_list_item extends StatefulWidget {
@@ -25,7 +26,7 @@ class _home_list_itemState extends State<home_list_item> {
   @override
   void initState() {
     is_mounted = true;
-    fetchData();
+    fetch_data_list();
     super.initState();
   }
 
@@ -35,7 +36,7 @@ class _home_list_itemState extends State<home_list_item> {
     super.dispose();
   }
 
-  Future<void> fetchData() async {
+  Future<void> fetch_data_list() async {
     List<Map<String, dynamic>> temp = await db_helper.fetch_input();
 
     if (is_mounted) {
@@ -48,18 +49,13 @@ class _home_list_itemState extends State<home_list_item> {
 
   @override
   Widget build(BuildContext context) {
-    input_data.sort((a, b) {
-      final format_date = DateFormat("dd/MM/yyyy");
-      final aDate = format_date.parse(a['date']);
-      final bDate = format_date.parse(b['date']);
-      return bDate.compareTo(aDate);
-    });
     final date_group = <String, List<Map<String, dynamic>>>{};
     for (final item in input_data) {
       final date = item['date'] as String;
       date_group.putIfAbsent(date, () => []);
       date_group[date]!.add(item);
     }
+
     toast.init(context);
     return Expanded(
       child: is_loading
@@ -126,14 +122,19 @@ class _home_list_itemState extends State<home_list_item> {
                           ),
                         ),
                         Column(
-                          children: list_item.reversed.map((input_item) {
+                          children:
+                              List.generate(list_item.length, (itemIndex) {
+                            final input_item = list_item[itemIndex];
+                            // var formatter = NumberFormat("#,##0", "en_US");
+                            // String format_money =
+                            //     formatter.format(input_item['money']);
                             return Slidable(
                               endActionPane: ActionPane(
                                 motion: const ScrollMotion(),
                                 children: [
                                   SlidableAction(
                                     onPressed: (context) {
-                                      _handleEdit(context, index);
+                                      _handleEdit(context, itemIndex);
                                     },
                                     foregroundColor: Colors.blue,
                                     icon: Icons.edit,
@@ -141,7 +142,7 @@ class _home_list_itemState extends State<home_list_item> {
                                   ),
                                   SlidableAction(
                                     onPressed: (context) {
-                                      _handleDelete(context, index);
+                                      _handleDelete(context, itemIndex);
                                     },
                                     foregroundColor: Colors.red,
                                     icon: Icons.delete,
@@ -267,6 +268,9 @@ class _home_list_itemState extends State<home_list_item> {
       setState(() {
         input_data.removeAt(index);
       });
+
+      home_appbar.staticGlobalKey.currentState?.fetchData();
+
       toast.showToast(
         child: Container(
           padding: const EdgeInsets.all(8),

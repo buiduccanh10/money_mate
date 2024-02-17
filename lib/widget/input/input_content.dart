@@ -127,10 +127,8 @@ class _input_contentState extends State<input_content> {
                 ),
                 TextField(
                   keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true, signed: true),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                  ],
+                    decimal: true,
+                  ),
                   controller: money_controller,
                   decoration: InputDecoration(
                       errorText:
@@ -326,18 +324,25 @@ class _input_contentState extends State<input_content> {
       DateTime? date, String description, String money, String cat_id) async {
     try {
       String format_date;
+      String format_money = money.replaceAll(',', '.');
+      double money_final = double.parse(format_money);
       if (date_controller.selectedDate == null) {
         format_date =
             DateFormat('dd/MM/yyyy').format(date_controller.displayDate!);
-        await db_helper.add_input(format_date, description, money, cat_id);
+        await db_helper.add_input(
+            format_date, description, money_final, cat_id);
       } else {
         format_date =
             DateFormat('dd/MM/yyyy').format(date_controller.selectedDate!);
-        await db_helper.add_input(format_date, description, money, cat_id);
+        await db_helper.add_input(
+            format_date, description, money_final, cat_id);
       }
 
       description_controller.clear();
       money_controller.clear();
+      setState(() {
+        selectedIndex = null;
+      });
 
       toast.showToast(
         child: Container(

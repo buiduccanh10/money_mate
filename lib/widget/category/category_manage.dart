@@ -104,19 +104,15 @@ class _category_manageState extends State<category_manage> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              IconButton(
-                  padding: const EdgeInsets.all(15),
-                  onPressed: () {
-                    Navigator.pop(context);
-                    widget.cat_reload_callback();
-                  },
-                  icon: const Icon(
-                    Icons.arrow_back_ios,
-                    color: Colors.white,
-                  )),
-              // const SizedBox(
-              //   width: 30,
-              // ),
+              BackButton(
+                style: const ButtonStyle(
+                    padding:
+                        MaterialStatePropertyAll(EdgeInsets.only(bottom: 10))),
+                onPressed: () {
+                  Navigator.pop(context);
+                  widget.cat_reload_callback();
+                },
+              ),
               const Padding(
                 padding: EdgeInsets.all(15.0),
                 child: Text(

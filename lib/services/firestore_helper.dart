@@ -57,8 +57,11 @@ class firestore_helper {
     try {
       List<Map<String, dynamic>> inputData = [];
 
-      QuerySnapshot<Map<String, dynamic>> snapshot =
-          await FirebaseFirestore.instance.collection('input').get();
+      QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+          .instance
+          .collection('input')
+          .orderBy('money', descending: true)
+          .get();
 
       for (var inputDoc in snapshot.docs) {
         String catId = inputDoc.data()['cat_id'];
@@ -138,7 +141,7 @@ class firestore_helper {
   }
 
   Future<void> add_input(
-      String date, String description, String money, String cat_id) async {
+      String date, String description, double money, String cat_id) async {
     DocumentReference doc_ref = db.collection("input").doc();
     String id = doc_ref.id;
 

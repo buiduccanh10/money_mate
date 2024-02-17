@@ -1,8 +1,10 @@
 import 'dart:ui';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:money_mate/main.dart';
+import 'package:money_mate/sign_up.dart';
 import 'package:rive/rive.dart' hide LinearGradient;
 
 class login extends StatefulWidget {
@@ -13,13 +15,11 @@ class login extends StatefulWidget {
 }
 
 class _loginState extends State<login> {
-  final admin_email = 'admin';
-  final admin_password = 'admin';
   bool? is_show;
   double scale = 1.0;
 
-  TextEditingController email_controller = TextEditingController();
-  TextEditingController password_controller = TextEditingController();
+  final email_controller = TextEditingController();
+  final password_controller = TextEditingController();
   FocusNode email_focus_node = FocusNode();
   FocusNode password_focus_node = FocusNode();
   StateMachineController? state_controller;
@@ -166,7 +166,7 @@ class _loginState extends State<login> {
                               ],
                             ),
                             InkWell(
-                              onTap: () {
+                              onTap: () async {
                                 setState(() {
                                   scale = 1.03;
                                 });
@@ -176,13 +176,18 @@ class _loginState extends State<login> {
                                     scale = 1.0;
                                   });
                                 });
-                                if (email_controller.text == admin_email &&
-                                    password_controller.text ==
-                                        admin_password) {
+                                try {
+                                  final credential = await FirebaseAuth.instance
+                                      .signInWithEmailAndPassword(
+                                          email: email_controller.text,
+                                          password: password_controller.text);
+                                  final user_name = credential.user?.email;
+
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (_) => const Main()));
+                                          builder: (_) =>
+                                              Main(user_name: user_name)));
 
                                   if (isChecking != null && isHandsUp != null) {
                                     isChecking!.change(false);
@@ -192,7 +197,7 @@ class _loginState extends State<login> {
                                   if (trigSuccess == null) return;
 
                                   trigSuccess!.change(true);
-                                } else {
+                                } on FirebaseAuthException catch (e) {
                                   if (isHandsUp != null) {
                                     isChecking!.change(false);
                                     isHandsUp!.change(false);
@@ -210,6 +215,12 @@ class _loginState extends State<login> {
                                       backgroundColor: Colors.red,
                                       textColor: Colors.white,
                                       fontSize: 16.0);
+                                  if (e.code == 'user-not-found') {
+                                    print('No user found for that email.');
+                                  } else if (e.code == 'wrong-password') {
+                                    print(
+                                        'Wrong password provided for that user.');
+                                  }
                                 }
                               },
                               child: AnimatedScale(
@@ -253,7 +264,13 @@ class _loginState extends State<login> {
                                         fontWeight: FontWeight.w500,
                                         fontSize: 15),
                                   ),
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (_) =>
+                                                const sign_up_page()));
+                                  },
                                 )
                               ],
                             ),

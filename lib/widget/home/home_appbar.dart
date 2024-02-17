@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:money_mate/services/firestore_helper.dart';
 import 'package:shimmer/shimmer.dart';
 
 class home_appbar extends StatefulWidget {
-  home_appbar({super.key});
+  final String? user_name;
+  static final GlobalKey<_home_appbarState> staticGlobalKey =
+      new GlobalKey<_home_appbarState>();
+  // home_appbar({
+  //   super.key,
+  //   });
+  home_appbar({this.user_name}) : super(key: home_appbar.staticGlobalKey);
 
   @override
   State<home_appbar> createState() => _home_appbarState();
@@ -15,12 +22,14 @@ class _home_appbarState extends State<home_appbar> {
   firestore_helper db_helper = firestore_helper();
   bool is_loading = true;
   bool is_mounted = false;
-  int total_income = 0;
-  int total_expense = 0;
-  int total_saving = 0;
+  double total_income = 0;
+  double total_expense = 0;
+  double total_saving = 0;
+  String? user_name;
 
   @override
   void initState() {
+    user_name = widget.user_name;
     is_mounted = true;
     fetchData();
     super.initState();
@@ -50,18 +59,23 @@ class _home_appbarState extends State<home_appbar> {
 
   void calculateTotals() {
     total_income = income_categories
-        .map<int>((catItem) => int.parse(catItem['money']))
-        .fold<int>(0, (prev, amount) => prev + amount);
+        .map<double>((catItem) => (catItem['money']))
+        .fold<double>(0, (prev, amount) => prev + amount);
 
     total_expense = expense_categories
-        .map<int>((catItem) => int.parse(catItem['money']))
-        .fold<int>(0, (prev, amount) => prev + amount);
+        .map<double>((catItem) => (catItem['money']))
+        .fold<double>(0, (prev, amount) => prev + amount);
 
-    total_saving = total_income - total_expense;
+    total_saving =
+        double.parse((total_income - total_expense).toStringAsFixed(2));
   }
 
   @override
   Widget build(BuildContext context) {
+    // var formatter = NumberFormat("#,##0", "en_US");
+    // String format_total = formatter.format(total_saving);
+    // String format_income = formatter.format(total_income);
+    // String format_expense = formatter.format(total_expense);
     return Stack(children: [
       Container(
           height: 295,
@@ -80,12 +94,18 @@ class _home_appbarState extends State<home_appbar> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Hi, Bui Duc Canh',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 26,
-                      fontWeight: FontWeight.w700),
+                Row(
+                  children: [
+                    Text(
+                      'Hi, ',
+                      style: const TextStyle(
+                          overflow: TextOverflow.ellipsis,
+                          color: Colors.white,
+                          fontSize: 26,
+                          fontWeight: FontWeight.w700),
+                    ),
+                    Text('$user_name')
+                  ],
                 ),
                 const SizedBox(
                   height: 20,
@@ -109,7 +129,7 @@ class _home_appbarState extends State<home_appbar> {
                 Shimmer.fromColors(
                   baseColor: Colors.white,
                   direction: ShimmerDirection.rtl,
-                  period: Duration(seconds: 3),
+                  period: const Duration(seconds: 3),
                   highlightColor: Colors.grey,
                   child: Text(
                     '${total_saving} đ',
@@ -160,19 +180,12 @@ class _home_appbarState extends State<home_appbar> {
                       children: [
                         Flexible(
                           child: Text(
-                            '+ ${total_income} đ',
+                            '${total_income} đ',
                             style: const TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.w700),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        const Icon(
-                          Icons.arrow_downward_sharp,
-                          color: Colors.green,
-                        )
                       ],
                     ),
                     const Row(
@@ -185,6 +198,10 @@ class _home_appbarState extends State<home_appbar> {
                               color: Colors.grey,
                               fontWeight: FontWeight.w700),
                         ),
+                        Icon(
+                          Icons.arrow_downward_sharp,
+                          color: Colors.green,
+                        )
                       ],
                     )
                   ],
@@ -218,19 +235,12 @@ class _home_appbarState extends State<home_appbar> {
                       children: [
                         Flexible(
                           child: Text(
-                            '- ${total_expense} đ',
+                            '${total_expense} đ',
                             style: const TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.w700),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        const Icon(
-                          Icons.arrow_upward_sharp,
-                          color: Colors.red,
-                        )
                       ],
                     ),
                     const Row(
@@ -243,6 +253,10 @@ class _home_appbarState extends State<home_appbar> {
                               color: Colors.grey,
                               fontWeight: FontWeight.w700),
                         ),
+                        Icon(
+                          Icons.arrow_upward_sharp,
+                          color: Colors.red,
+                        )
                       ],
                     )
                   ],

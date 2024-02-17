@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -6,6 +7,7 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:money_mate/chart.dart';
 import 'package:money_mate/home.dart';
 import 'package:money_mate/input.dart';
+import 'package:money_mate/login.dart';
 import 'package:money_mate/services/firestore_helper.dart';
 import 'package:money_mate/setting.dart';
 
@@ -22,17 +24,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    User? user = FirebaseAuth.instance.currentUser;
+
     return MaterialApp(
       title: 'MoneyMate',
       debugShowCheckedModeBanner: false,
-      home: const Main(),
+      home: user != null ? const Main() : login(),
       builder: FToastBuilder(),
     );
   }
 }
 
 class Main extends StatefulWidget {
-  const Main({super.key});
+  final String? user_name;
+  const Main({super.key, this.user_name});
 
   @override
   State<Main> createState() => _MainState();
@@ -41,7 +46,18 @@ class Main extends StatefulWidget {
 class _MainState extends State<Main> {
   int index = 0;
   bool extendBody = true;
-  final page = [const Home(), input(), const chart(), const setting()];
+  late List<Widget> page;
+
+  @override
+  void initState() {
+    super.initState();
+    page = [
+      Home(user_name: widget.user_name),
+      input(),
+      chart(),
+      setting(),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -8,7 +8,8 @@ import 'package:money_mate/widget/home/home_appbar.dart';
 import 'package:money_mate/widget/home/home_list_item.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key});
+  final String? user_name;
+  const Home({super.key, this.user_name});
 
   @override
   State<Home> createState() => _HomeState();
@@ -19,7 +20,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
-        children: [home_appbar(), home_list_item()],
+        children: [home_appbar(user_name : widget.user_name), home_list_item()],
       ),
     );
   }

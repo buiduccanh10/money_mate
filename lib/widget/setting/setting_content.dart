@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:money_mate/login.dart';
@@ -380,9 +381,19 @@ class _setting_contentState extends State<setting_content> {
         ),
         actions: <CupertinoActionSheetAction>[
           CupertinoActionSheetAction(
-            onPressed: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => login()));
+            onPressed: () async {
+              try {
+                await FirebaseAuth.instance.signOut();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          login()), // Assuming Login is your login screen
+                );
+              } catch (e) {
+                print("Error signing out: $e");
+                // Handle error here
+              }
             },
             child: const Text('Log out'),
           ),

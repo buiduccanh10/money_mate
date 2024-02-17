@@ -18,7 +18,7 @@ class chart_widget extends StatefulWidget {
 
 class _chart_widgetState extends State<chart_widget> {
   firestore_helper db_helper = firestore_helper();
-  List<Map<String, dynamic>> expense_categories= [];
+  List<Map<String, dynamic>> expense_categories = [];
   List<Map<String, dynamic>> income_categories = [];
   late TooltipBehavior tooltipBehavior;
   DateTime now = DateTime.now();
@@ -26,10 +26,10 @@ class _chart_widgetState extends State<chart_widget> {
   String? year_format_date;
   bool? is_income;
   bool is_loading = true;
-  int total_income = 0;
-  int total_expense = 0;
-  int total_saving = 0;
   bool is_mounted = false;
+  double total_income = 0;
+  double total_expense = 0;
+  double total_saving = 0;
 
   @override
   void initState() {
@@ -57,7 +57,7 @@ class _chart_widgetState extends State<chart_widget> {
     if (is_mounted) {
       setState(() {
         income_categories = income_temp;
-        expense_categories= expense_temp;
+        expense_categories = expense_temp;
         calculateTotals();
         is_loading = false;
       });
@@ -66,14 +66,15 @@ class _chart_widgetState extends State<chart_widget> {
 
   void calculateTotals() {
     total_income = income_categories
-        .map<int>((catItem) => int.parse(catItem['money']))
-        .fold<int>(0, (prev, amount) => prev + amount);
+        .map<double>((catItem) => (catItem['money']))
+        .fold<double>(0, (prev, amount) => prev + amount);
 
     total_expense = expense_categories
-        .map<int>((catItem) => int.parse(catItem['money']))
-        .fold<int>(0, (prev, amount) => prev + amount);
+        .map<double>((catItem) => (catItem['money']))
+        .fold<double>(0, (prev, amount) => prev + amount);
 
-    total_saving = total_income - total_expense;
+    total_saving =
+        double.parse((total_income - total_expense).toStringAsFixed(2));
   }
 
   @override
@@ -282,7 +283,7 @@ class _chart_widgetState extends State<chart_widget> {
                                           xValueMapper: (datum, _) =>
                                               datum['name'],
                                           yValueMapper: (datum, _) =>
-                                              int.parse(datum['money']),
+                                              (datum['money']),
                                           dataLabelMapper: (datum, _) =>
                                               datum['name'],
                                           dataLabelSettings:
@@ -298,7 +299,7 @@ class _chart_widgetState extends State<chart_widget> {
                                           xValueMapper: (datum, _) =>
                                               datum['name'],
                                           yValueMapper: (datum, _) =>
-                                              int.parse(datum['money']),
+                                              (datum['money']),
                                           dataLabelMapper: (datum, _) =>
                                               datum['name'],
                                           dataLabelSettings:
