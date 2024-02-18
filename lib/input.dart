@@ -6,7 +6,7 @@ import 'package:money_mate/widget/category/category_manage.dart';
 import 'package:money_mate/widget/input/input_content.dart';
 
 class input extends StatefulWidget {
-  input({super.key});
+  const input({super.key});
 
   @override
   State<input> createState() => _inputState();

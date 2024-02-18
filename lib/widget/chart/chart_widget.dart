@@ -79,133 +79,146 @@ class _chart_widgetState extends State<chart_widget> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+    var formatter = NumberFormat("#,###", "vi_VN");
+    String format_total = formatter.format(total_saving);
+    String format_income = formatter.format(total_income);
+    String format_expense = formatter.format(total_expense);
+
     return Scaffold(
       body: SingleChildScrollView(
         child: SafeArea(
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 75.0),
+                padding: EdgeInsets.only(top: height * 0.08),
                 child: Stack(
                   children: [
-                    Column(
-                      children: [
-                        Container(
-                          width: 400,
-                          decoration: BoxDecoration(
-                              border: Border.all(color: Colors.amber),
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(5),
-                              onTap: () => showCupertinoModalPopup(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return show_month_year_dialog(
-                                        widget.is_monthly);
-                                  }),
-                              child: Text(
-                                widget.is_monthly
-                                    ? '$month_format_date'
-                                    : '$year_format_date',
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.w600),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                width: 197.5,
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.amber),
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Text(
-                                      'Income: ',
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                    Text(
-                                      '+$total_income đ',
-                                      style: const TextStyle(
-                                          color: Colors.green,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 5,
-                              ),
-                              Container(
-                                width: 197.5,
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.amber),
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Text(
-                                      'Expense: ',
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                    Text(
-                                      '-$total_expense đ',
-                                      style: const TextStyle(
-                                          color: Colors.red,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600),
-                                    )
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        Container(
-                          width: 400,
-                          decoration: BoxDecoration(
-                              border: Border.all(color: Colors.amber),
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text(
-                                  'Total saving: ',
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                                Text(
-                                  '$total_saving đ',
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          Container(
+                            width: width,
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.amber),
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(5),
+                                onTap: () => showCupertinoModalPopup(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return show_month_year_dialog(
+                                          widget.is_monthly);
+                                    }),
+                                child: Text(
+                                  widget.is_monthly
+                                      ? '$month_format_date'
+                                      : '$year_format_date',
+                                  textAlign: TextAlign.center,
                                   style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.w600),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8, bottom: 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(right: width * 0.02),
+                                  child: Container(
+                                    width: width * 0.47,
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.amber),
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text(
+                                          'Income: ',
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                        Text(
+                                          '+$format_income đ',
+                                          style: const TextStyle(
+                                              color: Colors.green,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  width: width * 0.47,
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.amber),
+                                      borderRadius: BorderRadius.circular(10)),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Text(
+                                        'Expense: ',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      Text(
+                                        '-$format_expense đ',
+                                        style: const TextStyle(
+                                            color: Colors.red,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600),
+                                      )
+                                    ],
+                                  ),
                                 )
                               ],
                             ),
                           ),
-                        )
-                      ],
+                          Container(
+                            width: width,
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.amber),
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    'Total saving: ',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                  Text(
+                                    '$format_total đ',
+                                    style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600),
+                                  )
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 160),
@@ -218,7 +231,7 @@ class _chart_widgetState extends State<chart_widget> {
                                     bottom: BorderSide(color: Colors.grey))),
                             child: CustomSlidingSegmentedControl<int>(
                               initialValue: 1,
-                              fixedWidth: 205,
+                              fixedWidth: width * 0.5,
                               innerPadding: const EdgeInsets.all(0),
                               children: {
                                 1: Text(
@@ -387,11 +400,11 @@ class _chart_widgetState extends State<chart_widget> {
                                             children: [
                                               Padding(
                                                 padding: const EdgeInsets.only(
-                                                    right: 25.0),
+                                                    right: 20.0),
                                                 child: Text(
                                                   '${is_income! ? '+' : '-'} ${cat_item['money']} đ',
                                                   style: const TextStyle(
-                                                      fontSize: 18,
+                                                      fontSize: 16,
                                                       fontWeight:
                                                           FontWeight.w400),
                                                 ),

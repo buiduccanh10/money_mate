@@ -15,10 +15,15 @@ class _setting_contentState extends State<setting_content> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     return Scaffold(
       body: SingleChildScrollView(
-        padding:
-            const EdgeInsets.only(left: 18, top: 260, right: 18, bottom: 150),
+        padding: EdgeInsets.only(
+            left: width * 0.04,
+            top: height * 0.28,
+            right: width * 0.04,
+            bottom: height * 0.05),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Material(
             color: Colors.grey[200],

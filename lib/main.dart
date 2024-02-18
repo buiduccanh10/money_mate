@@ -29,15 +29,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'MoneyMate',
       debugShowCheckedModeBanner: false,
-      home: user != null ? const Main() : login(),
+      home: user != null ? const Main() : const login(),
       builder: FToastBuilder(),
     );
   }
 }
 
 class Main extends StatefulWidget {
-  final String? user_name;
-  const Main({super.key, this.user_name});
+  const Main({super.key});
 
   @override
   State<Main> createState() => _MainState();
@@ -52,15 +51,16 @@ class _MainState extends State<Main> {
   void initState() {
     super.initState();
     page = [
-      Home(user_name: widget.user_name),
-      input(),
-      chart(),
-      setting(),
+      const Home(),
+      const input(),
+      const chart(),
+      const setting(),
     ];
   }
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
     return PopScope(
       canPop: false,
       child: Scaffold(
@@ -68,7 +68,7 @@ class _MainState extends State<Main> {
         extendBody: extendBody,
         bottomNavigationBar: SafeArea(
           child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 0),
+            margin: const EdgeInsets.symmetric(horizontal: 25),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
@@ -111,7 +111,7 @@ class _MainState extends State<Main> {
                   colors: [Colors.orange, Colors.blue],
                 ),
                 padding: const EdgeInsets.all(20),
-                gap: 5,
+                gap: width * 0.02,
                 activeColor: Colors.white,
                 tabBorderRadius: 20,
                 curve: Curves.easeInToLinear,

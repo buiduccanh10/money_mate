@@ -1,16 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:money_mate/services/firestore_helper.dart';
 import 'package:shimmer/shimmer.dart';
 
 class home_appbar extends StatefulWidget {
-  final String? user_name;
-  static final GlobalKey<_home_appbarState> staticGlobalKey =
-      new GlobalKey<_home_appbarState>();
+  static final staticGlobalKey = GlobalKey<_home_appbarState>();
   // home_appbar({
   //   super.key,
   //   });
-  home_appbar({this.user_name}) : super(key: home_appbar.staticGlobalKey);
+  home_appbar() : super(key: home_appbar.staticGlobalKey);
 
   @override
   State<home_appbar> createState() => _home_appbarState();
@@ -19,6 +18,7 @@ class home_appbar extends StatefulWidget {
 class _home_appbarState extends State<home_appbar> {
   List<Map<String, dynamic>> expense_categories = [];
   List<Map<String, dynamic>> income_categories = [];
+  final user = FirebaseAuth.instance.currentUser!.email;
   firestore_helper db_helper = firestore_helper();
   bool is_loading = true;
   bool is_mounted = false;
@@ -29,7 +29,7 @@ class _home_appbarState extends State<home_appbar> {
 
   @override
   void initState() {
-    user_name = widget.user_name;
+    user_name = user;
     is_mounted = true;
     fetchData();
     super.initState();
@@ -72,13 +72,16 @@ class _home_appbarState extends State<home_appbar> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     // var formatter = NumberFormat("#,##0", "en_US");
-    // String format_total = formatter.format(total_saving);
-    // String format_income = formatter.format(total_income);
-    // String format_expense = formatter.format(total_expense);
+    var formatter = NumberFormat("#,###", "vi_VN");
+    String format_total = formatter.format(total_saving);
+    String format_income = formatter.format(total_income);
+    String format_expense = formatter.format(total_expense);
     return Stack(children: [
       Container(
-          height: 295,
+          height: height * 0.28,
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
@@ -89,76 +92,76 @@ class _home_appbarState extends State<home_appbar> {
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 70, left: 30),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      'Hi, ',
-                      style: const TextStyle(
-                          overflow: TextOverflow.ellipsis,
-                          color: Colors.white,
-                          fontSize: 26,
-                          fontWeight: FontWeight.w700),
+          SafeArea(
+            child: Padding(
+              padding: EdgeInsets.only(left: width * 0.06),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: width * 0.9,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: Text(
+                            'Hi, ${user_name}',
+                            style: const TextStyle(
+                                overflow: TextOverflow.ellipsis,
+                                color: Colors.white,
+                                fontSize: 24,
+                                fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                      ],
                     ),
-                    Text('$user_name')
-                  ],
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                const Row(
-                  children: [
-                    Text(
-                      '11/2023',
-                      style: TextStyle(
-                          color: Color.fromARGB(255, 220, 220, 220),
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700),
-                    ),
-                    Icon(
-                      Icons.arrow_drop_down,
-                      color: Color.fromARGB(255, 220, 220, 220),
-                      size: 30,
-                    )
-                  ],
-                ),
-                Shimmer.fromColors(
-                  baseColor: Colors.white,
-                  direction: ShimmerDirection.rtl,
-                  period: const Duration(seconds: 3),
-                  highlightColor: Colors.grey,
-                  child: Text(
-                    '${total_saving} đ',
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 32,
-                        fontWeight: FontWeight.w700),
                   ),
-                )
-              ],
+                  Padding(
+                    padding: EdgeInsets.only(top: height * 0.02),
+                    child: const Row(
+                      children: [
+                        Text(
+                          '11/2023',
+                          style: TextStyle(
+                              color: Color.fromARGB(255, 220, 220, 220),
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700),
+                        ),
+                        Icon(
+                          Icons.arrow_drop_down,
+                          color: Color.fromARGB(255, 220, 220, 220),
+                          size: 30,
+                        )
+                      ],
+                    ),
+                  ),
+                  Shimmer.fromColors(
+                    baseColor: Colors.white,
+                    direction: ShimmerDirection.rtl,
+                    period: const Duration(seconds: 3),
+                    highlightColor: Colors.grey,
+                    child: Text(
+                      '${format_total} đ',
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 32,
+                          fontWeight: FontWeight.w700),
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.only(right: 30),
-            child: CircleAvatar(
-              radius: 40,
-              backgroundImage: AssetImage('assets/avt.jpeg'),
-            ),
-          )
         ],
       ),
       Padding(
-        padding: const EdgeInsets.only(top: 230),
+        padding: EdgeInsets.only(top: height * 0.21),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              height: 100,
-              width: 180,
+              height: height * 0.11,
+              width: width * 0.4,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(10),
@@ -172,7 +175,7 @@ class _home_appbarState extends State<home_appbar> {
                 ],
               ),
               child: Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(10.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -180,9 +183,9 @@ class _home_appbarState extends State<home_appbar> {
                       children: [
                         Flexible(
                           child: Text(
-                            '${total_income} đ',
+                            '${format_income} đ',
                             style: const TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.w700),
+                                fontSize: 18, fontWeight: FontWeight.w700),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
@@ -194,7 +197,7 @@ class _home_appbarState extends State<home_appbar> {
                         Text(
                           'Income',
                           style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 16,
                               color: Colors.grey,
                               fontWeight: FontWeight.w700),
                         ),
@@ -208,12 +211,12 @@ class _home_appbarState extends State<home_appbar> {
                 ),
               ),
             ),
-            const SizedBox(
-              width: 25,
+            SizedBox(
+              width: width * 0.065,
             ),
             Container(
-              height: 100,
-              width: 180,
+              height: height * 0.11,
+              width: width * 0.4,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(10),
@@ -227,7 +230,7 @@ class _home_appbarState extends State<home_appbar> {
                 ],
               ),
               child: Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(10.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -235,9 +238,9 @@ class _home_appbarState extends State<home_appbar> {
                       children: [
                         Flexible(
                           child: Text(
-                            '${total_expense} đ',
+                            '${format_expense} đ',
                             style: const TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.w700),
+                                fontSize: 16, fontWeight: FontWeight.w700),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),

@@ -49,6 +49,7 @@ class _home_list_itemState extends State<home_list_item> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
     final date_group = <String, List<Map<String, dynamic>>>{};
     for (final item in input_data) {
       final date = item['date'] as String;
@@ -57,6 +58,12 @@ class _home_list_itemState extends State<home_list_item> {
     }
 
     toast.init(context);
+
+    final sorted_list = date_group.keys.toList()
+      ..sort((a, b) => DateFormat('dd/MM/yyyy')
+          .parse(b)
+          .compareTo(DateFormat('dd/MM/yyyy').parse(a)));
+
     return Expanded(
       child: is_loading
           ? ListView.builder(
@@ -101,24 +108,27 @@ class _home_list_itemState extends State<home_list_item> {
                   child: Text('No input data yet!'),
                 )
               : ListView.builder(
-                  padding: const EdgeInsets.only(top: 22, bottom: 100),
-                  itemCount: date_group.length,
+                  padding: const EdgeInsets.only(top: 10, bottom: 110),
+                  itemCount: sorted_list.length,
                   shrinkWrap: true,
                   itemBuilder: (BuildContext context, int index) {
-                    final date = date_group.keys.elementAt(index);
+                    final date = sorted_list[index];
                     final list_item = date_group[date]!;
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          width: MediaQuery.of(context).size.width,
-                          padding: const EdgeInsets.only(
-                              left: 10, top: 8, bottom: 8),
-                          decoration: BoxDecoration(color: Colors.grey[200]),
-                          child: Text(
-                            date,
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 14.0),
+                          child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            padding: const EdgeInsets.only(
+                                left: 10, top: 8, bottom: 8),
+                            decoration: BoxDecoration(color: Colors.grey[200]),
+                            child: Text(
+                              date,
+                              style: const TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.bold),
+                            ),
                           ),
                         ),
                         Column(
@@ -126,8 +136,9 @@ class _home_list_itemState extends State<home_list_item> {
                               List.generate(list_item.length, (itemIndex) {
                             final input_item = list_item[itemIndex];
                             // var formatter = NumberFormat("#,##0", "en_US");
-                            // String format_money =
-                            //     formatter.format(input_item['money']);
+                            var formatter = NumberFormat("#,##0", "vi_VN");
+                            String format_money =
+                                formatter.format(input_item['money']);
                             return Slidable(
                               endActionPane: ActionPane(
                                 motion: const ScrollMotion(),
@@ -142,7 +153,8 @@ class _home_list_itemState extends State<home_list_item> {
                                   ),
                                   SlidableAction(
                                     onPressed: (context) {
-                                      _handleDelete(context, itemIndex);
+                                      _handleDelete(
+                                          context, list_item[itemIndex]['id']);
                                     },
                                     foregroundColor: Colors.red,
                                     icon: Icons.delete,
@@ -154,10 +166,7 @@ class _home_list_itemState extends State<home_list_item> {
                                 onTap: () {},
                                 child: Padding(
                                   padding: const EdgeInsets.only(
-                                      top: 18,
-                                      bottom: 18.0,
-                                      left: 24,
-                                      right: 24),
+                                      top: 16, bottom: 0, left: 24, right: 24),
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -198,17 +207,21 @@ class _home_list_itemState extends State<home_list_item> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                Text(
-                                                  input_item['description'],
-                                                  style: const TextStyle(
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.w700),
+                                                SizedBox(
+                                                  width: width * 0.4,
+                                                  child: Text(
+                                                    input_item['description'],
+                                                    softWrap: true,
+                                                    style: const TextStyle(
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.w700),
+                                                  ),
                                                 ),
                                                 Text(
                                                   input_item['date'],
                                                   style: const TextStyle(
-                                                      fontSize: 16,
+                                                      fontSize: 14,
                                                       fontWeight:
                                                           FontWeight.w700,
                                                       color: Colors.grey),
@@ -218,17 +231,14 @@ class _home_list_itemState extends State<home_list_item> {
                                           ),
                                         ],
                                       ),
-                                      const SizedBox(
-                                        width: 50,
-                                      ),
                                       Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.end,
                                         children: [
                                           Text(
-                                            '${input_item['is_income'] ? '+' : '-'} ${input_item['money']} đ',
+                                            '${input_item['is_income'] ? '+' : '-'} ${format_money} đ',
                                             style: TextStyle(
-                                                fontSize: 20,
+                                                fontSize: 16,
                                                 fontWeight: FontWeight.w700,
                                                 color: input_item['is_income']
                                                     ? Colors.green
@@ -259,15 +269,16 @@ class _home_list_itemState extends State<home_list_item> {
 
   void _handleEdit(BuildContext context, int index) async {}
 
-  void _handleDelete(BuildContext context, int index) async {
+  void _handleDelete(BuildContext context, String input_id) async {
     try {
       await FirebaseFirestore.instance
           .collection("input")
-          .doc(input_data[index]['id'])
+          .doc(input_id)
           .delete();
-      setState(() {
-        input_data.removeAt(index);
-      });
+      // setState(() {
+      //   input_data.removeAt(index);
+      // });
+      fetch_data_list();
 
       home_appbar.staticGlobalKey.currentState?.fetchData();
 

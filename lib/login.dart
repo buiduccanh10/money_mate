@@ -3,9 +3,11 @@ import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:money_mate/main.dart';
 import 'package:money_mate/sign_up.dart';
 import 'package:rive/rive.dart' hide LinearGradient;
+import 'package:sign_in_button/sign_in_button.dart';
 
 class login extends StatefulWidget {
   const login({super.key});
@@ -166,62 +168,8 @@ class _loginState extends State<login> {
                               ],
                             ),
                             InkWell(
-                              onTap: () async {
-                                setState(() {
-                                  scale = 1.03;
-                                });
-                                Future.delayed(
-                                    const Duration(milliseconds: 200), () {
-                                  setState(() {
-                                    scale = 1.0;
-                                  });
-                                });
-                                try {
-                                  final credential = await FirebaseAuth.instance
-                                      .signInWithEmailAndPassword(
-                                          email: email_controller.text,
-                                          password: password_controller.text);
-                                  final user_name = credential.user?.email;
-
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (_) =>
-                                              Main(user_name: user_name)));
-
-                                  if (isChecking != null && isHandsUp != null) {
-                                    isChecking!.change(false);
-                                    isHandsUp!.change(false);
-                                  }
-
-                                  if (trigSuccess == null) return;
-
-                                  trigSuccess!.change(true);
-                                } on FirebaseAuthException catch (e) {
-                                  if (isHandsUp != null) {
-                                    isChecking!.change(false);
-                                    isHandsUp!.change(false);
-                                  }
-                                  if (trigFail == null) return;
-
-                                  trigFail!.change(true);
-
-                                  Fluttertoast.showToast(
-                                      msg:
-                                          'Please try email or password again!',
-                                      toastLength: Toast.LENGTH_SHORT,
-                                      gravity: ToastGravity.CENTER,
-                                      timeInSecForIosWeb: 1,
-                                      backgroundColor: Colors.red,
-                                      textColor: Colors.white,
-                                      fontSize: 16.0);
-                                  if (e.code == 'user-not-found') {
-                                    print('No user found for that email.');
-                                  } else if (e.code == 'wrong-password') {
-                                    print(
-                                        'Wrong password provided for that user.');
-                                  }
-                                }
+                              onTap: () {
+                                login();
                               },
                               child: AnimatedScale(
                                 duration: const Duration(milliseconds: 200),
@@ -275,17 +223,33 @@ class _loginState extends State<login> {
                               ],
                             ),
                             const Center(
-                              child: Text('Or sign up with:'),
+                              child: Text('Or sign with:'),
                             ),
-                            const Padding(
+                            Padding(
                               padding: EdgeInsets.all(8.0),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(
-                                    Icons.facebook,
-                                    color: Colors.blue,
-                                    size: 38,
+                                  SignInButton(
+                                    Buttons.google,
+                                    onPressed: () {
+                                      try {
+                                        GoogleAuthProvider googleAuthProvider =
+                                            GoogleAuthProvider();
+                                        final FirebaseAuth auth =
+                                            FirebaseAuth.instance;
+                                        auth.signInWithProvider(
+                                            googleAuthProvider);
+                                        // Navigator.pushReplacement(
+                                        //   context,
+                                        //   MaterialPageRoute(
+                                        //       builder: (context) =>
+                                        //           Main()), // Assuming Login is your login screen
+                                        // );
+                                      } catch (err) {
+                                        print(err);
+                                      }
+                                    },
                                   ),
                                 ],
                               ),
@@ -302,5 +266,68 @@ class _loginState extends State<login> {
         ),
       ),
     );
+  }
+
+  Future<void> login() async {
+    setState(() {
+      scale = 1.03;
+    });
+    Future.delayed(const Duration(milliseconds: 200), () {
+      setState(() {
+        scale = 1.0;
+      });
+    });
+    try {
+      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: email_controller.text, password: password_controller.text);
+
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (_) => Main()));
+
+      if (isChecking != null && isHandsUp != null) {
+        isChecking!.change(false);
+        isHandsUp!.change(false);
+      }
+
+      if (trigSuccess == null) return;
+
+      trigSuccess!.change(true);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        if (isHandsUp != null) {
+          isChecking!.change(false);
+          isHandsUp!.change(false);
+        }
+        if (trigFail == null) return;
+
+        trigFail!.change(true);
+
+        Fluttertoast.showToast(
+            msg: 'Please try email or password again!',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else if (e.code == 'wrong-password') {
+        if (isHandsUp != null) {
+          isChecking!.change(false);
+          isHandsUp!.change(false);
+        }
+        if (trigFail == null) return;
+
+        trigFail!.change(true);
+
+        Fluttertoast.showToast(
+            msg: 'Please try email or password again!',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    }
   }
 }

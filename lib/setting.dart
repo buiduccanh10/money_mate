@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:money_mate/widget/setting/setting_content.dart';
@@ -10,14 +11,27 @@ class setting extends StatefulWidget {
 }
 
 class _settingState extends State<setting> {
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  String? user_name;
+  String? image;
+
+  @override
+  void initState() {
+    user_name = auth.currentUser!.email;
+    image = auth.currentUser!.photoURL;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Stack(
         children: [
-          setting_content(),
+          const setting_content(),
           Container(
-            height: 240,
+            height: height * 0.26,
             decoration: const BoxDecoration(
               borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(10),
@@ -31,21 +45,33 @@ class _settingState extends State<setting> {
             child: SafeArea(
               maintainBottomViewPadding: true,
               child: Column(children: [
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    CircleAvatar(
-                      radius: 40,
-                      backgroundImage: AssetImage('assets/avt.jpeg'),
-                    ),
-                    Text(
-                      'Bui Duc Canh',
-                      style: TextStyle(
-                          fontSize: 26,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600),
-                    )
-                  ],
+                Padding(
+                  padding: const EdgeInsets.only(left: 16.0, right: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      CircleAvatar(
+                        radius: 40,
+                        backgroundImage: NetworkImage(image!),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Expanded(
+                        child: SizedBox(
+                          width: width * 0.8,
+                          child: Text(
+                            '${user_name}',
+                            style: const TextStyle(
+                                fontSize: 26,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
