@@ -67,7 +67,7 @@ class _home_list_itemState extends State<home_list_item> {
     return Expanded(
       child: is_loading
           ? ListView.builder(
-              padding: const EdgeInsets.only(top: 10, bottom: 100),
+              padding: const EdgeInsets.only(bottom: 100),
               itemCount: 5,
               itemBuilder: (BuildContext context, int index) {
                 return Shimmer.fromColors(
@@ -108,7 +108,7 @@ class _home_list_itemState extends State<home_list_item> {
                   child: Text('No input data yet!'),
                 )
               : ListView.builder(
-                  padding: const EdgeInsets.only(top: 10, bottom: 110),
+                  padding: const EdgeInsets.only(bottom: 120),
                   itemCount: sorted_list.length,
                   shrinkWrap: true,
                   itemBuilder: (BuildContext context, int index) {
@@ -136,7 +136,8 @@ class _home_list_itemState extends State<home_list_item> {
                               List.generate(list_item.length, (itemIndex) {
                             final input_item = list_item[itemIndex];
                             // var formatter = NumberFormat("#,##0", "en_US");
-                            var formatter = NumberFormat("#,##0", "vi_VN");
+                            var formatter =
+                                NumberFormat.simpleCurrency(locale: "vi_VN");
                             String format_money =
                                 formatter.format(input_item['money']);
                             return Slidable(
@@ -236,7 +237,7 @@ class _home_list_itemState extends State<home_list_item> {
                                             CrossAxisAlignment.end,
                                         children: [
                                           Text(
-                                            '${input_item['is_income'] ? '+' : '-'} ${format_money} đ',
+                                            '${input_item['is_income'] ? '+' : '-'} ${format_money}',
                                             style: TextStyle(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.w700,

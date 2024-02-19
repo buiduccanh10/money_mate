@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:money_mate/chart.dart';
+import 'package:money_mate/firebase_options.dart';
 import 'package:money_mate/home.dart';
 import 'package:money_mate/input.dart';
 import 'package:money_mate/login.dart';
@@ -13,7 +14,9 @@ import 'package:money_mate/setting.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   firestore_helper db_helper = firestore_helper();
   db_helper.init_database();
   runApp(const MyApp());
@@ -67,8 +70,8 @@ class _MainState extends State<Main> {
         body: page[index],
         extendBody: extendBody,
         bottomNavigationBar: SafeArea(
+          minimum: const EdgeInsets.all(25),
           child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 25),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               boxShadow: [

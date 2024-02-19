@@ -52,7 +52,10 @@ class _settingState extends State<setting> {
                     children: [
                       CircleAvatar(
                         radius: 40,
-                        backgroundImage: NetworkImage(image!),
+                        backgroundImage: image == null
+                            ? const AssetImage('assets/avt.png')
+                                as ImageProvider
+                            : NetworkImage(image!),
                       ),
                       const SizedBox(
                         width: 20,

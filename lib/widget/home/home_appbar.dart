@@ -18,7 +18,6 @@ class home_appbar extends StatefulWidget {
 class _home_appbarState extends State<home_appbar> {
   List<Map<String, dynamic>> expense_categories = [];
   List<Map<String, dynamic>> income_categories = [];
-  final user = FirebaseAuth.instance.currentUser!.email;
   firestore_helper db_helper = firestore_helper();
   bool is_loading = true;
   bool is_mounted = false;
@@ -29,9 +28,9 @@ class _home_appbarState extends State<home_appbar> {
 
   @override
   void initState() {
-    user_name = user;
     is_mounted = true;
     fetchData();
+    fetchUserName();
     super.initState();
   }
 
@@ -39,6 +38,15 @@ class _home_appbarState extends State<home_appbar> {
   void dispose() {
     is_mounted = false;
     super.dispose();
+  }
+
+  Future<void> fetchUserName() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        user_name = user.email;
+      });
+    }
   }
 
   Future<void> fetchData() async {
@@ -75,7 +83,8 @@ class _home_appbarState extends State<home_appbar> {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
     // var formatter = NumberFormat("#,##0", "en_US");
-    var formatter = NumberFormat("#,###", "vi_VN");
+    var formatter =
+        NumberFormat.simpleCurrency(locale: "vi_VN", decimalDigits: 0);
     String format_total = formatter.format(total_saving);
     String format_income = formatter.format(total_income);
     String format_expense = formatter.format(total_expense);
@@ -141,7 +150,7 @@ class _home_appbarState extends State<home_appbar> {
                     period: const Duration(seconds: 3),
                     highlightColor: Colors.grey,
                     child: Text(
-                      '${format_total} đ',
+                      '${format_total}',
                       style: const TextStyle(
                           color: Colors.white,
                           fontSize: 32,
@@ -183,7 +192,7 @@ class _home_appbarState extends State<home_appbar> {
                       children: [
                         Flexible(
                           child: Text(
-                            '${format_income} đ',
+                            '${format_income}',
                             style: const TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.w700),
                             overflow: TextOverflow.ellipsis,
@@ -238,7 +247,7 @@ class _home_appbarState extends State<home_appbar> {
                       children: [
                         Flexible(
                           child: Text(
-                            '${format_expense} đ',
+                            '${format_expense}',
                             style: const TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.w700),
                             overflow: TextOverflow.ellipsis,

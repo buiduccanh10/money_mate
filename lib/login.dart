@@ -1,9 +1,8 @@
 import 'dart:ui';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:money_mate/home.dart';
 import 'package:money_mate/main.dart';
 import 'package:money_mate/sign_up.dart';
 import 'package:rive/rive.dart' hide LinearGradient;
@@ -223,36 +222,21 @@ class _loginState extends State<login> {
                               ],
                             ),
                             const Center(
-                              child: Text('Or sign with:'),
+                              child: Text('Or sign up with:'),
                             ),
-                            Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SignInButton(
-                                    Buttons.google,
-                                    onPressed: () {
-                                      try {
-                                        GoogleAuthProvider googleAuthProvider =
-                                            GoogleAuthProvider();
-                                        final FirebaseAuth auth =
-                                            FirebaseAuth.instance;
-                                        auth.signInWithProvider(
-                                            googleAuthProvider);
-                                        // Navigator.pushReplacement(
-                                        //   context,
-                                        //   MaterialPageRoute(
-                                        //       builder: (context) =>
-                                        //           Main()), // Assuming Login is your login screen
-                                        // );
-                                      } catch (err) {
-                                        print(err);
-                                      }
-                                    },
-                                  ),
-                                ],
-                              ),
+                            SignInButton(
+                              Buttons.google,
+                              text: 'Sign up with Google',
+                              onPressed: () {
+                                login_google();
+                              },
+                            ),
+                            SignInButton(
+                              Buttons.facebook,
+                              text: 'Sign up with Facebook',
+                              onPressed: () {
+                                login_facebook();
+                              },
                             )
                           ],
                         ),
@@ -268,6 +252,33 @@ class _loginState extends State<login> {
     );
   }
 
+  Future<void> login_facebook() async {
+    try {
+      FacebookAuthProvider facebookAuthProvider = FacebookAuthProvider();
+      final FirebaseAuth auth = FirebaseAuth.instance;
+      await auth
+          .signInWithProvider(facebookAuthProvider)
+          .then((value) => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const Main()),
+              ));
+    } catch (err) {}
+  }
+
+  Future<void> login_google() async {
+    try {
+      GoogleAuthProvider googleAuthProvider = GoogleAuthProvider();
+      final FirebaseAuth auth = FirebaseAuth.instance;
+
+      await auth
+          .signInWithProvider(googleAuthProvider)
+          .then((value) => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const Main()),
+              ));
+    } catch (err) {}
+  }
+
   Future<void> login() async {
     setState(() {
       scale = 1.03;
@@ -278,11 +289,13 @@ class _loginState extends State<login> {
       });
     });
     try {
-      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: email_controller.text, password: password_controller.text);
-
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (_) => Main()));
+      await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+              email: email_controller.text, password: password_controller.text)
+          .then((value) => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Main()),
+              ));
 
       if (isChecking != null && isHandsUp != null) {
         isChecking!.change(false);

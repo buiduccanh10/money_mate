@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:money_mate/services/currency.dart';
 import 'package:money_mate/services/firestore_helper.dart';
 import 'package:money_mate/widget/category/category_manage.dart';
 import 'package:shimmer/shimmer.dart';
@@ -127,9 +128,12 @@ class _input_contentState extends State<input_content> {
                 ),
                 TextField(
                   keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                  ),
+                      decimal: true, signed: true),
                   controller: money_controller,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    Currency()
+                  ],
                   decoration: InputDecoration(
                       errorText:
                           money_validate ? 'Money can not be blank' : null,
@@ -324,7 +328,7 @@ class _input_contentState extends State<input_content> {
       DateTime? date, String description, String money, String cat_id) async {
     try {
       String format_date;
-      String format_money = money.replaceAll(',', '.');
+      String format_money = money.replaceAll('.', '');
       double money_final = double.parse(format_money);
       if (date_controller.selectedDate == null) {
         format_date =

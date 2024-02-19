@@ -81,7 +81,7 @@ class _chart_widgetState extends State<chart_widget> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
-    var formatter = NumberFormat("#,###", "vi_VN");
+    var formatter = NumberFormat.simpleCurrency(locale: "vi_VN");
     String format_total = formatter.format(total_saving);
     String format_income = formatter.format(total_income);
     String format_expense = formatter.format(total_expense);
@@ -151,7 +151,7 @@ class _chart_widgetState extends State<chart_widget> {
                                               fontWeight: FontWeight.w500),
                                         ),
                                         Text(
-                                          '+$format_income đ',
+                                          '+$format_income',
                                           style: const TextStyle(
                                               color: Colors.green,
                                               fontSize: 14,
@@ -178,7 +178,7 @@ class _chart_widgetState extends State<chart_widget> {
                                             fontWeight: FontWeight.w500),
                                       ),
                                       Text(
-                                        '-$format_expense đ',
+                                        '-$format_expense',
                                         style: const TextStyle(
                                             color: Colors.red,
                                             fontSize: 14,
@@ -208,7 +208,7 @@ class _chart_widgetState extends State<chart_widget> {
                                         fontWeight: FontWeight.w500),
                                   ),
                                   Text(
-                                    '$format_total đ',
+                                    '$format_total',
                                     style: const TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.w600),
