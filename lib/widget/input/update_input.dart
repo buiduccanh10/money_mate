@@ -437,7 +437,6 @@ class _update_inputState extends State<update_input> {
         toastDuration: const Duration(seconds: 2),
       );
     } catch (err) {
-      print(err);
       toast.showToast(
         child: Container(
           padding: const EdgeInsets.all(8),

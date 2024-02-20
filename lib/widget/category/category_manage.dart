@@ -10,7 +10,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:money_mate/services/firestore_helper.dart';
 import 'package:money_mate/widget/category/cat_add_dialog.dart';
-import 'package:money_mate/widget/category/cat_edit.dart';
+import 'package:money_mate/widget/category/cat_update_dialog.dart';
 import 'package:shimmer/shimmer.dart';
 
 typedef void cat_callback();
@@ -189,12 +189,16 @@ class _category_manageState extends State<category_manage> {
                               ]),
                           child: InkWell(
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        cat_edit(cat_id: (cat_item['cat_id']))),
-                              );
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return cat_update_dialog(
+                                      cat_item: cat_item,
+                                      cat_reload_callback: () {
+                                        fetchData();
+                                      },
+                                    );
+                                  });
                             },
                             child: Container(
                               decoration: const BoxDecoration(

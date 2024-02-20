@@ -46,23 +46,6 @@ class firestore_helper {
     }
   }
 
-  Future<Map<String, dynamic>> fetch_infor_user(String user_id) async {
-    try {
-      DocumentSnapshot<Map<String, dynamic>> user_doc =
-          await db.collection('users').doc(user_id).get();
-
-      if (user_doc.exists) {
-        Map<String, dynamic> userData = user_doc.data()!;
-
-        return userData;
-      } else {
-        return {};
-      }
-    } catch (error) {
-      return {};
-    }
-  }
-
   Future<List<Map<String, dynamic>>> fetch_categories(
       String uid, bool is_income) async {
     try {
@@ -181,6 +164,25 @@ class firestore_helper {
     };
 
     await doc_ref.set(cat);
+  }
+
+  Future<void> update_category(
+      String uid, String catId, String icon, String name, bool isIncome) async {
+    try {
+      DocumentReference docRef = FirebaseFirestore.instance
+          .collection("users")
+          .doc(uid)
+          .collection("category")
+          .doc(catId);
+
+      Map<String, dynamic> updatedData = {
+        "icon": icon,
+        "name": name,
+        "is_income": isIncome,
+      };
+
+      await docRef.update(updatedData);
+    } catch (error) {}
   }
 
   Future<void> add_input(String uid, String date, String description,

@@ -146,7 +146,7 @@ class _home_list_itemState extends State<home_list_item> {
                                 children: [
                                   SlidableAction(
                                     onPressed: (context) {
-                                      _handleEdit(context, itemIndex);
+                                      _handleEdit(context, input_item);
                                     },
                                     foregroundColor: Colors.blue,
                                     icon: Icons.edit,
@@ -275,7 +275,14 @@ class _home_list_itemState extends State<home_list_item> {
     );
   }
 
-  void _handleEdit(BuildContext context, int index) async {}
+  void _handleEdit(
+      BuildContext context, Map<String, dynamic> input_item) async {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (BuildContext context) =>
+                update_input(input_item: input_item)));
+  }
 
   void _handleDelete(BuildContext context, String input_id, String uid) async {
     try {

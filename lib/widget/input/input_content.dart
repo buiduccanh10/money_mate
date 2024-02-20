@@ -257,6 +257,7 @@ class _input_contentState extends State<input_content> {
                               cat_item['name'],
                               style: TextStyle(
                                   fontSize: 16,
+                                  overflow: TextOverflow.ellipsis,
                                   color: is_selected
                                       ? Colors.white
                                       : Colors.black),
