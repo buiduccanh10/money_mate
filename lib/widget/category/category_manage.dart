@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -31,6 +32,7 @@ class _category_manageState extends State<category_manage> {
   bool is_loading = true;
   bool is_mounted = false;
   FToast toast = FToast();
+  final uid = FirebaseAuth.instance.currentUser!.uid;
 
   @override
   void initState() {
@@ -47,7 +49,7 @@ class _category_manageState extends State<category_manage> {
 
   Future<void> fetchData() async {
     List<Map<String, dynamic>> temp =
-        await db_helper.fetch_categories(widget.is_income);
+        await db_helper.fetch_categories(uid, widget.is_income);
 
     if (is_mounted) {
       setState(() {
@@ -92,7 +94,7 @@ class _category_manageState extends State<category_manage> {
       ),
       body: Stack(children: [
         Container(
-          height: 110,
+          height: 100,
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
@@ -129,7 +131,7 @@ class _category_manageState extends State<category_manage> {
           ),
         ),
         Padding(
-            padding: const EdgeInsets.only(top: 100.0),
+            padding: const EdgeInsets.only(top: 90.0),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: is_loading
@@ -178,7 +180,7 @@ class _category_manageState extends State<category_manage> {
                                 ),
                                 SlidableAction(
                                   onPressed: (context) {
-                                    delete_cat(context, index);
+                                    delete_cat(context, index, uid);
                                   },
                                   foregroundColor: Colors.red,
                                   icon: Icons.delete,
@@ -235,10 +237,12 @@ class _category_manageState extends State<category_manage> {
 
   void edit_cat(BuildContext context, int index) {}
 
-  void delete_cat(BuildContext context, int index) async {
+  void delete_cat(BuildContext context, int index, String uid) async {
     try {
       if (widget.is_income) {
         await FirebaseFirestore.instance
+            .collection('users')
+            .doc(uid)
             .collection("category")
             .doc(income_categories[index]['cat_id'])
             .delete();
@@ -247,6 +251,8 @@ class _category_manageState extends State<category_manage> {
         });
       } else {
         await FirebaseFirestore.instance
+            .collection('users')
+            .doc(uid)
             .collection("category")
             .doc(expense_categories[index]['cat_id'])
             .delete();

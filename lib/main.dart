@@ -17,8 +17,9 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  firestore_helper db_helper = firestore_helper();
-  db_helper.init_database();
+
+  // firestore_helper db_helper = firestore_helper();
+  // db_helper.init_database();
   runApp(const MyApp());
 }
 
@@ -82,15 +83,7 @@ class _MainState extends State<Main> {
                   offset: const Offset(0, 7),
                 ),
               ],
-              color: Colors.grey[500],
-              // gradient: const LinearGradient(
-              //   begin: Alignment.topRight,
-              //   end: Alignment.bottomLeft,
-              //   colors: [
-              //     Colors.blue,
-              //     Colors.orange,
-              //   ],
-              // ),
+              color: const Color.fromARGB(255, 181, 181, 181),
             ),
             child: GNav(
                 selectedIndex: index,

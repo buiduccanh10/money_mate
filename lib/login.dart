@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:money_mate/home.dart';
 import 'package:money_mate/main.dart';
+import 'package:money_mate/services/firestore_helper.dart';
 import 'package:money_mate/sign_up.dart';
 import 'package:rive/rive.dart' hide LinearGradient;
 import 'package:sign_in_button/sign_in_button.dart';
@@ -21,6 +22,7 @@ class _loginState extends State<login> {
 
   final email_controller = TextEditingController();
   final password_controller = TextEditingController();
+  final db_helper = firestore_helper();
   FocusNode email_focus_node = FocusNode();
   FocusNode password_focus_node = FocusNode();
   StateMachineController? state_controller;
@@ -231,13 +233,13 @@ class _loginState extends State<login> {
                                 login_google();
                               },
                             ),
-                            SignInButton(
-                              Buttons.facebook,
-                              text: 'Sign up with Facebook',
-                              onPressed: () {
-                                login_facebook();
-                              },
-                            )
+                            // SignInButton(
+                            //   Buttons.facebook,
+                            //   text: 'Sign up with Facebook',
+                            //   onPressed: () {
+                            //     login_facebook();
+                            //   },
+                            // )
                           ],
                         ),
                       ),
@@ -270,8 +272,21 @@ class _loginState extends State<login> {
       GoogleAuthProvider googleAuthProvider = GoogleAuthProvider();
       final FirebaseAuth auth = FirebaseAuth.instance;
 
-      await auth
-          .signInWithProvider(googleAuthProvider)
+      final cre = await auth.signInWithProvider(googleAuthProvider);
+
+      String uid = cre.user!.uid;
+      String? email = cre.user!.email;
+
+      await db_helper
+          .get_user(uid, email!)
+          .then((value) => Fluttertoast.showToast(
+              msg: 'Login successful!',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.greenAccent,
+              textColor: Colors.white,
+              fontSize: 16.0))
           .then((value) => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const Main()),
@@ -292,6 +307,14 @@ class _loginState extends State<login> {
       await FirebaseAuth.instance
           .signInWithEmailAndPassword(
               email: email_controller.text, password: password_controller.text)
+          .then((value) => Fluttertoast.showToast(
+              msg: 'Login successful!',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.greenAccent,
+              textColor: Colors.white,
+              fontSize: 16.0))
           .then((value) => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => Main()),
@@ -316,7 +339,7 @@ class _loginState extends State<login> {
         trigFail!.change(true);
 
         Fluttertoast.showToast(
-            msg: 'Please try email or password again!',
+            msg: 'User does not exists!',
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 1,

@@ -6,10 +6,15 @@ import 'package:shimmer/shimmer.dart';
 
 class home_appbar extends StatefulWidget {
   static final staticGlobalKey = GlobalKey<_home_appbarState>();
-  // home_appbar({
-  //   super.key,
-  //   });
-  home_appbar() : super(key: home_appbar.staticGlobalKey);
+  const home_appbar({
+    super.key,
+  });
+
+  static _home_appbarState? getState() {
+    return staticGlobalKey.currentState;
+  }
+
+  //home_appbar() : super(key: home_appbar.staticGlobalKey);
 
   @override
   State<home_appbar> createState() => _home_appbarState();
@@ -25,6 +30,7 @@ class _home_appbarState extends State<home_appbar> {
   double total_expense = 0;
   double total_saving = 0;
   String? user_name;
+  final uid = FirebaseAuth.instance.currentUser!.uid;
 
   @override
   void initState() {
@@ -51,9 +57,9 @@ class _home_appbarState extends State<home_appbar> {
 
   Future<void> fetchData() async {
     List<Map<String, dynamic>> income_temp =
-        await db_helper.fetch_data_by_cat(isIncome: true);
+        await db_helper.fetch_data_by_cat(uid, isIncome: true);
     List<Map<String, dynamic>> expense_temp =
-        await db_helper.fetch_data_by_cat(isIncome: false);
+        await db_helper.fetch_data_by_cat(uid, isIncome: false);
 
     if (is_mounted) {
       setState(() {
@@ -261,7 +267,7 @@ class _home_appbarState extends State<home_appbar> {
                         Text(
                           'Expense',
                           style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 16,
                               color: Colors.grey,
                               fontWeight: FontWeight.w700),
                         ),

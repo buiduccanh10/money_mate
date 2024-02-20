@@ -1,12 +1,14 @@
 import 'dart:ffi';
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:money_mate/services/firestore_helper.dart';
 import 'package:money_mate/widget/home/home_appbar.dart';
+import 'package:money_mate/widget/input/update_input.dart';
 import 'package:shimmer/shimmer.dart';
 
 class home_list_item extends StatefulWidget {
@@ -22,6 +24,7 @@ class _home_list_itemState extends State<home_list_item> {
   bool is_loading = true;
   bool is_mounted = false;
   FToast toast = FToast();
+  final uid = FirebaseAuth.instance.currentUser!.uid;
 
   @override
   void initState() {
@@ -37,7 +40,7 @@ class _home_list_itemState extends State<home_list_item> {
   }
 
   Future<void> fetch_data_list() async {
-    List<Map<String, dynamic>> temp = await db_helper.fetch_input();
+    List<Map<String, dynamic>> temp = await db_helper.fetch_input(uid);
 
     if (is_mounted) {
       setState(() {
@@ -108,7 +111,7 @@ class _home_list_itemState extends State<home_list_item> {
                   child: Text('No input data yet!'),
                 )
               : ListView.builder(
-                  padding: const EdgeInsets.only(bottom: 120),
+                  padding: const EdgeInsets.only(top: 14, bottom: 120),
                   itemCount: sorted_list.length,
                   shrinkWrap: true,
                   itemBuilder: (BuildContext context, int index) {
@@ -117,18 +120,15 @@ class _home_list_itemState extends State<home_list_item> {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 14.0),
-                          child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            padding: const EdgeInsets.only(
-                                left: 10, top: 8, bottom: 8),
-                            decoration: BoxDecoration(color: Colors.grey[200]),
-                            child: Text(
-                              date,
-                              style: const TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.bold),
-                            ),
+                        Container(
+                          width: MediaQuery.of(context).size.width,
+                          padding: const EdgeInsets.only(
+                              left: 10, top: 8, bottom: 8),
+                          decoration: BoxDecoration(color: Colors.grey[200]),
+                          child: Text(
+                            date,
+                            style: const TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.bold),
                           ),
                         ),
                         Column(
@@ -154,8 +154,8 @@ class _home_list_itemState extends State<home_list_item> {
                                   ),
                                   SlidableAction(
                                     onPressed: (context) {
-                                      _handleDelete(
-                                          context, list_item[itemIndex]['id']);
+                                      _handleDelete(context,
+                                          list_item[itemIndex]['id'], uid);
                                     },
                                     foregroundColor: Colors.red,
                                     icon: Icons.delete,
@@ -164,10 +164,17 @@ class _home_list_itemState extends State<home_list_item> {
                                 ],
                               ),
                               child: InkWell(
-                                onTap: () {},
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (BuildContext context) =>
+                                              update_input(
+                                                  input_item: input_item)));
+                                },
                                 child: Padding(
                                   padding: const EdgeInsets.only(
-                                      top: 16, bottom: 0, left: 24, right: 24),
+                                      top: 14, bottom: 14, left: 24, right: 24),
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -270,18 +277,18 @@ class _home_list_itemState extends State<home_list_item> {
 
   void _handleEdit(BuildContext context, int index) async {}
 
-  void _handleDelete(BuildContext context, String input_id) async {
+  void _handleDelete(BuildContext context, String input_id, String uid) async {
     try {
       await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
           .collection("input")
           .doc(input_id)
           .delete();
-      // setState(() {
-      //   input_data.removeAt(index);
-      // });
+
       fetch_data_list();
 
-      home_appbar.staticGlobalKey.currentState?.fetchData();
+      home_appbar.getState()!.fetchData();
 
       toast.showToast(
         child: Container(

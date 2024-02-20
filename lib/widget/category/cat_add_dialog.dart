@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -25,6 +26,7 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
   bool cat_validate = false;
   firestore_helper db_helper = firestore_helper();
   FToast toast = FToast();
+  final uid = FirebaseAuth.instance.currentUser!.uid;
 
   @override
   void initState() {
@@ -192,7 +194,7 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
 
   Future<void> add_category(String icon, String name, bool is_income) async {
     try {
-      await db_helper.add_category(icon, name, is_income);
+      await db_helper.add_category(uid,icon, name, is_income);
       widget.cat_reload_callback();
 
       toast.showToast(

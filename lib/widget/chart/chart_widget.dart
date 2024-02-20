@@ -1,4 +1,5 @@
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -30,6 +31,7 @@ class _chart_widgetState extends State<chart_widget> {
   double total_income = 0;
   double total_expense = 0;
   double total_saving = 0;
+  final uid = FirebaseAuth.instance.currentUser!.uid;
 
   @override
   void initState() {
@@ -50,9 +52,9 @@ class _chart_widgetState extends State<chart_widget> {
 
   Future<void> fetchData() async {
     List<Map<String, dynamic>> income_temp =
-        await db_helper.fetch_data_by_cat(isIncome: true);
+        await db_helper.fetch_data_by_cat(uid, isIncome: true);
     List<Map<String, dynamic>> expense_temp =
-        await db_helper.fetch_data_by_cat(isIncome: false);
+        await db_helper.fetch_data_by_cat(uid, isIncome: false);
 
     if (is_mounted) {
       setState(() {

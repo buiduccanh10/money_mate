@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -34,6 +35,7 @@ class _input_contentState extends State<input_content> {
   bool is_loading = true;
   bool is_mounted = false;
   FToast toast = FToast();
+  final uid = FirebaseAuth.instance.currentUser!.uid;
 
   @override
   void initState() {
@@ -51,10 +53,10 @@ class _input_contentState extends State<input_content> {
 
   Future<void> fetchData() async {
     List<Map<String, dynamic>> income_temp =
-        await db_helper.fetch_categories(true);
+        await db_helper.fetch_categories(uid, true);
 
     List<Map<String, dynamic>> expense_temp =
-        await db_helper.fetch_categories(false);
+        await db_helper.fetch_categories(uid, false);
 
     if (is_mounted) {
       setState(() {
@@ -155,7 +157,7 @@ class _input_contentState extends State<input_content> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(left: 15.0, top: 10),
+            padding: const EdgeInsets.only(left: 15.0, right: 15, top: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -270,11 +272,22 @@ class _input_contentState extends State<input_content> {
       floatingActionButton: AnimatedScale(
         scale: scale,
         duration: const Duration(milliseconds: 200),
-        child: SizedBox(
-          width: 110,
+        child: Container(
+          width: 120,
           height: 60,
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            gradient: LinearGradient(
+              colors: [
+                Colors.green,
+                Colors.lightGreen,
+                Colors.lightGreenAccent,
+              ],
+            ),
+          ),
           child: FloatingActionButton.extended(
-            backgroundColor: const Color.fromARGB(255, 63, 148, 66),
+            //backgroundColor: const Color.fromARGB(255, 63, 148, 66),
+            backgroundColor: Colors.transparent,
             onPressed: () {
               if (description_controller.text.isEmpty ||
                   money_controller.text.isEmpty) {
@@ -334,12 +347,12 @@ class _input_contentState extends State<input_content> {
         format_date =
             DateFormat('dd/MM/yyyy').format(date_controller.displayDate!);
         await db_helper.add_input(
-            format_date, description, money_final, cat_id);
+            uid, format_date, description, money_final, cat_id);
       } else {
         format_date =
             DateFormat('dd/MM/yyyy').format(date_controller.selectedDate!);
         await db_helper.add_input(
-            format_date, description, money_final, cat_id);
+            uid, format_date, description, money_final, cat_id);
       }
 
       description_controller.clear();
