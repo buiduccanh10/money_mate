@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:money_mate/services/firestore_helper.dart';
 
 class sign_up_page extends StatefulWidget {
-  const sign_up_page({Key? key}) : super(key: key);
+  const sign_up_page({super.key});
 
   @override
   _sign_up_pageState createState() => _sign_up_pageState();
@@ -18,7 +18,7 @@ class _sign_up_pageState extends State<sign_up_page> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Sign up')),
+      appBar: AppBar(title: const Text('Sign up')),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -27,28 +27,28 @@ class _sign_up_pageState extends State<sign_up_page> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               TextField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Email',
                   prefixIcon: Icon(Icons.email),
                 ),
                 controller: email,
                 keyboardType: TextInputType.emailAddress,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Password',
                   prefixIcon: Icon(Icons.lock),
                 ),
                 controller: password,
                 obscureText: true,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   sign_up_submit();
                 },
-                child: Text('Sign Up'),
+                child: const Text('Sign Up'),
               ),
             ],
           ),
@@ -66,20 +66,21 @@ class _sign_up_pageState extends State<sign_up_page> {
       );
 
       String uid = cre.user!.uid;
+      await cre.user!.sendEmailVerification();
 
-      await db_helper.get_user(uid, email.text);
-
-      Navigator.pop(context);
-
-      Fluttertoast.showToast(
-        msg: 'Sign up successful!',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.greenAccent,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
+      await db_helper
+          .get_user(uid, email.text, '')
+          .then((value) => Fluttertoast.showToast(
+                msg:
+                    'Sign up successful, then follow link send to emai to verify',
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.CENTER,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.green,
+                textColor: Colors.white,
+                fontSize: 16.0,
+              ))
+          .then((value) => Navigator.pop(context));
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         Fluttertoast.showToast(
@@ -87,7 +88,7 @@ class _sign_up_pageState extends State<sign_up_page> {
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 1,
-          backgroundColor: Colors.redAccent,
+          backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0,
         );
@@ -97,7 +98,7 @@ class _sign_up_pageState extends State<sign_up_page> {
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 1,
-          backgroundColor: Colors.redAccent,
+          backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0,
         );

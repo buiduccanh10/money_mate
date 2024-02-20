@@ -5,12 +5,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class firestore_helper {
   FirebaseFirestore db = FirebaseFirestore.instance;
 
-  Future<void> get_user(String user_id, String email) async {
+  Future<void> get_user(String user_id, String email, String image_url) async {
     DocumentReference user_ref = db.collection('users').doc(user_id);
 
-    final users = <String, dynamic>{
-      "email": email,
-    };
+    final users = <String, dynamic>{"email": email, "image": image_url};
 
     await user_ref.set(users);
     String uid = user_ref.id;
@@ -19,10 +17,10 @@ class firestore_helper {
   }
 
   Future<void> initUserDatabase(String userId) async {
-    CollectionReference userCollection =
+    CollectionReference user_collection =
         db.collection('users').doc(userId).collection('category');
 
-    QuerySnapshot snapshot = await userCollection.limit(1).get();
+    QuerySnapshot snapshot = await user_collection.limit(1).get();
 
     if (snapshot.docs.isEmpty) {
       List<Map<String, dynamic>> cat_default = [
@@ -39,7 +37,7 @@ class firestore_helper {
       ];
 
       for (var data in cat_default) {
-        DocumentReference docRef = userCollection.doc();
+        DocumentReference docRef = user_collection.doc();
         await docRef.set({
           ...data,
           'cat_id': docRef.id,
@@ -48,34 +46,22 @@ class firestore_helper {
     }
   }
 
-  // Future<void> init_database() async {
-  //   CollectionReference cat_collection = db.collection('category');
+  Future<Map<String, dynamic>> fetch_infor_user(String user_id) async {
+    try {
+      DocumentSnapshot<Map<String, dynamic>> user_doc =
+          await db.collection('users').doc(user_id).get();
 
-  //   QuerySnapshot snapshot = await cat_collection.limit(1).get();
+      if (user_doc.exists) {
+        Map<String, dynamic> userData = user_doc.data()!;
 
-  //   if (snapshot.docs.isEmpty) {
-  //     List<Map<String, dynamic>> cat_default = [
-  //       {'name': 'Salary', 'icon': '💵', 'is_income': true},
-  //       {'name': 'Business', 'icon': '🤝🏻', 'is_income': true},
-  //       {'name': 'Others', 'icon': '🗒️', 'is_income': true},
-  //       {"name": "Shopping", "icon": "🛒", "is_income": false},
-  //       {"name": "Food", "icon": "🍔", "is_income": false},
-  //       {"name": "Vegetable", "icon": "🥬", "is_income": false},
-  //       {"name": "Clothes", "icon": "👕", "is_income": false},
-  //       {"name": "Travel", "icon": "🏖️", "is_income": false},
-  //       {"name": "Moving", "icon": "🚘", "is_income": false},
-  //       {"name": "Others", "icon": "🗒️", "is_income": false}
-  //     ];
-
-  //     for (var data in cat_default) {
-  //       DocumentReference docRef = cat_collection.doc();
-  //       await docRef.set({
-  //         ...data,
-  //         'cat_id': docRef.id,
-  //       });
-  //     }
-  //   }
-  // }
+        return userData;
+      } else {
+        return {};
+      }
+    } catch (error) {
+      return {};
+    }
+  }
 
   Future<List<Map<String, dynamic>>> fetch_categories(
       String uid, bool is_income) async {

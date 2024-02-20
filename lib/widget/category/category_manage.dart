@@ -265,7 +265,7 @@ class _category_manageState extends State<category_manage> {
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10.0),
-            color: Colors.greenAccent,
+            color: Colors.green,
           ),
           child: const Row(
             mainAxisSize: MainAxisSize.min,
@@ -285,7 +285,7 @@ class _category_manageState extends State<category_manage> {
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10.0),
-            color: Colors.redAccent,
+            color: Colors.red,
           ),
           child: const Row(
             mainAxisSize: MainAxisSize.min,

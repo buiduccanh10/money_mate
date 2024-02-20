@@ -19,9 +19,11 @@ class login extends StatefulWidget {
 class _loginState extends State<login> {
   bool? is_show;
   double scale = 1.0;
-
   final email_controller = TextEditingController();
   final password_controller = TextEditingController();
+  late String uid;
+  String? email;
+  String? image;
   final db_helper = firestore_helper();
   FocusNode email_focus_node = FocusNode();
   FocusNode password_focus_node = FocusNode();
@@ -274,17 +276,18 @@ class _loginState extends State<login> {
 
       final cre = await auth.signInWithProvider(googleAuthProvider);
 
-      String uid = cre.user!.uid;
-      String? email = cre.user!.email;
+      uid = cre.user!.uid;
+      email = cre.user!.email;
+      image = cre.user!.photoURL;
 
       await db_helper
-          .get_user(uid, email!)
+          .get_user(uid, email!, image!)
           .then((value) => Fluttertoast.showToast(
               msg: 'Login successful!',
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.CENTER,
               timeInSecForIosWeb: 1,
-              backgroundColor: Colors.greenAccent,
+              backgroundColor: Colors.green,
               textColor: Colors.white,
               fontSize: 16.0))
           .then((value) => Navigator.push(
@@ -304,21 +307,30 @@ class _loginState extends State<login> {
       });
     });
     try {
-      await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
-              email: email_controller.text, password: password_controller.text)
-          .then((value) => Fluttertoast.showToast(
-              msg: 'Login successful!',
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.greenAccent,
-              textColor: Colors.white,
-              fontSize: 16.0))
-          .then((value) => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Main()),
-              ));
+      final cre = await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: email_controller.text, password: password_controller.text);
+
+      if (cre.user!.emailVerified) {
+        Fluttertoast.showToast(
+                msg: 'Login successful!',
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.CENTER,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.green,
+                textColor: Colors.white,
+                fontSize: 16.0)
+            .then((value) => Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const Main())));
+      } else {
+        Fluttertoast.showToast(
+            msg: 'Please follow link in your email to verify your account!',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
 
       if (isChecking != null && isHandsUp != null) {
         isChecking!.change(false);

@@ -11,7 +11,7 @@ class setting extends StatefulWidget {
 }
 
 class _settingState extends State<setting> {
-  final FirebaseAuth auth = FirebaseAuth.instance;
+  final auth = FirebaseAuth.instance;
   String? user_name;
   String? image;
 

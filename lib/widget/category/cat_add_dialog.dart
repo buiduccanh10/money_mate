@@ -202,7 +202,7 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10.0),
-            color: Colors.greenAccent,
+            color: Colors.green,
           ),
           child: const Row(
             mainAxisSize: MainAxisSize.min,
@@ -222,7 +222,7 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10.0),
-            color: Colors.redAccent,
+            color: Colors.red,
           ),
           child: const Row(
             mainAxisSize: MainAxisSize.min,

@@ -388,17 +388,15 @@ class _setting_contentState extends State<setting_content> {
           CupertinoActionSheetAction(
             onPressed: () async {
               try {
-                await FirebaseAuth.instance.signOut();
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          login()), // Assuming Login is your login screen
-                );
-              } catch (e) {
-                print("Error signing out: $e");
-                // Handle error here
-              }
+                await FirebaseAuth.instance
+                    .signOut()
+                    .then((value) => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  const login()), // Assuming Login is your login screen
+                        ));
+              } catch (e) {}
             },
             child: const Text('Log out'),
           ),
