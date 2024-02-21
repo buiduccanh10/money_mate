@@ -132,7 +132,7 @@ class _chart_widgetState extends State<chart_widget> {
           child: Column(
             children: [
               Padding(
-                padding: EdgeInsets.only(top: height * 0.08),
+                padding: EdgeInsets.only(top: height * 0.09),
                 child: Stack(
                   children: [
                     Padding(
