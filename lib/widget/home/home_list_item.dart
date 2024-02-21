@@ -118,7 +118,7 @@ class _home_list_itemState extends State<home_list_item> {
                   child: Text('No input data yet!'),
                 )
               : ListView.builder(
-                  padding: const EdgeInsets.only(top: 14, bottom: 120),
+                  padding: const EdgeInsets.only(top: 24, bottom: 120),
                   itemCount: sorted_list.length,
                   shrinkWrap: true,
                   itemBuilder: (BuildContext context, int index) {

@@ -1,6 +1,6 @@
 # money_mate
 
-MoneyMate is an expense management application for individuals and small businesses
+MoneyMate is a spending management app that offers features that allow you to personalize your spending
 
 ## Getting Started
 

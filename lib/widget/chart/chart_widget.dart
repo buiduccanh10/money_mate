@@ -120,7 +120,6 @@ class _chart_widgetState extends State<chart_widget> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
     var formatter = NumberFormat.simpleCurrency(locale: "vi_VN");
     String format_total = formatter.format(total_saving);
     String format_income = formatter.format(total_income);
@@ -132,7 +131,7 @@ class _chart_widgetState extends State<chart_widget> {
           child: Column(
             children: [
               Padding(
-                padding: EdgeInsets.only(top: height * 0.09),
+                padding: const EdgeInsets.only(top: 70),
                 child: Stack(
                   children: [
                     Padding(

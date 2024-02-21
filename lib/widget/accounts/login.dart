@@ -2,10 +2,10 @@ import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:money_mate/home.dart';
+import 'package:money_mate/widget/home/home.dart';
 import 'package:money_mate/main.dart';
 import 'package:money_mate/services/firestore_helper.dart';
-import 'package:money_mate/sign_up.dart';
+import 'package:money_mate/widget/accounts/sign_up.dart';
 import 'package:rive/rive.dart' hide LinearGradient;
 import 'package:sign_in_button/sign_in_button.dart';
 
@@ -194,7 +194,7 @@ class _loginState extends State<login> {
                                   width: 350,
                                   child: const Center(
                                     child: Text(
-                                      'Login',
+                                      'Log in',
                                       style: TextStyle(
                                           fontSize: 18,
                                           color: Colors.white,
@@ -226,11 +226,11 @@ class _loginState extends State<login> {
                               ],
                             ),
                             const Center(
-                              child: Text('Or sign up with:'),
+                              child: Text('Or sign in with:'),
                             ),
                             SignInButton(
                               Buttons.google,
-                              text: 'Sign up with Google',
+                              text: 'Sign in with Google',
                               onPressed: () {
                                 login_google();
                               },

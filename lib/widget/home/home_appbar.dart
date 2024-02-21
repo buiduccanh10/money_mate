@@ -150,7 +150,7 @@ class _home_appbarState extends State<home_appbar> {
                             selectedMonth: month,
                             selectedYear: year,
                             boxDecoration: BoxDecoration(
-                                color: Colors.grey[200],
+                                color: Colors.grey[100],
                                 borderRadius: BorderRadius.circular(10)),
                             inputDecoration: const InputDecoration(
                               border: InputBorder.none,
@@ -259,6 +259,9 @@ class _home_appbarState extends State<home_appbar> {
                               color: Colors.grey,
                               fontWeight: FontWeight.w700),
                         ),
+                        SizedBox(
+                          width: 10,
+                        ),
                         Icon(
                           Icons.arrow_downward_sharp,
                           color: Colors.green,
@@ -313,6 +316,9 @@ class _home_appbarState extends State<home_appbar> {
                               fontSize: 16,
                               color: Colors.grey,
                               fontWeight: FontWeight.w700),
+                        ),
+                        SizedBox(
+                          width: 10,
                         ),
                         Icon(
                           Icons.arrow_upward_sharp,

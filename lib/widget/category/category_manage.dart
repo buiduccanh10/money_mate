@@ -124,7 +124,9 @@ class _category_manageState extends State<category_manage> {
               ),
               IconButton(
                   padding: const EdgeInsets.all(15),
-                  onPressed: () {},
+                  onPressed: () {
+                    delete_all_category();
+                  },
                   icon: const Icon(Icons.delete_sweep,
                       color: Colors.red, size: 28))
             ],
@@ -172,7 +174,7 @@ class _category_manageState extends State<category_manage> {
                               children: [
                                 SlidableAction(
                                   onPressed: (context) {
-                                    edit_cat(context, index);
+                                    edit_cat(context, cat_item);
                                   },
                                   foregroundColor: Colors.blue,
                                   icon: Icons.edit,
@@ -239,7 +241,65 @@ class _category_manageState extends State<category_manage> {
     );
   }
 
-  void edit_cat(BuildContext context, int index) {}
+  void delete_all_category() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(
+                'Delete all ${widget.is_income ? 'income' : 'expense'} category?'),
+            actions: [
+              Container(
+                width: 80,
+                decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(10)),
+                child: TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text(
+                      'Cancel',
+                      style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: Color.fromARGB(255, 127, 127, 127)),
+                    )),
+              ),
+              Container(
+                width: 90,
+                decoration: BoxDecoration(
+                    color: Colors.red,
+                    border: Border.all(color: Colors.red),
+                    borderRadius: BorderRadius.circular(10)),
+                child: TextButton(
+                    onPressed: () {
+                      db_helper.delete_all_category(uid, widget.is_income);
+                    },
+                    child: const Text(
+                      'Comfirm',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    )),
+              )
+            ],
+          );
+        });
+  }
+
+  void edit_cat(BuildContext context, Map<String, dynamic> cat_item) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return cat_update_dialog(
+            cat_item: cat_item,
+            cat_reload_callback: () {
+              fetchData();
+            },
+          );
+        });
+  }
 
   void delete_cat(BuildContext context, int index, String uid) async {
     try {

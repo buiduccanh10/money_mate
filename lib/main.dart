@@ -4,14 +4,14 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:money_mate/chart.dart';
+import 'package:money_mate/widget/chart/chart.dart';
 import 'package:money_mate/firebase_options.dart';
-import 'package:money_mate/home.dart';
-import 'package:money_mate/input.dart';
-import 'package:money_mate/login.dart';
+import 'package:money_mate/widget/home/home.dart';
+import 'package:money_mate/widget/input/input.dart';
+import 'package:money_mate/widget/accounts/login.dart';
 import 'package:money_mate/search.dart';
 import 'package:money_mate/services/firestore_helper.dart';
-import 'package:money_mate/setting.dart';
+import 'package:money_mate/widget/search/setting.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -70,7 +70,7 @@ class _MainState extends State<Main> {
         body: page[index],
         extendBody: extendBody,
         bottomNavigationBar: SafeArea(
-          minimum: EdgeInsets.all(width / 50),
+          minimum: EdgeInsets.all(width / 20),
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
@@ -105,7 +105,8 @@ class _MainState extends State<Main> {
                   end: Alignment.centerRight,
                   colors: [Colors.orange, Colors.blue],
                 ),
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.only(
+                    top: 20, bottom: 20, left: 16, right: 16),
                 gap: width * 0.01,
                 activeColor: Colors.white,
                 tabBorderRadius: 20,
@@ -127,7 +128,7 @@ class _MainState extends State<Main> {
                   ),
                   GButton(
                     icon: Icons.search_outlined,
-                    text: 'Input',
+                    text: 'Search',
                     iconColor: Colors.black87,
                   ),
                   GButton(

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
-import 'package:money_mate/home.dart';
+import 'package:money_mate/widget/home/home.dart';
 import 'package:money_mate/main.dart';
 import 'package:money_mate/services/currency.dart';
 import 'package:money_mate/services/firestore_helper.dart';

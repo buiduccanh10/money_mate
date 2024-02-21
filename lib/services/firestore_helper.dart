@@ -252,6 +252,21 @@ class firestore_helper {
     } catch (error) {}
   }
 
+  Future<void> delete_all_category(String uid, bool isIncome) async {
+    try {
+      CollectionReference categoryCollectionRef =
+          db.collection('users').doc(uid).collection('category');
+
+      QuerySnapshot querySnapshot = await categoryCollectionRef
+          .where('is_income', isEqualTo: isIncome)
+          .get();
+
+      querySnapshot.docs.forEach((DocumentSnapshot documentSnapshot) async {
+        await documentSnapshot.reference.delete();
+      });
+    } catch (error) {}
+  }
+
   Future<void> add_input(String uid, String date, String description,
       double money, String cat_id) async {
     DocumentReference doc_ref =

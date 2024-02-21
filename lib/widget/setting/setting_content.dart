@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:money_mate/login.dart';
+import 'package:money_mate/widget/accounts/login.dart';
 
 class setting_content extends StatefulWidget {
   const setting_content({super.key});
