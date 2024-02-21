@@ -1,26 +1,29 @@
+import 'package:datepicker_dropdown/datepicker_dropdown.dart';
+import 'package:datepicker_dropdown/order_format.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:money_mate/services/firestore_helper.dart';
+import 'package:money_mate/widget/home/home_list_item.dart';
 import 'package:shimmer/shimmer.dart';
 
 class home_appbar extends StatefulWidget {
-  static final staticGlobalKey = GlobalKey<_home_appbarState>();
-  const home_appbar({
-    super.key,
-  });
+  static final home_appbar_globalkey = GlobalKey<_home_appbarState>();
 
   static _home_appbarState? getState() {
-    return staticGlobalKey.currentState;
+    return home_appbar_globalkey.currentState;
   }
 
-  //home_appbar() : super(key: home_appbar.staticGlobalKey);
+  home_appbar() : super(key: home_appbar.home_appbar_globalkey);
 
   @override
   State<home_appbar> createState() => _home_appbarState();
 }
 
 class _home_appbarState extends State<home_appbar> {
+  var month = DateTime.now().month;
+  var year = DateTime.now().year;
+  String formattedDate = '';
   List<Map<String, dynamic>> expense_categories = [];
   List<Map<String, dynamic>> income_categories = [];
   firestore_helper db_helper = firestore_helper();
@@ -34,6 +37,7 @@ class _home_appbarState extends State<home_appbar> {
 
   @override
   void initState() {
+    formattedDate = getMonthYearString(month, year);
     is_mounted = true;
     fetchData();
     fetchUserName();
@@ -46,6 +50,12 @@ class _home_appbarState extends State<home_appbar> {
     super.dispose();
   }
 
+  String getMonthYearString(int month, int year) {
+    final DateTime dateTime = DateTime(year, month);
+    final DateFormat formatter = DateFormat('MMMM yyyy');
+    return formatter.format(dateTime);
+  }
+
   Future<void> fetchUserName() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -56,10 +66,10 @@ class _home_appbarState extends State<home_appbar> {
   }
 
   Future<void> fetchData() async {
-    List<Map<String, dynamic>> income_temp =
-        await db_helper.fetch_data_by_cat(uid, isIncome: true);
-    List<Map<String, dynamic>> expense_temp =
-        await db_helper.fetch_data_by_cat(uid, isIncome: false);
+    List<Map<String, dynamic>> income_temp = await db_helper
+        .fetch_data_cat_bymonth(uid, formattedDate, isIncome: true);
+    List<Map<String, dynamic>> expense_temp = await db_helper
+        .fetch_data_cat_bymonth(uid, formattedDate, isIncome: false);
 
     if (is_mounted) {
       setState(() {
@@ -88,7 +98,6 @@ class _home_appbarState extends State<home_appbar> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
-    // var formatter = NumberFormat("#,##0", "en_US");
     var formatter =
         NumberFormat.simpleCurrency(locale: "vi_VN", decimalDigits: 0);
     String format_total = formatter.format(total_saving);
@@ -96,7 +105,7 @@ class _home_appbarState extends State<home_appbar> {
     String format_expense = formatter.format(total_expense);
     return Stack(children: [
       Container(
-          height: height * 0.28,
+          height: height * 0.3,
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
@@ -132,36 +141,70 @@ class _home_appbarState extends State<home_appbar> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(top: height * 0.02),
-                    child: const Row(
-                      children: [
-                        Text(
-                          '11/2023',
-                          style: TextStyle(
-                              color: Color.fromARGB(255, 220, 220, 220),
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700),
-                        ),
-                        Icon(
-                          Icons.arrow_drop_down,
-                          color: Color.fromARGB(255, 220, 220, 220),
-                          size: 30,
-                        )
-                      ],
-                    ),
+                    padding: const EdgeInsets.only(top: 26.0, bottom: 8),
+                    child: SizedBox(
+                        height: 50,
+                        width: width * 0.6,
+                        child: DropdownDatePicker(
+                            width: 5,
+                            selectedMonth: month,
+                            selectedYear: year,
+                            boxDecoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                borderRadius: BorderRadius.circular(10)),
+                            inputDecoration: const InputDecoration(
+                              border: InputBorder.none,
+                            ),
+                            icon: const Icon(
+                              Icons.arrow_drop_down,
+                              color: Colors.grey,
+                              size: 30,
+                            ),
+                            onChangedMonth: (newMonth) {
+                              setState(() {
+                                month = int.parse(newMonth!);
+                                formattedDate = getMonthYearString(month, year);
+                                fetchData();
+                                home_list_item.getState()!.fetch_data_list();
+                              });
+                            },
+                            onChangedYear: (newYear) {
+                              setState(() {
+                                year = int.parse(newYear!);
+                                formattedDate = getMonthYearString(month, year);
+                                fetchData();
+                                home_list_item.getState()!.fetch_data_list();
+                              });
+                            },
+                            showDay: false,
+                            yearFlex: 2,
+                            monthFlex: 3)),
                   ),
-                  Shimmer.fromColors(
-                    baseColor: Colors.white,
-                    direction: ShimmerDirection.rtl,
-                    period: const Duration(seconds: 3),
-                    highlightColor: Colors.grey,
-                    child: Text(
-                      '${format_total}',
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 32,
-                          fontWeight: FontWeight.w700),
-                    ),
+                  Row(
+                    children: [
+                      const Text(
+                        'Total: ',
+                        style: TextStyle(
+                            color: Colors.amber,
+                            fontSize: 22,
+                            fontWeight: FontWeight.w700),
+                      ),
+                      Shimmer.fromColors(
+                        baseColor: Colors.white,
+                        direction: ShimmerDirection.rtl,
+                        period: const Duration(seconds: 3),
+                        highlightColor: Colors.grey,
+                        child: Row(
+                          children: [
+                            Text(
+                              '${format_total}',
+                              style: const TextStyle(
+                                  fontSize: 30, fontWeight: FontWeight.w700),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   )
                 ],
               ),
@@ -170,7 +213,7 @@ class _home_appbarState extends State<home_appbar> {
         ],
       ),
       Padding(
-        padding: EdgeInsets.only(top: height * 0.21),
+        padding: EdgeInsets.only(top: height * 0.25),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -200,7 +243,7 @@ class _home_appbarState extends State<home_appbar> {
                           child: Text(
                             '${format_income}',
                             style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w700),
+                                fontSize: 16, fontWeight: FontWeight.w700),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),

@@ -12,7 +12,13 @@ import 'package:money_mate/widget/input/update_input.dart';
 import 'package:shimmer/shimmer.dart';
 
 class home_list_item extends StatefulWidget {
-  const home_list_item({super.key});
+  static final home_list_item_globalkey = GlobalKey<_home_list_itemState>();
+
+  static _home_list_itemState? getState() {
+    return home_list_item_globalkey.currentState;
+  }
+
+  home_list_item() : super(key: home_list_item_globalkey);
 
   @override
   State<home_list_item> createState() => _home_list_itemState();
@@ -40,7 +46,8 @@ class _home_list_itemState extends State<home_list_item> {
   }
 
   Future<void> fetch_data_list() async {
-    List<Map<String, dynamic>> temp = await db_helper.fetch_input(uid);
+    List<Map<String, dynamic>> temp =
+        await db_helper.fetch_input(uid, home_appbar.getState()!.formattedDate);
 
     if (is_mounted) {
       setState(() {
@@ -154,8 +161,8 @@ class _home_list_itemState extends State<home_list_item> {
                                   ),
                                   SlidableAction(
                                     onPressed: (context) {
-                                      _handleDelete(context,
-                                          list_item[itemIndex]['id'], uid);
+                                      _handleDelete(
+                                          context, input_item['id'], uid);
                                     },
                                     foregroundColor: Colors.red,
                                     icon: Icons.delete,
@@ -221,7 +228,7 @@ class _home_list_itemState extends State<home_list_item> {
                                                     input_item['description'],
                                                     softWrap: true,
                                                     style: const TextStyle(
-                                                        fontSize: 18,
+                                                        fontSize: 16,
                                                         fontWeight:
                                                             FontWeight.w700),
                                                   ),
@@ -246,7 +253,7 @@ class _home_list_itemState extends State<home_list_item> {
                                           Text(
                                             '${input_item['is_income'] ? '+' : '-'} ${format_money}',
                                             style: TextStyle(
-                                                fontSize: 16,
+                                                fontSize: 14,
                                                 fontWeight: FontWeight.w700,
                                                 color: input_item['is_income']
                                                     ? Colors.green

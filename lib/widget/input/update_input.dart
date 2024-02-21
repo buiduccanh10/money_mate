@@ -11,6 +11,7 @@ import 'package:money_mate/services/currency.dart';
 import 'package:money_mate/services/firestore_helper.dart';
 import 'package:money_mate/widget/category/category_manage.dart';
 import 'package:money_mate/widget/home/home_appbar.dart';
+import 'package:money_mate/widget/home/home_list_item.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
@@ -43,7 +44,8 @@ class _update_inputState extends State<update_input> {
   void initState() {
     //date_controller.selectedDate = widget.input_item['date'];
     description_controller.text = widget.input_item['description'];
-    money_controller.text = widget.input_item['money'].toString();
+    final money_update = NumberFormat("###,###,###", "vi_VN");
+    money_controller.text = money_update.format(widget.input_item['money']);
     cat_id = widget.input_item['cat_id'];
 
     is_mounted = true;
@@ -323,7 +325,6 @@ class _update_inputState extends State<update_input> {
           ),
         ),
       ]),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: AnimatedScale(
         scale: scale,
         duration: const Duration(milliseconds: 200),
@@ -403,19 +404,18 @@ class _update_inputState extends State<update_input> {
         await db_helper
             .update_input(
                 uid, id, format_date, description, money_final, cat_id)
-            .then((value) => Navigator.push(context,
-                MaterialPageRoute(builder: (BuildContext context) => Main())));
+            .then((value) => Navigator.pop(context));
       } else {
         format_date =
             DateFormat('dd/MM/yyyy').format(date_controller.selectedDate!);
         await db_helper
             .update_input(
                 uid, id, format_date, description, money_final, cat_id)
-            .then((value) => Navigator.push(context,
-                MaterialPageRoute(builder: (BuildContext context) => Main())));
+            .then((value) => Navigator.pop(context));
       }
 
-      //home_appbar.staticGlobalKey.currentState?.fetchData();
+      home_appbar.getState()!.fetchData();
+      home_list_item.getState()!.fetch_data_list();
 
       toast.showToast(
         child: Container(

@@ -9,6 +9,7 @@ import 'package:money_mate/firebase_options.dart';
 import 'package:money_mate/home.dart';
 import 'package:money_mate/input.dart';
 import 'package:money_mate/login.dart';
+import 'package:money_mate/search.dart';
 import 'package:money_mate/services/firestore_helper.dart';
 import 'package:money_mate/setting.dart';
 
@@ -17,9 +18,6 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
-  // firestore_helper db_helper = firestore_helper();
-  // db_helper.init_database();
   runApp(const MyApp());
 }
 
@@ -57,6 +55,7 @@ class _MainState extends State<Main> {
     page = [
       const Home(),
       const input(),
+      const search(),
       const chart(),
       const setting(),
     ];
@@ -71,7 +70,7 @@ class _MainState extends State<Main> {
         body: page[index],
         extendBody: extendBody,
         bottomNavigationBar: SafeArea(
-          minimum: const EdgeInsets.all(25),
+          minimum: EdgeInsets.all(width / 50),
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
@@ -107,7 +106,7 @@ class _MainState extends State<Main> {
                   colors: [Colors.orange, Colors.blue],
                 ),
                 padding: const EdgeInsets.all(20),
-                gap: width * 0.02,
+                gap: width * 0.01,
                 activeColor: Colors.white,
                 tabBorderRadius: 20,
                 curve: Curves.easeInToLinear,
@@ -123,6 +122,11 @@ class _MainState extends State<Main> {
                   ),
                   GButton(
                     icon: Icons.mode_edit_outline_rounded,
+                    text: 'Input',
+                    iconColor: Colors.black87,
+                  ),
+                  GButton(
+                    icon: Icons.search_outlined,
                     text: 'Input',
                     iconColor: Colors.black87,
                   ),

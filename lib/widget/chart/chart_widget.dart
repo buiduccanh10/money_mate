@@ -1,4 +1,5 @@
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
+import 'package:datepicker_dropdown/datepicker_dropdown.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,9 +23,7 @@ class _chart_widgetState extends State<chart_widget> {
   List<Map<String, dynamic>> expense_categories = [];
   List<Map<String, dynamic>> income_categories = [];
   late TooltipBehavior tooltipBehavior;
-  DateTime now = DateTime.now();
-  String? month_format_date;
-  String? year_format_date;
+  String month_year_formated = '';
   bool? is_income;
   bool is_loading = true;
   bool is_mounted = false;
@@ -32,16 +31,25 @@ class _chart_widgetState extends State<chart_widget> {
   double total_expense = 0;
   double total_saving = 0;
   final uid = FirebaseAuth.instance.currentUser!.uid;
+  var month = DateTime.now().month;
+  var year = DateTime.now().year;
 
   @override
   void initState() {
     is_income = true;
     is_mounted = true;
-    month_format_date = DateFormat('MMMM yyyy').format(now);
-    year_format_date = DateFormat('yyyy').format(now);
+    month_year_formated = getMonthYearString(month, year);
     tooltipBehavior = TooltipBehavior(enable: true);
-    fetchData();
+    is_month();
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(chart_widget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.is_monthly != widget.is_monthly) {
+      is_month();
+    }
   }
 
   @override
@@ -50,11 +58,41 @@ class _chart_widgetState extends State<chart_widget> {
     super.dispose();
   }
 
-  Future<void> fetchData() async {
-    List<Map<String, dynamic>> income_temp =
-        await db_helper.fetch_data_by_cat(uid, isIncome: true);
-    List<Map<String, dynamic>> expense_temp =
-        await db_helper.fetch_data_by_cat(uid, isIncome: false);
+  String getMonthYearString(int month, int year) {
+    final DateTime dateTime = DateTime(year, month);
+    final DateFormat formatter = DateFormat('MMMM yyyy');
+    return formatter.format(dateTime);
+  }
+
+  void is_month() {
+    if (widget.is_monthly) {
+      fecth_data_bymonth();
+    } else {
+      fecth_data_byyear();
+    }
+  }
+
+  Future<void> fecth_data_bymonth() async {
+    List<Map<String, dynamic>> income_temp = await db_helper
+        .fetch_data_cat_bymonth(uid, month_year_formated, isIncome: true);
+    List<Map<String, dynamic>> expense_temp = await db_helper
+        .fetch_data_cat_bymonth(uid, month_year_formated, isIncome: false);
+
+    if (is_mounted) {
+      setState(() {
+        income_categories = income_temp;
+        expense_categories = expense_temp;
+        calculateTotals();
+        is_loading = false;
+      });
+    }
+  }
+
+  Future<void> fecth_data_byyear() async {
+    List<Map<String, dynamic>> income_temp = await db_helper
+        .fetch_data_cat_byyear(uid, year.toString(), isIncome: true);
+    List<Map<String, dynamic>> expense_temp = await db_helper
+        .fetch_data_cat_byyear(uid, year.toString(), isIncome: false);
 
     if (is_mounted) {
       setState(() {
@@ -106,27 +144,66 @@ class _chart_widgetState extends State<chart_widget> {
                             decoration: BoxDecoration(
                                 border: Border.all(color: Colors.amber),
                                 borderRadius: BorderRadius.circular(10)),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: InkWell(
-                                borderRadius: BorderRadius.circular(5),
-                                onTap: () => showCupertinoModalPopup(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return show_month_year_dialog(
-                                          widget.is_monthly);
-                                    }),
-                                child: Text(
-                                  widget.is_monthly
-                                      ? '$month_format_date'
-                                      : '$year_format_date',
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                              ),
-                            ),
+                            child: widget.is_monthly
+                                ? SizedBox(
+                                    height: 50,
+                                    child: DropdownDatePicker(
+                                        width: 5,
+                                        selectedMonth: month,
+                                        selectedYear: year,
+                                        inputDecoration: const InputDecoration(
+                                          border: InputBorder.none,
+                                        ),
+                                        icon: const Icon(
+                                          Icons.arrow_drop_down,
+                                          color: Colors.grey,
+                                          size: 30,
+                                        ),
+                                        onChangedMonth: (newMonth) {
+                                          setState(() {
+                                            month = int.parse(newMonth!);
+                                            month_year_formated =
+                                                getMonthYearString(month, year);
+                                            fecth_data_bymonth();
+                                          });
+                                        },
+                                        onChangedYear: (newYear) {
+                                          setState(() {
+                                            year = int.parse(newYear!);
+                                            month_year_formated =
+                                                getMonthYearString(month, year);
+                                            fecth_data_bymonth();
+                                          });
+                                        },
+                                        showDay: false,
+                                        yearFlex: 2,
+                                        monthFlex: 3))
+                                : SizedBox(
+                                    height: 50,
+                                    child: DropdownDatePicker(
+                                      width: width * 0.15,
+                                      selectedYear: year,
+                                      boxDecoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      inputDecoration: const InputDecoration(
+                                        border: InputBorder.none,
+                                      ),
+                                      icon: const Icon(
+                                        Icons.arrow_drop_down,
+                                        color: Colors.grey,
+                                        size: 30,
+                                      ),
+                                      onChangedYear: (newYear) {
+                                        setState(() {
+                                          year = int.parse(newYear!);
+                                          fecth_data_byyear();
+                                        });
+                                      },
+                                      showDay: false,
+                                      showMonth: false,
+                                    )),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 8, bottom: 8),
@@ -363,6 +440,9 @@ class _chart_widgetState extends State<chart_widget> {
                                     : expense_categories[index]
                                         as Map<String, dynamic>;
 
+                                String money_format =
+                                    formatter.format(cat_item['money']);
+
                                 return InkWell(
                                   onTap: () {},
                                   child: Container(
@@ -400,16 +480,12 @@ class _chart_widgetState extends State<chart_widget> {
                                           ),
                                           Row(
                                             children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    right: 20.0),
-                                                child: Text(
-                                                  '${is_income! ? '+' : '-'} ${cat_item['money']} đ',
-                                                  style: const TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w400),
-                                                ),
+                                              Text(
+                                                '${is_income! ? '+' : '-'} ${money_format}',
+                                                style: const TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.w400),
                                               ),
                                               const Icon(Icons.navigate_next)
                                             ],
@@ -428,71 +504,6 @@ class _chart_widgetState extends State<chart_widget> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget show_month_year_dialog(bool is_monthly) {
-    return Container(
-      height: 250,
-      color: Colors.white,
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text(
-                    'Cancel',
-                    style: TextStyle(color: Colors.red),
-                  )),
-              TextButton(
-                  onPressed: () {
-                    setState(() {
-                      if (is_monthly) {
-                        month_format_date = DateFormat('MMMM yyyy').format(now);
-                      }
-                    });
-                    Navigator.pop(context);
-                  },
-                  child:
-                      const Text('OK', style: TextStyle(color: Colors.green)))
-            ],
-          ),
-          SizedBox(
-            height: 200,
-            child: is_monthly
-                ? CupertinoDatePicker(
-                    initialDateTime: now,
-                    mode: CupertinoDatePickerMode.monthYear,
-                    onDateTimeChanged: (DateTime datetime) {
-                      now = datetime;
-                    })
-                : BottomSheet(
-                    onClosing: () {},
-                    builder: (BuildContext context) {
-                      return Material(
-                        color: Colors.white,
-                        child: YearPicker(
-                          firstDate: DateTime(1),
-                          lastDate: DateTime(9999),
-                          selectedDate: now,
-                          onChanged: (DateTime datetime) {
-                            setState(() {
-                              now = datetime;
-                              year_format_date = DateFormat('yyyy').format(now);
-                            });
-                            Navigator.pop(context);
-                          },
-                        ),
-                      );
-                    },
-                  ),
-          ),
-        ],
       ),
     );
   }
