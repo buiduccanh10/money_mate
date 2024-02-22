@@ -5,8 +5,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:money_mate/services/firestore_helper.dart';
+import 'package:money_mate/widget/chart/chart_item_detail.dart';
 import 'package:shimmer/shimmer.dart';
-
+import 'package:collection/collection.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
@@ -80,8 +81,31 @@ class _chart_widgetState extends State<chart_widget> {
 
     if (is_mounted) {
       setState(() {
-        income_categories = income_temp;
-        expense_categories = expense_temp;
+        income_categories = groupBy(income_temp, (item) => '${item['cat_id']}')
+            .values
+            .map((items) => {
+                  'icon': items.first['icon'],
+                  'name': items.first['name'],
+                  'is_income': true,
+                  'cat_id': items.first['cat_id'],
+                  'money': items
+                      .map<double>((item) => item['money'])
+                      .fold<double>(0, (prev, amount) => prev + amount),
+                })
+            .toList();
+        expense_categories =
+            groupBy(expense_temp, (item) => '${item['cat_id']}')
+                .values
+                .map((items) => {
+                      'icon': items.first['icon'],
+                      'name': items.first['name'],
+                      'is_income': true,
+                      'cat_id': items.first['cat_id'],
+                      'money': items
+                          .map<double>((item) => item['money'])
+                          .fold<double>(0, (prev, amount) => prev + amount),
+                    })
+                .toList();
         calculateTotals();
         is_loading = false;
       });
@@ -91,13 +115,37 @@ class _chart_widgetState extends State<chart_widget> {
   Future<void> fecth_data_byyear() async {
     List<Map<String, dynamic>> income_temp = await db_helper
         .fetch_data_cat_byyear(uid, year.toString(), isIncome: true);
+
     List<Map<String, dynamic>> expense_temp = await db_helper
         .fetch_data_cat_byyear(uid, year.toString(), isIncome: false);
 
     if (is_mounted) {
       setState(() {
-        income_categories = income_temp;
-        expense_categories = expense_temp;
+        income_categories = groupBy(income_temp, (item) => '${item['cat_id']}')
+            .values
+            .map((items) => {
+                  'icon': items.first['icon'],
+                  'name': items.first['name'],
+                  'is_income': true,
+                  'cat_id': items.first['cat_id'],
+                  'money': items
+                      .map<double>((item) => item['money'])
+                      .fold<double>(0, (prev, amount) => prev + amount),
+                })
+            .toList();
+        expense_categories =
+            groupBy(expense_temp, (item) => '${item['cat_id']}')
+                .values
+                .map((items) => {
+                      'icon': items.first['icon'],
+                      'name': items.first['name'],
+                      'is_income': true,
+                      'cat_id': items.first['cat_id'],
+                      'money': items
+                          .map<double>((item) => item['money'])
+                          .fold<double>(0, (prev, amount) => prev + amount),
+                    })
+                .toList();
         calculateTotals();
         is_loading = false;
       });
@@ -143,13 +191,17 @@ class _chart_widgetState extends State<chart_widget> {
                             decoration: BoxDecoration(
                                 border: Border.all(color: Colors.amber),
                                 borderRadius: BorderRadius.circular(10)),
-                            child: widget.is_monthly
-                                ? SizedBox(
-                                    height: 50,
-                                    child: DropdownDatePicker(
-                                        width: 5,
+                            child: SizedBox(
+                                height: 50,
+                                child: widget.is_monthly
+                                    ? DropdownDatePicker(
+                                        width: 0,
                                         selectedMonth: month,
                                         selectedYear: year,
+                                        boxDecoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            color: Colors.white),
                                         inputDecoration: const InputDecoration(
                                           border: InputBorder.none,
                                         ),
@@ -176,71 +228,72 @@ class _chart_widgetState extends State<chart_widget> {
                                         },
                                         showDay: false,
                                         yearFlex: 2,
-                                        monthFlex: 3))
-                                : SizedBox(
-                                    height: 50,
-                                    child: DropdownDatePicker(
-                                      width: width * 0.15,
-                                      selectedYear: year,
-                                      boxDecoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(10)),
-                                      inputDecoration: const InputDecoration(
-                                        border: InputBorder.none,
-                                      ),
-                                      icon: const Icon(
-                                        Icons.arrow_drop_down,
-                                        color: Colors.grey,
-                                        size: 30,
-                                      ),
-                                      onChangedYear: (newYear) {
-                                        setState(() {
-                                          year = int.parse(newYear!);
-                                          fecth_data_byyear();
-                                        });
-                                      },
-                                      showDay: false,
-                                      showMonth: false,
-                                    )),
+                                        monthFlex: 3)
+                                    : Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 80.0),
+                                        child: DropdownDatePicker(
+                                          width: 80,
+                                          selectedYear: year,
+                                          boxDecoration: const BoxDecoration(
+                                            color: Colors.white,
+                                          ),
+                                          inputDecoration:
+                                              const InputDecoration(
+                                            border: InputBorder.none,
+                                          ),
+                                          icon: const Icon(
+                                            Icons.arrow_drop_down,
+                                            color: Colors.grey,
+                                            size: 30,
+                                          ),
+                                          onChangedYear: (newYear) {
+                                            setState(() {
+                                              year = int.parse(newYear!);
+                                              fecth_data_byyear();
+                                            });
+                                          },
+                                          showDay: false,
+                                          showMonth: false,
+                                        ),
+                                      )),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 8, bottom: 8),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Padding(
-                                  padding: EdgeInsets.only(right: width * 0.02),
-                                  child: Container(
-                                    width: width * 0.47,
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.amber),
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const Text(
-                                          'Income: ',
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                        Text(
-                                          '+$format_income',
-                                          style: const TextStyle(
-                                              color: Colors.green,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600),
-                                        )
-                                      ],
-                                    ),
+                                Container(
+                                  width: width * 0.48,
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.amber),
+                                      borderRadius: BorderRadius.circular(10)),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Text(
+                                        'Income: ',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      Text(
+                                        '+$format_income',
+                                        style: const TextStyle(
+                                            color: Colors.green,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600),
+                                      )
+                                    ],
                                   ),
                                 ),
+                                const SizedBox(
+                                  width: 1,
+                                ),
                                 Container(
-                                  width: width * 0.47,
+                                  width: width * 0.48,
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
                                       border: Border.all(color: Colors.amber),
@@ -367,136 +420,146 @@ class _chart_widgetState extends State<chart_widget> {
                             : SfCircularChart(
                                 tooltipBehavior: tooltipBehavior,
                                 series: <CircularSeries>[
-                                  is_income!
-                                      ? DoughnutSeries<Map<String, dynamic>,
-                                          String>(
-                                          dataSource: income_categories,
-                                          xValueMapper: (datum, _) =>
-                                              datum['name'],
-                                          yValueMapper: (datum, _) =>
-                                              (datum['money']),
-                                          dataLabelMapper: (datum, _) =>
-                                              datum['name'],
-                                          dataLabelSettings:
-                                              const DataLabelSettings(
-                                                  isVisible: true),
-                                          enableTooltip: true,
-                                          animationDuration: 1200,
-                                          explode: true,
-                                        )
-                                      : DoughnutSeries<Map<String, dynamic>,
-                                          String>(
-                                          dataSource: expense_categories,
-                                          xValueMapper: (datum, _) =>
-                                              datum['name'],
-                                          yValueMapper: (datum, _) =>
-                                              (datum['money']),
-                                          dataLabelMapper: (datum, _) =>
-                                              datum['name'],
-                                          dataLabelSettings:
-                                              const DataLabelSettings(
-                                                  isVisible: true),
-                                          enableTooltip: true,
-                                          animationDuration: 1200,
-                                          explode: true,
-                                        ),
+                                  DoughnutSeries<Map<String, dynamic>, String>(
+                                    dataSource: is_income!
+                                        ? income_categories
+                                        : expense_categories,
+                                    xValueMapper: (datum, _) => datum['name'],
+                                    yValueMapper: (datum, _) => datum['money'],
+                                    dataLabelMapper: (datum, _) =>
+                                        datum['name'],
+                                    dataLabelSettings: const DataLabelSettings(
+                                        isVisible: true),
+                                    enableTooltip: true,
+                                    animationDuration: 1000,
+                                    explode: true,
+                                  )
                                 ],
                               ),
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 430),
-                      child: is_loading
-                          ? ListView.builder(
-                              padding: const EdgeInsets.all(8),
-                              shrinkWrap: true,
-                              itemCount: 5,
-                              itemBuilder: (BuildContext context, int index) {
-                                return Shimmer.fromColors(
-                                  baseColor: Colors.grey[300]!,
-                                  highlightColor: Colors.grey[100]!,
-                                  child: Container(
-                                    margin: const EdgeInsets.symmetric(
-                                        vertical: 7.0),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(5.0),
+                        padding: const EdgeInsets.only(top: 430),
+                        child: is_loading
+                            ? ListView.builder(
+                                padding: const EdgeInsets.all(8),
+                                shrinkWrap: true,
+                                itemCount: 5,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return Shimmer.fromColors(
+                                    baseColor: Colors.grey[300]!,
+                                    highlightColor: Colors.grey[100]!,
+                                    child: Container(
+                                      margin: const EdgeInsets.symmetric(
+                                          vertical: 7.0),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius:
+                                            BorderRadius.circular(5.0),
+                                      ),
+                                      height: 50.0,
                                     ),
-                                    height: 50.0,
-                                  ),
-                                );
-                              },
-                            )
-                          : ListView.builder(
-                              shrinkWrap: true,
-                              padding: const EdgeInsets.all(8),
-                              itemCount: is_income!
-                                  ? income_categories.length
-                                  : expense_categories.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                final cat_item = is_income!
-                                    ? income_categories[index]
-                                    : expense_categories[index]
-                                        as Map<String, dynamic>;
+                                  );
+                                },
+                              )
+                            : ListView.builder(
+                                shrinkWrap: true,
+                                padding: const EdgeInsets.all(8),
+                                itemCount: (is_income!
+                                        ? income_categories
+                                        : expense_categories)
+                                    .length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  final cat_item = is_income!
+                                      ? income_categories[index]
+                                      : expense_categories[index];
 
-                                String money_format =
-                                    formatter.format(cat_item['money']);
+                                  String money_format =
+                                      formatter.format(cat_item['money']);
 
-                                return InkWell(
-                                  onTap: () {},
-                                  child: Container(
-                                    decoration: const BoxDecoration(
-                                      border: Border(
+                                  return InkWell(
+                                    onTap: () {
+                                      Future<void> fecth_input_group() async {
+                                        List<Map<String, dynamic>> data = widget
+                                                .is_monthly
+                                            ? await db_helper
+                                                .fetch_input_month_by_cat_id(
+                                                    uid,
+                                                    month_year_formated,
+                                                    cat_item['cat_id'],
+                                                    isIncome: is_income!)
+                                            : await db_helper
+                                                .fetch_input_year_by_cat_id(
+                                                    uid,
+                                                    year.toString(),
+                                                    cat_item['cat_id'],
+                                                    isIncome: is_income!);
+
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: ((context) =>
+                                                    chart_item_detail(
+                                                        data: data,
+                                                        is_monthly: widget
+                                                            .is_monthly))));
+                                      }
+
+                                      fecth_input_group();
+                                    },
+                                    child: Container(
+                                      decoration: const BoxDecoration(
+                                        border: Border(
                                           bottom: BorderSide(
-                                              color: Colors.black, width: 0)),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 15.0,
-                                          right: 15,
-                                          top: 8,
-                                          bottom: 8),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Text(
-                                                cat_item['icon'],
-                                                style: const TextStyle(
-                                                    fontSize: 28),
-                                              ),
-                                              const SizedBox(
-                                                width: 20,
-                                              ),
-                                              Text(
-                                                cat_item['name'],
-                                                style: const TextStyle(
-                                                    fontSize: 18),
-                                              ),
-                                            ],
-                                          ),
-                                          Row(
-                                            children: [
-                                              Text(
-                                                '${is_income! ? '+' : '-'} ${money_format}',
-                                                style: const TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight:
-                                                        FontWeight.w400),
-                                              ),
-                                              const Icon(Icons.navigate_next)
-                                            ],
-                                          )
-                                        ],
+                                              color: Colors.black, width: 0),
+                                        ),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 15.0,
+                                            right: 15,
+                                            top: 8,
+                                            bottom: 8),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  cat_item['icon'],
+                                                  style: const TextStyle(
+                                                      fontSize: 28),
+                                                ),
+                                                const SizedBox(
+                                                  width: 20,
+                                                ),
+                                                Text(
+                                                  cat_item['name'],
+                                                  style: const TextStyle(
+                                                      fontSize: 18),
+                                                ),
+                                              ],
+                                            ),
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  '${is_income! ? '+' : '-'} $money_format',
+                                                  style: const TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w400),
+                                                ),
+                                                const Icon(Icons.navigate_next)
+                                              ],
+                                            )
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                );
-                              },
-                            ),
-                    ),
+                                  );
+                                },
+                              )),
                   ],
                 ),
               )

@@ -165,7 +165,7 @@ class _category_manageState extends State<category_manage> {
                       itemBuilder: (BuildContext context, int index) {
                         final cat_item = widget.is_income
                             ? income_categories[index]
-                            : expense_categories[index] as Map<String, dynamic>;
+                            : expense_categories[index];
 
                         return Slidable(
                           closeOnScroll: true,

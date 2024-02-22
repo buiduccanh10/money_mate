@@ -119,6 +119,102 @@ class firestore_helper {
     }
   }
 
+  Future<List<Map<String, dynamic>>> fetch_input_month_by_cat_id(
+      String uid, String monthYear, String cat_id,
+      {required bool isIncome}) async {
+    try {
+      final DateTime date = DateFormat('MMMM yyyy').parse(monthYear);
+      final int month = date.month;
+      final int year = date.year;
+
+      List<Map<String, dynamic>> inputData = [];
+
+      QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+          .instance
+          .collection('users')
+          .doc(uid)
+          .collection('category')
+          .where('is_income', isEqualTo: isIncome)
+          .where('cat_id', isEqualTo: cat_id)
+          .get();
+
+      for (var catDoc in snapshot.docs) {
+        QuerySnapshot<Map<String, dynamic>> inputSnapshot =
+            await FirebaseFirestore.instance
+                .collection('users')
+                .doc(uid)
+                .collection('input')
+                .where('cat_id', isEqualTo: cat_id)
+                .get();
+
+        for (var inputDoc in inputSnapshot.docs) {
+          DateTime inputDate =
+              DateFormat('dd/MM/yyyy').parse(inputDoc.data()['date']);
+          if (inputDate.month == month && inputDate.year == year) {
+            Map<String, dynamic> inputDataWithIcon = {
+              'icon': catDoc.data()['icon'],
+              'name': catDoc.data()['name'],
+              'is_income': catDoc.data()['is_income'],
+              ...inputDoc.data(),
+            };
+            inputData.add(inputDataWithIcon);
+          }
+        }
+      }
+
+      return inputData;
+    } catch (error) {
+      return [];
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> fetch_input_year_by_cat_id(
+      String uid, String year, String cat_id,
+      {required bool isIncome}) async {
+    try {
+      final int parsedYear = int.parse(year);
+
+      List<Map<String, dynamic>> inputData = [];
+
+      QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+          .instance
+          .collection('users')
+          .doc(uid)
+          .collection('category')
+          .where('is_income', isEqualTo: isIncome)
+          .where('cat_id', isEqualTo: cat_id)
+          .get();
+
+      for (var catDoc in snapshot.docs) {
+        QuerySnapshot<Map<String, dynamic>> inputSnapshot =
+            await FirebaseFirestore.instance
+                .collection('users')
+                .doc(uid)
+                .collection('input')
+                .where('cat_id', isEqualTo: cat_id)
+                .get();
+
+        for (var inputDoc in inputSnapshot.docs) {
+          DateTime inputDate =
+              DateFormat('dd/MM/yyyy').parse(inputDoc.data()['date']);
+          if (inputDate.year == parsedYear) {
+            Map<String, dynamic> inputDataWithIcon = {
+              'icon': catDoc.data()['icon'],
+              'name': catDoc.data()['name'],
+              'is_income': catDoc.data()['is_income'],
+              ...inputDoc.data(),
+            };
+            inputData.add(inputDataWithIcon);
+          }
+        }
+      }
+
+      return inputData;
+    } catch (error) {
+      return [];
+    }
+  }
+
   Future<List<Map<String, dynamic>>> fetch_data_cat_bymonth(
       String uid, String monthYear,
       {required bool isIncome}) async {

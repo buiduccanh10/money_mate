@@ -226,7 +226,7 @@ class _input_contentState extends State<input_content> {
                     bool is_selected = index == selectedIndex;
                     final cat_item = widget.is_income
                         ? income_categories[index]
-                        : expense_categories[index] as Map<String, dynamic>;
+                        : expense_categories[index];
                     return InkWell(
                       borderRadius: BorderRadius.circular(10),
                       onTap: () {

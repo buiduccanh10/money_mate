@@ -105,7 +105,7 @@ class _home_appbarState extends State<home_appbar> {
     String format_expense = formatter.format(total_expense);
     return Stack(children: [
       Container(
-          height: height * 0.3,
+          height: 280,
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
@@ -213,7 +213,7 @@ class _home_appbarState extends State<home_appbar> {
         ],
       ),
       Padding(
-        padding: EdgeInsets.only(top: height * 0.25),
+        padding: const EdgeInsets.only(top: 235),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
