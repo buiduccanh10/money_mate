@@ -13,7 +13,14 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class chart_widget extends StatefulWidget {
   bool is_monthly;
-  chart_widget({super.key, required this.is_monthly});
+  static final chart_widget_globalkey = GlobalKey<_chart_widgetState>();
+
+  static _chart_widgetState? getState() {
+    return chart_widget_globalkey.currentState;
+  }
+
+  chart_widget({required this.is_monthly})
+      : super(key: chart_widget.chart_widget_globalkey);
 
   @override
   State<chart_widget> createState() => _chart_widgetState();
@@ -479,33 +486,19 @@ class _chart_widgetState extends State<chart_widget> {
 
                                   return InkWell(
                                     onTap: () {
-                                      Future<void> fecth_input_group() async {
-                                        List<Map<String, dynamic>> data = widget
-                                                .is_monthly
-                                            ? await db_helper
-                                                .fetch_input_month_by_cat_id(
-                                                    uid,
-                                                    month_year_formated,
-                                                    cat_item['cat_id'],
-                                                    isIncome: is_income!)
-                                            : await db_helper
-                                                .fetch_input_year_by_cat_id(
-                                                    uid,
-                                                    year.toString(),
-                                                    cat_item['cat_id'],
-                                                    isIncome: is_income!);
-
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: ((context) =>
-                                                    chart_item_detail(
-                                                        data: data,
-                                                        is_monthly: widget
-                                                            .is_monthly))));
+                                      if (widget.is_monthly) {
+                                        details_cat_item(
+                                            cat_item['cat_id'],
+                                            month_year_formated,
+                                            is_income!,
+                                            widget.is_monthly);
+                                      } else {
+                                        details_cat_item(
+                                            cat_item['cat_id'],
+                                            year.toString(),
+                                            is_income!,
+                                            widget.is_monthly);
                                       }
-
-                                      fecth_input_group();
                                     },
                                     child: Container(
                                       decoration: const BoxDecoration(
@@ -565,6 +558,21 @@ class _chart_widgetState extends State<chart_widget> {
               )
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> details_cat_item(
+      String cat_id, String date, bool is_income, bool is_monthly) async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => chart_item_detail(
+          cat_id: cat_id,
+          date: date,
+          is_income: is_income,
+          is_monthly: is_monthly,
         ),
       ),
     );

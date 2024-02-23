@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:money_mate/widget/chart/chart.dart';
+import 'package:money_mate/widget/chart/chart_item_detail.dart';
+import 'package:money_mate/widget/chart/chart_widget.dart';
 import 'package:money_mate/widget/home/home.dart';
 import 'package:money_mate/main.dart';
 import 'package:money_mate/services/currency.dart';
@@ -414,15 +417,20 @@ class _update_inputState extends State<update_input> {
             .then((value) => Navigator.pop(context));
       }
 
-      home_appbar.getState()!.fetchData();
-      home_list_item.getState()!.fetch_data_list();
+      if (home_appbar.getState() != null && home_list_item.getState() != null) {
+        home_appbar.getState()!.fetchData();
+        home_list_item.getState()!.fetch_data_list();
+      } else {
+        chart_widget.getState()!.is_month();
+        chart_item_detail.getState()!.fetchData();
+      }
 
       toast.showToast(
         child: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10.0),
-            color: Colors.greenAccent,
+            color: Colors.green,
           ),
           child: const Row(
             mainAxisSize: MainAxisSize.min,
@@ -437,19 +445,20 @@ class _update_inputState extends State<update_input> {
         toastDuration: const Duration(seconds: 2),
       );
     } catch (err) {
+      print(err);
       toast.showToast(
         child: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10.0),
-            color: Colors.redAccent,
+            color: Colors.red,
           ),
           child: const Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Icon(Icons.do_disturb),
-              Text("Create fail!"),
+              Text("Update fail!"),
             ],
           ),
         ),
