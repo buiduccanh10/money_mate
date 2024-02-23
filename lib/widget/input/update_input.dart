@@ -192,10 +192,8 @@ class _update_inputState extends State<update_input> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => category_manage(
-                                  is_income: widget.input_item['is_income'],
-                                  cat_reload_callback: () {
-                                    fetchData();
-                                  })),
+                                    is_income: widget.input_item['is_income'],
+                                  )),
                         );
                       },
                       child: const Text('More...'))

@@ -14,7 +14,14 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class input_content extends StatefulWidget {
   bool is_income;
-  input_content({super.key, required this.is_income});
+  static final input_content_globalkey = GlobalKey<_input_contentState>();
+
+  static _input_contentState? getState() {
+    return input_content_globalkey.currentState;
+  }
+
+  input_content({required this.is_income})
+      : super(key: input_content.input_content_globalkey);
 
   @override
   State<input_content> createState() => _input_contentState();
@@ -172,10 +179,8 @@ class _input_contentState extends State<input_content> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => category_manage(
-                                is_income: widget.is_income,
-                                cat_reload_callback: () {
-                                  fetchData();
-                                })),
+                                  is_income: widget.is_income,
+                                )),
                       );
                     },
                     child: const Text('More...'))

@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:money_mate/widget/accounts/login.dart';
+import 'package:money_mate/widget/setting/privacy_setting.dart';
 
 class setting_content extends StatefulWidget {
   const setting_content({super.key});
@@ -204,7 +205,13 @@ class _setting_contentState extends State<setting_content> {
                     borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(10),
                         bottomRight: Radius.circular(10)),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  const privacy_setting()));
+                    },
                     child: const Padding(
                       padding: EdgeInsets.all(8.0),
                       child: Row(
@@ -387,16 +394,14 @@ class _setting_contentState extends State<setting_content> {
         actions: <CupertinoActionSheetAction>[
           CupertinoActionSheetAction(
             onPressed: () async {
-              try {
-                await FirebaseAuth.instance
-                    .signOut()
-                    .then((value) => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  const login()), // Assuming Login is your login screen
-                        ));
-              } catch (e) {}
+              await FirebaseAuth.instance
+                  .signOut()
+                  .then((value) => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                const login()), // Assuming Login is your login screen
+                      ));
             },
             child: const Text('Log out'),
           ),

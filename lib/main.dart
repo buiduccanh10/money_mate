@@ -82,7 +82,7 @@ class _MainState extends State<Main> {
                   offset: const Offset(0, 7),
                 ),
               ],
-              color: const Color.fromARGB(255, 181, 181, 181),
+              color: Color.fromARGB(255, 216, 216, 216),
             ),
             child: GNav(
                 selectedIndex: index,

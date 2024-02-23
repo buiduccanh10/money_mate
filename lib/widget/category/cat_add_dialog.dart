@@ -6,14 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:money_mate/widget/category/category_manage.dart';
 import 'package:money_mate/services/firestore_helper.dart';
+import 'package:money_mate/widget/input/input_content.dart';
 
 typedef void cat_callback();
 
 class cat_add_dialog extends StatefulWidget {
   bool is_income;
-  final cat_callback cat_reload_callback;
-  cat_add_dialog(
-      {super.key, required this.is_income, required this.cat_reload_callback});
+  cat_add_dialog({super.key, required this.is_income});
 
   @override
   State<cat_add_dialog> createState() => _cat_add_dialogState();
@@ -194,8 +193,13 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
 
   Future<void> add_category(String icon, String name, bool is_income) async {
     try {
-      await db_helper.add_category(uid,icon, name, is_income);
-      widget.cat_reload_callback();
+      await db_helper.add_category(uid, icon, name, is_income);
+
+      if (category_manage.getState() != null &&
+          input_content.getState() != null) {
+        category_manage.getState()!.fetchData();
+        input_content.getState()!.fetchData();
+      }
 
       toast.showToast(
         child: Container(

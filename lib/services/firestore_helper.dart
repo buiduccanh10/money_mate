@@ -49,268 +49,244 @@ class firestore_helper {
 
   Future<List<Map<String, dynamic>>> fetch_categories(
       String uid, bool is_income) async {
-    try {
-      List<Map<String, dynamic>> categories = [];
+    List<Map<String, dynamic>> categories = [];
 
-      QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
-          .instance
-          .collection("users")
-          .doc(uid)
-          .collection('category')
-          .where('is_income', isEqualTo: is_income)
-          .get();
+    QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+        .instance
+        .collection("users")
+        .doc(uid)
+        .collection('category')
+        .where('is_income', isEqualTo: is_income)
+        .get();
 
-      for (var doc in snapshot.docs) {
-        categories.add(doc.data());
-      }
-
-      return categories;
-    } catch (error) {
-      return [];
+    for (var doc in snapshot.docs) {
+      categories.add(doc.data());
     }
+
+    return categories;
   }
 
   Future<List<Map<String, dynamic>>> fetch_input(
       String uid, String monthYear) async {
-    try {
-      final DateTime date = DateFormat('MMMM yyyy').parse(monthYear);
-      final int month = date.month;
-      final int year = date.year;
+    final DateTime date = DateFormat('MMMM yyyy').parse(monthYear);
+    final int month = date.month;
+    final int year = date.year;
 
-      List<Map<String, dynamic>> inputData = [];
+    List<Map<String, dynamic>> inputData = [];
 
-      QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
-          .instance
-          .collection('users')
-          .doc(uid)
-          .collection('input')
-          .orderBy('money', descending: true)
-          .get();
+    QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+        .instance
+        .collection('users')
+        .doc(uid)
+        .collection('input')
+        .orderBy('money', descending: true)
+        .get();
 
-      for (var inputDoc in snapshot.docs) {
-        String catId = inputDoc.data()['cat_id'];
+    for (var inputDoc in snapshot.docs) {
+      String catId = inputDoc.data()['cat_id'];
 
-        DocumentSnapshot<Map<String, dynamic>> cat_snapshot =
-            await FirebaseFirestore.instance
-                .collection('users')
-                .doc(uid)
-                .collection('category')
-                .doc(catId)
-                .get();
-        DateTime inputDate =
-            DateFormat('dd/MM/yyyy').parse(inputDoc.data()['date']);
+      DocumentSnapshot<Map<String, dynamic>> cat_snapshot =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(uid)
+              .collection('category')
+              .doc(catId)
+              .get();
+      DateTime inputDate =
+          DateFormat('dd/MM/yyyy').parse(inputDoc.data()['date']);
 
-        if (cat_snapshot.exists) {
-          if (inputDate.month == month && inputDate.year == year) {
-            Map<String, dynamic> inputDataWithIcon = {
-              'icon': cat_snapshot.data()!['icon'],
-              'name': cat_snapshot.data()!['name'],
-              'is_income': cat_snapshot.data()!['is_income'],
-              ...inputDoc.data(),
-            };
-            inputData.add(inputDataWithIcon);
-          }
+      if (cat_snapshot.exists) {
+        if (inputDate.month == month && inputDate.year == year) {
+          Map<String, dynamic> inputDataWithIcon = {
+            'icon': cat_snapshot.data()!['icon'],
+            'name': cat_snapshot.data()!['name'],
+            'is_income': cat_snapshot.data()!['is_income'],
+            ...inputDoc.data(),
+          };
+          inputData.add(inputDataWithIcon);
         }
       }
-
-      return inputData;
-    } catch (error) {
-      return [];
     }
+
+    return inputData;
   }
 
   Future<List<Map<String, dynamic>>> fetch_input_month_by_cat_id(
       String uid, String monthYear, String cat_id,
       {required bool isIncome}) async {
-    try {
-      final DateTime date = DateFormat('MMMM yyyy').parse(monthYear);
-      final int month = date.month;
-      final int year = date.year;
+    final DateTime date = DateFormat('MMMM yyyy').parse(monthYear);
+    final int month = date.month;
+    final int year = date.year;
 
-      List<Map<String, dynamic>> inputData = [];
+    List<Map<String, dynamic>> inputData = [];
 
-      QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
-          .instance
-          .collection('users')
-          .doc(uid)
-          .collection('category')
-          .where('is_income', isEqualTo: isIncome)
-          .where('cat_id', isEqualTo: cat_id)
-          .get();
+    QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+        .instance
+        .collection('users')
+        .doc(uid)
+        .collection('category')
+        .where('is_income', isEqualTo: isIncome)
+        .where('cat_id', isEqualTo: cat_id)
+        .get();
 
-      for (var catDoc in snapshot.docs) {
-        QuerySnapshot<Map<String, dynamic>> inputSnapshot =
-            await FirebaseFirestore.instance
-                .collection('users')
-                .doc(uid)
-                .collection('input')
-                .where('cat_id', isEqualTo: cat_id)
-                .get();
+    for (var catDoc in snapshot.docs) {
+      QuerySnapshot<Map<String, dynamic>> inputSnapshot =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(uid)
+              .collection('input')
+              .where('cat_id', isEqualTo: cat_id)
+              .get();
 
-        for (var inputDoc in inputSnapshot.docs) {
-          DateTime inputDate =
-              DateFormat('dd/MM/yyyy').parse(inputDoc.data()['date']);
-          if (inputDate.month == month && inputDate.year == year) {
-            Map<String, dynamic> inputDataWithIcon = {
-              'icon': catDoc.data()['icon'],
-              'name': catDoc.data()['name'],
-              'is_income': catDoc.data()['is_income'],
-              ...inputDoc.data(),
-            };
-            inputData.add(inputDataWithIcon);
-          }
+      for (var inputDoc in inputSnapshot.docs) {
+        DateTime inputDate =
+            DateFormat('dd/MM/yyyy').parse(inputDoc.data()['date']);
+        if (inputDate.month == month && inputDate.year == year) {
+          Map<String, dynamic> inputDataWithIcon = {
+            'icon': catDoc.data()['icon'],
+            'name': catDoc.data()['name'],
+            'is_income': catDoc.data()['is_income'],
+            ...inputDoc.data(),
+          };
+          inputData.add(inputDataWithIcon);
         }
       }
-
-      return inputData;
-    } catch (error) {
-      return [];
     }
+
+    return inputData;
   }
 
   Future<List<Map<String, dynamic>>> fetch_input_year_by_cat_id(
       String uid, String year, String cat_id,
       {required bool isIncome}) async {
-    try {
-      final int parsedYear = int.parse(year);
+    final int parsedYear = int.parse(year);
 
-      List<Map<String, dynamic>> inputData = [];
+    List<Map<String, dynamic>> inputData = [];
 
-      QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
-          .instance
-          .collection('users')
-          .doc(uid)
-          .collection('category')
-          .where('is_income', isEqualTo: isIncome)
-          .where('cat_id', isEqualTo: cat_id)
-          .get();
+    QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+        .instance
+        .collection('users')
+        .doc(uid)
+        .collection('category')
+        .where('is_income', isEqualTo: isIncome)
+        .where('cat_id', isEqualTo: cat_id)
+        .get();
 
-      for (var catDoc in snapshot.docs) {
-        QuerySnapshot<Map<String, dynamic>> inputSnapshot =
-            await FirebaseFirestore.instance
-                .collection('users')
-                .doc(uid)
-                .collection('input')
-                .where('cat_id', isEqualTo: cat_id)
-                .get();
+    for (var catDoc in snapshot.docs) {
+      QuerySnapshot<Map<String, dynamic>> inputSnapshot =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(uid)
+              .collection('input')
+              .where('cat_id', isEqualTo: cat_id)
+              .get();
 
-        for (var inputDoc in inputSnapshot.docs) {
-          DateTime inputDate =
-              DateFormat('dd/MM/yyyy').parse(inputDoc.data()['date']);
-          if (inputDate.year == parsedYear) {
-            Map<String, dynamic> inputDataWithIcon = {
-              'icon': catDoc.data()['icon'],
-              'name': catDoc.data()['name'],
-              'is_income': catDoc.data()['is_income'],
-              ...inputDoc.data(),
-            };
-            inputData.add(inputDataWithIcon);
-          }
+      for (var inputDoc in inputSnapshot.docs) {
+        DateTime inputDate =
+            DateFormat('dd/MM/yyyy').parse(inputDoc.data()['date']);
+        if (inputDate.year == parsedYear) {
+          Map<String, dynamic> inputDataWithIcon = {
+            'icon': catDoc.data()['icon'],
+            'name': catDoc.data()['name'],
+            'is_income': catDoc.data()['is_income'],
+            ...inputDoc.data(),
+          };
+          inputData.add(inputDataWithIcon);
         }
       }
-
-      return inputData;
-    } catch (error) {
-      return [];
     }
+
+    return inputData;
   }
 
   Future<List<Map<String, dynamic>>> fetch_data_cat_bymonth(
       String uid, String monthYear,
       {required bool isIncome}) async {
-    try {
-      final DateTime date = DateFormat('MMMM yyyy').parse(monthYear);
-      final int month = date.month;
-      final int year = date.year;
+    final DateTime date = DateFormat('MMMM yyyy').parse(monthYear);
+    final int month = date.month;
+    final int year = date.year;
 
-      List<Map<String, dynamic>> inputData = [];
+    List<Map<String, dynamic>> inputData = [];
 
-      QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
-          .instance
-          .collection('users')
-          .doc(uid)
-          .collection('category')
-          .where('is_income', isEqualTo: isIncome)
-          .get();
+    QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+        .instance
+        .collection('users')
+        .doc(uid)
+        .collection('category')
+        .where('is_income', isEqualTo: isIncome)
+        .get();
 
-      for (var catDoc in snapshot.docs) {
-        String catId = catDoc.data()['cat_id'];
+    for (var catDoc in snapshot.docs) {
+      String catId = catDoc.data()['cat_id'];
 
-        QuerySnapshot<Map<String, dynamic>> inputSnapshot =
-            await FirebaseFirestore.instance
-                .collection('users')
-                .doc(uid)
-                .collection('input')
-                .where('cat_id', isEqualTo: catId)
-                .get();
+      QuerySnapshot<Map<String, dynamic>> inputSnapshot =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(uid)
+              .collection('input')
+              .where('cat_id', isEqualTo: catId)
+              .get();
 
-        for (var inputDoc in inputSnapshot.docs) {
-          DateTime inputDate =
-              DateFormat('dd/MM/yyyy').parse(inputDoc.data()['date']);
-          if (inputDate.month == month && inputDate.year == year) {
-            Map<String, dynamic> inputDataWithIcon = {
-              'icon': catDoc.data()['icon'],
-              'name': catDoc.data()['name'],
-              'is_income': catDoc.data()['is_income'],
-              ...inputDoc.data(),
-            };
-            inputData.add(inputDataWithIcon);
-          }
+      for (var inputDoc in inputSnapshot.docs) {
+        DateTime inputDate =
+            DateFormat('dd/MM/yyyy').parse(inputDoc.data()['date']);
+        if (inputDate.month == month && inputDate.year == year) {
+          Map<String, dynamic> inputDataWithIcon = {
+            'icon': catDoc.data()['icon'],
+            'name': catDoc.data()['name'],
+            'is_income': catDoc.data()['is_income'],
+            ...inputDoc.data(),
+          };
+          inputData.add(inputDataWithIcon);
         }
       }
-
-      return inputData;
-    } catch (error) {
-      return [];
     }
+
+    return inputData;
   }
 
   Future<List<Map<String, dynamic>>> fetch_data_cat_byyear(
       String uid, String year,
       {required bool isIncome}) async {
-    try {
-      final int parsedYear = int.parse(year);
+    final int parsedYear = int.parse(year);
 
-      List<Map<String, dynamic>> inputData = [];
+    List<Map<String, dynamic>> inputData = [];
 
-      QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
-          .instance
-          .collection('users')
-          .doc(uid)
-          .collection('category')
-          .where('is_income', isEqualTo: isIncome)
-          .get();
+    QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+        .instance
+        .collection('users')
+        .doc(uid)
+        .collection('category')
+        .where('is_income', isEqualTo: isIncome)
+        .get();
 
-      for (var catDoc in snapshot.docs) {
-        String catId = catDoc.data()['cat_id'];
+    for (var catDoc in snapshot.docs) {
+      String catId = catDoc.data()['cat_id'];
 
-        QuerySnapshot<Map<String, dynamic>> inputSnapshot =
-            await FirebaseFirestore.instance
-                .collection('users')
-                .doc(uid)
-                .collection('input')
-                .where('cat_id', isEqualTo: catId)
-                .get();
+      QuerySnapshot<Map<String, dynamic>> inputSnapshot =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(uid)
+              .collection('input')
+              .where('cat_id', isEqualTo: catId)
+              .get();
 
-        for (var inputDoc in inputSnapshot.docs) {
-          DateTime inputDate =
-              DateFormat('dd/MM/yyyy').parse(inputDoc.data()['date']);
-          if (inputDate.year == parsedYear) {
-            Map<String, dynamic> inputDataWithIcon = {
-              'icon': catDoc.data()['icon'],
-              'name': catDoc.data()['name'],
-              'is_income': catDoc.data()['is_income'],
-              ...inputDoc.data(),
-            };
-            inputData.add(inputDataWithIcon);
-          }
+      for (var inputDoc in inputSnapshot.docs) {
+        DateTime inputDate =
+            DateFormat('dd/MM/yyyy').parse(inputDoc.data()['date']);
+        if (inputDate.year == parsedYear) {
+          Map<String, dynamic> inputDataWithIcon = {
+            'icon': catDoc.data()['icon'],
+            'name': catDoc.data()['name'],
+            'is_income': catDoc.data()['is_income'],
+            ...inputDoc.data(),
+          };
+          inputData.add(inputDataWithIcon);
         }
       }
-
-      return inputData;
-    } catch (error) {
-      return [];
     }
+
+    return inputData;
   }
 
   Future<void> add_category(
@@ -331,36 +307,32 @@ class firestore_helper {
 
   Future<void> update_category(
       String uid, String catId, String icon, String name, bool isIncome) async {
-    try {
-      DocumentReference docRef = FirebaseFirestore.instance
-          .collection("users")
-          .doc(uid)
-          .collection("category")
-          .doc(catId);
+    DocumentReference docRef = FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
+        .collection("category")
+        .doc(catId);
 
-      Map<String, dynamic> updatedData = {
-        "icon": icon,
-        "name": name,
-        "is_income": isIncome,
-      };
+    Map<String, dynamic> updatedData = {
+      "icon": icon,
+      "name": name,
+      "is_income": isIncome,
+    };
 
-      await docRef.update(updatedData);
-    } catch (error) {}
+    await docRef.update(updatedData);
   }
 
   Future<void> delete_all_category(String uid, bool isIncome) async {
-    try {
-      CollectionReference categoryCollectionRef =
-          db.collection('users').doc(uid).collection('category');
+    CollectionReference categoryCollectionRef =
+        db.collection('users').doc(uid).collection('category');
 
-      QuerySnapshot querySnapshot = await categoryCollectionRef
-          .where('is_income', isEqualTo: isIncome)
-          .get();
+    QuerySnapshot querySnapshot = await categoryCollectionRef
+        .where('is_income', isEqualTo: isIncome)
+        .get();
 
-      querySnapshot.docs.forEach((DocumentSnapshot documentSnapshot) async {
-        await documentSnapshot.reference.delete();
-      });
-    } catch (error) {}
+    querySnapshot.docs.forEach((DocumentSnapshot documentSnapshot) async {
+      await documentSnapshot.reference.delete();
+    });
   }
 
   Future<void> add_input(String uid, String date, String description,
@@ -382,20 +354,16 @@ class firestore_helper {
 
   Future<void> update_input(String uid, String id, String date,
       String description, double money, String cat_id) async {
-    try {
-      DocumentReference doc_ref =
-          db.collection('users').doc(uid).collection("input").doc(id);
+    DocumentReference doc_ref =
+        db.collection('users').doc(uid).collection("input").doc(id);
 
-      final data = <String, dynamic>{
-        "date": date,
-        "description": description,
-        "money": money,
-        "cat_id": cat_id
-      };
+    final data = <String, dynamic>{
+      "date": date,
+      "description": description,
+      "money": money,
+      "cat_id": cat_id
+    };
 
-      await doc_ref.update(data);
-    } catch (error) {
-      print("Error updating input: $error");
-    }
+    await doc_ref.update(data);
   }
 }
