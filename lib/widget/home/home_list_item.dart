@@ -153,7 +153,7 @@ class _home_list_itemState extends State<home_list_item> {
                                 children: [
                                   SlidableAction(
                                     onPressed: (context) {
-                                      _handleEdit(context, input_item);
+                                      hand_edit(context, input_item);
                                     },
                                     foregroundColor: Colors.blue,
                                     icon: Icons.edit,
@@ -161,7 +161,7 @@ class _home_list_itemState extends State<home_list_item> {
                                   ),
                                   SlidableAction(
                                     onPressed: (context) {
-                                      _handleDelete(
+                                      handle_delete(
                                           context, input_item['id'], uid);
                                     },
                                     foregroundColor: Colors.red,
@@ -282,8 +282,7 @@ class _home_list_itemState extends State<home_list_item> {
     );
   }
 
-  void _handleEdit(
-      BuildContext context, Map<String, dynamic> input_item) async {
+  void hand_edit(BuildContext context, Map<String, dynamic> input_item) async {
     Navigator.push(
         context,
         MaterialPageRoute(
@@ -291,7 +290,7 @@ class _home_list_itemState extends State<home_list_item> {
                 update_input(input_item: input_item)));
   }
 
-  void _handleDelete(BuildContext context, String input_id, String uid) async {
+  void handle_delete(BuildContext context, String input_id, String uid) async {
     try {
       await FirebaseFirestore.instance
           .collection('users')
@@ -302,7 +301,9 @@ class _home_list_itemState extends State<home_list_item> {
 
       fetch_data_list();
 
-      home_appbar.getState()!.fetchData();
+      if (home_appbar.getState() != null) {
+        home_appbar.getState()!.fetchData();
+      }
 
       toast.showToast(
         child: Container(

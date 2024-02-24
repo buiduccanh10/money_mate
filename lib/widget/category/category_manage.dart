@@ -109,11 +109,11 @@ class _category_manageState extends State<category_manage> {
                   Navigator.pop(context);
                 },
               ),
-              const Padding(
-                padding: EdgeInsets.all(15.0),
+              Padding(
+                padding: const EdgeInsets.all(15.0),
                 child: Text(
-                  'Swipe left to take action',
-                  style: TextStyle(color: Colors.white, fontSize: 18),
+                  'Manage ${(widget.is_income ? '"Income"' : '"Expense"')} categories',
+                  style: const TextStyle(color: Colors.white, fontSize: 18),
                 ),
               ),
               IconButton(
@@ -244,26 +244,9 @@ class _category_manageState extends State<category_manage> {
                 'Delete all ${widget.is_income ? 'income' : 'expense'} category?'),
             actions: [
               Container(
-                width: 80,
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(10)),
-                child: TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          color: Color.fromARGB(255, 127, 127, 127)),
-                    )),
-              ),
-              Container(
                 width: 90,
                 decoration: BoxDecoration(
-                    color: Colors.red,
-                    border: Border.all(color: Colors.red),
+                    border: Border.all(color: Colors.grey),
                     borderRadius: BorderRadius.circular(10)),
                 child: TextButton(
                     onPressed: () async {
@@ -296,7 +279,24 @@ class _category_manageState extends State<category_manage> {
                       });
                     },
                     child: const Text(
-                      'Comfirm',
+                      'Confirm',
+                      style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: Color.fromARGB(255, 127, 127, 127)),
+                    )),
+              ),
+              Container(
+                width: 90,
+                decoration: BoxDecoration(
+                    color: Colors.red,
+                    border: Border.all(color: Colors.red),
+                    borderRadius: BorderRadius.circular(10)),
+                child: TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text(
+                      'Cancel',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w700,

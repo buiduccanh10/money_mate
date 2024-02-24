@@ -366,4 +366,45 @@ class firestore_helper {
 
     await doc_ref.update(data);
   }
+
+  Future<void> delete_all_data(String uid) async {
+    CollectionReference cat_ref =
+        db.collection('users').doc(uid).collection('category');
+
+    QuerySnapshot cat_snapshot = await cat_ref.get();
+
+    cat_snapshot.docs.forEach((DocumentSnapshot documentSnapshot) async {
+      await documentSnapshot.reference.delete();
+    });
+
+    CollectionReference input_ref =
+        db.collection('users').doc(uid).collection('category');
+
+    QuerySnapshot input_snapshot = await input_ref.get();
+
+    input_snapshot.docs.forEach((DocumentSnapshot documentSnapshot) async {
+      await documentSnapshot.reference.delete();
+    });
+  }
+
+  Future<void> delete_user(String uid) async {
+    WriteBatch batch = db.batch();
+
+    QuerySnapshot categorySnapshot =
+        await db.collection('users/$uid/category').get();
+    for (var doc in categorySnapshot.docs) {
+      batch.delete(doc.reference);
+    }
+
+    QuerySnapshot inputSnapshot = await db.collection('users/$uid/input').get();
+    for (var doc in inputSnapshot.docs) {
+      batch.delete(doc.reference);
+    }
+
+    batch.delete(db.collection('users').doc(uid));
+
+    await batch.commit();
+
+    await FirebaseAuth.instance.currentUser!.delete();
+  }
 }

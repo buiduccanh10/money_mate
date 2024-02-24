@@ -24,12 +24,13 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
   bool icon_validate = false;
   bool cat_validate = false;
   firestore_helper db_helper = firestore_helper();
-  FToast toast = FToast();
+  FToast? toast;
   final uid = FirebaseAuth.instance.currentUser!.uid;
 
   @override
   void initState() {
-    toast.init(context);
+    toast = FToast();
+    toast!.init(context);
     super.initState();
   }
 
@@ -201,7 +202,7 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
         input_content.getState()!.fetchData();
       }
 
-      toast.showToast(
+      toast!.showToast(
         child: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
@@ -221,7 +222,7 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
         toastDuration: const Duration(seconds: 2),
       );
     } catch (err) {
-      toast.showToast(
+      toast!.showToast(
         child: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(

@@ -10,8 +10,7 @@ import 'package:money_mate/widget/home/home.dart';
 import 'package:money_mate/widget/input/input.dart';
 import 'package:money_mate/widget/accounts/login.dart';
 import 'package:money_mate/search.dart';
-import 'package:money_mate/services/firestore_helper.dart';
-import 'package:money_mate/widget/search/setting.dart';
+import 'package:money_mate/widget/setting/setting.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
