@@ -32,7 +32,7 @@ class _privacy_settingState extends State<privacy_setting> {
       body: SingleChildScrollView(
         child: Column(children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.only(left: 14.0, right: 14),
             child: Material(
               borderRadius: BorderRadius.circular(10),
               color: Colors.grey[200],
@@ -74,7 +74,7 @@ class _privacy_settingState extends State<privacy_setting> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.only(top: 8, left: 14.0, right: 14),
             child: Material(
               borderRadius: BorderRadius.circular(10),
               color: Colors.grey[200],

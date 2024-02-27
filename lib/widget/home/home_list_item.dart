@@ -153,7 +153,7 @@ class _home_list_itemState extends State<home_list_item> {
                                 children: [
                                   SlidableAction(
                                     onPressed: (context) {
-                                      hand_edit(context, input_item);
+                                      handle_edit(context, input_item);
                                     },
                                     foregroundColor: Colors.blue,
                                     icon: Icons.edit,
@@ -282,7 +282,8 @@ class _home_list_itemState extends State<home_list_item> {
     );
   }
 
-  void hand_edit(BuildContext context, Map<String, dynamic> input_item) async {
+  void handle_edit(
+      BuildContext context, Map<String, dynamic> input_item) async {
     Navigator.push(
         context,
         MaterialPageRoute(

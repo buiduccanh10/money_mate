@@ -9,7 +9,7 @@ import 'package:money_mate/firebase_options.dart';
 import 'package:money_mate/widget/home/home.dart';
 import 'package:money_mate/widget/input/input.dart';
 import 'package:money_mate/widget/accounts/login.dart';
-import 'package:money_mate/search.dart';
+import 'package:money_mate/widget/search/search.dart';
 import 'package:money_mate/widget/setting/setting.dart';
 
 Future<void> main() async {
@@ -28,6 +28,7 @@ class MyApp extends StatelessWidget {
     User? user = FirebaseAuth.instance.currentUser;
 
     return MaterialApp(
+      theme: ThemeData.light(useMaterial3: true),
       title: 'MoneyMate',
       debugShowCheckedModeBanner: false,
       home: user != null ? const Main() : const login(),

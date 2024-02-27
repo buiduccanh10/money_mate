@@ -66,6 +66,23 @@ class firestore_helper {
     return categories;
   }
 
+  Future<List<Map<String, dynamic>>> fetch_all_categories(String uid) async {
+    List<Map<String, dynamic>> categories = [];
+
+    QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+        .instance
+        .collection("users")
+        .doc(uid)
+        .collection('category')
+        .get();
+
+    for (var doc in snapshot.docs) {
+      categories.add(doc.data());
+    }
+
+    return categories;
+  }
+
   Future<List<Map<String, dynamic>>> fetch_input(
       String uid, String monthYear) async {
     final DateTime date = DateFormat('MMMM yyyy').parse(monthYear);
@@ -378,7 +395,7 @@ class firestore_helper {
     });
 
     CollectionReference input_ref =
-        db.collection('users').doc(uid).collection('category');
+        db.collection('users').doc(uid).collection('input');
 
     QuerySnapshot input_snapshot = await input_ref.get();
 
@@ -406,5 +423,98 @@ class firestore_helper {
     await batch.commit();
 
     await FirebaseAuth.instance.currentUser!.delete();
+  }
+
+  Future<List<Map<String, dynamic>>> search(String uid, String query) async {
+    List<Map<String, dynamic>> results = [];
+
+    QuerySnapshot<Map<String, dynamic>> inputSnapshot =
+        await db.collection('users').doc(uid).collection('input').get();
+
+    final cleanedQuery = query.trim().toLowerCase().replaceAll(' ', '');
+
+    for (var inputDoc in inputSnapshot.docs) {
+      String description = inputDoc
+          .data()['description']
+          .toString()
+          .trim()
+          .toLowerCase()
+          .replaceAll(' ', '');
+      String date = inputDoc
+          .data()['date']
+          .toString()
+          .trim()
+          .toLowerCase()
+          .replaceAll(' ', '');
+      String money = inputDoc
+          .data()['money']
+          .toString()
+          .trim()
+          .toLowerCase()
+          .replaceAll(' ', '');
+
+      var searchableText = description + date + money;
+
+      final catId = inputDoc.data()['cat_id'];
+
+      DocumentSnapshot<Map<String, dynamic>> catSnapshot = await db
+          .collection('users')
+          .doc(uid)
+          .collection('category')
+          .doc(catId)
+          .get();
+
+      if (catSnapshot.exists) {
+        String categoryName =
+            catSnapshot.data()!['name'].toString().trim().toLowerCase();
+        searchableText += categoryName;
+
+        if (searchableText.contains(cleanedQuery)) {
+          Map<String, dynamic> result = {
+            'icon': catSnapshot.data()!['icon'],
+            'name': catSnapshot.data()!['name'],
+            'is_income': catSnapshot.data()!['is_income'],
+            ...inputDoc.data(),
+          };
+          results.add(result);
+        }
+      }
+    }
+    return results;
+  }
+
+  Future<List<Map<String, dynamic>>> search_by_cat(
+      String uid, String cat_id) async {
+    List<Map<String, dynamic>> results = [];
+
+    QuerySnapshot<Map<String, dynamic>> inputSnapshot = await FirebaseFirestore
+        .instance
+        .collection('users')
+        .doc(uid)
+        .collection('input')
+        .where('cat_id', isEqualTo: cat_id)
+        .get();
+
+    for (var inputDoc in inputSnapshot.docs) {
+      String catId = inputDoc.data()['cat_id'];
+      DocumentSnapshot<Map<String, dynamic>> catSnapshot = await db
+          .collection('users')
+          .doc(uid)
+          .collection('category')
+          .doc(catId)
+          .get();
+
+      if (catSnapshot.exists) {
+        Map<String, dynamic> result = {
+          'icon': catSnapshot.data()!['icon'],
+          'name': catSnapshot.data()!['name'],
+          'is_income': catSnapshot.data()!['is_income'],
+          ...inputDoc.data(),
+        };
+        results.add(result);
+      }
+    }
+
+    return results;
   }
 }
