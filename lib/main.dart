@@ -55,7 +55,7 @@ class _MainState extends State<Main> {
     page = [
       const Home(),
       const input(),
-      const search(),
+      search(),
       const chart(),
       const setting(),
     ];

@@ -14,10 +14,10 @@ class firestore_helper {
     await user_ref.set(users);
     String uid = user_ref.id;
 
-    initUserDatabase(uid);
+    init_user_database(uid);
   }
 
-  Future<void> initUserDatabase(String userId) async {
+  Future<void> init_user_database(String userId) async {
     CollectionReference user_collection =
         db.collection('users').doc(userId).collection('category');
 
@@ -28,13 +28,10 @@ class firestore_helper {
         {'name': 'Salary', 'icon': '💵', 'is_income': true},
         {'name': 'Business', 'icon': '🤝🏻', 'is_income': true},
         {'name': 'Others', 'icon': '🗒️', 'is_income': true},
-        {"name": "Shopping", "icon": "🛒", "is_income": false},
-        {"name": "Food", "icon": "🍔", "is_income": false},
-        {"name": "Vegetable", "icon": "🥬", "is_income": false},
+        {"name": "Medical", "icon": "💊", "is_income": false},
+        {"name": "Food", "icon": "🍽️", "is_income": false},
         {"name": "Clothes", "icon": "👕", "is_income": false},
-        {"name": "Travel", "icon": "🏖️", "is_income": false},
-        {"name": "Moving", "icon": "🚘", "is_income": false},
-        {"name": "Others", "icon": "🗒️", "is_income": false}
+        {"name": "Transportation", "icon": "🚘", "is_income": false},
       ];
 
       for (var data in cat_default) {

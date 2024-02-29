@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -11,7 +12,13 @@ import 'package:money_mate/widget/input/update_input.dart';
 import 'package:shimmer/shimmer.dart';
 
 class search extends StatefulWidget {
-  const search({super.key});
+  static final search_globalkey = GlobalKey<_searchState>();
+
+  static _searchState? getState() {
+    return search_globalkey.currentState;
+  }
+
+  search() : super(key: search.search_globalkey);
 
   @override
   State<search> createState() => _searchState();
@@ -25,6 +32,7 @@ class _searchState extends State<search> {
   bool is_mounted = false;
   bool is_loading = true;
   FToast toast = FToast();
+  Timer? timer;
 
   @override
   void initState() {
@@ -35,6 +43,7 @@ class _searchState extends State<search> {
 
   @override
   void dispose() {
+    timer?.cancel();
     is_mounted = false;
     super.dispose();
   }
@@ -47,6 +56,16 @@ class _searchState extends State<search> {
         is_loading = false;
       });
     }
+  }
+
+  void updated_item(Map<String, dynamic> updated_item) {
+    setState(() {
+      int index =
+          results.indexWhere((item) => item['id'] == updated_item['id']);
+      if (index != -1) {
+        results[index] = updated_item;
+      }
+    });
   }
 
   @override
@@ -62,15 +81,17 @@ class _searchState extends State<search> {
                     SearchBar(
                       padding: const MaterialStatePropertyAll<EdgeInsets>(
                           EdgeInsets.symmetric(horizontal: 16.0)),
-                      onSubmitted: (query) {
-                        search(uid, query);
-                      },
                       onChanged: (query) {
-                        if (query.isEmpty) {
-                          setState(() {
-                            results = [];
-                          });
-                        }
+                        timer?.cancel();
+                        timer = Timer(const Duration(milliseconds: 500), () {
+                          if (query.isEmpty) {
+                            setState(() {
+                              results = [];
+                            });
+                          } else {
+                            search(uid, query);
+                          }
+                        });
                       },
                       hintText: 'Type any to search...',
                       leading: const Icon(
@@ -123,7 +144,7 @@ class _searchState extends State<search> {
                                       children: [
                                         Text(
                                           cat_list[index]['icon'],
-                                          style: const TextStyle(fontSize: 18),
+                                          style: const TextStyle(fontSize: 20),
                                         ),
                                         const SizedBox(width: 4),
                                         Text(cat_list[index]['name'])

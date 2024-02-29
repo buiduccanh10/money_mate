@@ -15,6 +15,7 @@ import 'package:money_mate/services/firestore_helper.dart';
 import 'package:money_mate/widget/category/category_manage.dart';
 import 'package:money_mate/widget/home/home_appbar.dart';
 import 'package:money_mate/widget/home/home_list_item.dart';
+import 'package:money_mate/widget/search/search.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
@@ -418,9 +419,31 @@ class _update_inputState extends State<update_input> {
       if (home_appbar.getState() != null && home_list_item.getState() != null) {
         home_appbar.getState()!.fetchData();
         home_list_item.getState()!.fetch_data_list();
-      } else {
+      } else if (chart_widget.getState() != null &&
+          chart_item_detail.getState() != null) {
         chart_widget.getState()!.is_month();
         chart_item_detail.getState()!.fetchData();
+      } else {
+        final test = await db_helper.fetch_categories(
+            uid, widget.input_item['is_income']);
+
+        Map<String, dynamic> item = {
+          "id": widget.input_item['id'],
+          "date": format_date,
+          "description": description,
+          "money": money_final,
+        };
+
+        if (test.isNotEmpty) {
+          final test_item =
+              test.firstWhere((category) => category['cat_id'] == cat_id);
+          item['cat_id'] = test_item['cat_id'];
+          item['icon'] = test_item['icon'];
+          item['name'] = test_item['name'];
+          item['is_income'] = test_item['is_income'];
+        }
+
+        search.getState()!.updated_item(item);
       }
 
       toast.showToast(
