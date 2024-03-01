@@ -3,7 +3,9 @@ import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/widget/category/category_manage.dart';
 import 'package:money_mate/services/firestore_helper.dart';
 import 'package:money_mate/widget/input/input_content.dart';
@@ -41,9 +43,9 @@ class _cat_update_dialogState extends State<cat_update_dialog> {
         backgroundColor: Colors.white,
         title: Row(
           children: [
-            const Text(
-              'Update category',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            Text(
+              LocaleData.update_cat_title.getString(context),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
             Flexible(
               child: Padding(
@@ -80,7 +82,9 @@ class _cat_update_dialogState extends State<cat_update_dialog> {
                   focusedBorder: OutlineInputBorder(
                       borderSide: const BorderSide(color: Colors.blue),
                       borderRadius: BorderRadius.circular(10)),
-                  label: const Text('Choose an icon'),
+                  label: Text(
+                    LocaleData.choose_an_icon.getString(context),
+                  ),
                   labelStyle: TextStyle(color: Colors.grey.withOpacity(1)),
                   prefixIcon: const Icon(Icons.insert_emoticon),
                   prefixIconColor: Colors.orange,
@@ -112,7 +116,9 @@ class _cat_update_dialogState extends State<cat_update_dialog> {
                   focusedBorder: OutlineInputBorder(
                       borderSide: const BorderSide(color: Colors.blue),
                       borderRadius: BorderRadius.circular(10)),
-                  label: const Text('Category name'),
+                  label: Text(
+                    LocaleData.category_name.getString(context),
+                  ),
                   labelStyle: TextStyle(color: Colors.grey.withOpacity(1)),
                   floatingLabelStyle: const TextStyle(color: Colors.black),
                   prefixIcon: const Icon(Icons.new_label),
@@ -132,15 +138,15 @@ class _cat_update_dialogState extends State<cat_update_dialog> {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: const Text(
-                  'Cancel',
-                  style: TextStyle(
+                child: Text(
+                  LocaleData.cancel.getString(context),
+                  style: const TextStyle(
                       fontWeight: FontWeight.w700,
                       color: Color.fromARGB(255, 127, 127, 127)),
                 )),
           ),
           Container(
-            width: 80,
+            width: 90,
             decoration: BoxDecoration(
                 color: Colors.green,
                 border: Border.all(color: Colors.green),
@@ -163,9 +169,9 @@ class _cat_update_dialogState extends State<cat_update_dialog> {
                     Navigator.of(context).pop();
                   }
                 },
-                child: const Text(
-                  'Update',
-                  style: TextStyle(
+                child: Text(
+                  LocaleData.update.getString(context),
+                  style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w700,
                   ),

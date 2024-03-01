@@ -1,7 +1,11 @@
+import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
+import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/widget/accounts/login.dart';
+import 'package:money_mate/widget/setting/language_setting.dart';
 import 'package:money_mate/widget/setting/privacy_setting.dart';
 
 class setting_content extends StatefulWidget {
@@ -13,6 +17,14 @@ class setting_content extends StatefulWidget {
 
 class _setting_contentState extends State<setting_content> {
   bool is_dark = false;
+  late String current_locale;
+  final flutter_localization = FlutterLocalization.instance;
+
+  @override
+  void initState() {
+    current_locale = flutter_localization.currentLocale!.languageCode;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,15 +46,21 @@ class _setting_contentState extends State<setting_content> {
                 borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(10),
                     topRight: Radius.circular(10)),
-                onTap: () {},
-                child: const Padding(
-                  padding: EdgeInsets.all(8.0),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              const language_setting()));
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Row(
                         children: [
-                          Padding(
+                          const Padding(
                             padding: EdgeInsets.only(left: 10.0, right: 18),
                             child: Icon(
                               Icons.language,
@@ -54,33 +72,33 @@ class _setting_contentState extends State<setting_content> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Language',
-                                style: TextStyle(
+                                LocaleData.language.getString(context),
+                                style: const TextStyle(
                                     fontWeight: FontWeight.w500, fontSize: 16),
                               ),
                               Text(
-                                'English',
-                                style: TextStyle(color: Colors.grey),
+                                LocaleData.language_des.getString(context),
+                                style: const TextStyle(color: Colors.grey),
                               )
                             ],
                           ),
                         ],
                       ),
-                      Icon(Icons.navigate_next)
+                      const Icon(Icons.navigate_next)
                     ],
                   ),
                 ),
               ),
               InkWell(
                 onTap: () {},
-                child: const Padding(
-                  padding: EdgeInsets.all(8.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Row(
                         children: [
-                          Padding(
+                          const Padding(
                             padding: EdgeInsets.only(left: 10.0, right: 18),
                             child: Icon(
                               Icons.currency_exchange,
@@ -92,11 +110,11 @@ class _setting_contentState extends State<setting_content> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Currency',
-                                style: TextStyle(
+                                LocaleData.currency.getString(context),
+                                style: const TextStyle(
                                     fontWeight: FontWeight.w500, fontSize: 16),
                               ),
-                              Text(
+                              const Text(
                                 'VNĐ',
                                 style: TextStyle(color: Colors.grey),
                               )
@@ -104,7 +122,7 @@ class _setting_contentState extends State<setting_content> {
                           ),
                         ],
                       ),
-                      Icon(Icons.navigate_next)
+                      const Icon(Icons.navigate_next)
                     ],
                   ),
                 ),
@@ -124,15 +142,15 @@ class _setting_contentState extends State<setting_content> {
                             size: 26,
                           ),
                         ),
-                        const Column(
+                        Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Dark mode',
-                              style: TextStyle(
+                              LocaleData.darkmode.getString(context),
+                              style: const TextStyle(
                                   fontWeight: FontWeight.w500, fontSize: 16),
                             ),
-                            Text(
+                            const Text(
                               'Automatic',
                               style: TextStyle(color: Colors.grey),
                             )
@@ -164,14 +182,14 @@ class _setting_contentState extends State<setting_content> {
                         topLeft: Radius.circular(10),
                         topRight: Radius.circular(10)),
                     onTap: () {},
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Row(
                             children: [
-                              Padding(
+                              const Padding(
                                 padding: EdgeInsets.only(left: 10.0, right: 18),
                                 child: Icon(
                                   Icons.lock,
@@ -183,20 +201,27 @@ class _setting_contentState extends State<setting_content> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Application lock',
-                                    style: TextStyle(
+                                    LocaleData.application_lock
+                                        .getString(context),
+                                    style: const TextStyle(
                                         fontWeight: FontWeight.w500,
                                         fontSize: 16),
                                   ),
-                                  Text(
-                                    'Use Password or FaceID to unlock app',
-                                    style: TextStyle(color: Colors.grey),
+                                  SizedBox(
+                                    width: width * 0.7,
+                                    child: Text(
+                                      LocaleData.application_lock_des
+                                          .getString(context),
+                                      overflow: TextOverflow.ellipsis,
+                                      style:
+                                          const TextStyle(color: Colors.grey),
+                                    ),
                                   )
                                 ],
                               ),
                             ],
                           ),
-                          Icon(Icons.navigate_next)
+                          const Icon(Icons.navigate_next)
                         ],
                       ),
                     ),
@@ -212,14 +237,14 @@ class _setting_contentState extends State<setting_content> {
                               builder: (BuildContext context) =>
                                   const privacy_setting()));
                     },
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Row(
                             children: [
-                              Padding(
+                              const Padding(
                                 padding: EdgeInsets.only(left: 10.0, right: 18),
                                 child: Icon(
                                   Icons.privacy_tip,
@@ -231,20 +256,20 @@ class _setting_contentState extends State<setting_content> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Privacy',
-                                    style: TextStyle(
+                                    LocaleData.privacy.getString(context),
+                                    style: const TextStyle(
                                         fontWeight: FontWeight.w500,
                                         fontSize: 16),
                                   ),
                                   Text(
-                                    'More privacy options',
-                                    style: TextStyle(color: Colors.grey),
+                                    LocaleData.privacy_des.getString(context),
+                                    style: const TextStyle(color: Colors.grey),
                                   )
                                 ],
                               ),
                             ],
                           ),
-                          Icon(Icons.navigate_next)
+                          const Icon(Icons.navigate_next)
                         ],
                       ),
                     ),
@@ -264,14 +289,14 @@ class _setting_contentState extends State<setting_content> {
                       topLeft: Radius.circular(10),
                       topRight: Radius.circular(10)),
                   onTap: () {},
-                  child: const Padding(
-                    padding: EdgeInsets.all(8.0),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Row(
                           children: [
-                            Padding(
+                            const Padding(
                               padding: EdgeInsets.only(left: 10.0, right: 18),
                               child: Icon(
                                 Icons.info,
@@ -283,20 +308,20 @@ class _setting_contentState extends State<setting_content> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'About',
-                                  style: TextStyle(
+                                  LocaleData.about.getString(context),
+                                  style: const TextStyle(
                                       fontWeight: FontWeight.w500,
                                       fontSize: 16),
                                 ),
                                 Text(
-                                  'Learn more about Money Mate',
-                                  style: TextStyle(color: Colors.grey),
+                                  LocaleData.about_des.getString(context),
+                                  style: const TextStyle(color: Colors.grey),
                                 )
                               ],
                             ),
                           ],
                         ),
-                        Icon(Icons.navigate_next)
+                        const Icon(Icons.navigate_next)
                       ],
                     ),
                   ),
@@ -306,14 +331,14 @@ class _setting_contentState extends State<setting_content> {
                       bottomLeft: Radius.circular(10),
                       bottomRight: Radius.circular(10)),
                   onTap: () {},
-                  child: const Padding(
-                    padding: EdgeInsets.all(8.0),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Row(
                           children: [
-                            Padding(
+                            const Padding(
                               padding: EdgeInsets.only(left: 10.0, right: 18),
                               child: Icon(
                                 Icons.feedback,
@@ -325,20 +350,25 @@ class _setting_contentState extends State<setting_content> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Send feedback',
-                                  style: TextStyle(
+                                  LocaleData.send_feedback.getString(context),
+                                  style: const TextStyle(
                                       fontWeight: FontWeight.w500,
                                       fontSize: 16),
                                 ),
-                                Text(
-                                  'Let us know your experience about app',
-                                  style: TextStyle(color: Colors.grey),
+                                SizedBox(
+                                  width: width * 0.7,
+                                  child: Text(
+                                    LocaleData.send_feedback_des
+                                        .getString(context),
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(color: Colors.grey),
+                                  ),
                                 )
                               ],
                             ),
                           ],
                         ),
-                        Icon(Icons.navigate_next)
+                        const Icon(Icons.navigate_next)
                       ],
                     ),
                   ),
@@ -356,7 +386,7 @@ class _setting_contentState extends State<setting_content> {
                 onTap: () {
                   show_curpetino_action(context);
                 },
-                child: const SizedBox(
+                child: SizedBox(
                   height: 50,
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -365,8 +395,8 @@ class _setting_contentState extends State<setting_content> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'Log out',
-                              style: TextStyle(
+                              LocaleData.log_out.getString(context),
+                              style: const TextStyle(
                                   fontWeight: FontWeight.w500,
                                   fontSize: 18,
                                   color: Colors.red),
@@ -387,9 +417,9 @@ class _setting_contentState extends State<setting_content> {
     showCupertinoModalPopup<void>(
       context: context,
       builder: (BuildContext context) => CupertinoActionSheet(
-        title: const Text(
-          'Sign out your account?',
-          style: TextStyle(fontSize: 16),
+        title: Text(
+          LocaleData.log_out_dialog.getString(context),
+          style: const TextStyle(fontSize: 16),
         ),
         actions: <CupertinoActionSheetAction>[
           CupertinoActionSheetAction(
@@ -403,7 +433,7 @@ class _setting_contentState extends State<setting_content> {
                                 const login()), // Assuming Login is your login screen
                       ));
             },
-            child: const Text('Log out'),
+            child: Text(LocaleData.log_out.getString(context)),
           ),
           CupertinoActionSheetAction(
             isDefaultAction: true,
@@ -411,7 +441,7 @@ class _setting_contentState extends State<setting_content> {
             onPressed: () {
               Navigator.pop(context);
             },
-            child: const Text('Cancel'),
+            child: Text(LocaleData.cancel.getString(context)),
           ),
         ],
       ),

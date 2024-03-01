@@ -6,9 +6,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:money_mate/services/firestore_helper.dart';
+import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/widget/category/cat_add_dialog.dart';
 import 'package:money_mate/widget/category/cat_update_dialog.dart';
 import 'package:money_mate/widget/input/input_content.dart';
@@ -112,7 +114,9 @@ class _category_manageState extends State<category_manage> {
               Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Text(
-                  'Manage ${(widget.is_income ? '"Income"' : '"Expense"')} categories',
+                  widget.is_income
+                      ? LocaleData.in_category_manage_appbar.getString(context)
+                      : LocaleData.ex_category_manage_appbar.getString(context),
                   style: const TextStyle(color: Colors.white, fontSize: 18),
                 ),
               ),
@@ -228,8 +232,8 @@ class _category_manageState extends State<category_manage> {
                                 ),
                               );
                             })
-                    : const Center(
-                        child: Text('No category yet!'),
+                    : Center(
+                        child: Text(LocaleData.no_cat_yet.getString(context)),
                       ))),
       ]),
     );
@@ -241,10 +245,13 @@ class _category_manageState extends State<category_manage> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text(
-                'Delete all ${widget.is_income ? 'income' : 'expense'} category?'),
+              widget.is_income
+                  ? LocaleData.in_delete_all_title.getString(context)
+                  : LocaleData.ex_delete_all_title.getString(context),
+            ),
             actions: [
               Container(
-                width: 90,
+                width: 100,
                 decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey),
                     borderRadius: BorderRadius.circular(10)),
@@ -278,15 +285,15 @@ class _category_manageState extends State<category_manage> {
                         input_content.getState()!.fetchData();
                       });
                     },
-                    child: const Text(
-                      'Confirm',
-                      style: TextStyle(
+                    child: Text(
+                      LocaleData.confirm.getString(context),
+                      style: const TextStyle(
                           fontWeight: FontWeight.w700,
                           color: Color.fromARGB(255, 127, 127, 127)),
                     )),
               ),
               Container(
-                width: 90,
+                width: 80,
                 decoration: BoxDecoration(
                     color: Colors.red,
                     border: Border.all(color: Colors.red),
@@ -295,9 +302,9 @@ class _category_manageState extends State<category_manage> {
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(
+                    child: Text(
+                      LocaleData.cancel.getString(context),
+                      style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
                       ),

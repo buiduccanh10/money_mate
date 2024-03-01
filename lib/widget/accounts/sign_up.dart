@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:money_mate/services/firestore_helper.dart';
+import 'package:money_mate/services/locales.dart';
 
 class sign_up_page extends StatefulWidget {
   const sign_up_page({super.key});
@@ -18,7 +20,7 @@ class _sign_up_pageState extends State<sign_up_page> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Sign up')),
+      appBar: AppBar(title: Text(LocaleData.sign_up.getString(context))),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -27,18 +29,18 @@ class _sign_up_pageState extends State<sign_up_page> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               TextField(
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  prefixIcon: Icon(Icons.email),
+                decoration: InputDecoration(
+                  labelText: LocaleData.email.getString(context),
+                  prefixIcon: const Icon(Icons.email),
                 ),
                 controller: email,
                 keyboardType: TextInputType.emailAddress,
               ),
               const SizedBox(height: 20),
               TextField(
-                decoration: const InputDecoration(
-                  labelText: 'Password',
-                  prefixIcon: Icon(Icons.lock),
+                decoration: InputDecoration(
+                  labelText: LocaleData.password.getString(context),
+                  prefixIcon: const Icon(Icons.lock),
                 ),
                 controller: password,
                 obscureText: true,
@@ -48,7 +50,7 @@ class _sign_up_pageState extends State<sign_up_page> {
                 onPressed: () {
                   sign_up_submit();
                 },
-                child: const Text('Sign Up'),
+                child: Text(LocaleData.sign_up.getString(context)),
               ),
             ],
           ),

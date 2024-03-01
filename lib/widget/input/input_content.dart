@@ -3,10 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:money_mate/services/currency.dart';
 import 'package:money_mate/services/firestore_helper.dart';
+import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/widget/category/category_manage.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -124,8 +126,8 @@ class _input_contentState extends State<input_content> {
                       focusedBorder: OutlineInputBorder(
                           borderSide: const BorderSide(color: Colors.amber),
                           borderRadius: BorderRadius.circular(10)),
-                      label: const Text(
-                        'Description',
+                      label: Text(
+                        LocaleData.input_description.getString(context),
                       ),
                       labelStyle: TextStyle(color: Colors.grey.withOpacity(1)),
                       floatingLabelStyle: const TextStyle(color: Colors.black),
@@ -153,7 +155,9 @@ class _input_contentState extends State<input_content> {
                       focusedBorder: OutlineInputBorder(
                           borderSide: const BorderSide(color: Colors.amber),
                           borderRadius: BorderRadius.circular(10)),
-                      label: const Text('Money'),
+                      label: Text(
+                        LocaleData.input_money.getString(context),
+                      ),
                       labelStyle: TextStyle(color: Colors.grey.withOpacity(1)),
                       floatingLabelStyle: const TextStyle(color: Colors.black),
                       prefixIcon: const Icon(Icons.attach_money),
@@ -169,7 +173,9 @@ class _input_contentState extends State<input_content> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  widget.is_income ? 'Income category' : 'Expense category',
+                  widget.is_income
+                      ? LocaleData.income_category.getString(context)
+                      : LocaleData.expense_category.getString(context),
                   style: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.w700),
                 ),
@@ -183,7 +189,9 @@ class _input_contentState extends State<input_content> {
                                 )),
                       );
                     },
-                    child: const Text('More...'))
+                    child: Text(
+                      LocaleData.more.getString(context),
+                    ))
               ],
             ),
           ),
@@ -318,19 +326,19 @@ class _input_contentState extends State<input_content> {
                 });
               });
             },
-            label: const Row(
+            label: Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.add,
                   size: 35,
                   color: Colors.white,
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 5,
                 ),
                 Text(
-                  'Save',
-                  style: TextStyle(
+                  LocaleData.input_save.getString(context),
+                  style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
                       color: Colors.white),

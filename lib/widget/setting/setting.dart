@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
+import 'package:money_mate/services/locales.dart';
 
 import 'package:money_mate/widget/setting/setting_content.dart';
 
@@ -84,16 +86,16 @@ class _settingState extends State<setting> {
                     child: InkWell(
                       borderRadius: BorderRadius.circular(10),
                       onTap: () {},
-                      child: const Padding(
-                        padding: EdgeInsets.all(8.0),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Row(
                               children: [
-                                Padding(
-                                  padding:
-                                      EdgeInsets.only(left: 10.0, right: 18),
+                                const Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 10.0, right: 18),
                                   child: Icon(
                                     Icons.edit_square,
                                     size: 26,
@@ -103,20 +105,21 @@ class _settingState extends State<setting> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Modify',
-                                      style: TextStyle(
+                                      LocaleData.modify.getString(context),
+                                      style: const TextStyle(
                                           fontWeight: FontWeight.w500,
                                           fontSize: 16),
                                     ),
                                     Text(
-                                      'Tap to change your profile',
-                                      style: TextStyle(color: Colors.grey),
+                                      LocaleData.modify_des.getString(context),
+                                      style:
+                                          const TextStyle(color: Colors.grey),
                                     )
                                   ],
                                 ),
                               ],
                             ),
-                            Icon(Icons.navigate_next)
+                            const Icon(Icons.navigate_next)
                           ],
                         ),
                       ),

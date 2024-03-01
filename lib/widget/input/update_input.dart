@@ -3,8 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/widget/chart/chart.dart';
 import 'package:money_mate/widget/chart/chart_item_detail.dart';
 import 'package:money_mate/widget/chart/chart_widget.dart';
@@ -132,8 +134,8 @@ class _update_inputState extends State<update_input> {
                         focusedBorder: OutlineInputBorder(
                             borderSide: const BorderSide(color: Colors.amber),
                             borderRadius: BorderRadius.circular(10)),
-                        label: const Text(
-                          'Description',
+                        label: Text(
+                          LocaleData.input_description.getString(context),
                         ),
                         labelStyle:
                             TextStyle(color: Colors.grey.withOpacity(1)),
@@ -163,7 +165,9 @@ class _update_inputState extends State<update_input> {
                         focusedBorder: OutlineInputBorder(
                             borderSide: const BorderSide(color: Colors.amber),
                             borderRadius: BorderRadius.circular(10)),
-                        label: const Text('Money'),
+                        label: Text(
+                          LocaleData.input_money.getString(context),
+                        ),
                         labelStyle:
                             TextStyle(color: Colors.grey.withOpacity(1)),
                         floatingLabelStyle:
@@ -182,8 +186,8 @@ class _update_inputState extends State<update_input> {
                 children: [
                   Text(
                     widget.input_item['is_income']
-                        ? 'Income category'
-                        : 'Expense category',
+                        ? LocaleData.income_category.getString(context)
+                        : LocaleData.expense_category.getString(context),
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.w700),
                   ),
@@ -197,7 +201,9 @@ class _update_inputState extends State<update_input> {
                                   )),
                         );
                       },
-                      child: const Text('More...'))
+                      child: Text(
+                        LocaleData.more.getString(context),
+                      ))
                 ],
               ),
             ),
@@ -308,7 +314,9 @@ class _update_inputState extends State<update_input> {
                     Navigator.pop(context);
                   }),
                   Text(
-                    widget.input_item['is_income'] ? 'Income' : 'Expense',
+                    widget.input_item['is_income']
+                        ? LocaleData.income.getString(context)
+                        : LocaleData.expense.getString(context),
                     style: const TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -370,19 +378,19 @@ class _update_inputState extends State<update_input> {
                 });
               });
             },
-            label: const Row(
+            label: Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.edit_calendar,
                   size: 30,
                   color: Colors.white,
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 5,
                 ),
                 Text(
-                  'Update',
-                  style: TextStyle(
+                  LocaleData.update.getString(context),
+                  style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
                       color: Colors.white),

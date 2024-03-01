@@ -2,8 +2,10 @@ import 'package:datepicker_dropdown/datepicker_dropdown.dart';
 import 'package:datepicker_dropdown/order_format.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:intl/intl.dart';
 import 'package:money_mate/services/firestore_helper.dart';
+import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/widget/home/home_list_item.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -129,7 +131,7 @@ class _home_appbarState extends State<home_appbar> {
                         Expanded(
                           flex: 1,
                           child: Text(
-                            'Hi, ${user_name}',
+                            '${LocaleData.hello_home_appbar.getString(context)}${user_name}',
                             style: const TextStyle(
                                 overflow: TextOverflow.ellipsis,
                                 color: Colors.white,
@@ -182,9 +184,9 @@ class _home_appbarState extends State<home_appbar> {
                   ),
                   Row(
                     children: [
-                      const Text(
-                        'Total: ',
-                        style: TextStyle(
+                      Text(
+                        LocaleData.total_saving.getString(context),
+                        style: const TextStyle(
                             color: Colors.amber,
                             fontSize: 22,
                             fontWeight: FontWeight.w700),
@@ -249,20 +251,20 @@ class _home_appbarState extends State<home_appbar> {
                         ),
                       ],
                     ),
-                    const Row(
+                    Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Income',
-                          style: TextStyle(
+                          LocaleData.income.getString(context),
+                          style: const TextStyle(
                               fontSize: 16,
                               color: Colors.grey,
                               fontWeight: FontWeight.w700),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
-                        Icon(
+                        const Icon(
                           Icons.arrow_downward_sharp,
                           color: Colors.green,
                         )
@@ -307,20 +309,20 @@ class _home_appbarState extends State<home_appbar> {
                         ),
                       ],
                     ),
-                    const Row(
+                    Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Expense',
-                          style: TextStyle(
+                          LocaleData.expense.getString(context),
+                          style: const TextStyle(
                               fontSize: 16,
                               color: Colors.grey,
                               fontWeight: FontWeight.w700),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
-                        Icon(
+                        const Icon(
                           Icons.arrow_upward_sharp,
                           color: Colors.red,
                         )

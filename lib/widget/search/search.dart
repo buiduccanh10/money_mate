@@ -4,10 +4,12 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:money_mate/services/firestore_helper.dart';
+import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/widget/input/update_input.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -93,7 +95,8 @@ class _searchState extends State<search> {
                           }
                         });
                       },
-                      hintText: 'Type any to search...',
+                      hintText:
+                          LocaleData.type_any_to_search.getString(context),
                       leading: const Icon(
                         Icons.search,
                         size: 28,

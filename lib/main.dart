@@ -1,9 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/widget/chart/chart.dart';
 import 'package:money_mate/firebase_options.dart';
 import 'package:money_mate/widget/home/home.dart';
@@ -20,8 +21,21 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final FlutterLocalization localization = FlutterLocalization.instance;
+
+  @override
+  void initState() {
+    configureLocalization();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,11 +43,23 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       theme: ThemeData.light(useMaterial3: true),
-      title: 'MoneyMate',
+      title: 'Money Mate',
       debugShowCheckedModeBanner: false,
       home: user != null ? const Main() : const login(),
       builder: FToastBuilder(),
+      supportedLocales: localization.supportedLocales,
+      localizationsDelegates: localization.localizationsDelegates,
+      locale: localization.currentLocale,
     );
+  }
+
+  void configureLocalization() {
+    localization.init(mapLocales: LOCALES, initLanguageCode: "en");
+    localization.onTranslatedLanguage = onTranslatedLanguage;
+  }
+
+  void onTranslatedLanguage(Locale? locale) {
+    setState(() {});
   }
 }
 
@@ -82,7 +108,7 @@ class _MainState extends State<Main> {
                   offset: const Offset(0, 7),
                 ),
               ],
-              color: Color.fromARGB(255, 216, 216, 216),
+              color: const Color.fromARGB(255, 216, 216, 216),
             ),
             child: GNav(
                 selectedIndex: index,
@@ -115,30 +141,30 @@ class _MainState extends State<Main> {
                     fontWeight: FontWeight.w700,
                     color: Colors.white,
                     fontSize: 16),
-                tabs: const [
+                tabs: [
                   GButton(
                     icon: Icons.home,
                     iconColor: Colors.black87,
-                    text: 'Home',
+                    text: LocaleData.home.getString(context),
                   ),
                   GButton(
                     icon: Icons.mode_edit_outline_rounded,
-                    text: 'Input',
+                    text: LocaleData.input.getString(context),
                     iconColor: Colors.black87,
                   ),
                   GButton(
                     icon: Icons.search_outlined,
-                    text: 'Search',
+                    text: LocaleData.search.getString(context),
                     iconColor: Colors.black87,
                   ),
                   GButton(
                     icon: Icons.pie_chart,
-                    text: 'Chart',
+                    text: LocaleData.chart.getString(context),
                     iconColor: Colors.black87,
                   ),
                   GButton(
                     icon: Icons.settings,
-                    text: 'Setting',
+                    text: LocaleData.setting.getString(context),
                     iconColor: Colors.black87,
                   ),
                 ]),

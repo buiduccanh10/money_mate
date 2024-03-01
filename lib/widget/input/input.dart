@@ -2,6 +2,8 @@ import 'package:custom_sliding_segmented_control/custom_sliding_segmented_contro
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localization/flutter_localization.dart';
+import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/widget/category/category_manage.dart';
 import 'package:money_mate/widget/input/input_content.dart';
 
@@ -68,7 +70,7 @@ class _inputState extends State<input> {
                           color: Colors.green,
                         ),
                         Text(
-                          'Income',
+                          LocaleData.income.getString(context),
                           style: TextStyle(
                               color: is_income! ? Colors.black : Colors.white,
                               fontWeight: FontWeight.w500,
@@ -83,7 +85,7 @@ class _inputState extends State<input> {
                           color: Colors.red,
                         ),
                         Text(
-                          'Expense',
+                          LocaleData.expense.getString(context),
                           style: TextStyle(
                               color: is_income! ? Colors.white : Colors.black,
                               fontWeight: FontWeight.w500,

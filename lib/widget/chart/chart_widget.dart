@@ -3,8 +3,10 @@ import 'package:datepicker_dropdown/datepicker_dropdown.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:intl/intl.dart';
 import 'package:money_mate/services/firestore_helper.dart';
+import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/widget/chart/chart_item_detail.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:collection/collection.dart';
@@ -280,9 +282,9 @@ class _chart_widgetState extends State<chart_widget> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      const Text(
-                                        'Income: ',
-                                        style: TextStyle(
+                                      Text(
+                                        '${LocaleData.income.getString(context)}: ',
+                                        style: const TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500),
                                       ),
@@ -309,9 +311,9 @@ class _chart_widgetState extends State<chart_widget> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      const Text(
-                                        'Expense: ',
-                                        style: TextStyle(
+                                      Text(
+                                        '${LocaleData.expense.getString(context)}: ',
+                                        style: const TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500),
                                       ),
@@ -339,9 +341,9 @@ class _chart_widgetState extends State<chart_widget> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Text(
-                                    'Total saving: ',
-                                    style: TextStyle(
+                                  Text(
+                                    LocaleData.total_saving.getString(context),
+                                    style: const TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w500),
                                   ),

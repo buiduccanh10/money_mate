@@ -3,7 +3,9 @@ import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/widget/category/category_manage.dart';
 import 'package:money_mate/services/firestore_helper.dart';
 import 'package:money_mate/widget/input/input_content.dart';
@@ -39,9 +41,9 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
     return Builder(builder: (context) {
       return AlertDialog(
         backgroundColor: Colors.white,
-        title: const Text(
-          'Add a new category',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+        title: Text(
+          LocaleData.add_cat_dialog_title.getString(context),
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
         ),
         elevation: 100,
         scrollable: true,
@@ -65,7 +67,9 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
                   focusedBorder: OutlineInputBorder(
                       borderSide: const BorderSide(color: Colors.blue),
                       borderRadius: BorderRadius.circular(10)),
-                  label: const Text('Choose an icon'),
+                  label: Text(
+                    LocaleData.choose_an_icon.getString(context),
+                  ),
                   labelStyle: TextStyle(color: Colors.grey.withOpacity(1)),
                   prefixIcon: const Icon(Icons.insert_emoticon),
                   prefixIconColor: Colors.orange,
@@ -97,7 +101,9 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
                   focusedBorder: OutlineInputBorder(
                       borderSide: const BorderSide(color: Colors.blue),
                       borderRadius: BorderRadius.circular(10)),
-                  label: const Text('Category name'),
+                  label: Text(
+                    LocaleData.category_name.getString(context),
+                  ),
                   labelStyle: TextStyle(color: Colors.grey.withOpacity(1)),
                   floatingLabelStyle: const TextStyle(color: Colors.black),
                   prefixIcon: const Icon(Icons.new_label),
@@ -117,9 +123,9 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: const Text(
-                  'Cancel',
-                  style: TextStyle(
+                child: Text(
+                  LocaleData.cancel.getString(context),
+                  style: const TextStyle(
                       fontWeight: FontWeight.w700,
                       color: Color.fromARGB(255, 127, 127, 127)),
                 )),
@@ -144,9 +150,9 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
                     Navigator.of(context).pop();
                   }
                 },
-                child: const Text(
-                  'Save',
-                  style: TextStyle(
+                child: Text(
+                  LocaleData.input_save.getString(context),
+                  style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w700,
                   ),

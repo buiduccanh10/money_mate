@@ -3,10 +3,12 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:money_mate/services/firestore_helper.dart';
+import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/widget/home/home_appbar.dart';
 import 'package:money_mate/widget/input/update_input.dart';
 import 'package:shimmer/shimmer.dart';
@@ -114,8 +116,8 @@ class _home_list_itemState extends State<home_list_item> {
               },
             )
           : input_data.isEmpty
-              ? const Center(
-                  child: Text('No input data yet!'),
+              ? Center(
+                  child: Text(LocaleData.no_input_data.getString(context)),
                 )
               : ListView.builder(
                   padding: const EdgeInsets.only(top: 24, bottom: 120),

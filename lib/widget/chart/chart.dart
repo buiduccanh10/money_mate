@@ -1,6 +1,8 @@
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
+import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/widget/chart/chart_widget.dart';
 
 class chart extends StatefulWidget {
@@ -58,14 +60,14 @@ class _chartState extends State<chart> {
                   height: 50,
                   children: {
                     1: Text(
-                      'Monthly',
+                      LocaleData.switch_monthly.getString(context),
                       style: TextStyle(
                           color: is_monthly! ? Colors.black : Colors.white,
                           fontWeight: FontWeight.w500,
                           fontSize: 16),
                     ),
                     2: Text(
-                      'Yearly',
+                      LocaleData.switch_yearly.getString(context),
                       style: TextStyle(
                           color: is_monthly! ? Colors.white : Colors.black,
                           fontWeight: FontWeight.w500,

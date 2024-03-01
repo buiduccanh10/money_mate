@@ -1,7 +1,9 @@
 import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/widget/home/home.dart';
 import 'package:money_mate/main.dart';
 import 'package:money_mate/services/firestore_helper.dart';
@@ -33,12 +35,15 @@ class _loginState extends State<login> {
   SMIInput<bool>? trigSuccess;
   SMIInput<bool>? trigFail;
   SMIInput<double>? numLook;
+  final flutter_localization = FlutterLocalization.instance;
+  late String current_locale;
 
   @override
   void initState() {
     is_show = true;
     email_focus_node.addListener(email_focus);
     password_focus_node.addListener(password_focus);
+    current_locale = flutter_localization.currentLocale!.languageCode;
     super.initState();
   }
 
@@ -63,6 +68,30 @@ class _loginState extends State<login> {
       canPop: false,
       child: Scaffold(
         backgroundColor: const Color(0xffD6E2EA),
+        appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            automaticallyImplyLeading: false,
+            actions: [
+              DropdownButton(
+                underline: Container(),
+                value: current_locale,
+                borderRadius: BorderRadius.circular(10),
+                padding: const EdgeInsets.all(10),
+                items: [
+                  DropdownMenuItem(
+                    value: 'vi',
+                    child: Text('🇻🇳 ${LocaleData.op_vi.getString(context)}'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'en',
+                    child: Text('🇦🇺 ${LocaleData.op_en.getString(context)}'),
+                  ),
+                ],
+                onChanged: (value) {
+                  set_locale(value);
+                },
+              )
+            ]),
         body: SingleChildScrollView(
           child: SafeArea(
             child: Padding(
@@ -116,7 +145,8 @@ class _loginState extends State<login> {
                                 }
                               },
                               decoration: InputDecoration(
-                                  label: const Text('Email'),
+                                  label:
+                                      Text(LocaleData.email.getString(context)),
                                   prefixIcon: const Icon(
                                     Icons.email,
                                   ),
@@ -140,7 +170,8 @@ class _loginState extends State<login> {
                                 isHandsUp!.change(true);
                               },
                               decoration: InputDecoration(
-                                  label: const Text('Password'),
+                                  label: Text(
+                                      LocaleData.password.getString(context)),
                                   prefixIcon: const Icon(
                                     Icons.lock,
                                   ),
@@ -161,9 +192,9 @@ class _loginState extends State<login> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 TextButton(
-                                  child: const Text(
-                                    'Forgot your password?',
-                                    style: TextStyle(
+                                  child: Text(
+                                    LocaleData.forgot_pass.getString(context),
+                                    style: const TextStyle(
                                         decoration: TextDecoration.underline),
                                   ),
                                   onPressed: () {},
@@ -192,10 +223,10 @@ class _loginState extends State<login> {
                                   ),
                                   height: 50,
                                   width: 350,
-                                  child: const Center(
+                                  child: Center(
                                     child: Text(
-                                      'Log in',
-                                      style: TextStyle(
+                                      LocaleData.login.getString(context),
+                                      style: const TextStyle(
                                           fontSize: 18,
                                           color: Colors.white,
                                           fontWeight: FontWeight.w500),
@@ -206,11 +237,12 @@ class _loginState extends State<login> {
                             ),
                             Row(
                               children: [
-                                const Text("Don't you have account?"),
+                                Text(LocaleData.dont_have_acc
+                                    .getString(context)),
                                 TextButton(
-                                  child: const Text(
-                                    'Sign up',
-                                    style: TextStyle(
+                                  child: Text(
+                                    LocaleData.sign_up.getString(context),
+                                    style: const TextStyle(
                                         color: Colors.blue,
                                         fontWeight: FontWeight.w500,
                                         fontSize: 15),
@@ -225,12 +257,13 @@ class _loginState extends State<login> {
                                 )
                               ],
                             ),
-                            const Center(
-                              child: Text('Or sign in with:'),
+                            Center(
+                              child: Text(
+                                  LocaleData.or_sign_in.getString(context)),
                             ),
                             SignInButton(
                               Buttons.google,
-                              text: 'Sign in with Google',
+                              text: LocaleData.sign_in_gg.getString(context),
                               onPressed: () {
                                 login_google();
                               },
@@ -254,6 +287,20 @@ class _loginState extends State<login> {
         ),
       ),
     );
+  }
+
+  void set_locale(String? value) {
+    if (value == null) return;
+    if (value == 'vi') {
+      flutter_localization.translate('vi');
+    } else if (value == 'en') {
+      flutter_localization.translate('en');
+    } else {
+      return;
+    }
+    setState(() {
+      current_locale = value;
+    });
   }
 
   Future<void> login_facebook() async {
