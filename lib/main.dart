@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:money_mate/services/currency.dart';
 import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/widget/chart/chart.dart';
 import 'package:money_mate/firebase_options.dart';
@@ -29,7 +30,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final FlutterLocalization localization = FlutterLocalization.instance;
+  final localization = FlutterLocalization.instance;
 
   @override
   void initState() {

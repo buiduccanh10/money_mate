@@ -33,6 +33,7 @@ class _home_list_itemState extends State<home_list_item> {
   bool is_mounted = false;
   FToast toast = FToast();
   final uid = FirebaseAuth.instance.currentUser!.uid;
+  final localization = FlutterLocalization.instance;
 
   @override
   void initState() {
@@ -145,8 +146,8 @@ class _home_list_itemState extends State<home_list_item> {
                               List.generate(list_item.length, (itemIndex) {
                             final input_item = list_item[itemIndex];
                             // var formatter = NumberFormat("#,##0", "en_US");
-                            var formatter =
-                                NumberFormat.simpleCurrency(locale: "vi_VN");
+                            var formatter = NumberFormat.simpleCurrency(
+                                locale: localization.currentLocale.toString());
                             String format_money =
                                 formatter.format(input_item['money']);
                             return Slidable(
@@ -315,12 +316,12 @@ class _home_list_itemState extends State<home_list_item> {
             borderRadius: BorderRadius.circular(10.0),
             color: Colors.green,
           ),
-          child: const Row(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Icon(Icons.check),
-              Text("Delete success!"),
+              const Icon(Icons.check),
+              Text(LocaleData.toast_delete_success.getString(context)),
             ],
           ),
         ),
@@ -335,12 +336,12 @@ class _home_list_itemState extends State<home_list_item> {
             borderRadius: BorderRadius.circular(10.0),
             color: Colors.red,
           ),
-          child: const Row(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Icon(Icons.do_disturb),
-              Text("Fail delete!"),
+              const Icon(Icons.do_disturb),
+              Text(LocaleData.toast_delete_fail.getString(context)),
             ],
           ),
         ),

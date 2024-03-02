@@ -12,7 +12,7 @@ import 'package:money_mate/widget/chart/chart_item_detail.dart';
 import 'package:money_mate/widget/chart/chart_widget.dart';
 import 'package:money_mate/widget/home/home.dart';
 import 'package:money_mate/main.dart';
-import 'package:money_mate/services/currency.dart';
+import 'package:money_mate/services/currency_format.dart';
 import 'package:money_mate/services/firestore_helper.dart';
 import 'package:money_mate/widget/category/category_manage.dart';
 import 'package:money_mate/widget/home/home_appbar.dart';
@@ -125,7 +125,7 @@ class _update_inputState extends State<update_input> {
                     controller: description_controller,
                     decoration: InputDecoration(
                         errorText: des_validate
-                            ? 'Description can not be blank'
+                            ? LocaleData.des_validator.getString(context)
                             : null,
                         enabledBorder: OutlineInputBorder(
                           borderSide: const BorderSide(color: Colors.amber),
@@ -153,11 +153,12 @@ class _update_inputState extends State<update_input> {
                     controller: money_controller,
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
-                      Currency()
+                      currency_format()
                     ],
                     decoration: InputDecoration(
-                        errorText:
-                            money_validate ? 'Money can not be blank' : null,
+                        errorText: money_validate
+                            ? LocaleData.money_validator.getString(context)
+                            : null,
                         enabledBorder: OutlineInputBorder(
                           borderSide: const BorderSide(color: Colors.amber),
                           borderRadius: BorderRadius.circular(10),
@@ -282,6 +283,7 @@ class _update_inputState extends State<update_input> {
                                   style: const TextStyle(fontSize: 20)),
                               Text(
                                 cat_item['name'],
+                                overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                     fontSize: 16,
                                     color: is_selected
@@ -461,12 +463,12 @@ class _update_inputState extends State<update_input> {
             borderRadius: BorderRadius.circular(10.0),
             color: Colors.green,
           ),
-          child: const Row(
+          child:  Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Icon(Icons.check),
-              Text("Update success!"),
+              const Icon(Icons.check),
+              Text(LocaleData.toast_update_success.getString(context)),
             ],
           ),
         ),
@@ -482,12 +484,12 @@ class _update_inputState extends State<update_input> {
             borderRadius: BorderRadius.circular(10.0),
             color: Colors.red,
           ),
-          child: const Row(
+          child:  Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Icon(Icons.do_disturb),
-              Text("Update fail!"),
+              const Icon(Icons.do_disturb),
+              Text(LocaleData.toast_update_fail.getString(context)),
             ],
           ),
         ),

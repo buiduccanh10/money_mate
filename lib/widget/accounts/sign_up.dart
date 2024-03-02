@@ -73,8 +73,7 @@ class _sign_up_pageState extends State<sign_up_page> {
       await db_helper
           .get_user(uid, email.text, '')
           .then((value) => Fluttertoast.showToast(
-                msg:
-                    'Sign up successful, then follow link send to emai to verify',
+                msg: LocaleData.toast_sign_up_success.getString(context),
                 toastLength: Toast.LENGTH_SHORT,
                 gravity: ToastGravity.CENTER,
                 timeInSecForIosWeb: 1,
@@ -86,7 +85,7 @@ class _sign_up_pageState extends State<sign_up_page> {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         Fluttertoast.showToast(
-          msg: 'The password provided is too weak!',
+          msg: LocaleData.toast_sign_up_weakpass.getString(context),
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 1,
@@ -96,7 +95,7 @@ class _sign_up_pageState extends State<sign_up_page> {
         );
       } else if (e.code == 'email-already-in-use') {
         Fluttertoast.showToast(
-          msg: 'The account already exists for that email!',
+          msg: LocaleData.toast_user_exist.getString(context),
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 1,
@@ -105,8 +104,6 @@ class _sign_up_pageState extends State<sign_up_page> {
           fontSize: 16.0,
         );
       }
-    } catch (e) {
-      print(e);
     }
   }
 }

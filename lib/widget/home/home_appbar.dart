@@ -36,6 +36,7 @@ class _home_appbarState extends State<home_appbar> {
   double total_saving = 0;
   String? user_name;
   final uid = FirebaseAuth.instance.currentUser!.uid;
+  final localization = FlutterLocalization.instance;
 
   @override
   void initState() {
@@ -100,8 +101,9 @@ class _home_appbarState extends State<home_appbar> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
-    var formatter =
-        NumberFormat.simpleCurrency(locale: "vi_VN", decimalDigits: 0);
+    var formatter = NumberFormat.simpleCurrency(
+        locale: localization.currentLocale.toString(), decimalDigits: 0);
+
     String format_total = formatter.format(total_saving);
     String format_income = formatter.format(total_income);
     String format_expense = formatter.format(total_expense);

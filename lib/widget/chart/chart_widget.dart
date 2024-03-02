@@ -43,6 +43,7 @@ class _chart_widgetState extends State<chart_widget> {
   final uid = FirebaseAuth.instance.currentUser!.uid;
   var month = DateTime.now().month;
   var year = DateTime.now().year;
+  final localization = FlutterLocalization.instance;
 
   @override
   void initState() {
@@ -177,7 +178,8 @@ class _chart_widgetState extends State<chart_widget> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    var formatter = NumberFormat.simpleCurrency(locale: "vi_VN");
+    var formatter = NumberFormat.simpleCurrency(
+        locale: localization.currentLocale.toString());
     String format_total = formatter.format(total_saving);
     String format_income = formatter.format(total_income);
     String format_expense = formatter.format(total_expense);
@@ -375,7 +377,7 @@ class _chart_widgetState extends State<chart_widget> {
                               innerPadding: const EdgeInsets.all(0),
                               children: {
                                 1: Text(
-                                  'Income',
+                                  LocaleData.income.getString(context),
                                   style: TextStyle(
                                       color: is_income!
                                           ? Colors.black
@@ -384,7 +386,7 @@ class _chart_widgetState extends State<chart_widget> {
                                       fontSize: 16),
                                 ),
                                 2: Text(
-                                  'Expense',
+                                  LocaleData.expense.getString(context),
                                   style: TextStyle(
                                       color: is_income!
                                           ? Colors.grey

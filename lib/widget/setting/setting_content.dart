@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/widget/accounts/login.dart';
+import 'package:money_mate/widget/setting/currency_setting.dart';
 import 'package:money_mate/widget/setting/language_setting.dart';
 import 'package:money_mate/widget/setting/privacy_setting.dart';
 
@@ -90,7 +91,13 @@ class _setting_contentState extends State<setting_content> {
                 ),
               ),
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              const currency_setting()));
+                },
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(

@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:money_mate/services/firestore_helper.dart';
+import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/widget/accounts/login.dart';
 
 class privacy_setting extends StatefulWidget {
@@ -27,7 +29,7 @@ class _privacy_settingState extends State<privacy_setting> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Privacy'),
+        title: Text(LocaleData.privacy.getString(context)),
       ),
       body: SingleChildScrollView(
         child: Column(children: [
@@ -41,12 +43,12 @@ class _privacy_settingState extends State<privacy_setting> {
                 onTap: () {
                   delete_all_data();
                 },
-                child: const Padding(
-                  padding: EdgeInsets.all(8.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
                   child: Row(
                     children: [
-                      Padding(
-                        padding: EdgeInsets.only(left: 10.0, right: 18),
+                      const Padding(
+                        padding: const EdgeInsets.only(left: 10.0, right: 18),
                         child: Icon(
                           Icons.folder_delete,
                           color: Colors.red,
@@ -57,13 +59,14 @@ class _privacy_settingState extends State<privacy_setting> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Delete all data of account',
-                            style: TextStyle(
+                            LocaleData.delete_all_data_acc.getString(context),
+                            style: const TextStyle(
                                 fontWeight: FontWeight.w500, fontSize: 16),
                           ),
                           Text(
-                            'Your input, category,... data will be delete',
-                            style: TextStyle(color: Colors.grey),
+                            LocaleData.delete_all_data_acc_des
+                                .getString(context),
+                            style: const TextStyle(color: Colors.grey),
                           )
                         ],
                       )
@@ -83,11 +86,11 @@ class _privacy_settingState extends State<privacy_setting> {
                 onTap: () async {
                   delete_user();
                 },
-                child: const Padding(
-                  padding: EdgeInsets.all(8.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
                   child: Row(
                     children: [
-                      Padding(
+                      const Padding(
                         padding: EdgeInsets.only(left: 10.0, right: 18),
                         child: Icon(
                           Icons.person_off,
@@ -99,13 +102,13 @@ class _privacy_settingState extends State<privacy_setting> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Delete account',
-                            style: TextStyle(
+                            LocaleData.delete_acc.getString(context),
+                            style: const TextStyle(
                                 fontWeight: FontWeight.w500, fontSize: 16),
                           ),
                           Text(
-                            'Your account will no longer exist',
-                            style: TextStyle(color: Colors.grey),
+                            LocaleData.delete_acc_des.getString(context),
+                            style: const TextStyle(color: Colors.grey),
                           )
                         ],
                       )
@@ -125,10 +128,11 @@ class _privacy_settingState extends State<privacy_setting> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Delete all data?'),
+            title:
+                Text('${LocaleData.delete_all_data_acc.getString(context)} ?'),
             actions: [
               Container(
-                width: 90,
+                width: 100,
                 decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey),
                     borderRadius: BorderRadius.circular(10)),
@@ -144,13 +148,14 @@ class _privacy_settingState extends State<privacy_setting> {
                                       borderRadius: BorderRadius.circular(10.0),
                                       color: Colors.green,
                                     ),
-                                    child: const Row(
+                                    child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceEvenly,
                                       children: [
-                                        Icon(Icons.check),
-                                        Text("Delete all success!"),
+                                        const Icon(Icons.check),
+                                        Text(LocaleData.toast_delete_success
+                                            .getString(context)),
                                       ],
                                     ),
                                   ),
@@ -166,12 +171,13 @@ class _privacy_settingState extends State<privacy_setting> {
                               borderRadius: BorderRadius.circular(10.0),
                               color: Colors.red,
                             ),
-                            child: const Row(
+                            child: Row(
                               mainAxisSize: MainAxisSize.min,
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                Icon(Icons.do_disturb),
-                                Text("Delete all data fail!"),
+                                const Icon(Icons.do_disturb),
+                                Text(LocaleData.toast_delete_fail
+                                    .getString(context)),
                               ],
                             ),
                           ),
@@ -180,9 +186,9 @@ class _privacy_settingState extends State<privacy_setting> {
                         );
                       }
                     },
-                    child: const Text(
-                      'Comfirm',
-                      style: TextStyle(
+                    child: Text(
+                      LocaleData.confirm.getString(context),
+                      style: const TextStyle(
                           fontWeight: FontWeight.w700,
                           color: Color.fromARGB(255, 127, 127, 127)),
                     )),
@@ -197,9 +203,9 @@ class _privacy_settingState extends State<privacy_setting> {
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(
+                    child: Text(
+                      LocaleData.cancel.getString(context),
+                      style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
                       ),
@@ -215,10 +221,10 @@ class _privacy_settingState extends State<privacy_setting> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Delete account?'),
+            title: Text('${LocaleData.delete_acc.getString(context)} ?'),
             actions: [
               Container(
-                width: 90,
+                width: 100,
                 decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey),
                     borderRadius: BorderRadius.circular(10)),
@@ -241,24 +247,24 @@ class _privacy_settingState extends State<privacy_setting> {
                               borderRadius: BorderRadius.circular(10.0),
                               color: Colors.red,
                             ),
-                            child: const Row(
+                            child: Row(
                               mainAxisSize: MainAxisSize.min,
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                Icon(Icons.do_disturb),
-                                Text(
-                                    "Delete user fail! (Try login again and delete)"),
+                                const Icon(Icons.do_disturb),
+                                Text(LocaleData.toast_delete_user_fail
+                                    .getString(context)),
                               ],
                             ),
                           ),
                           gravity: ToastGravity.CENTER,
-                          toastDuration: const Duration(seconds: 2),
+                          toastDuration: const Duration(seconds: 4),
                         );
                       }
                     },
-                    child: const Text(
-                      'Comfirm',
-                      style: TextStyle(
+                    child: Text(
+                      LocaleData.confirm.getString(context),
+                      style: const TextStyle(
                           fontWeight: FontWeight.w700,
                           color: Color.fromARGB(255, 127, 127, 127)),
                     )),
@@ -273,9 +279,9 @@ class _privacy_settingState extends State<privacy_setting> {
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(
+                    child: Text(
+                      LocaleData.cancel.getString(context),
+                      style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
                       ),

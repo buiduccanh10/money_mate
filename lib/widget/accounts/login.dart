@@ -74,17 +74,28 @@ class _loginState extends State<login> {
             actions: [
               DropdownButton(
                 underline: Container(),
-                value: current_locale,
                 borderRadius: BorderRadius.circular(10),
-                padding: const EdgeInsets.all(10),
+                icon: const Icon(
+                  Icons.language,
+                  color: Colors.blue,
+                  size: 28,
+                ),
+                padding: const EdgeInsets.all(14),
                 items: [
                   DropdownMenuItem(
                     value: 'vi',
-                    child: Text('🇻🇳 ${LocaleData.op_vi.getString(context)}'),
+                    alignment: AlignmentDirectional.center,
+                    child: Text(LocaleData.op_vi.getString(context)),
                   ),
                   DropdownMenuItem(
                     value: 'en',
-                    child: Text('🇦🇺 ${LocaleData.op_en.getString(context)}'),
+                    alignment: AlignmentDirectional.center,
+                    child: Text(LocaleData.op_en.getString(context)),
+                  ),
+                  DropdownMenuItem(
+                    value: 'zh',
+                    alignment: AlignmentDirectional.center,
+                    child: Text(LocaleData.op_cn.getString(context)),
                   ),
                 ],
                 onChanged: (value) {
@@ -295,6 +306,8 @@ class _loginState extends State<login> {
       flutter_localization.translate('vi');
     } else if (value == 'en') {
       flutter_localization.translate('en');
+    } else if (value == 'zh') {
+      flutter_localization.translate('zh');
     } else {
       return;
     }
@@ -330,7 +343,7 @@ class _loginState extends State<login> {
       await db_helper
           .get_user(uid, email!, image!)
           .then((value) => Fluttertoast.showToast(
-              msg: 'Login successful!',
+              msg: LocaleData.toast_login_success.getString(context),
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.CENTER,
               timeInSecForIosWeb: 1,
@@ -359,7 +372,7 @@ class _loginState extends State<login> {
 
       if (cre.user!.emailVerified) {
         Fluttertoast.showToast(
-                msg: 'Login successful!',
+                msg: LocaleData.toast_login_success.getString(context),
                 toastLength: Toast.LENGTH_SHORT,
                 gravity: ToastGravity.CENTER,
                 timeInSecForIosWeb: 1,
@@ -370,7 +383,7 @@ class _loginState extends State<login> {
                 MaterialPageRoute(builder: (context) => const Main())));
       } else {
         Fluttertoast.showToast(
-            msg: 'Please follow link in your email to verify your account!',
+            msg: LocaleData.toast_verify_email.getString(context),
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 1,
@@ -398,7 +411,7 @@ class _loginState extends State<login> {
         trigFail!.change(true);
 
         Fluttertoast.showToast(
-            msg: 'User does not exists!',
+            msg: LocaleData.toast_user_not_exist.getString(context),
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 1,
@@ -415,7 +428,7 @@ class _loginState extends State<login> {
         trigFail!.change(true);
 
         Fluttertoast.showToast(
-            msg: 'Please try email or password again!',
+            msg: LocaleData.toast_login_fail.getString(context),
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 1,

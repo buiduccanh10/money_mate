@@ -3,10 +3,12 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:money_mate/services/firestore_helper.dart';
+import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/widget/chart/chart_widget.dart';
 import 'package:money_mate/widget/home/home_appbar.dart';
 import 'package:money_mate/widget/input/update_input.dart';
@@ -40,6 +42,7 @@ class _chart_item_detailState extends State<chart_item_detail> {
   final uid = FirebaseAuth.instance.currentUser!.uid;
   bool is_loading = true;
   bool is_mounted = false;
+  final localization = FlutterLocalization.instance;
 
   @override
   void initState() {
@@ -182,7 +185,9 @@ class _chart_item_detailState extends State<chart_item_detail> {
                                         animationDuration: 1000,
                                         dataLabelMapper: (datum, _) {
                                           return NumberFormat.simpleCurrency(
-                                                  locale: "vi_VN")
+                                                  locale: localization
+                                                      .currentLocale
+                                                      .toString())
                                               .format(datum['money']);
                                         },
                                         pointColorMapper: (datum, _) {
@@ -279,7 +284,9 @@ class _chart_item_detailState extends State<chart_item_detail> {
 
                                               var formatter =
                                                   NumberFormat.simpleCurrency(
-                                                      locale: "vi_VN");
+                                                      locale: localization
+                                                          .currentLocale
+                                                          .toString());
                                               String format_money = formatter
                                                   .format(input_item['money']);
                                               return Slidable(
@@ -502,12 +509,12 @@ class _chart_item_detailState extends State<chart_item_detail> {
             borderRadius: BorderRadius.circular(10.0),
             color: Colors.green,
           ),
-          child: const Row(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Icon(Icons.check),
-              Text("Delete success!"),
+              const Icon(Icons.check),
+              Text(LocaleData.toast_delete_success.getString(context)),
             ],
           ),
         ),
@@ -522,12 +529,12 @@ class _chart_item_detailState extends State<chart_item_detail> {
             borderRadius: BorderRadius.circular(10.0),
             color: Colors.red,
           ),
-          child: const Row(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Icon(Icons.do_disturb),
-              Text("Fail delete!"),
+              const Icon(Icons.do_disturb),
+              Text(LocaleData.toast_delete_fail.getString(context)),
             ],
           ),
         ),

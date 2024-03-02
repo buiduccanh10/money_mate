@@ -394,12 +394,12 @@ class _searchState extends State<search> {
             borderRadius: BorderRadius.circular(10.0),
             color: Colors.red,
           ),
-          child: const Row(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Icon(Icons.search_off_outlined),
-              Text("Not found !"),
+              const Icon(Icons.search_off_outlined),
+              Text(LocaleData.toast_not_found.getString(context)),
             ],
           ),
         ),
@@ -427,12 +427,12 @@ class _searchState extends State<search> {
             borderRadius: BorderRadius.circular(10.0),
             color: Colors.red,
           ),
-          child: const Row(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Icon(Icons.search_off_outlined),
-              Text("Not found !"),
+              const Icon(Icons.search_off_outlined),
+              Text(LocaleData.toast_not_found.getString(context)),
             ],
           ),
         ),
@@ -478,17 +478,17 @@ class _searchState extends State<search> {
             borderRadius: BorderRadius.circular(10.0),
             color: Colors.green,
           ),
-          child: const Row(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Icon(Icons.check),
-              Text("Delete success!"),
+              const Icon(Icons.delete),
+              Text(LocaleData.toast_delete_success.getString(context)),
             ],
           ),
         ),
         gravity: ToastGravity.CENTER,
-        toastDuration: const Duration(seconds: 2),
+        toastDuration: const Duration(seconds: 3),
       );
     } catch (err) {
       toast.showToast(
@@ -498,17 +498,17 @@ class _searchState extends State<search> {
             borderRadius: BorderRadius.circular(10.0),
             color: Colors.red,
           ),
-          child: const Row(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Icon(Icons.do_disturb),
-              Text("Fail delete!"),
+              const Icon(Icons.do_disturb),
+              Text(LocaleData.toast_delete_fail.getString(context)),
             ],
           ),
         ),
         gravity: ToastGravity.CENTER,
-        toastDuration: const Duration(seconds: 2),
+        toastDuration: const Duration(seconds: 3),
       );
     }
   }

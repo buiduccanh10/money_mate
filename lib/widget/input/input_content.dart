@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
-import 'package:money_mate/services/currency.dart';
+import 'package:money_mate/services/currency_format.dart';
 import 'package:money_mate/services/firestore_helper.dart';
 import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/widget/category/category_manage.dart';
@@ -45,6 +45,7 @@ class _input_contentState extends State<input_content> {
   bool is_mounted = false;
   FToast toast = FToast();
   final uid = FirebaseAuth.instance.currentUser!.uid;
+  final localization = FlutterLocalization.instance;
 
   @override
   void initState() {
@@ -117,8 +118,9 @@ class _input_contentState extends State<input_content> {
                   keyboardType: TextInputType.text,
                   controller: description_controller,
                   decoration: InputDecoration(
-                      errorText:
-                          des_validate ? 'Description can not be blank' : null,
+                      errorText: des_validate
+                          ? LocaleData.des_validator.getString(context)
+                          : null,
                       enabledBorder: OutlineInputBorder(
                         borderSide: const BorderSide(color: Colors.amber),
                         borderRadius: BorderRadius.circular(10),
@@ -138,16 +140,22 @@ class _input_contentState extends State<input_content> {
                   height: 10,
                 ),
                 TextField(
-                  keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true, signed: true),
+                  keyboardType: localization.currentLocale.toString() == 'vi'
+                      ? const TextInputType.numberWithOptions(
+                          decimal: false, signed: true)
+                      : const TextInputType.numberWithOptions(
+                          decimal: true, signed: false),
                   controller: money_controller,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    Currency()
-                  ],
+                  inputFormatters: localization.currentLocale.toString() == 'vi'
+                      ? [
+                          FilteringTextInputFormatter.digitsOnly,
+                          currency_format(),
+                        ]
+                      : [],
                   decoration: InputDecoration(
-                      errorText:
-                          money_validate ? 'Money can not be blank' : null,
+                      errorText: money_validate
+                          ? LocaleData.money_validator.getString(context)
+                          : null,
                       enabledBorder: OutlineInputBorder(
                         borderSide: const BorderSide(color: Colors.amber),
                         borderRadius: BorderRadius.circular(10),
@@ -162,7 +170,12 @@ class _input_contentState extends State<input_content> {
                       floatingLabelStyle: const TextStyle(color: Colors.black),
                       prefixIcon: const Icon(Icons.attach_money),
                       prefixIconColor: Colors.green,
-                      suffixText: 'VND'),
+                      suffixStyle: const TextStyle(fontSize: 20),
+                      suffixText: localization.currentLocale.toString() == 'vi'
+                          ? 'đ'
+                          : localization.currentLocale.toString() == 'zh'
+                              ? '¥'
+                              : '\$'),
                 ),
               ],
             ),
@@ -304,11 +317,31 @@ class _input_contentState extends State<input_content> {
             backgroundColor: Colors.transparent,
             onPressed: () {
               if (description_controller.text.isEmpty ||
-                  money_controller.text.isEmpty) {
+                  money_controller.text.isEmpty ||
+                  (selectedIndex == null || cat_id == null)) {
                 setState(() {
                   des_validate = description_controller.text.isEmpty;
                   money_validate = money_controller.text.isEmpty;
                 });
+                toast.showToast(
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      color: Colors.amber,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        const Icon(Icons.warning),
+                        Text(LocaleData.cat_validator.getString(context)),
+                      ],
+                    ),
+                  ),
+                  gravity: ToastGravity.CENTER,
+                  toastDuration: const Duration(seconds: 3),
+                );
               } else {
                 add_input(
                     date_controller.selectedDate,
@@ -355,7 +388,9 @@ class _input_contentState extends State<input_content> {
       DateTime? date, String description, String money, String cat_id) async {
     try {
       String format_date;
-      String format_money = money.replaceAll('.', '');
+      String format_money = localization.currentLocale.toString() == 'vi'
+          ? money.replaceAll('.', '')
+          : money.replaceAll(',', '.');
       double money_final = double.parse(format_money);
       if (date_controller.selectedDate == null) {
         format_date =
@@ -382,12 +417,12 @@ class _input_contentState extends State<input_content> {
             borderRadius: BorderRadius.circular(10.0),
             color: Colors.green,
           ),
-          child: const Row(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Icon(Icons.check),
-              Text("Create success!"),
+              const Icon(Icons.check),
+              Text(LocaleData.toast_add_success.getString(context)),
             ],
           ),
         ),
@@ -402,12 +437,12 @@ class _input_contentState extends State<input_content> {
             borderRadius: BorderRadius.circular(10.0),
             color: Colors.red,
           ),
-          child: const Row(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Icon(Icons.do_disturb),
-              Text("Create fail!"),
+              const Icon(Icons.do_disturb),
+              Text(LocaleData.toast_add_fail.getString(context)),
             ],
           ),
         ),

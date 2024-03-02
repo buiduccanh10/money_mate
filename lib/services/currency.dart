@@ -1,20 +1,21 @@
-import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 
-class Currency extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
-    if (newValue.selection.baseOffset == 0) {
-      return newValue;
-    }
-    double value = double.parse(newValue.text);
-    final money = NumberFormat("###,###,###", "vi_VN");
+const List<MapLocale> CURRENCY = [
+  MapLocale('vi', CurrencyData.VIC),
+  MapLocale('en', CurrencyData.ENC),
+];
 
-    String new_text = money.format(value);
+mixin CurrencyData {
+  static const String currency = 'currency';
+  static const String vi_currency_op = 'vi_currency_op';
+  static const String en_currency_op = 'en_currency_op';
 
-    return newValue.copyWith(
-        text: new_text,
-        selection: TextSelection.collapsed(offset: new_text.length));
-  }
+  static const Map<String, dynamic> ENC = {
+    currency: 'VNĐ',
+    vi_currency_op: 'Viet nam dong'
+  };
+  static const Map<String, dynamic> VIC = {
+    currency: 'Dollar',
+    en_currency_op: 'Dollars'
+  };
 }
