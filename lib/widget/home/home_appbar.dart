@@ -99,6 +99,8 @@ class _home_appbarState extends State<home_appbar> {
 
   @override
   Widget build(BuildContext context) {
+    bool is_dark = Theme.of(context).brightness == Brightness.dark;
+
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
     var formatter = NumberFormat.simpleCurrency(
@@ -110,12 +112,21 @@ class _home_appbarState extends State<home_appbar> {
     return Stack(children: [
       Container(
           height: 280,
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Colors.blue, Colors.orange],
-            ),
+          decoration: BoxDecoration(
+            gradient: is_dark
+                ? const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color.fromARGB(255, 0, 112, 204),
+                      Color.fromARGB(255, 203, 122, 0)
+                    ],
+                  )
+                : const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Colors.blue, Colors.orange],
+                  ),
           )),
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -154,11 +165,15 @@ class _home_appbarState extends State<home_appbar> {
                             selectedMonth: month,
                             selectedYear: year,
                             boxDecoration: BoxDecoration(
-                                color: Colors.grey[100],
+                                color: is_dark
+                                    ? Colors.grey[700]
+                                    : Colors.grey[100],
                                 borderRadius: BorderRadius.circular(10)),
                             inputDecoration: const InputDecoration(
                               border: InputBorder.none,
                             ),
+                            textStyle: TextStyle(
+                                color: is_dark ? Colors.white : Colors.black),
                             icon: const Icon(
                               Icons.arrow_drop_down,
                               color: Colors.grey,
@@ -225,16 +240,18 @@ class _home_appbarState extends State<home_appbar> {
               height: height * 0.11,
               width: width * 0.4,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: is_dark ? Colors.grey[700] : Colors.white,
                 borderRadius: BorderRadius.circular(10),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.3),
-                    spreadRadius: 6,
-                    blurRadius: 9,
-                    offset: const Offset(0, 5),
-                  ),
-                ],
+                boxShadow: is_dark
+                    ? null
+                    : [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.3),
+                          spreadRadius: 6,
+                          blurRadius: 9,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
               ),
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
@@ -246,8 +263,10 @@ class _home_appbarState extends State<home_appbar> {
                         Flexible(
                           child: Text(
                             '${format_income}',
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w700),
+                            style: TextStyle(
+                                color: is_dark ? Colors.white : Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
@@ -258,17 +277,17 @@ class _home_appbarState extends State<home_appbar> {
                       children: [
                         Text(
                           LocaleData.income.getString(context),
-                          style: const TextStyle(
+                          style: TextStyle(
                               fontSize: 16,
-                              color: Colors.grey,
+                              color: is_dark ? Colors.white : Colors.grey,
                               fontWeight: FontWeight.w700),
                         ),
                         const SizedBox(
                           width: 10,
                         ),
-                        const Icon(
+                        Icon(
                           Icons.arrow_downward_sharp,
-                          color: Colors.green,
+                          color: is_dark ? Colors.greenAccent : Colors.green,
                         )
                       ],
                     )
@@ -283,16 +302,18 @@ class _home_appbarState extends State<home_appbar> {
               height: height * 0.11,
               width: width * 0.4,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: is_dark ? Colors.grey[700] : Colors.white,
                 borderRadius: BorderRadius.circular(10),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.3),
-                    spreadRadius: 6,
-                    blurRadius: 9,
-                    offset: const Offset(0, 5),
-                  ),
-                ],
+                boxShadow: is_dark
+                    ? null
+                    : [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.3),
+                          spreadRadius: 6,
+                          blurRadius: 9,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
               ),
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
@@ -304,8 +325,10 @@ class _home_appbarState extends State<home_appbar> {
                         Flexible(
                           child: Text(
                             '${format_expense}',
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w700),
+                            style: TextStyle(
+                                color: is_dark ? Colors.white : Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
@@ -316,17 +339,17 @@ class _home_appbarState extends State<home_appbar> {
                       children: [
                         Text(
                           LocaleData.expense.getString(context),
-                          style: const TextStyle(
+                          style: TextStyle(
                               fontSize: 16,
-                              color: Colors.grey,
+                              color: is_dark ? Colors.white : Colors.grey,
                               fontWeight: FontWeight.w700),
                         ),
                         const SizedBox(
                           width: 10,
                         ),
-                        const Icon(
+                        Icon(
                           Icons.arrow_upward_sharp,
-                          color: Colors.red,
+                          color: is_dark ? Colors.redAccent : Colors.red,
                         )
                       ],
                     )

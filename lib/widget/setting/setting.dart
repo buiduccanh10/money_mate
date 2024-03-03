@@ -26,6 +26,7 @@ class _settingState extends State<setting> {
 
   @override
   Widget build(BuildContext context) {
+    bool is_dark = Theme.of(context).brightness == Brightness.dark;
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -34,14 +35,19 @@ class _settingState extends State<setting> {
           const setting_content(),
           Container(
             height: height * 0.26,
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(10),
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.only(
+                  bottomLeft: const Radius.circular(10),
                   bottomRight: Radius.circular(10)),
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [Colors.orange, Colors.blue],
+                colors: is_dark
+                    ? [
+                        const Color.fromARGB(255, 0, 112, 204),
+                        const Color.fromARGB(255, 203, 122, 0)
+                      ]
+                    : [Colors.orange, Colors.blue],
               ),
             ),
             child: SafeArea(
@@ -81,7 +87,7 @@ class _settingState extends State<setting> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Material(
-                    color: Colors.white,
+                    color: is_dark ? Colors.grey[500] : Colors.white,
                     borderRadius: BorderRadius.circular(10),
                     child: InkWell(
                       borderRadius: BorderRadius.circular(10),
@@ -94,11 +100,12 @@ class _settingState extends State<setting> {
                             Row(
                               children: [
                                 const Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 10.0, right: 18),
+                                  padding:
+                                      EdgeInsets.only(left: 10.0, right: 18),
                                   child: Icon(
                                     Icons.edit_square,
                                     size: 26,
+                                    color: Colors.black,
                                   ),
                                 ),
                                 Column(
@@ -106,14 +113,19 @@ class _settingState extends State<setting> {
                                   children: [
                                     Text(
                                       LocaleData.modify.getString(context),
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                           fontWeight: FontWeight.w500,
+                                          color: is_dark
+                                              ? Colors.white
+                                              : Colors.black,
                                           fontSize: 16),
                                     ),
                                     Text(
                                       LocaleData.modify_des.getString(context),
-                                      style:
-                                          const TextStyle(color: Colors.grey),
+                                      style: TextStyle(
+                                          color: is_dark
+                                              ? Colors.grey[10]
+                                              : Colors.grey),
                                     )
                                   ],
                                 ),

@@ -24,16 +24,22 @@ class _chartState extends State<chart> {
 
   @override
   Widget build(BuildContext context) {
+    bool is_dark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       body: Stack(children: [
         chart_widget(is_monthly: is_monthly!),
         Container(
           height: 100,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [Colors.orange, Colors.blue],
+              colors: is_dark
+                  ? [
+                      const Color.fromARGB(255, 0, 112, 204),
+                      const Color.fromARGB(255, 203, 122, 0)
+                    ]
+                  : [Colors.orange, Colors.blue],
             ),
           ),
         ),
@@ -45,14 +51,16 @@ class _chartState extends State<chart> {
               Container(
                 height: 50,
                 decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.3),
-                      spreadRadius: 6,
-                      blurRadius: 9,
-                      offset: const Offset(0, 5),
-                    ),
-                  ],
+                  boxShadow: is_dark
+                      ? null
+                      : [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.3),
+                            spreadRadius: 6,
+                            blurRadius: 9,
+                            offset: const Offset(0, 5),
+                          ),
+                        ],
                 ),
                 child: CustomSlidingSegmentedControl<int>(
                   initialValue: 1,

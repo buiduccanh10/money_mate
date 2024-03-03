@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
+import 'package:money_mate/services/firestore_helper.dart';
 import 'package:money_mate/services/locales.dart';
 
 class language_setting extends StatefulWidget {
@@ -12,11 +14,22 @@ class language_setting extends StatefulWidget {
 class _language_settingState extends State<language_setting> {
   late String current_locale;
   final flutter_localization = FlutterLocalization.instance;
+  final uid = FirebaseAuth.instance.currentUser!.uid;
+  final db_helper = firestore_helper();
 
   @override
   void initState() {
+    get_language();
     current_locale = flutter_localization.currentLocale!.languageCode;
     super.initState();
+  }
+
+  Future<void> get_language() async {
+    String temp = (await db_helper.get_language(uid))!;
+    setState(() {
+      current_locale = temp;
+      set_locale(current_locale);
+    });
   }
 
   @override
@@ -68,6 +81,11 @@ class _language_settingState extends State<language_setting> {
     }
     setState(() {
       current_locale = value;
+      update_language(uid, current_locale);
     });
+  }
+
+  Future<void> update_language(String uid, String language) async {
+    await db_helper.update_language(uid, language);
   }
 }

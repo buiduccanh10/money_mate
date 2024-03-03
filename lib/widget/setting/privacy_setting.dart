@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:money_mate/main.dart';
 import 'package:money_mate/services/firestore_helper.dart';
 import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/widget/accounts/login.dart';
@@ -237,7 +238,7 @@ class _privacy_settingState extends State<privacy_setting> {
                                 .then((value) => Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => const login()),
+                                          builder: (context) => const MyApp()),
                                     )));
                       } catch (err) {
                         toast!.showToast(

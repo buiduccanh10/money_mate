@@ -79,6 +79,7 @@ class _input_contentState extends State<input_content> {
 
   @override
   Widget build(BuildContext context) {
+    bool is_dark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(children: [
@@ -88,7 +89,8 @@ class _input_contentState extends State<input_content> {
               children: [
                 Container(
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.amber),
+                    border: Border.all(
+                        color: is_dark ? Colors.orange : Colors.amber),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: SfDateRangePicker(
@@ -122,7 +124,8 @@ class _input_contentState extends State<input_content> {
                           ? LocaleData.des_validator.getString(context)
                           : null,
                       enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Colors.amber),
+                        borderSide: BorderSide(
+                            color: is_dark ? Colors.orange : Colors.amber),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       focusedBorder: OutlineInputBorder(
@@ -132,7 +135,8 @@ class _input_contentState extends State<input_content> {
                         LocaleData.input_description.getString(context),
                       ),
                       labelStyle: TextStyle(color: Colors.grey.withOpacity(1)),
-                      floatingLabelStyle: const TextStyle(color: Colors.black),
+                      floatingLabelStyle: TextStyle(
+                          color: is_dark ? Colors.white : Colors.black),
                       prefixIcon: const Icon(Icons.description),
                       prefixIconColor: Colors.blue),
                 ),
@@ -157,7 +161,8 @@ class _input_contentState extends State<input_content> {
                           ? LocaleData.money_validator.getString(context)
                           : null,
                       enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Colors.amber),
+                        borderSide: BorderSide(
+                            color: is_dark ? Colors.orange : Colors.amber),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       focusedBorder: OutlineInputBorder(
@@ -167,7 +172,8 @@ class _input_contentState extends State<input_content> {
                         LocaleData.input_money.getString(context),
                       ),
                       labelStyle: TextStyle(color: Colors.grey.withOpacity(1)),
-                      floatingLabelStyle: const TextStyle(color: Colors.black),
+                      floatingLabelStyle: TextStyle(
+                          color: is_dark ? Colors.white : Colors.black),
                       prefixIcon: const Icon(Icons.attach_money),
                       prefixIconColor: Colors.green,
                       suffixStyle: const TextStyle(fontSize: 20),
@@ -265,12 +271,21 @@ class _input_contentState extends State<input_content> {
                         duration: const Duration(milliseconds: 500),
                         curve: Curves.easeInOut,
                         decoration: BoxDecoration(
-                          border: Border.all(color: Colors.amber),
+                          border: Border.all(
+                              color: is_dark ? Colors.orange : Colors.amber),
                           borderRadius: BorderRadius.circular(10),
                           gradient: LinearGradient(
                               colors: is_selected
-                                  ? [Colors.blue, Colors.orange]
-                                  : [Colors.white, Colors.white],
+                                  ? (is_dark
+                                      ? [
+                                          const Color.fromARGB(
+                                              255, 0, 112, 204),
+                                          const Color.fromARGB(255, 203, 122, 0)
+                                        ]
+                                      : [Colors.blue, Colors.orange])
+                                  : (is_dark
+                                      ? [Colors.blueGrey, Colors.grey]
+                                      : [Colors.white, Colors.white]),
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight),
                         ),
@@ -286,7 +301,9 @@ class _input_contentState extends State<input_content> {
                                   overflow: TextOverflow.ellipsis,
                                   color: is_selected
                                       ? Colors.white
-                                      : Colors.black),
+                                      : (is_dark
+                                          ? Colors.white
+                                          : Colors.black)),
                             ),
                           ],
                         ),

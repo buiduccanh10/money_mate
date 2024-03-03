@@ -67,6 +67,7 @@ class _category_manageState extends State<category_manage> {
   @override
   Widget build(BuildContext context) {
     toast.init(context);
+    bool is_dark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       floatingActionButton: Padding(
@@ -92,11 +93,19 @@ class _category_manageState extends State<category_manage> {
       body: Stack(children: [
         Container(
           height: 100,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [Colors.blue, Colors.orange],
+              colors: is_dark
+                  ? [
+                      const Color.fromARGB(255, 203, 122, 0),
+                      const Color.fromARGB(255, 0, 112, 204),
+                    ]
+                  : [
+                      Colors.orange,
+                      Colors.blue,
+                    ],
             ),
           ),
           child: Row(
@@ -126,7 +135,7 @@ class _category_manageState extends State<category_manage> {
                     delete_all_category();
                   },
                   icon: const Icon(Icons.delete_sweep,
-                      color: Colors.red, size: 28))
+                      color: Colors.redAccent, size: 28))
             ],
           ),
         ),
@@ -169,6 +178,7 @@ class _category_manageState extends State<category_manage> {
                                     motion: const ScrollMotion(),
                                     children: [
                                       SlidableAction(
+                                        backgroundColor: Colors.transparent,
                                         onPressed: (context) {
                                           edit_cat(context, cat_item);
                                         },
@@ -177,6 +187,7 @@ class _category_manageState extends State<category_manage> {
                                         label: 'Edit',
                                       ),
                                       SlidableAction(
+                                        backgroundColor: Colors.transparent,
                                         onPressed: (context) {
                                           delete_cat(context, index, uid);
                                         },

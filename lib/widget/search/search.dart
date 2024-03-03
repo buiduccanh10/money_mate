@@ -73,6 +73,8 @@ class _searchState extends State<search> {
   @override
   Widget build(BuildContext context) {
     toast.init(context);
+    bool is_dark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
         body: SafeArea(
             child: Padding(
@@ -227,6 +229,8 @@ class _searchState extends State<search> {
                                           motion: const ScrollMotion(),
                                           children: [
                                             SlidableAction(
+                                              backgroundColor:
+                                                  Colors.transparent,
                                               onPressed: (context) {
                                                 handle_edit(
                                                     context, results[index]);
@@ -236,6 +240,8 @@ class _searchState extends State<search> {
                                               label: 'Edit',
                                             ),
                                             SlidableAction(
+                                              backgroundColor:
+                                                  Colors.transparent,
                                               onPressed: (context) {
                                                 handle_delete(
                                                     context,
@@ -275,18 +281,24 @@ class _searchState extends State<search> {
                                                   children: [
                                                     Container(
                                                       decoration: BoxDecoration(
-                                                          boxShadow: [
-                                                            BoxShadow(
-                                                              color: Colors.grey
-                                                                  .withOpacity(
-                                                                      0.3),
-                                                              spreadRadius: 2,
-                                                              blurRadius: 7,
-                                                              offset:
-                                                                  const Offset(
-                                                                      -5, 5),
-                                                            )
-                                                          ],
+                                                          boxShadow: is_dark
+                                                              ? null
+                                                              : [
+                                                                  BoxShadow(
+                                                                    color: Colors
+                                                                        .grey
+                                                                        .withOpacity(
+                                                                            0.3),
+                                                                    spreadRadius:
+                                                                        2,
+                                                                    blurRadius:
+                                                                        7,
+                                                                    offset:
+                                                                        const Offset(
+                                                                            -5,
+                                                                            5),
+                                                                  )
+                                                                ],
                                                           borderRadius:
                                                               BorderRadius
                                                                   .circular(

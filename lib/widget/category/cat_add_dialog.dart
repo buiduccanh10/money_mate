@@ -38,9 +38,9 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
 
   @override
   Widget build(BuildContext context) {
+    bool is_dark = Theme.of(context).brightness == Brightness.dark;
     return Builder(builder: (context) {
       return AlertDialog(
-        backgroundColor: Colors.white,
         title: Text(
           LocaleData.add_cat_dialog_title.getString(context),
           style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
@@ -72,6 +72,8 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
                   ),
                   labelStyle: TextStyle(color: Colors.grey.withOpacity(1)),
                   prefixIcon: const Icon(Icons.insert_emoticon),
+                  floatingLabelStyle:
+                      TextStyle(color: is_dark ? Colors.white : Colors.black),
                   prefixIconColor: Colors.orange,
                   suffixIcon: TextButton(
                     onPressed: () {
@@ -105,7 +107,8 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
                     LocaleData.category_name.getString(context),
                   ),
                   labelStyle: TextStyle(color: Colors.grey.withOpacity(1)),
-                  floatingLabelStyle: const TextStyle(color: Colors.black),
+                  floatingLabelStyle:
+                      TextStyle(color: is_dark ? Colors.white : Colors.black),
                   prefixIcon: const Icon(Icons.new_label),
                   prefixIconColor: Colors.blueAccent,
                 ),
@@ -164,6 +167,7 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
   }
 
   void showEmojiPicker(BuildContext context) {
+    bool is_dark = Theme.of(context).brightness == Brightness.dark;
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -171,9 +175,10 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
           height: 300,
           child: EmojiPicker(
             textEditingController: icon_controller,
-            config: const Config(
+            config: Config(
               columns: 7,
-              bgColor: Colors.white,
+              iconColor: is_dark ? Colors.white : Colors.black,
+              bgColor: is_dark ? Colors.grey : Colors.white,
               emojiSizeMax: 28,
               verticalSpacing: 0,
               horizontalSpacing: 0,
@@ -184,12 +189,14 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
               recentsLimit: 28,
               noRecents: Text(
                 'No Recents',
-                style: TextStyle(fontSize: 20, color: Colors.black26),
+                style: TextStyle(
+                    fontSize: 20,
+                    color: is_dark ? Colors.white : Colors.black26),
                 textAlign: TextAlign.center,
               ),
-              loadingIndicator: SizedBox.shrink(),
+              loadingIndicator: const SizedBox.shrink(),
               tabIndicatorAnimDuration: kTabScrollDuration,
-              categoryIcons: CategoryIcons(),
+              categoryIcons: const CategoryIcons(),
               buttonMode: ButtonMode.MATERIAL,
             ),
           ),

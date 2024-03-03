@@ -81,6 +81,7 @@ class _chart_item_detailState extends State<chart_item_detail> {
 
   @override
   Widget build(BuildContext context) {
+    bool is_dark = Theme.of(context).brightness == Brightness.dark;
     final date_group = <String, List<Map<String, dynamic>>>{};
     List<String> sorted_list = [];
 
@@ -116,11 +117,16 @@ class _chart_item_detailState extends State<chart_item_detail> {
           Stack(children: [
             Container(
               height: 100,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Colors.orange, Colors.blue],
+                  colors: is_dark
+                      ? [
+                          const Color.fromARGB(255, 0, 112, 204),
+                          const Color.fromARGB(255, 203, 122, 0)
+                        ]
+                      : [Colors.orange, Colors.blue],
                 ),
               ),
               child: Row(
@@ -268,7 +274,9 @@ class _chart_item_detailState extends State<chart_item_detail> {
                                             padding: const EdgeInsets.only(
                                                 left: 10, top: 8, bottom: 8),
                                             decoration: BoxDecoration(
-                                                color: Colors.grey[200]),
+                                                color: is_dark
+                                                    ? Colors.grey[700]
+                                                    : Colors.grey[200]),
                                             child: Text(
                                               date,
                                               style: const TextStyle(
@@ -294,6 +302,8 @@ class _chart_item_detailState extends State<chart_item_detail> {
                                                   motion: const ScrollMotion(),
                                                   children: [
                                                     SlidableAction(
+                                                      backgroundColor:
+                                                          Colors.transparent,
                                                       onPressed: (context) {
                                                         handle_edit(context,
                                                             input_item);
@@ -304,6 +314,8 @@ class _chart_item_detailState extends State<chart_item_detail> {
                                                       label: 'Edit',
                                                     ),
                                                     SlidableAction(
+                                                      backgroundColor:
+                                                          Colors.transparent,
                                                       onPressed: (context) {
                                                         handle_delete(
                                                           context,
@@ -344,26 +356,21 @@ class _chart_item_detailState extends State<chart_item_detail> {
                                                         Row(
                                                           children: [
                                                             Container(
-                                                              decoration: BoxDecoration(
-                                                                  boxShadow: [
-                                                                    BoxShadow(
-                                                                      color: Colors
-                                                                          .grey
-                                                                          .withOpacity(
-                                                                              0.3),
-                                                                      spreadRadius:
-                                                                          2,
-                                                                      blurRadius:
-                                                                          7,
-                                                                      offset:
-                                                                          const Offset(
-                                                                              -5,
-                                                                              5),
-                                                                    )
-                                                                  ],
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                      boxShadow:
+                                                                          is_dark
+                                                                              ? null
+                                                                              : [
+                                                                                  BoxShadow(
+                                                                                    color: Colors.grey.withOpacity(0.3),
+                                                                                    spreadRadius: 2,
+                                                                                    blurRadius: 7,
+                                                                                    offset: const Offset(-5, 5),
+                                                                                  )
+                                                                                ],
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
                                                                               50)),
                                                               child:
                                                                   CircleAvatar(

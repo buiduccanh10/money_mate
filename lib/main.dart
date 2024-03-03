@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +7,7 @@ import 'package:flutter_localization/flutter_localization.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:money_mate/services/currency.dart';
+import 'package:money_mate/services/firestore_helper.dart';
 import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/widget/chart/chart.dart';
 import 'package:money_mate/firebase_options.dart';
@@ -25,25 +28,76 @@ Future<void> main() async {
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
+  static void setAppTheme(BuildContext context, ThemeData newTheme) {
+    _MyAppState? state = context.findAncestorStateOfType<_MyAppState>();
+    state?.setAppTheme(newTheme);
+  }
+
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
   final localization = FlutterLocalization.instance;
+  String? uid;
+  User? user;
+  final db_helper = firestore_helper();
+  ThemeData? theme;
+  String language = 'en';
+  bool? is_dark;
 
   @override
   void initState() {
-    configureLocalization();
+    if (FirebaseAuth.instance.currentUser != null) {
+      user = FirebaseAuth.instance.currentUser;
+      uid = user!.uid;
+      get_language();
+      get_dark_mode();
+      configureLocalization();
+    } else {
+      configureLocalization();
+      setAppTheme(ThemeData.light());
+    }
     super.initState();
+  }
+
+  Future<void> get_language() async {
+    String temp = (await db_helper.get_language(uid!))!;
+    setState(() {
+      localization.translate(temp);
+    });
+  }
+
+  setAppTheme(ThemeData newtheme) {
+    setState(() {
+      theme = newtheme;
+    });
+  }
+
+  Future<void> get_dark_mode() async {
+    bool temp = (await db_helper.get_dark_mode(uid!))!;
+    setState(() {
+      is_dark = temp;
+      set_dark_mode();
+    });
+  }
+
+  void set_dark_mode() {
+    if (is_dark!) {
+      setState(() {
+        theme = ThemeData.dark();
+      });
+    } else {
+      setState(() {
+        theme = ThemeData.light();
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    User? user = FirebaseAuth.instance.currentUser;
-
     return MaterialApp(
-      theme: ThemeData.light(useMaterial3: true),
+      theme: theme,
       title: 'Money Mate',
       debugShowCheckedModeBanner: false,
       home: user != null ? const Main() : const login(),
@@ -55,7 +109,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   void configureLocalization() {
-    localization.init(mapLocales: LOCALES, initLanguageCode: "en");
+    localization.init(mapLocales: LOCALES, initLanguageCode: language);
     localization.onTranslatedLanguage = onTranslatedLanguage;
   }
 
@@ -90,6 +144,7 @@ class _MainState extends State<Main> {
 
   @override
   Widget build(BuildContext context) {
+    bool is_dark = Theme.of(context).brightness == Brightness.dark;
     final width = MediaQuery.of(context).size.width;
     return PopScope(
       canPop: false,
@@ -127,11 +182,20 @@ class _MainState extends State<Main> {
                     });
                   }
                 },
-                tabBackgroundGradient: const LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors: [Colors.orange, Colors.blue],
-                ),
+                tabBackgroundGradient: is_dark
+                    ? const LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Color.fromARGB(255, 0, 112, 204),
+                          Color.fromARGB(255, 203, 122, 0)
+                        ],
+                      )
+                    : const LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: [Colors.orange, Colors.blue],
+                      ),
                 padding: const EdgeInsets.only(
                     top: 20, bottom: 20, left: 16, right: 16),
                 gap: width * 0.01,

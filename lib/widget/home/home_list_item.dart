@@ -62,6 +62,7 @@ class _home_list_itemState extends State<home_list_item> {
 
   @override
   Widget build(BuildContext context) {
+    bool is_dark = Theme.of(context).brightness == Brightness.dark;
     final width = MediaQuery.of(context).size.width;
     final date_group = <String, List<Map<String, dynamic>>>{};
     for (final item in input_data) {
@@ -134,7 +135,10 @@ class _home_list_itemState extends State<home_list_item> {
                           width: MediaQuery.of(context).size.width,
                           padding: const EdgeInsets.only(
                               left: 10, top: 8, bottom: 8),
-                          decoration: BoxDecoration(color: Colors.grey[200]),
+                          decoration: BoxDecoration(
+                              color: is_dark
+                                  ? Colors.grey[700]
+                                  : Colors.grey[200]),
                           child: Text(
                             date,
                             style: const TextStyle(
@@ -155,6 +159,7 @@ class _home_list_itemState extends State<home_list_item> {
                                 motion: const ScrollMotion(),
                                 children: [
                                   SlidableAction(
+                                    backgroundColor: Colors.transparent,
                                     onPressed: (context) {
                                       handle_edit(context, input_item);
                                     },
@@ -163,6 +168,7 @@ class _home_list_itemState extends State<home_list_item> {
                                     label: 'Edit',
                                   ),
                                   SlidableAction(
+                                    backgroundColor: Colors.transparent,
                                     onPressed: (context) {
                                       handle_delete(
                                           context, input_item['id'], uid);
@@ -193,15 +199,18 @@ class _home_list_itemState extends State<home_list_item> {
                                         children: [
                                           Container(
                                             decoration: BoxDecoration(
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.grey
-                                                        .withOpacity(0.3),
-                                                    spreadRadius: 2,
-                                                    blurRadius: 7,
-                                                    offset: const Offset(-5, 5),
-                                                  )
-                                                ],
+                                                boxShadow: is_dark
+                                                    ? null
+                                                    : [
+                                                        BoxShadow(
+                                                          color: Colors.grey
+                                                              .withOpacity(0.3),
+                                                          spreadRadius: 2,
+                                                          blurRadius: 7,
+                                                          offset: const Offset(
+                                                              -5, 5),
+                                                        )
+                                                      ],
                                                 borderRadius:
                                                     BorderRadius.circular(50)),
                                             child: CircleAvatar(

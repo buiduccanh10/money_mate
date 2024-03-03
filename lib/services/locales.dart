@@ -69,7 +69,9 @@ mixin LocaleData {
   static const String op_vi = 'op_vi';
   static const String op_cn = 'op_cn';
   static const String currency = 'currency';
-  static const String darkmode = 'darkmode';
+  static const String appearance = 'appearance';
+  static const String darkmode_light_des = 'darkmode_light_des';
+  static const String darkmode_dark_des = 'darkmode_dark_des';
   static const String application_lock = 'application_lock';
   static const String application_lock_des = 'application_lock_des';
   static const String privacy = 'privacy';
@@ -149,7 +151,7 @@ mixin LocaleData {
     modify_des: 'Tap to change your profile',
     language: 'Language',
     currency: 'Currency',
-    darkmode: 'Dark mode',
+    appearance: 'Appearance',
     application_lock: 'Application lock',
     application_lock_des: 'Use Passwork or FaceID when open',
     privacy: 'Privacy',
@@ -197,7 +199,9 @@ mixin LocaleData {
     toast_user_not_exist: 'User is not exist !',
     cat_validator: 'No category selected yet !',
     des_validator: 'Description field can not be blank',
-    money_validator: 'Money field can not be blank'
+    money_validator: 'Money field can not be blank',
+    darkmode_light_des: 'Light',
+    darkmode_dark_des: 'Dark'
   };
 
   static const Map<String, dynamic> VI = {
@@ -237,7 +241,7 @@ mixin LocaleData {
     modify_des: 'Nhấn để thay đổi hồ sơ của bạn',
     language: 'Ngôn ngữ',
     currency: 'Tiền tệ',
-    darkmode: 'Chế độ tối',
+    appearance: 'Giao diện',
     application_lock: 'Khoá ứng dụng',
     application_lock_des: 'Sử dụng mật khẩu hoặc FaceID khi mở ứng dụng',
     privacy: 'Quyền riêng tư',
@@ -286,6 +290,8 @@ mixin LocaleData {
     cat_validator: 'Chưa có danh mục nào được chọn !',
     des_validator: 'Trường mô tả không được để trống',
     money_validator: 'Trường số tiền không được để trống',
+    darkmode_light_des: 'Sáng',
+    darkmode_dark_des: 'Tối'
   };
 
   static const Map<String, dynamic> CN = {
@@ -325,7 +331,7 @@ mixin LocaleData {
     modify_des: '点击以更改您的资料',
     language: '语言',
     currency: '货币',
-    darkmode: '暗模式',
+    appearance: '展示',
     application_lock: '应用程序锁',
     application_lock_des: '打开时使用密码或面容识别',
     privacy: '隐私',
@@ -372,5 +378,7 @@ mixin LocaleData {
     cat_validator: '尚未选择类别！',
     des_validator: '描述字段不能为空',
     money_validator: '金钱字段不能为空',
+    darkmode_light_des: '明亮',
+    darkmode_dark_des: '暗'
   };
 }

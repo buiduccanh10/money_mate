@@ -45,6 +45,7 @@ class _update_inputState extends State<update_input> {
   bool is_mounted = false;
   FToast toast = FToast();
   final uid = FirebaseAuth.instance.currentUser!.uid;
+  final localization = FlutterLocalization.instance;
 
   @override
   void initState() {
@@ -84,6 +85,7 @@ class _update_inputState extends State<update_input> {
 
   @override
   Widget build(BuildContext context) {
+    bool is_dark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       body: Stack(children: [
         SingleChildScrollView(
@@ -139,8 +141,8 @@ class _update_inputState extends State<update_input> {
                         ),
                         labelStyle:
                             TextStyle(color: Colors.grey.withOpacity(1)),
-                        floatingLabelStyle:
-                            const TextStyle(color: Colors.black),
+                        floatingLabelStyle: TextStyle(
+                            color: is_dark ? Colors.white : Colors.black),
                         prefixIcon: const Icon(Icons.description),
                         prefixIconColor: Colors.blue),
                   ),
@@ -148,19 +150,26 @@ class _update_inputState extends State<update_input> {
                     height: 10,
                   ),
                   TextField(
-                    keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true, signed: true),
+                    keyboardType: localization.currentLocale.toString() == 'vi'
+                        ? const TextInputType.numberWithOptions(
+                            decimal: false, signed: true)
+                        : const TextInputType.numberWithOptions(
+                            decimal: true, signed: false),
                     controller: money_controller,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      currency_format()
-                    ],
+                    inputFormatters:
+                        localization.currentLocale.toString() == 'vi'
+                            ? [
+                                FilteringTextInputFormatter.digitsOnly,
+                                currency_format(),
+                              ]
+                            : [],
                     decoration: InputDecoration(
                         errorText: money_validate
                             ? LocaleData.money_validator.getString(context)
                             : null,
                         enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.amber),
+                          borderSide: BorderSide(
+                              color: is_dark ? Colors.orange : Colors.amber),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         focusedBorder: OutlineInputBorder(
@@ -171,11 +180,17 @@ class _update_inputState extends State<update_input> {
                         ),
                         labelStyle:
                             TextStyle(color: Colors.grey.withOpacity(1)),
-                        floatingLabelStyle:
-                            const TextStyle(color: Colors.black),
+                        floatingLabelStyle: TextStyle(
+                            color: is_dark ? Colors.white : Colors.black),
                         prefixIcon: const Icon(Icons.attach_money),
                         prefixIconColor: Colors.green,
-                        suffixText: 'VND'),
+                        suffixStyle: const TextStyle(fontSize: 20),
+                        suffixText:
+                            localization.currentLocale.toString() == 'vi'
+                                ? 'đ'
+                                : localization.currentLocale.toString() == 'zh'
+                                    ? '¥'
+                                    : '\$'),
                   ),
                 ],
               ),
@@ -271,8 +286,17 @@ class _update_inputState extends State<update_input> {
                             borderRadius: BorderRadius.circular(10),
                             gradient: LinearGradient(
                                 colors: is_selected
-                                    ? [Colors.blue, Colors.orange]
-                                    : [Colors.white, Colors.white],
+                                    ? (is_dark
+                                        ? [
+                                            const Color.fromARGB(
+                                                255, 0, 112, 204),
+                                            const Color.fromARGB(
+                                                255, 203, 122, 0)
+                                          ]
+                                        : [Colors.blue, Colors.orange])
+                                    : (is_dark
+                                        ? [Colors.grey, Colors.grey]
+                                        : [Colors.white, Colors.white]),
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight),
                           ),
@@ -300,11 +324,16 @@ class _update_inputState extends State<update_input> {
         ),
         Container(
           height: 100,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [Colors.orange, Colors.blue],
+              colors: is_dark
+                  ? [
+                      const Color.fromARGB(255, 0, 112, 204),
+                      const Color.fromARGB(255, 203, 122, 0)
+                    ]
+                  : [Colors.orange, Colors.blue],
             ),
           ),
           child: Column(
@@ -463,7 +492,7 @@ class _update_inputState extends State<update_input> {
             borderRadius: BorderRadius.circular(10.0),
             color: Colors.green,
           ),
-          child:  Row(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -484,7 +513,7 @@ class _update_inputState extends State<update_input> {
             borderRadius: BorderRadius.circular(10.0),
             color: Colors.red,
           ),
-          child:  Row(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [

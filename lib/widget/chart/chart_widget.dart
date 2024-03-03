@@ -177,6 +177,7 @@ class _chart_widgetState extends State<chart_widget> {
 
   @override
   Widget build(BuildContext context) {
+    bool is_dark = Theme.of(context).brightness == Brightness.dark;
     final width = MediaQuery.of(context).size.width;
     var formatter = NumberFormat.simpleCurrency(
         locale: localization.currentLocale.toString());
@@ -200,7 +201,9 @@ class _chart_widgetState extends State<chart_widget> {
                           Container(
                             width: width,
                             decoration: BoxDecoration(
-                                border: Border.all(color: Colors.amber),
+                                border: Border.all(
+                                    color:
+                                        is_dark ? Colors.orange : Colors.amber),
                                 borderRadius: BorderRadius.circular(10)),
                             child: SizedBox(
                                 height: 50,
@@ -212,7 +215,13 @@ class _chart_widgetState extends State<chart_widget> {
                                         boxDecoration: BoxDecoration(
                                             borderRadius:
                                                 BorderRadius.circular(10),
-                                            color: Colors.white),
+                                            color: is_dark
+                                                ? Colors.transparent
+                                                : Colors.white),
+                                        textStyle: TextStyle(
+                                            color: is_dark
+                                                ? Colors.white
+                                                : Colors.black),
                                         inputDecoration: const InputDecoration(
                                           border: InputBorder.none,
                                         ),
@@ -246,9 +255,15 @@ class _chart_widgetState extends State<chart_widget> {
                                         child: DropdownDatePicker(
                                           width: 80,
                                           selectedYear: year,
-                                          boxDecoration: const BoxDecoration(
-                                            color: Colors.white,
+                                          boxDecoration: BoxDecoration(
+                                            color: is_dark
+                                                ? Colors.transparent
+                                                : Colors.white,
                                           ),
+                                          textStyle: TextStyle(
+                                              color: is_dark
+                                                  ? Colors.white
+                                                  : Colors.black),
                                           inputDecoration:
                                               const InputDecoration(
                                             border: InputBorder.none,
@@ -278,7 +293,10 @@ class _chart_widgetState extends State<chart_widget> {
                                   width: width * 0.48,
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.amber),
+                                      border: Border.all(
+                                          color: is_dark
+                                              ? Colors.orange
+                                              : Colors.amber),
                                       borderRadius: BorderRadius.circular(10)),
                                   child: Row(
                                     mainAxisAlignment:
@@ -307,7 +325,10 @@ class _chart_widgetState extends State<chart_widget> {
                                   width: width * 0.48,
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.amber),
+                                      border: Border.all(
+                                          color: is_dark
+                                              ? Colors.orange
+                                              : Colors.amber),
                                       borderRadius: BorderRadius.circular(10)),
                                   child: Row(
                                     mainAxisAlignment:
@@ -363,7 +384,7 @@ class _chart_widgetState extends State<chart_widget> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 160),
+                      padding: const EdgeInsets.only(top: 170),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -380,7 +401,9 @@ class _chart_widgetState extends State<chart_widget> {
                                   LocaleData.income.getString(context),
                                   style: TextStyle(
                                       color: is_income!
-                                          ? Colors.black
+                                          ? (is_dark
+                                              ? Colors.white
+                                              : Colors.black)
                                           : Colors.grey,
                                       fontWeight: FontWeight.w500,
                                       fontSize: 16),
@@ -390,19 +413,27 @@ class _chart_widgetState extends State<chart_widget> {
                                   style: TextStyle(
                                       color: is_income!
                                           ? Colors.grey
-                                          : Colors.black,
+                                          : (is_dark
+                                              ? Colors.white
+                                              : Colors.black),
                                       fontWeight: FontWeight.w500,
                                       fontSize: 16),
                                 ),
                               },
-                              decoration: const BoxDecoration(
-                                color: CupertinoColors.white,
+                              decoration: BoxDecoration(
+                                color: is_dark
+                                    ? Colors.transparent
+                                    : CupertinoColors.white,
                               ),
-                              thumbDecoration: const BoxDecoration(
-                                color: Colors.white,
+                              thumbDecoration: BoxDecoration(
+                                color:
+                                    is_dark ? Colors.grey[700] : Colors.white,
                                 border: Border(
                                     bottom: BorderSide(
-                                        width: 1.5, color: Colors.black)),
+                                        width: 1.5,
+                                        color: is_dark
+                                            ? Colors.white
+                                            : Colors.black)),
                               ),
                               curve: Curves.linear,
                               onValueChanged: (value) {
@@ -423,7 +454,7 @@ class _chart_widgetState extends State<chart_widget> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 190.0),
+                      padding: const EdgeInsets.only(top: 200.0),
                       child: SizedBox(
                         height: 280,
                         child: is_loading
@@ -450,7 +481,7 @@ class _chart_widgetState extends State<chart_widget> {
                       ),
                     ),
                     Padding(
-                        padding: const EdgeInsets.only(top: 430),
+                        padding: const EdgeInsets.only(top: 440),
                         child: is_loading
                             ? ListView.builder(
                                 padding: const EdgeInsets.all(8),

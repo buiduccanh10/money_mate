@@ -330,31 +330,31 @@ class _loginState extends State<login> {
   }
 
   Future<void> login_google() async {
-    try {
-      GoogleAuthProvider googleAuthProvider = GoogleAuthProvider();
-      final FirebaseAuth auth = FirebaseAuth.instance;
+    GoogleAuthProvider googleAuthProvider = GoogleAuthProvider();
+    final FirebaseAuth auth = FirebaseAuth.instance;
 
-      final cre = await auth.signInWithProvider(googleAuthProvider);
+    final cre = await auth.signInWithProvider(googleAuthProvider);
 
-      uid = cre.user!.uid;
-      email = cre.user!.email;
-      image = cre.user!.photoURL;
+    uid = cre.user!.uid;
+    email = cre.user!.email;
+    image = cre.user!.photoURL;
 
-      await db_helper
-          .get_user(uid, email!, image!)
-          .then((value) => Fluttertoast.showToast(
-              msg: LocaleData.toast_login_success.getString(context),
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.green,
-              textColor: Colors.white,
-              fontSize: 16.0))
-          .then((value) => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const Main()),
-              ));
-    } catch (err) {}
+    if (cre.additionalUserInfo!.isNewUser) {
+      db_helper.get_user(uid, email!, image!);
+    }
+
+    Fluttertoast.showToast(
+            msg: LocaleData.toast_login_success.getString(context),
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0)
+        .then((value) => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MyApp()),
+            ));
   }
 
   Future<void> login() async {
@@ -369,6 +369,10 @@ class _loginState extends State<login> {
     try {
       final cre = await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: email_controller.text, password: password_controller.text);
+
+      if (cre.additionalUserInfo!.isNewUser) {
+        db_helper.get_user(uid, email!, image!);
+      }
 
       if (cre.user!.emailVerified) {
         Fluttertoast.showToast(

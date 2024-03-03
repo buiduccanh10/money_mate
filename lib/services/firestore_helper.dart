@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'dart:ui' as ui;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,9 +11,18 @@ class firestore_helper {
   Future<void> get_user(String user_id, String email, String image_url) async {
     DocumentReference user_ref = db.collection('users').doc(user_id);
 
-    final users = <String, dynamic>{"email": email, "image": image_url};
+    String language = Platform.localeName.split('_').first;
+    bool is_dark = ui.window.platformBrightness == ui.Brightness.dark;
+
+    final users = <String, dynamic>{
+      'email': email,
+      'image': image_url,
+      'language': language,
+      'is_dark': is_dark
+    };
 
     await user_ref.set(users);
+
     String uid = user_ref.id;
 
     init_user_database(uid);
@@ -21,7 +32,7 @@ class firestore_helper {
     CollectionReference user_collection =
         db.collection('users').doc(userId).collection('category');
 
-    QuerySnapshot snapshot = await user_collection.limit(1).get();
+    QuerySnapshot snapshot = await user_collection.get();
 
     if (snapshot.docs.isEmpty) {
       List<Map<String, dynamic>> cat_default = [
@@ -42,6 +53,46 @@ class firestore_helper {
         });
       }
     }
+  }
+
+  Future<String?> get_language(String uid) async {
+    DocumentSnapshot userDocument =
+        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
+    if (userDocument.exists) {
+      Map<String, dynamic>? data = userDocument.data() as Map<String, dynamic>?;
+      if (data != null && data.containsKey('language')) {
+        String? language = data['language'];
+        return language;
+      }
+    }
+    return null;
+  }
+
+  Future<void> update_language(String uid, String language) async {
+    await FirebaseFirestore.instance.collection('users').doc(uid).update({
+      'language': language,
+    });
+  }
+
+  Future<bool?> get_dark_mode(String uid) async {
+    DocumentSnapshot userDocument =
+        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
+    if (userDocument.exists) {
+      Map<String, dynamic>? data = userDocument.data() as Map<String, dynamic>?;
+      if (data != null && data.containsKey('is_dark')) {
+        bool? is_dark = data['is_dark'];
+        return is_dark;
+      }
+    }
+    return null;
+  }
+
+  Future<void> update_dark_mode(String uid, bool is_dark) async {
+    await FirebaseFirestore.instance.collection('users').doc(uid).update({
+      'is_dark': is_dark,
+    });
   }
 
   Future<List<Map<String, dynamic>>> fetch_categories(

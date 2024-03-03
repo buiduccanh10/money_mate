@@ -26,6 +26,7 @@ class _inputState extends State<input> {
 
   @override
   Widget build(BuildContext context) {
+    bool is_dark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       body: Stack(children: [
         input_content(
@@ -33,12 +34,21 @@ class _inputState extends State<input> {
         ),
         Container(
           height: 100,
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Colors.orange, Colors.blue],
-            ),
+          decoration: BoxDecoration(
+            gradient: is_dark
+                ? const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color.fromARGB(255, 203, 122, 0),
+                      Color.fromARGB(255, 0, 112, 204),
+                    ],
+                  )
+                : const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Colors.orange, Colors.blue],
+                  ),
           ),
         ),
         Padding(
@@ -49,14 +59,16 @@ class _inputState extends State<input> {
               Container(
                 height: 50,
                 decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.3),
-                      spreadRadius: 6,
-                      blurRadius: 9,
-                      offset: const Offset(0, 5),
-                    ),
-                  ],
+                  boxShadow: is_dark
+                      ? null
+                      : [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.3),
+                            spreadRadius: 6,
+                            blurRadius: 9,
+                            offset: const Offset(0, 5),
+                          ),
+                        ],
                 ),
                 child: CustomSlidingSegmentedControl<int>(
                   initialValue: 1,
