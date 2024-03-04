@@ -145,10 +145,8 @@ class _input_contentState extends State<input_content> {
                 ),
                 TextField(
                   keyboardType: localization.currentLocale.toString() == 'vi'
-                      ? const TextInputType.numberWithOptions(
-                          decimal: false, signed: true)
-                      : const TextInputType.numberWithOptions(
-                          decimal: true, signed: false),
+                      ? const TextInputType.numberWithOptions(decimal: false)
+                      : const TextInputType.numberWithOptions(decimal: true),
                   controller: money_controller,
                   inputFormatters: localization.currentLocale.toString() == 'vi'
                       ? [
@@ -156,6 +154,9 @@ class _input_contentState extends State<input_content> {
                           currency_format(),
                         ]
                       : [],
+                  onTapOutside: (event) {
+                    FocusScope.of(context).unfocus();
+                  },
                   decoration: InputDecoration(
                       errorText: money_validate
                           ? LocaleData.money_validator.getString(context)
@@ -228,7 +229,8 @@ class _input_contentState extends State<input_content> {
                   shrinkWrap: true, // Adjusts the height based on content
                   itemBuilder: (BuildContext context, int index) {
                     return Shimmer.fromColors(
-                      baseColor: Colors.grey[300]!,
+                      baseColor:
+                          is_dark ? Colors.grey[700]! : Colors.grey[300]!,
                       highlightColor: Colors.grey[100]!,
                       child: Container(
                         margin: const EdgeInsets.symmetric(vertical: 7.0),

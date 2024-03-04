@@ -28,6 +28,7 @@ class _privacy_settingState extends State<privacy_setting> {
 
   @override
   Widget build(BuildContext context) {
+    bool is_dark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: AppBar(
         title: Text(LocaleData.privacy.getString(context)),
@@ -38,7 +39,7 @@ class _privacy_settingState extends State<privacy_setting> {
             padding: const EdgeInsets.only(left: 14.0, right: 14),
             child: Material(
               borderRadius: BorderRadius.circular(10),
-              color: Colors.grey[200],
+              color: is_dark ? Colors.grey[700] : Colors.grey[200],
               child: InkWell(
                 borderRadius: BorderRadius.circular(10),
                 onTap: () {
@@ -49,7 +50,7 @@ class _privacy_settingState extends State<privacy_setting> {
                   child: Row(
                     children: [
                       const Padding(
-                        padding: const EdgeInsets.only(left: 10.0, right: 18),
+                        padding: EdgeInsets.only(left: 10.0, right: 18),
                         child: Icon(
                           Icons.folder_delete,
                           color: Colors.red,
@@ -81,7 +82,7 @@ class _privacy_settingState extends State<privacy_setting> {
             padding: const EdgeInsets.only(top: 8, left: 14.0, right: 14),
             child: Material(
               borderRadius: BorderRadius.circular(10),
-              color: Colors.grey[200],
+              color: is_dark ? Colors.grey[700] : Colors.grey[200],
               child: InkWell(
                 borderRadius: BorderRadius.circular(10),
                 onTap: () async {
@@ -252,7 +253,7 @@ class _privacy_settingState extends State<privacy_setting> {
                               mainAxisSize: MainAxisSize.min,
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                const Icon(Icons.do_disturb),
+                                const Icon(Icons.person_off_outlined),
                                 Text(LocaleData.toast_delete_user_fail
                                     .getString(context)),
                               ],

@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:money_mate/services/currency.dart';
 import 'package:money_mate/services/firestore_helper.dart';
 import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/widget/chart/chart.dart';
@@ -158,13 +157,17 @@ class _MainState extends State<Main> {
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: is_dark
+                      ? Colors.white.withOpacity(0.1)
+                      : Colors.black.withOpacity(0.2),
                   spreadRadius: 7,
                   blurRadius: 8,
                   offset: const Offset(0, 7),
                 ),
               ],
-              color: const Color.fromARGB(255, 216, 216, 216),
+              color: is_dark
+                  ? Colors.grey[500]
+                  : const Color.fromARGB(255, 216, 216, 216),
             ),
             child: GNav(
                 selectedIndex: index,

@@ -35,6 +35,7 @@ class _searchState extends State<search> {
   bool is_loading = true;
   FToast toast = FToast();
   Timer? timer;
+  final localization = FlutterLocalization.instance;
 
   @override
   void initState() {
@@ -164,8 +165,11 @@ class _searchState extends State<search> {
                         ? Padding(
                             padding: const EdgeInsets.all(26.0),
                             child: Image.asset(
-                              'assets/Search.png',
+                              is_dark
+                                  ? 'assets/search_dark.png'
+                                  : 'assets/search_light.png',
                               width: MediaQuery.of(context).size.width * 0.4,
+                              filterQuality: FilterQuality.high,
                             ),
                           )
                         : is_loading
@@ -221,7 +225,8 @@ class _searchState extends State<search> {
                                         (BuildContext context, int index) {
                                       var formatter =
                                           NumberFormat.simpleCurrency(
-                                              locale: "vi_VN");
+                                              locale: localization.currentLocale
+                                                  .toString());
                                       String format_money = formatter
                                           .format(results[index]['money']);
                                       return Slidable(

@@ -85,7 +85,7 @@ class _home_list_itemState extends State<home_list_item> {
               itemCount: 5,
               itemBuilder: (BuildContext context, int index) {
                 return Shimmer.fromColors(
-                  baseColor: Colors.grey[300]!,
+                  baseColor: is_dark ? Colors.grey[700]! : Colors.grey[300]!,
                   highlightColor: Colors.grey[100]!,
                   child: Padding(
                     padding: const EdgeInsets.only(
@@ -149,7 +149,6 @@ class _home_list_itemState extends State<home_list_item> {
                           children:
                               List.generate(list_item.length, (itemIndex) {
                             final input_item = list_item[itemIndex];
-                            // var formatter = NumberFormat("#,##0", "en_US");
                             var formatter = NumberFormat.simpleCurrency(
                                 locale: localization.currentLocale.toString());
                             String format_money =

@@ -7,7 +7,6 @@ import 'package:money_mate/main.dart';
 import 'package:money_mate/services/firestore_helper.dart';
 import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/widget/accounts/login.dart';
-import 'package:money_mate/widget/setting/currency_setting.dart';
 import 'package:money_mate/widget/setting/language_setting.dart';
 import 'package:money_mate/widget/setting/privacy_setting.dart';
 

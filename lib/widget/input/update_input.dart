@@ -52,7 +52,9 @@ class _update_inputState extends State<update_input> {
     //date_controller.selectedDate = widget.input_item['date'];
     description_controller.text = widget.input_item['description'];
     final money_update = NumberFormat("###,###,###", "vi_VN");
-    money_controller.text = money_update.format(widget.input_item['money']);
+    money_controller.text = localization.currentLocale.toString() == 'vi'
+        ? money_update.format(widget.input_item['money'])
+        : (widget.input_item['money'].toString());
     cat_id = widget.input_item['cat_id'];
 
     is_mounted = true;
@@ -151,10 +153,8 @@ class _update_inputState extends State<update_input> {
                   ),
                   TextField(
                     keyboardType: localization.currentLocale.toString() == 'vi'
-                        ? const TextInputType.numberWithOptions(
-                            decimal: false, signed: true)
-                        : const TextInputType.numberWithOptions(
-                            decimal: true, signed: false),
+                        ? const TextInputType.numberWithOptions(decimal: false)
+                        : const TextInputType.numberWithOptions(decimal: true),
                     controller: money_controller,
                     inputFormatters:
                         localization.currentLocale.toString() == 'vi'
@@ -438,7 +438,9 @@ class _update_inputState extends State<update_input> {
       String money, String cat_id) async {
     try {
       String format_date;
-      String format_money = money.replaceAll('.', '');
+      String format_money = localization.currentLocale.toString() == 'vi'
+          ? money.replaceAll('.', '')
+          : money.replaceAll(',', '.');
       double money_final = double.parse(format_money);
       if (date_controller.selectedDate == null) {
         format_date = widget.input_item['date'];

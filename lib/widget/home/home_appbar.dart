@@ -104,7 +104,7 @@ class _home_appbarState extends State<home_appbar> {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
     var formatter = NumberFormat.simpleCurrency(
-        locale: localization.currentLocale.toString(), decimalDigits: 0);
+        locale: localization.currentLocale.toString());
 
     String format_total = formatter.format(total_saving);
     String format_income = formatter.format(total_income);

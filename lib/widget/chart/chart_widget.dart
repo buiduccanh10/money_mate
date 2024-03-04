@@ -489,7 +489,9 @@ class _chart_widgetState extends State<chart_widget> {
                                 itemCount: 5,
                                 itemBuilder: (BuildContext context, int index) {
                                   return Shimmer.fromColors(
-                                    baseColor: Colors.grey[300]!,
+                                    baseColor: is_dark
+                                        ? Colors.grey[700]!
+                                        : Colors.grey[300]!,
                                     highlightColor: Colors.grey[100]!,
                                     child: Container(
                                       margin: const EdgeInsets.symmetric(

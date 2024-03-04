@@ -9,7 +9,7 @@ class currency_format extends TextInputFormatter {
       return newValue;
     }
     double value = double.parse(newValue.text);
-    final money = NumberFormat("###,###,###", "vi_VN");
+    final money = NumberFormat("#,###", "vi_VN");
 
     String new_text = money.format(value);
 

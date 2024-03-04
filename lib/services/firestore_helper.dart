@@ -455,22 +455,24 @@ class firestore_helper {
   Future<void> delete_user(String uid) async {
     WriteBatch batch = db.batch();
 
+    QuerySnapshot inputSnapshot = await db.collection('users/$uid/input').get();
+    for (var doc in inputSnapshot.docs) {
+      batch.delete(doc.reference);
+    }
+
     QuerySnapshot categorySnapshot =
         await db.collection('users/$uid/category').get();
     for (var doc in categorySnapshot.docs) {
       batch.delete(doc.reference);
     }
 
-    QuerySnapshot inputSnapshot = await db.collection('users/$uid/input').get();
-    for (var doc in inputSnapshot.docs) {
-      batch.delete(doc.reference);
-    }
-
     batch.delete(db.collection('users').doc(uid));
 
     await batch.commit();
-
     await FirebaseAuth.instance.currentUser!.delete();
+    // await FirebaseAuth.instance.currentUser!
+    //     .reauthenticateWithProvider(GoogleAuthProvider())
+    //     .whenComplete(() => FirebaseAuth.instance.currentUser!.delete());
   }
 
   Future<List<Map<String, dynamic>>> search(String uid, String query) async {
