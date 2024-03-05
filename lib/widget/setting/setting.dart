@@ -28,16 +28,15 @@ class _settingState extends State<setting> {
   Widget build(BuildContext context) {
     bool is_dark = Theme.of(context).brightness == Brightness.dark;
     final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Stack(
         children: [
           const setting_content(),
           Container(
-            height: height * 0.26,
+            height: 230,
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.only(
-                  bottomLeft: const Radius.circular(10),
+                  bottomLeft: Radius.circular(10),
                   bottomRight: Radius.circular(10)),
               gradient: LinearGradient(
                 begin: Alignment.topLeft,

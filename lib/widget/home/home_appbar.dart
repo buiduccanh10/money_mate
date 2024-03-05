@@ -275,12 +275,14 @@ class _home_appbarState extends State<home_appbar> {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          LocaleData.income.getString(context),
-                          style: TextStyle(
-                              fontSize: 16,
-                              color: is_dark ? Colors.white : Colors.grey,
-                              fontWeight: FontWeight.w700),
+                        Flexible(
+                          child: Text(
+                            LocaleData.income.getString(context),
+                            style: TextStyle(
+                                fontSize: 16,
+                                color: is_dark ? Colors.white : Colors.grey,
+                                fontWeight: FontWeight.w700),
+                          ),
                         ),
                         const SizedBox(
                           width: 10,
@@ -337,12 +339,14 @@ class _home_appbarState extends State<home_appbar> {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          LocaleData.expense.getString(context),
-                          style: TextStyle(
-                              fontSize: 16,
-                              color: is_dark ? Colors.white : Colors.grey,
-                              fontWeight: FontWeight.w700),
+                        Flexible(
+                          child: Text(
+                            LocaleData.expense.getString(context),
+                            style: TextStyle(
+                                fontSize: 16,
+                                color: is_dark ? Colors.white : Colors.grey,
+                                fontWeight: FontWeight.w700),
+                          ),
                         ),
                         const SizedBox(
                           width: 10,

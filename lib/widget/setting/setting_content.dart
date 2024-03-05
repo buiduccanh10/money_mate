@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:money_mate/main.dart';
 import 'package:money_mate/services/firestore_helper.dart';
 import 'package:money_mate/services/locales.dart';
@@ -19,16 +21,27 @@ class setting_content extends StatefulWidget {
 
 class _setting_contentState extends State<setting_content> {
   bool is_dark = false;
+  bool is_lock = false;
   late String current_locale;
   final db_helper = firestore_helper();
   final uid = FirebaseAuth.instance.currentUser!.uid;
   final flutter_localization = FlutterLocalization.instance;
+  final LocalAuthentication local_auth = LocalAuthentication();
+  FToast toast = FToast();
 
   @override
   void initState() {
     get_dark_mode();
+    get_is_lock();
     current_locale = flutter_localization.currentLocale!.languageCode;
     super.initState();
+  }
+
+  Future<void> get_is_lock() async {
+    bool temp = (await db_helper.get_is_lock(uid))!;
+    setState(() {
+      is_lock = temp;
+    });
   }
 
   Future<void> get_dark_mode() async {
@@ -41,13 +54,14 @@ class _setting_contentState extends State<setting_content> {
 
   @override
   Widget build(BuildContext context) {
+    toast.init(context);
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
       body: SingleChildScrollView(
         padding: EdgeInsets.only(
             left: width * 0.04,
-            top: height * 0.28,
+            top: 250,
             right: width * 0.04,
             bottom: height * 0.05),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -199,7 +213,7 @@ class _setting_contentState extends State<setting_content> {
                                         fontSize: 16),
                                   ),
                                   SizedBox(
-                                    width: width * 0.7,
+                                    width: width * 0.6,
                                     child: Text(
                                       LocaleData.application_lock_des
                                           .getString(context),
@@ -212,7 +226,57 @@ class _setting_contentState extends State<setting_content> {
                               ),
                             ],
                           ),
-                          const Icon(Icons.navigate_next)
+                          Switch(
+                              value: is_lock,
+                              activeColor: Colors.lightGreen,
+                              thumbIcon:
+                                  MaterialStateProperty.resolveWith<Icon?>(
+                                (Set<MaterialState> states) {
+                                  if (states.contains(MaterialState.selected)) {
+                                    return const Icon(Icons.check);
+                                  }
+                                  return const Icon(Icons.close);
+                                },
+                              ),
+                              onChanged: (value) async {
+                                if (await local_auth.isDeviceSupported()) {
+                                  setState(() {
+                                    is_lock = value;
+                                    update_is_lock(uid, is_lock);
+                                    if (Main.getState() != null) {
+                                      Main.getState()!.get_is_lock();
+                                    }
+                                  });
+                                } else {
+                                  toast.showToast(
+                                    child: Container(
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                        color: Colors.orange,
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          const Icon(Icons.warning),
+                                          Flexible(
+                                            child: Text(
+                                              LocaleData.local_auth_warning
+                                                  .getString(context),
+                                              overflow: TextOverflow.clip,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    gravity: ToastGravity.CENTER,
+                                    toastDuration: const Duration(seconds: 3),
+                                  );
+                                }
+                              })
                         ],
                       ),
                     ),
@@ -347,7 +411,7 @@ class _setting_contentState extends State<setting_content> {
                                       fontSize: 16),
                                 ),
                                 SizedBox(
-                                  width: width * 0.7,
+                                  width: width * 0.6,
                                   child: Text(
                                     LocaleData.send_feedback_des
                                         .getString(context),
@@ -407,6 +471,10 @@ class _setting_contentState extends State<setting_content> {
 
   Future<void> update_dark_mode(String uid, bool is_dark) async {
     await db_helper.update_dark_mode(uid, is_dark);
+  }
+
+  Future<void> update_is_lock(String uid, bool is_lock) async {
+    await db_helper.update_is_lock(uid, is_lock);
   }
 
   void update_theme() {

@@ -290,7 +290,7 @@ class _chart_widgetState extends State<chart_widget> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Container(
-                                  width: width * 0.48,
+                                  width: width * 0.475,
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
                                       border: Border.all(
@@ -318,11 +318,11 @@ class _chart_widgetState extends State<chart_widget> {
                                     ],
                                   ),
                                 ),
-                                const SizedBox(
-                                  width: 1,
+                                SizedBox(
+                                  width: width * 0.01,
                                 ),
                                 Container(
-                                  width: width * 0.48,
+                                  width: width * 0.475,
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
                                       border: Border.all(

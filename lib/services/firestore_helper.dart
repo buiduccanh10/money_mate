@@ -18,7 +18,8 @@ class firestore_helper {
       'email': email,
       'image': image_url,
       'language': language,
-      'is_dark': is_dark
+      'is_dark': is_dark,
+      'is_lock': false,
     };
 
     await user_ref.set(users);
@@ -92,6 +93,26 @@ class firestore_helper {
   Future<void> update_dark_mode(String uid, bool is_dark) async {
     await FirebaseFirestore.instance.collection('users').doc(uid).update({
       'is_dark': is_dark,
+    });
+  }
+
+  Future<bool?> get_is_lock(String uid) async {
+    DocumentSnapshot userDocument =
+        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
+    if (userDocument.exists) {
+      Map<String, dynamic>? data = userDocument.data() as Map<String, dynamic>?;
+      if (data != null && data.containsKey('is_lock')) {
+        bool? is_lock = data['is_lock'];
+        return is_lock;
+      }
+    }
+    return null;
+  }
+
+  Future<void> update_is_lock(String uid, bool is_lock) async {
+    await FirebaseFirestore.instance.collection('users').doc(uid).update({
+      'is_lock': is_lock,
     });
   }
 

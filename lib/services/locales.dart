@@ -114,6 +114,10 @@ mixin LocaleData {
   static const String toast_verify_email = 'toast_verify_email';
   static const String toast_user_not_exist = 'toast_user_not_exist';
 
+  //local auth
+  static const String local_auth_title = 'local_auth_title';
+  static const String local_auth_warning = 'local_auth_warning';
+
   static const Map<String, dynamic> EN = {
     home: 'Home',
     input: 'Input',
@@ -201,7 +205,10 @@ mixin LocaleData {
     des_validator: 'Description field can not be blank',
     money_validator: 'Money field can not be blank',
     darkmode_light_des: 'Light',
-    darkmode_dark_des: 'Dark'
+    darkmode_dark_des: 'Dark',
+    local_auth_title: 'Authenticate to access the app',
+    local_auth_warning:
+        "Your device don't have any security method, set it again !"
   };
 
   static const Map<String, dynamic> VI = {
@@ -291,7 +298,10 @@ mixin LocaleData {
     des_validator: 'Trường mô tả không được để trống',
     money_validator: 'Trường số tiền không được để trống',
     darkmode_light_des: 'Sáng',
-    darkmode_dark_des: 'Tối'
+    darkmode_dark_des: 'Tối',
+    local_auth_title: 'Xác thực để truy cập ứng dụng',
+    local_auth_warning:
+        "Thiết bị của bạn không có bất kỳ phương thức bảo mật nào, hãy thiết lập lại!"
   };
 
   static const Map<String, dynamic> CN = {
@@ -379,6 +389,8 @@ mixin LocaleData {
     des_validator: '描述字段不能为空',
     money_validator: '金钱字段不能为空',
     darkmode_light_des: '明亮',
-    darkmode_dark_des: '暗'
+    darkmode_dark_des: '暗',
+    local_auth_title: '授权以访问应用',
+    local_auth_warning: "您的设备没有任何安全方法，请重新设置！"
   };
 }

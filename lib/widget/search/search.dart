@@ -168,7 +168,7 @@ class _searchState extends State<search> {
                               is_dark
                                   ? 'assets/search_dark.png'
                                   : 'assets/search_light.png',
-                              width: MediaQuery.of(context).size.width * 0.4,
+                              width: 200,
                               filterQuality: FilterQuality.high,
                             ),
                           )

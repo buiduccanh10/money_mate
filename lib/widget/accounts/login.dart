@@ -324,7 +324,7 @@ class _loginState extends State<login> {
           .signInWithProvider(facebookAuthProvider)
           .then((value) => Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const Main()),
+                MaterialPageRoute(builder: (context) => Main()),
               ));
     } catch (err) {}
   }
@@ -383,8 +383,8 @@ class _loginState extends State<login> {
                 backgroundColor: Colors.green,
                 textColor: Colors.white,
                 fontSize: 16.0)
-            .then((value) => Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const Main())));
+            .then((value) => Navigator.push(
+                context, MaterialPageRoute(builder: (context) => Main())));
       } else {
         Fluttertoast.showToast(
             msg: LocaleData.toast_verify_email.getString(context),

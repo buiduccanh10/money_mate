@@ -1,11 +1,11 @@
 import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:money_mate/services/firestore_helper.dart';
 import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/widget/chart/chart.dart';
@@ -99,7 +99,7 @@ class _MyAppState extends State<MyApp> {
       theme: theme,
       title: 'Money Mate',
       debugShowCheckedModeBanner: false,
-      home: user != null ? const Main() : const login(),
+      home: user != null ? Main() : const login(),
       builder: FToastBuilder(),
       supportedLocales: localization.supportedLocales,
       localizationsDelegates: localization.localizationsDelegates,
@@ -118,20 +118,45 @@ class _MyAppState extends State<MyApp> {
 }
 
 class Main extends StatefulWidget {
-  const Main({super.key});
+  static final main_globalkey = GlobalKey<_MainState>();
+
+  static _MainState? getState() {
+    return main_globalkey.currentState;
+  }
+
+  Main() : super(key: Main.main_globalkey);
 
   @override
   State<Main> createState() => _MainState();
 }
 
-class _MainState extends State<Main> {
+class _MainState extends State<Main> with WidgetsBindingObserver {
   int index = 0;
   bool extendBody = true;
   late List<Widget> page;
+  final LocalAuthentication local_auth = LocalAuthentication();
+  bool auth = false;
+  bool is_lock = false;
+  final uid = FirebaseAuth.instance.currentUser!.uid;
+  final db_helper = firestore_helper();
+  FToast toast = FToast();
+
+  Future<void> check_authentication() async {
+    await local_auth.authenticate(
+      localizedReason: LocaleData.local_auth_title.getString(context),
+    );
+
+    setState(() {
+      auth = true;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    get_is_lock();
+
     page = [
       const Home(),
       const input(),
@@ -142,9 +167,85 @@ class _MainState extends State<Main> {
   }
 
   @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    if (is_lock == true) {
+      if (state == AppLifecycleState.hidden ||
+          state == AppLifecycleState.paused && auth == true) {
+        setState(() {
+          auth = false;
+        });
+      }
+      if (state == AppLifecycleState.resumed && auth == false) {
+        if (await local_auth.isDeviceSupported()) {
+          check_authentication();
+        } else {
+          setState(() {
+            auth = false;
+            is_lock = false;
+            db_helper.update_is_lock(uid, false);
+          });
+        }
+      }
+    }
+  }
+
+  Future<void> get_is_lock() async {
+    if (await local_auth.isDeviceSupported()) {
+      bool temp = (await db_helper.get_is_lock(uid))!;
+      setState(() {
+        is_lock = temp;
+        if (is_lock == true) {
+          check_authentication();
+        }
+      });
+    } else {
+      await db_helper.update_is_lock(uid, false);
+      toast.showToast(
+        child: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10.0),
+            color: Colors.orange,
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              const Icon(Icons.warning),
+              Flexible(
+                child: Text(
+                  LocaleData.local_auth_warning.getString(context),
+                  overflow: TextOverflow.clip,
+                ),
+              ),
+            ],
+          ),
+        ),
+        gravity: ToastGravity.CENTER,
+        toastDuration: const Duration(seconds: 3),
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     bool is_dark = Theme.of(context).brightness == Brightness.dark;
     final width = MediaQuery.of(context).size.width;
+
+    if (!auth && is_lock == true) {
+      return Scaffold(
+        backgroundColor: is_dark
+            ? ThemeData.dark().canvasColor
+            : ThemeData.light().canvasColor,
+      );
+    }
+
     return PopScope(
       canPop: false,
       child: Scaffold(
