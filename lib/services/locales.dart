@@ -18,6 +18,7 @@ mixin LocaleData {
   static const String hello_home_appbar = 'hello_home_appbar';
   static const String total_saving = 'total_saving';
   static const String no_input_data = 'no_input_data';
+  static const String no_available = 'no_available';
 
   //slideable
   static const String slide_edit = 'slide_edit';
@@ -208,7 +209,8 @@ mixin LocaleData {
     darkmode_dark_des: 'Dark',
     local_auth_title: 'Authenticate to access the app',
     local_auth_warning:
-        "Your device don't have any security method, set it again !"
+        "Your device don't have any security method, set it again !",
+    no_available: 'No available'
   };
 
   static const Map<String, dynamic> VI = {
@@ -301,7 +303,8 @@ mixin LocaleData {
     darkmode_dark_des: 'Tối',
     local_auth_title: 'Xác thực để truy cập ứng dụng',
     local_auth_warning:
-        "Thiết bị của bạn không có bất kỳ phương thức bảo mật nào, hãy thiết lập lại!"
+        "Thiết bị của bạn không có bất kỳ phương thức bảo mật nào, hãy thiết lập lại!",
+    no_available: 'Không có sẵn'
   };
 
   static const Map<String, dynamic> CN = {
@@ -391,6 +394,7 @@ mixin LocaleData {
     darkmode_light_des: '明亮',
     darkmode_dark_des: '暗',
     local_auth_title: '授权以访问应用',
-    local_auth_warning: "您的设备没有任何安全方法，请重新设置！"
+    local_auth_warning: "您的设备没有任何安全方法，请重新设置！",
+    no_available: '暂无可用'
   };
 }

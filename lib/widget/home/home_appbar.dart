@@ -218,7 +218,7 @@ class _home_appbarState extends State<home_appbar> {
                             Text(
                               '${format_total}',
                               style: const TextStyle(
-                                  fontSize: 30, fontWeight: FontWeight.w700),
+                                  fontSize: 28, fontWeight: FontWeight.w700),
                             ),
                           ],
                         ),
@@ -267,7 +267,7 @@ class _home_appbarState extends State<home_appbar> {
                                 color: is_dark ? Colors.white : Colors.black,
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700),
-                            overflow: TextOverflow.ellipsis,
+                            overflow: TextOverflow.clip,
                           ),
                         ),
                       ],
@@ -331,7 +331,7 @@ class _home_appbarState extends State<home_appbar> {
                                 color: is_dark ? Colors.white : Colors.black,
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700),
-                            overflow: TextOverflow.ellipsis,
+                            overflow: TextOverflow.clip,
                           ),
                         ),
                       ],

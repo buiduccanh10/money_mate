@@ -357,12 +357,12 @@ class _category_manageState extends State<category_manage> {
             borderRadius: BorderRadius.circular(10.0),
             color: Colors.green,
           ),
-          child: const Row(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Icon(Icons.check),
-              Text("Delete success!"),
+              const Icon(Icons.check),
+              Text(LocaleData.toast_delete_success.getString(context)),
             ],
           ),
         ),
@@ -377,12 +377,12 @@ class _category_manageState extends State<category_manage> {
             borderRadius: BorderRadius.circular(10.0),
             color: Colors.red,
           ),
-          child: const Row(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Icon(Icons.do_disturb),
-              Text("Fail delete!"),
+              const Icon(Icons.do_disturb),
+              Text(LocaleData.toast_delete_fail.getString(context)),
             ],
           ),
         ),

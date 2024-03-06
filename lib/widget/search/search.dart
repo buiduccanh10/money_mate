@@ -162,15 +162,10 @@ class _searchState extends State<search> {
                       ),
                     ),
                     results.isEmpty
-                        ? Padding(
-                            padding: const EdgeInsets.all(26.0),
-                            child: Image.asset(
-                              is_dark
-                                  ? 'assets/search_dark.png'
-                                  : 'assets/search_light.png',
-                              width: 200,
-                              filterQuality: FilterQuality.high,
-                            ),
+                        ? Image.asset(
+                            'assets/search.png',
+                            width: 250,
+                            filterQuality: FilterQuality.high,
                           )
                         : is_loading
                             ? Expanded(

@@ -469,10 +469,10 @@ class _update_inputState extends State<update_input> {
             uid, widget.input_item['is_income']);
 
         Map<String, dynamic> item = {
-          "id": widget.input_item['id'],
-          "date": format_date,
-          "description": description,
-          "money": money_final,
+          'id': widget.input_item['id'],
+          'date': format_date,
+          'description': description,
+          'money': money_final,
         };
 
         if (test.isNotEmpty) {

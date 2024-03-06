@@ -136,7 +136,6 @@ class _chart_widgetState extends State<chart_widget> {
             .map((items) => {
                   'icon': items.first['icon'],
                   'name': items.first['name'],
-                  'is_income': true,
                   'cat_id': items.first['cat_id'],
                   'money': items
                       .map<double>((item) => item['money'])
@@ -149,7 +148,6 @@ class _chart_widgetState extends State<chart_widget> {
                 .map((items) => {
                       'icon': items.first['icon'],
                       'name': items.first['name'],
-                      'is_income': true,
                       'cat_id': items.first['cat_id'],
                       'money': items
                           .map<double>((item) => item['money'])
@@ -285,78 +283,76 @@ class _chart_widgetState extends State<chart_widget> {
                                       )),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(top: 8, bottom: 8),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  width: width * 0.475,
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: is_dark
-                                              ? Colors.orange
-                                              : Colors.amber),
-                                      borderRadius: BorderRadius.circular(10)),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        '${LocaleData.income.getString(context)}: ',
-                                        style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                      Text(
-                                        '+$format_income',
-                                        style: const TextStyle(
-                                            color: Colors.green,
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w600),
-                                      )
-                                    ],
+                            padding: const EdgeInsets.only(top: 8),
+                            child: Container(
+                              width: width,
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: is_dark
+                                          ? Colors.orange
+                                          : Colors.amber),
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    '${LocaleData.income.getString(context)}: ',
+                                    style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500),
                                   ),
-                                ),
-                                SizedBox(
-                                  width: width * 0.01,
-                                ),
-                                Container(
-                                  width: width * 0.475,
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: is_dark
-                                              ? Colors.orange
-                                              : Colors.amber),
-                                      borderRadius: BorderRadius.circular(10)),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        '${LocaleData.expense.getString(context)}: ',
-                                        style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                      Text(
-                                        '-$format_expense',
-                                        style: const TextStyle(
-                                            color: Colors.red,
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w600),
-                                      )
-                                    ],
+                                  Text(
+                                    '+$format_income',
+                                    style: const TextStyle(
+                                        color: Colors.green,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600),
+                                    overflow: TextOverflow.clip,
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0, top: 8),
+                            child: Container(
+                              width: width,
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: is_dark
+                                          ? Colors.orange
+                                          : Colors.amber),
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    '${LocaleData.expense.getString(context)}: ',
+                                    style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500),
                                   ),
-                                )
-                              ],
+                                  Text(
+                                    '-$format_expense',
+                                    style: const TextStyle(
+                                        color: Colors.red,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600),
+                                  )
+                                ],
+                              ),
                             ),
                           ),
                           Container(
                             width: width,
                             decoration: BoxDecoration(
-                                border: Border.all(color: Colors.amber),
+                                border: Border.all(
+                                    color:
+                                        is_dark ? Colors.orange : Colors.amber),
                                 borderRadius: BorderRadius.circular(10)),
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -384,7 +380,7 @@ class _chart_widgetState extends State<chart_widget> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 170),
+                      padding: const EdgeInsets.only(top: 220),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -454,7 +450,7 @@ class _chart_widgetState extends State<chart_widget> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 200.0),
+                      padding: const EdgeInsets.only(top: 240.0),
                       child: SizedBox(
                         height: 280,
                         child: is_loading
@@ -481,7 +477,7 @@ class _chart_widgetState extends State<chart_widget> {
                       ),
                     ),
                     Padding(
-                        padding: const EdgeInsets.only(top: 440),
+                        padding: const EdgeInsets.only(top: 490),
                         child: is_loading
                             ? ListView.builder(
                                 padding: const EdgeInsets.all(8),

@@ -189,7 +189,7 @@ class _home_list_itemState extends State<home_list_item> {
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.only(
-                                      top: 14, bottom: 14, left: 24, right: 24),
+                                      top: 14, bottom: 14, left: 20, right: 20),
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -261,14 +261,30 @@ class _home_list_itemState extends State<home_list_item> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.end,
                                         children: [
-                                          Text(
-                                            '${input_item['is_income'] ? '+' : '-'} ${format_money}',
-                                            style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w700,
-                                                color: input_item['is_income']
-                                                    ? Colors.green
-                                                    : Colors.red),
+                                          Row(
+                                            children: [
+                                              Container(
+                                                constraints: BoxConstraints(
+                                                    maxWidth:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.345),
+                                                child: Text(
+                                                  '${input_item['is_income'] ? '+' : '-'} ${format_money}',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w700,
+                                                    color:
+                                                        input_item['is_income']
+                                                            ? Colors.green
+                                                            : Colors.red,
+                                                  ),
+                                                  overflow: TextOverflow
+                                                      .clip,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                           Text(
                                             input_item['name'],

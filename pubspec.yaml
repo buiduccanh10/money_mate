@@ -61,15 +61,16 @@ flutter_launcher_icons:
   ios: true
   image_path: "assets/logo.png"
   min_sdk_android: 21
+  remove_alpha_ios: true
 
 flutter_native_splash:
   color: "#FFFFFF"
-  image: assets/logo.png
-  branding: assets/MoneyMate.png
+  image: assets/splash.png
+  branding: "assets/splash_brand.png"
   android_12:
     color: "#FFFFFF"
-    image: assets/logo.png
-    branding: assets/MoneyMate.png
+    image: assets/splash.png
+    branding: assets/splash_brand.png
 
 dev_dependencies:
   flutter_test:
