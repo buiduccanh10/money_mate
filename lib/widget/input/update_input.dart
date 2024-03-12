@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -282,23 +284,19 @@ class _update_inputState extends State<update_input> {
                           duration: const Duration(milliseconds: 500),
                           curve: Curves.easeInOut,
                           decoration: BoxDecoration(
-                            border: Border.all(color: Colors.amber),
+                            border: Border.all(
+                                width: 1.5,
+                                color: is_selected
+                                    ? is_dark
+                                        ? Colors.orange
+                                        : Colors.amber
+                                    : Colors.transparent),
+                            color: Colors
+                                .primaries[
+                                    Random().nextInt(Colors.primaries.length)]
+                                .shade100
+                                .withOpacity(0.35),
                             borderRadius: BorderRadius.circular(10),
-                            gradient: LinearGradient(
-                                colors: is_selected
-                                    ? (is_dark
-                                        ? [
-                                            const Color.fromARGB(
-                                                255, 0, 112, 204),
-                                            const Color.fromARGB(
-                                                255, 203, 122, 0)
-                                          ]
-                                        : [Colors.blue, Colors.orange])
-                                    : (is_dark
-                                        ? [Colors.grey, Colors.grey]
-                                        : [Colors.white, Colors.white]),
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight),
                           ),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -310,9 +308,8 @@ class _update_inputState extends State<update_input> {
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                     fontSize: 16,
-                                    color: is_selected
-                                        ? Colors.white
-                                        : Colors.black),
+                                    color:
+                                        is_dark ? Colors.white : Colors.black),
                               ),
                             ],
                           ),

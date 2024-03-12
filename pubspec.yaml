@@ -36,7 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   google_nav_bar: ^5.0.6
   flutter_slidable: ^3.0.1
-  emoji_picker_flutter: ^1.6.3
+  emoji_picker_flutter: ^2.1.0
   syncfusion_flutter_datepicker: ^24.1.44
   syncfusion_flutter_charts: ^24.1.45+2
   intl: ^0.18.1
@@ -44,17 +44,18 @@ dependencies:
   flutter_launcher_icons: ^0.13.1
   flutter_native_splash: ^2.3.9
   firebase_core: ^2.24.2
-  cloud_firestore: ^4.14.0
-  rive: ^0.12.4
+  cloud_firestore: ^4.15.8
+  rive: ^0.13.0
   fluttertoast: ^8.2.4
   shimmer: ^3.0.0
   firebase_auth: ^4.17.4
   sign_in_button: ^3.2.0
   datepicker_dropdown: ^0.1.0
   flutter_localization: ^0.2.0
-  flutter_localizations:
-    sdk: flutter
   local_auth: ^2.1.8
+  awesome_notifications: ^0.8.2
+  shared_preferences: ^2.2.2
+  #firebase_messaging: ^14.7.19
 
 flutter_launcher_icons:
   android: "launcher_icon"

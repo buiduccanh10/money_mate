@@ -232,26 +232,26 @@ class _searchState extends State<search> {
                                               backgroundColor:
                                                   Colors.transparent,
                                               onPressed: (context) {
-                                                handle_edit(
-                                                    context, results[index]);
+                                                handle_edit(results[index]);
                                               },
                                               foregroundColor: Colors.blue,
                                               icon: Icons.edit,
-                                              label: 'Edit',
+                                              label: LocaleData.slide_edit
+                                                  .getString(context),
                                             ),
                                             SlidableAction(
                                               backgroundColor:
                                                   Colors.transparent,
                                               onPressed: (context) {
                                                 handle_delete(
-                                                    context,
                                                     results[index]['id'],
                                                     uid,
                                                     index);
                                               },
                                               foregroundColor: Colors.red,
                                               icon: Icons.delete,
-                                              label: 'Delete',
+                                              label: LocaleData.slide_delete
+                                                  .getString(context),
                                             ),
                                           ],
                                         ),
@@ -460,8 +460,7 @@ class _searchState extends State<search> {
     });
   }
 
-  void handle_edit(
-      BuildContext context, Map<String, dynamic> input_item) async {
+  void handle_edit(Map<String, dynamic> input_item) async {
     Navigator.push(
         context,
         MaterialPageRoute(
@@ -469,8 +468,7 @@ class _searchState extends State<search> {
                 update_input(input_item: input_item)));
   }
 
-  void handle_delete(
-      BuildContext context, String input_id, String uid, int index) async {
+  void handle_delete(String input_id, String uid, int index) async {
     try {
       await FirebaseFirestore.instance
           .collection('users')

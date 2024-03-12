@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -129,90 +130,72 @@ class _privacy_settingState extends State<privacy_setting> {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
+          return CupertinoAlertDialog(
             title:
                 Text('${LocaleData.delete_all_data_acc.getString(context)} ?'),
             actions: [
-              Container(
-                width: 100,
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(10)),
-                child: TextButton(
-                    onPressed: () async {
-                      try {
-                        await db_helper
-                            .delete_all_data(uid)
-                            .then((value) => toast!.showToast(
-                                  child: Container(
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                      color: Colors.green,
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        const Icon(Icons.check),
-                                        Text(LocaleData.toast_delete_success
-                                            .getString(context)),
-                                      ],
-                                    ),
+              CupertinoDialogAction(
+                  isDefaultAction: true,
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    LocaleData.cancel.getString(context),
+                  )),
+              CupertinoDialogAction(
+                  isDestructiveAction: true,
+                  onPressed: () async {
+                    try {
+                      await db_helper
+                          .delete_all_data(uid)
+                          .then((value) => toast!.showToast(
+                                child: Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    color: Colors.green,
                                   ),
-                                  gravity: ToastGravity.CENTER,
-                                  toastDuration: const Duration(seconds: 2),
-                                ))
-                            .then((value) => Navigator.of(context).pop());
-                      } catch (err) {
-                        toast!.showToast(
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.0),
-                              color: Colors.red,
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                const Icon(Icons.do_disturb),
-                                Text(LocaleData.toast_delete_fail
-                                    .getString(context)),
-                              ],
-                            ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      const Icon(Icons.check),
+                                      Text(LocaleData.toast_delete_success
+                                          .getString(context)),
+                                    ],
+                                  ),
+                                ),
+                                gravity: ToastGravity.CENTER,
+                                toastDuration: const Duration(seconds: 2),
+                              ))
+                          .then((value) => Navigator.of(context).pop());
+                    } catch (err) {
+                      toast!.showToast(
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            color: Colors.red,
                           ),
-                          gravity: ToastGravity.CENTER,
-                          toastDuration: const Duration(seconds: 2),
-                        );
-                      }
-                    },
-                    child: Text(
-                      LocaleData.confirm.getString(context),
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w700,
-                          color: Color.fromARGB(255, 127, 127, 127)),
-                    )),
-              ),
-              Container(
-                width: 90,
-                decoration: BoxDecoration(
-                    color: Colors.red,
-                    border: Border.all(color: Colors.red),
-                    borderRadius: BorderRadius.circular(10)),
-                child: TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text(
-                      LocaleData.cancel.getString(context),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    )),
-              )
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              const Icon(Icons.do_disturb),
+                              Text(LocaleData.toast_delete_fail
+                                  .getString(context)),
+                            ],
+                          ),
+                        ),
+                        gravity: ToastGravity.CENTER,
+                        toastDuration: const Duration(seconds: 2),
+                      );
+                    }
+                  },
+                  child: Text(
+                    LocaleData.confirm.getString(context),
+                  )),
             ],
           );
         });
@@ -222,73 +205,55 @@ class _privacy_settingState extends State<privacy_setting> {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
+          return CupertinoAlertDialog(
             title: Text('${LocaleData.delete_acc.getString(context)} ?'),
             actions: [
-              Container(
-                width: 100,
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(10)),
-                child: TextButton(
-                    onPressed: () async {
-                      try {
-                        await db_helper.delete_user(uid).then((value) =>
-                            FirebaseAuth.instance
-                                .signOut()
-                                .then((value) => Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => const MyApp()),
-                                    )));
-                      } catch (err) {
-                        toast!.showToast(
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.0),
-                              color: Colors.red,
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                const Icon(Icons.person_off_outlined),
-                                Text(LocaleData.toast_delete_user_fail
-                                    .getString(context)),
-                              ],
-                            ),
+              CupertinoDialogAction(
+                  isDefaultAction: true,
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    LocaleData.cancel.getString(context),
+                  )),
+              CupertinoDialogAction(
+                  isDestructiveAction: true,
+                  onPressed: () async {
+                    try {
+                      await db_helper.delete_user(uid).then((value) =>
+                          FirebaseAuth.instance
+                              .signOut()
+                              .then((value) => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => const MyApp()),
+                                  )));
+                    } catch (err) {
+                      toast!.showToast(
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            color: Colors.red,
                           ),
-                          gravity: ToastGravity.CENTER,
-                          toastDuration: const Duration(seconds: 4),
-                        );
-                      }
-                    },
-                    child: Text(
-                      LocaleData.confirm.getString(context),
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w700,
-                          color: Color.fromARGB(255, 127, 127, 127)),
-                    )),
-              ),
-              Container(
-                width: 90,
-                decoration: BoxDecoration(
-                    color: Colors.red,
-                    border: Border.all(color: Colors.red),
-                    borderRadius: BorderRadius.circular(10)),
-                child: TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text(
-                      LocaleData.cancel.getString(context),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    )),
-              )
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              const Icon(Icons.person_off_outlined),
+                              Text(LocaleData.toast_delete_user_fail
+                                  .getString(context)),
+                            ],
+                          ),
+                        ),
+                        gravity: ToastGravity.CENTER,
+                        toastDuration: const Duration(seconds: 4),
+                      );
+                    }
+                  },
+                  child: Text(
+                    LocaleData.confirm.getString(context),
+                  )),
             ],
           );
         });

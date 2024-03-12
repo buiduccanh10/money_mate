@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:ui' as ui;
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class firestore_helper {
   FirebaseFirestore db = FirebaseFirestore.instance;
@@ -448,6 +451,177 @@ class firestore_helper {
       await documentSnapshot.reference.delete();
     });
   }
+
+  Future<void> removeScheduleInputTask(int idNotification) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    Set<String> keys = prefs.getKeys();
+
+    for (String key in keys) {
+      if (int.parse(key) == idNotification) {
+        AwesomeNotifications().cancel(int.parse(key));
+
+        await prefs.remove(key);
+      }
+    }
+  }
+
+  Future<void> removeAllSchedule() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    AwesomeNotifications().cancelAll();
+    prefs.remove;
+  }
+
+  Future<void> scheduleInputTask(String uid, String date, String description,
+      double money, String cat_id, String option, BuildContext context) async {
+    DateTime schedule = DateFormat('dd/MM/yyyy').parse(date);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String prefs_id = DateTime.now().millisecond.hashCode.toString();
+    List<String> inputData = [
+      uid,
+      date,
+      description,
+      money.toString(),
+      cat_id,
+    ];
+
+    await prefs.setStringList(prefs_id, inputData);
+
+    switch (option) {
+      case 'daily':
+        AwesomeNotifications().createNotification(
+            content: NotificationContent(
+              id: int.parse(prefs_id),
+              channelKey: 'input_channel',
+              groupKey: 'input_channel_group',
+              title: 'Input data is due',
+              body: 'Auto add input successful !',
+            ),
+            actionButtons: [
+              NotificationActionButton(
+                key: 'DISMISS',
+                label: 'OK',
+                actionType: ActionType.Default,
+              ),
+            ],
+            schedule: NotificationCalendar(
+              hour: 0,
+              minute: 0,
+              second: 0,
+              repeats: true,
+              allowWhileIdle: true,
+            ));
+        break;
+      case 'weekly':
+        AwesomeNotifications().createNotification(
+          content: NotificationContent(
+            id: int.parse(prefs_id),
+            channelKey: 'input_channel',
+            groupKey: 'input_channel_group',
+            title: 'Input data is due',
+            body: 'Auto add input successful !',
+          ),
+          actionButtons: [
+            NotificationActionButton(
+              key: 'DISMISS',
+              label: 'OK',
+              actionType: ActionType.Default,
+            ),
+          ],
+          schedule: NotificationCalendar(
+            weekday: schedule.weekday,
+            hour: 0,
+            minute: 0,
+            second: 0,
+            repeats: true,
+            allowWhileIdle: true,
+          ),
+        );
+        break;
+      case 'monthly':
+        AwesomeNotifications().createNotification(
+          content: NotificationContent(
+            id: int.parse(prefs_id),
+            channelKey: 'input_channel',
+            groupKey: 'input_channel_group',
+            title: 'Input data is due',
+            body: 'Auto add input successful !',
+          ),
+          actionButtons: [
+            NotificationActionButton(
+              key: 'DISMISS',
+              label: 'OK',
+              actionType: ActionType.Default,
+            ),
+          ],
+          schedule: NotificationCalendar(
+            weekday: schedule.day,
+            hour: 0,
+            minute: 0,
+            second: 0,
+            repeats: true,
+            allowWhileIdle: true,
+          ),
+        );
+        break;
+      case 'yearly':
+        AwesomeNotifications().createNotification(
+          content: NotificationContent(
+            id: int.parse(prefs_id),
+            channelKey: 'input_channel',
+            groupKey: 'input_channel_group',
+            title: 'Input data is due',
+            body: 'Auto add input successful !',
+          ),
+          actionButtons: [
+            NotificationActionButton(
+              key: 'DISMISS',
+              label: 'OK',
+              actionType: ActionType.Default,
+            ),
+          ],
+          schedule: NotificationCalendar(
+            weekday: schedule.month,
+            hour: 0,
+            minute: 0,
+            second: 0,
+            repeats: true,
+            allowWhileIdle: true,
+          ),
+        );
+        break;
+    }
+
+    AwesomeNotifications().setListeners(
+        onActionReceivedMethod: onActionReceivedMethod,
+        onNotificationDisplayedMethod: onNotificationDisplayedMethod);
+  }
+
+  static Future<void> onNotificationDisplayedMethod(
+      ReceivedNotification receivedNotification) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    Set<String> keys = prefs.getKeys();
+    String id = '';
+    for (String key in keys) {
+      if (key == receivedNotification.id.toString()) {
+        id = key;
+        if (receivedNotification.channelKey == 'input_channel') {
+          List<String>? inputData = prefs.getStringList(id);
+
+          String uid = inputData![0];
+          String date = DateFormat('dd/MM/yyyy').format(DateTime.now());
+          String description = inputData[2];
+          double money = double.parse(inputData[3]);
+          String cat_id = inputData[4];
+
+          await firestore_helper()
+              .add_input(uid, date, description, money, cat_id);
+        }
+      }
+    }
+  }
+
+  static Future<void> onActionReceivedMethod(
+      ReceivedAction ReceivedAction) async {}
 
   Future<void> add_input(String uid, String date, String description,
       double money, String cat_id) async {

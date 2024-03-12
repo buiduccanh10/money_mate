@@ -1,4 +1,5 @@
 import 'package:flutter_localization/flutter_localization.dart';
+import 'package:money_mate/widget/setting/advance_setting/advance_setting.dart';
 
 const List<MapLocale> LOCALES = [
   MapLocale('vi', LocaleData.VI),
@@ -56,6 +57,8 @@ mixin LocaleData {
   static const String add_cat = 'add_cat';
   static const String update_cat_title = 'update_cat_title';
   static const String update = 'update';
+  static const String cat_icon_validator = 'cat_icon_validator';
+  static const String cat_name_validator = 'cat_name_validator';
 
   //search page
   static const String type_any_to_search = 'type_any_to_search';
@@ -87,6 +90,21 @@ mixin LocaleData {
   static const String delete_all_data_acc_des = 'delete_all_data_acc_des';
   static const String delete_acc = 'delete_acc';
   static const String delete_acc_des = 'delete_acc_des';
+  static const String advanced_settings = 'advanced_settings';
+
+  //fixed income and expense
+  static const String fixed_in_ex = 'fixed_in_ex';
+  static const String fixed_in_ex_des = 'fixed_in_ex_des';
+  static const String set_up = 'set_up';
+  static const String no_set_up_yet = 'no_set_up_yet';
+  static const String delete_all_schedule = 'delete_all_schedule';
+  static const String select_category = 'select_category';
+  static const String repeat = 'repeat';
+  static const String never_repeat = 'never_repeat';
+  static const String daily = 'daily';
+  static const String monthly = 'monthly';
+  static const String weekly = 'weekly';
+  static const String yearly = 'yearly';
 
   //login
   static const String email = 'email';
@@ -210,7 +228,22 @@ mixin LocaleData {
     local_auth_title: 'Authenticate to access the app',
     local_auth_warning:
         "Your device don't have any security method, set it again !",
-    no_available: 'No available'
+    no_available: 'No available',
+    cat_icon_validator: 'Please choose an icon',
+    cat_name_validator: 'Please enter category name',
+    advanced_settings: 'Advanced settings',
+    fixed_in_ex: 'Set up fixed income and expense',
+    fixed_in_ex_des: 'Automating recurring income and expense entries',
+    delete_all_schedule: 'Delete all schedule ?',
+    no_set_up_yet: 'No set up yet !',
+    set_up: 'Set up',
+    select_category: 'Select category:',
+    repeat: 'Repeat:',
+    never_repeat: 'Never',
+    daily: 'Daily',
+    weekly: 'Weekly',
+    monthly: 'Monthly',
+    yearly: 'Yearly'
   };
 
   static const Map<String, dynamic> VI = {
@@ -304,7 +337,22 @@ mixin LocaleData {
     local_auth_title: 'Xác thực để truy cập ứng dụng',
     local_auth_warning:
         "Thiết bị của bạn không có bất kỳ phương thức bảo mật nào, hãy thiết lập lại!",
-    no_available: 'Không có sẵn'
+    no_available: 'Không có sẵn',
+    cat_icon_validator: 'Vui lòng chọn một biểu tượng',
+    cat_name_validator: 'Vui lòng nhập tên danh mục',
+    advanced_settings: 'Cài đặt nâng cao',
+    fixed_in_ex: 'Thiết lập thu nhập và chi phí cố định',
+    fixed_in_ex_des: 'Tự động hóa các mục thu nhập và chi phí định kỳ',
+    delete_all_schedule: 'Xóa tất cả lịch trình ?',
+    no_set_up_yet: 'Chưa thiết lập !',
+    set_up: 'Thiết lập',
+    select_category: 'Chọn danh mục:',
+    repeat: 'Lặp lại:',
+    never_repeat: 'Không bao giờ',
+    daily: 'Hàng ngày',
+    weekly: 'Hàng tuần',
+    monthly: 'Hàng tháng',
+    yearly: 'Hàng năm'
   };
 
   static const Map<String, dynamic> CN = {
@@ -395,6 +443,21 @@ mixin LocaleData {
     darkmode_dark_des: '暗',
     local_auth_title: '授权以访问应用',
     local_auth_warning: "您的设备没有任何安全方法，请重新设置！",
-    no_available: '暂无可用'
+    no_available: '暂无可用',
+    cat_icon_validator: '请选择一个图标',
+    cat_name_validator: '请输入类别名称',
+    advanced_settings: '高级设置',
+    fixed_in_ex: '设置固定收入和支出',
+    fixed_in_ex_des: '自动生成经常性收入和支出条目',
+    delete_all_schedule: '删除所有日程？',
+    no_set_up_yet: '尚未设置！',
+    set_up: '设置',
+    select_category: '选择类别：',
+    repeat: '重复：',
+    never_repeat: '从不',
+    daily: '每日',
+    weekly: '每周',
+    monthly: '每月',
+    yearly: '每年'
   };
 }

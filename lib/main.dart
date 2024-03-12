@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:money_mate/services/firestore_helper.dart';
+import 'package:money_mate/services/local_notification.dart';
 import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/widget/chart/chart.dart';
 import 'package:money_mate/firebase_options.dart';
@@ -21,6 +22,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await NotificationService.initializeNotification();
   runApp(const MyApp());
 }
 

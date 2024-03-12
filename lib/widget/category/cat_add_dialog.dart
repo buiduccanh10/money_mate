@@ -26,18 +26,17 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
   bool icon_validate = false;
   bool cat_validate = false;
   firestore_helper db_helper = firestore_helper();
-  FToast? toast;
+  FToast toast = FToast();
   final uid = FirebaseAuth.instance.currentUser!.uid;
 
   @override
   void initState() {
-    toast = FToast();
-    toast!.init(context);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    toast.init(context);
     bool is_dark = Theme.of(context).brightness == Brightness.dark;
     return Builder(builder: (context) {
       return AlertDialog(
@@ -52,14 +51,15 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
           child: Column(
             children: [
               TextField(
-                readOnly: true,
                 controller: icon_controller,
                 keyboardType: TextInputType.text,
                 onTap: () {
                   showEmojiPicker(context);
                 },
                 decoration: InputDecoration(
-                  errorText: icon_validate ? 'Please choose an icon' : null,
+                  errorText: icon_validate
+                      ? LocaleData.cat_icon_validator.getString(context)
+                      : null,
                   enabledBorder: OutlineInputBorder(
                     borderSide: const BorderSide(color: Colors.blue),
                     borderRadius: BorderRadius.circular(10),
@@ -75,17 +75,6 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
                   floatingLabelStyle:
                       TextStyle(color: is_dark ? Colors.white : Colors.black),
                   prefixIconColor: Colors.orange,
-                  suffixIcon: TextButton(
-                    onPressed: () {
-                      setState(() {
-                        icon_controller.clear();
-                      });
-                    },
-                    child: const Icon(
-                      Icons.clear,
-                      color: Colors.red,
-                    ),
-                  ),
                 ),
               ),
               const SizedBox(
@@ -95,7 +84,9 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
                 keyboardType: TextInputType.text,
                 controller: cat_controller,
                 decoration: InputDecoration(
-                  errorText: cat_validate ? 'Please enter name of icon' : null,
+                  errorText: cat_validate
+                      ? LocaleData.cat_name_validator.getString(context)
+                      : null,
                   enabledBorder: OutlineInputBorder(
                     borderSide: const BorderSide(color: Colors.blue),
                     borderRadius: BorderRadius.circular(10),
@@ -176,29 +167,18 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
           child: EmojiPicker(
             textEditingController: icon_controller,
             config: Config(
-              columns: 7,
-              iconColor: is_dark ? Colors.white : Colors.black,
-              bgColor: is_dark ? Colors.grey : Colors.white,
-              emojiSizeMax: 28,
-              verticalSpacing: 0,
-              horizontalSpacing: 0,
-              enableSkinTones: true,
-              gridPadding: EdgeInsets.zero,
-              initCategory: Category.RECENT,
-              recentTabBehavior: RecentTabBehavior.RECENT,
-              recentsLimit: 28,
-              noRecents: Text(
-                'No Recents',
-                style: TextStyle(
-                    fontSize: 20,
-                    color: is_dark ? Colors.white : Colors.black26),
-                textAlign: TextAlign.center,
-              ),
-              loadingIndicator: const SizedBox.shrink(),
-              tabIndicatorAnimDuration: kTabScrollDuration,
-              categoryIcons: const CategoryIcons(),
-              buttonMode: ButtonMode.MATERIAL,
-            ),
+                checkPlatformCompatibility: true,
+                bottomActionBarConfig:
+                    const BottomActionBarConfig(enabled: false),
+                categoryViewConfig: CategoryViewConfig(
+                    showBackspaceButton: true,
+                    backgroundColor: is_dark ? Colors.black : Colors.white,
+                    backspaceColor: Colors.red),
+                emojiViewConfig: EmojiViewConfig(
+                    backgroundColor: is_dark ? Colors.black : Colors.white,
+                    noRecents: DefaultNoRecentsWidget,
+                    loadingIndicator: const SizedBox.shrink(),
+                    buttonMode: ButtonMode.MATERIAL)),
           ),
         );
       },
@@ -215,19 +195,19 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
         input_content.getState()!.fetchData();
       }
 
-      toast!.showToast(
+      toast.showToast(
         child: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10.0),
             color: Colors.green,
           ),
-          child: const Row(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Icon(Icons.check),
-              Text("Create success!"),
+              const Icon(Icons.check),
+              Text(LocaleData.toast_add_success.getString(context)),
             ],
           ),
         ),
@@ -235,19 +215,19 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
         toastDuration: const Duration(seconds: 2),
       );
     } catch (err) {
-      toast!.showToast(
+      toast.showToast(
         child: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10.0),
             color: Colors.red,
           ),
-          child: const Row(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Icon(Icons.do_disturb),
-              Text("Create fail!"),
+              const Icon(Icons.do_disturb),
+              Text(LocaleData.toast_add_fail.getString(context)),
             ],
           ),
         ),

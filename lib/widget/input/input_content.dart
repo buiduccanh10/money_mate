@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -274,22 +276,18 @@ class _input_contentState extends State<input_content> {
                         curve: Curves.easeInOut,
                         decoration: BoxDecoration(
                           border: Border.all(
-                              color: is_dark ? Colors.orange : Colors.amber),
+                              width: 1.5,
+                              color: is_selected
+                                  ? is_dark
+                                      ? Colors.orange
+                                      : Colors.amber
+                                  : Colors.transparent),
+                          color: Colors
+                              .primaries[
+                                  Random().nextInt(Colors.primaries.length)]
+                              .shade100
+                              .withOpacity(0.35),
                           borderRadius: BorderRadius.circular(10),
-                          gradient: LinearGradient(
-                              colors: is_selected
-                                  ? (is_dark
-                                      ? [
-                                          const Color.fromARGB(
-                                              255, 0, 112, 204),
-                                          const Color.fromARGB(255, 203, 122, 0)
-                                        ]
-                                      : [Colors.blue, Colors.orange])
-                                  : (is_dark
-                                      ? [Colors.blueGrey, Colors.grey]
-                                      : [Colors.white, Colors.white]),
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight),
                         ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -301,11 +299,7 @@ class _input_contentState extends State<input_content> {
                               style: TextStyle(
                                   fontSize: 16,
                                   overflow: TextOverflow.ellipsis,
-                                  color: is_selected
-                                      ? Colors.white
-                                      : (is_dark
-                                          ? Colors.white
-                                          : Colors.black)),
+                                  color: is_dark ? Colors.white : Colors.black),
                             ),
                           ],
                         ),
@@ -332,7 +326,6 @@ class _input_contentState extends State<input_content> {
             ),
           ),
           child: FloatingActionButton.extended(
-            //backgroundColor: const Color.fromARGB(255, 63, 148, 66),
             backgroundColor: Colors.transparent,
             onPressed: () {
               if (description_controller.text.isEmpty ||
@@ -347,7 +340,7 @@ class _input_contentState extends State<input_content> {
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
-                      color: Colors.amber,
+                      color: Colors.orange,
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -427,6 +420,7 @@ class _input_contentState extends State<input_content> {
       money_controller.clear();
       setState(() {
         selectedIndex = null;
+        this.cat_id = null;
       });
 
       toast.showToast(

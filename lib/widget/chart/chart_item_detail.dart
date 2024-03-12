@@ -111,6 +111,17 @@ class _chart_item_detailState extends State<chart_item_detail> {
 
     toast.init(context);
 
+    String? formattedDate;
+    try {
+      if (widget.is_monthly!) {
+        formattedDate = DateFormat('MM/yyyy')
+            .format(DateFormat('dd/MM/yyyy').parse(data.first['date']));
+      } else {
+        formattedDate = DateFormat('yyyy')
+            .format(DateFormat('dd/MM/yyyy').parse(data.first['date']));
+      }
+    } catch (err) {}
+
     return Scaffold(
       body: Column(
         children: [
@@ -139,11 +150,11 @@ class _chart_item_detailState extends State<chart_item_detail> {
                       padding: const EdgeInsets.all(10.0),
                       child: data.isNotEmpty
                           ? Text(
-                              '"${data.first['name']}" details (${widget.is_monthly! ? 'Month' : 'Year'})',
+                              '${data.first['name']} (${widget.is_monthly! ? formattedDate : formattedDate})',
                               style: const TextStyle(
                                   color: Colors.white, fontSize: 18),
                             )
-                          : const Text('No data yet!')),
+                          : Text(LocaleData.no_input_data.getString(context))),
                 ],
               ),
             ),
@@ -151,10 +162,11 @@ class _chart_item_detailState extends State<chart_item_detail> {
               padding: const EdgeInsets.only(top: 120),
               child: SingleChildScrollView(
                 child: data.isEmpty
-                    ? const Padding(
-                        padding: EdgeInsets.only(top: 250),
+                    ? Padding(
+                        padding: const EdgeInsets.only(top: 250),
                         child: Center(
-                          child: Text('No data yet!'),
+                          child:
+                              Text(LocaleData.no_input_data.getString(context)),
                         ),
                       )
                     : Column(
@@ -305,20 +317,20 @@ class _chart_item_detailState extends State<chart_item_detail> {
                                                       backgroundColor:
                                                           Colors.transparent,
                                                       onPressed: (context) {
-                                                        handle_edit(context,
-                                                            input_item);
+                                                        handle_edit(input_item);
                                                       },
                                                       foregroundColor:
                                                           Colors.blue,
                                                       icon: Icons.edit,
-                                                      label: 'Edit',
+                                                      label: LocaleData
+                                                          .slide_edit
+                                                          .getString(context),
                                                     ),
                                                     SlidableAction(
                                                       backgroundColor:
                                                           Colors.transparent,
                                                       onPressed: (context) {
                                                         handle_delete(
-                                                          context,
                                                           input_item['id'],
                                                           uid,
                                                         );
@@ -326,7 +338,9 @@ class _chart_item_detailState extends State<chart_item_detail> {
                                                       foregroundColor:
                                                           Colors.red,
                                                       icon: Icons.delete,
-                                                      label: 'Delete',
+                                                      label: LocaleData
+                                                          .slide_delete
+                                                          .getString(context),
                                                     ),
                                                   ],
                                                 ),
@@ -488,8 +502,7 @@ class _chart_item_detailState extends State<chart_item_detail> {
     );
   }
 
-  void handle_edit(
-      BuildContext context, Map<String, dynamic> input_item) async {
+  void handle_edit(Map<String, dynamic> input_item) async {
     Navigator.push(
         context,
         MaterialPageRoute(
@@ -497,7 +510,7 @@ class _chart_item_detailState extends State<chart_item_detail> {
                 update_input(input_item: input_item)));
   }
 
-  void handle_delete(BuildContext context, String input_id, String uid) async {
+  void handle_delete(String input_id, String uid) async {
     try {
       await FirebaseFirestore.instance
           .collection('users')

@@ -9,6 +9,7 @@ import 'package:money_mate/main.dart';
 import 'package:money_mate/services/firestore_helper.dart';
 import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/widget/accounts/login.dart';
+import 'package:money_mate/widget/setting/advance_setting/advance_setting.dart';
 import 'package:money_mate/widget/setting/language_setting.dart';
 import 'package:money_mate/widget/setting/privacy_setting.dart';
 
@@ -63,8 +64,56 @@ class _setting_contentState extends State<setting_content> {
             left: width * 0.04,
             top: 250,
             right: width * 0.04,
-            bottom: height * 0.05),
+            bottom: height * 0.15),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 0.0, bottom: 16),
+            child: Material(
+              color: is_dark ? Colors.grey[700] : Colors.grey[200],
+              borderRadius: BorderRadius.circular(10),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(10),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (builder) => const advance_setting()));
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(left: 10.0, right: 18),
+                            child: Icon(
+                              Icons.settings_suggest,
+                              color: is_dark ? Colors.brown[100] : Colors.brown,
+                              size: 30,
+                            ),
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                LocaleData.advanced_settings.getString(context),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w500, fontSize: 16),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const Icon(Icons.navigate_next)
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
           Material(
             color: is_dark ? Colors.grey[700] : Colors.grey[200],
             borderRadius: BorderRadius.circular(10),
@@ -343,7 +392,9 @@ class _setting_contentState extends State<setting_content> {
                   borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(10),
                       topRight: Radius.circular(10)),
-                  onTap: () {},
+                  onTap: () {
+                    showAboutDialog(context: context);
+                  },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
@@ -495,6 +546,7 @@ class _setting_contentState extends State<setting_content> {
         ),
         actions: <CupertinoActionSheetAction>[
           CupertinoActionSheetAction(
+            isDestructiveAction: true,
             onPressed: () async {
               await FirebaseAuth.instance
                   .signOut()
@@ -507,7 +559,6 @@ class _setting_contentState extends State<setting_content> {
           ),
           CupertinoActionSheetAction(
             isDefaultAction: true,
-            isDestructiveAction: true,
             onPressed: () {
               Navigator.pop(context);
             },

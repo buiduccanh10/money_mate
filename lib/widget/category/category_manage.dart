@@ -180,20 +180,22 @@ class _category_manageState extends State<category_manage> {
                                       SlidableAction(
                                         backgroundColor: Colors.transparent,
                                         onPressed: (context) {
-                                          edit_cat(context, cat_item);
+                                          edit_cat(cat_item);
                                         },
                                         foregroundColor: Colors.blue,
                                         icon: Icons.edit,
-                                        label: 'Edit',
+                                        label: LocaleData.slide_edit
+                                            .getString(context),
                                       ),
                                       SlidableAction(
                                         backgroundColor: Colors.transparent,
                                         onPressed: (context) {
-                                          delete_cat(context, index, uid);
+                                          delete_cat(index, uid);
                                         },
                                         foregroundColor: Colors.red,
                                         icon: Icons.delete,
-                                        label: 'Delete',
+                                        label: LocaleData.slide_delete
+                                            .getString(context),
                                       ),
                                     ]),
                                 child: InkWell(
@@ -254,79 +256,63 @@ class _category_manageState extends State<category_manage> {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
+          return CupertinoAlertDialog(
             title: Text(
               widget.is_income
                   ? LocaleData.in_delete_all_title.getString(context)
                   : LocaleData.ex_delete_all_title.getString(context),
             ),
             actions: [
-              Container(
-                width: 100,
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(10)),
-                child: TextButton(
-                    onPressed: () async {
-                      await db_helper
-                          .delete_all_category(uid, widget.is_income)
-                          .then((value) => toast.showToast(
-                                child: Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    color: Colors.green,
-                                  ),
-                                  child: const Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      Icon(Icons.check),
-                                      Text("Delete all success!"),
-                                    ],
-                                  ),
-                                ),
-                                gravity: ToastGravity.CENTER,
-                                toastDuration: const Duration(seconds: 2),
-                              ))
-                          .then((value) => Navigator.of(context).pop())
-                          .then((value) {
-                        category_manage.getState()!.fetchData();
-                        input_content.getState()!.fetchData();
-                      });
-                    },
-                    child: Text(
-                      LocaleData.confirm.getString(context),
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w700,
-                          color: Color.fromARGB(255, 127, 127, 127)),
-                    )),
+              CupertinoDialogAction(
+                isDefaultAction: true,
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  LocaleData.cancel.getString(context),
+                ),
               ),
-              Container(
-                width: 80,
-                decoration: BoxDecoration(
-                    color: Colors.red,
-                    border: Border.all(color: Colors.red),
-                    borderRadius: BorderRadius.circular(10)),
-                child: TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text(
-                      LocaleData.cancel.getString(context),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    )),
-              )
+              CupertinoDialogAction(
+                  isDestructiveAction: true,
+                  onPressed: () async {
+                    await db_helper
+                        .delete_all_category(uid, widget.is_income)
+                        .then((value) => toast.showToast(
+                              child: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  color: Colors.green,
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    const Icon(Icons.check),
+                                    Text(LocaleData.toast_delete_success
+                                        .getString(context)),
+                                  ],
+                                ),
+                              ),
+                              gravity: ToastGravity.CENTER,
+                              toastDuration: const Duration(seconds: 2),
+                            ))
+                        .then((value) => Navigator.of(context).pop())
+                        .then((value) {
+                      category_manage.getState()!.fetchData();
+                      input_content.getState()!.fetchData();
+                    });
+                  },
+                  child: Text(
+                    LocaleData.confirm.getString(context),
+                  )),
             ],
           );
         });
   }
 
-  void edit_cat(BuildContext context, Map<String, dynamic> cat_item) {
+  void edit_cat(Map<String, dynamic> cat_item) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -336,7 +322,7 @@ class _category_manageState extends State<category_manage> {
         });
   }
 
-  void delete_cat(BuildContext context, int index, String uid) async {
+  void delete_cat(int index, String uid) async {
     try {
       await FirebaseFirestore.instance
           .collection('users')

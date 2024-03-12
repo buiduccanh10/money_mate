@@ -160,21 +160,22 @@ class _home_list_itemState extends State<home_list_item> {
                                   SlidableAction(
                                     backgroundColor: Colors.transparent,
                                     onPressed: (context) {
-                                      handle_edit(context, input_item);
+                                      handle_edit(input_item);
                                     },
                                     foregroundColor: Colors.blue,
                                     icon: Icons.edit,
-                                    label: 'Edit',
+                                    label: LocaleData.slide_edit
+                                        .getString(context),
                                   ),
                                   SlidableAction(
                                     backgroundColor: Colors.transparent,
                                     onPressed: (context) {
-                                      handle_delete(
-                                          context, input_item['id'], uid);
+                                      handle_delete(input_item['id'], uid);
                                     },
                                     foregroundColor: Colors.red,
                                     icon: Icons.delete,
-                                    label: 'Delete',
+                                    label: LocaleData.slide_delete
+                                        .getString(context),
                                   ),
                                 ],
                               ),
@@ -280,8 +281,7 @@ class _home_list_itemState extends State<home_list_item> {
                                                             ? Colors.green
                                                             : Colors.red,
                                                   ),
-                                                  overflow: TextOverflow
-                                                      .clip,
+                                                  overflow: TextOverflow.clip,
                                                 ),
                                               ),
                                             ],
@@ -309,8 +309,7 @@ class _home_list_itemState extends State<home_list_item> {
     );
   }
 
-  void handle_edit(
-      BuildContext context, Map<String, dynamic> input_item) async {
+  void handle_edit(Map<String, dynamic> input_item) async {
     Navigator.push(
         context,
         MaterialPageRoute(
@@ -318,7 +317,7 @@ class _home_list_itemState extends State<home_list_item> {
                 update_input(input_item: input_item)));
   }
 
-  void handle_delete(BuildContext context, String input_id, String uid) async {
+  void handle_delete(String input_id, String uid) async {
     try {
       await FirebaseFirestore.instance
           .collection('users')
