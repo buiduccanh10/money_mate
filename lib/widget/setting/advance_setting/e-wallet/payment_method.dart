@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:money_mate/services/locales.dart';
-import 'package:money_mate/widget/setting/advance_setting/e-wallet/e-wallet.dart';
-import 'package:money_mate/widget/setting/advance_setting/fixed_in_ex/setup_in_ex_regular.dart';
+import 'package:money_mate/widget/setting/advance_setting/e-wallet/qrcode.dart';
 
-class advance_setting extends StatelessWidget {
-  const advance_setting({super.key});
+class payment_method extends StatelessWidget {
+  const payment_method({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:
-          AppBar(title: Text(LocaleData.advanced_settings.getString(context))),
+      appBar: AppBar(
+        title: Text(LocaleData.payment_method_title.getString(context)),
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -19,10 +19,8 @@ class advance_setting extends StatelessWidget {
               padding: const EdgeInsets.only(top: 0.0, bottom: 0),
               child: InkWell(
                 onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (builder) => setup_in_ex_regular()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => const qrcode()));
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
@@ -32,26 +30,15 @@ class advance_setting extends StatelessWidget {
                       Row(
                         children: [
                           const Padding(
-                            padding: EdgeInsets.only(left: 10.0, right: 18),
-                            child: Icon(
-                              Icons.auto_awesome_motion_outlined,
-                              size: 30,
-                            ),
-                          ),
+                              padding: EdgeInsets.only(right: 18),
+                              child: Icon(Icons.qr_code_scanner)),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                LocaleData.fixed_in_ex.getString(context),
+                                LocaleData.payment_method_qr.getString(context),
                                 style: const TextStyle(
                                     fontWeight: FontWeight.w500, fontSize: 16),
-                              ),
-                              SizedBox(
-                                width: 300,
-                                child: Text(
-                                  LocaleData.fixed_in_ex_des.getString(context),
-                                  style: const TextStyle(color: Colors.grey),
-                                ),
                               ),
                             ],
                           ),
@@ -66,10 +53,7 @@ class advance_setting extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 0.0, bottom: 0),
               child: InkWell(
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (builder) => const ewallet()));
-                },
+                onTap: () {},
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Row(
@@ -78,27 +62,16 @@ class advance_setting extends StatelessWidget {
                       Row(
                         children: [
                           const Padding(
-                            padding: EdgeInsets.only(left: 10.0, right: 18),
-                            child: Icon(
-                              Icons.payment,
-                              size: 30,
-                            ),
-                          ),
+                              padding: EdgeInsets.only(right: 18),
+                              child: Icon(Icons.person_add_alt_1)),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                LocaleData.pay_by_e_wallet.getString(context),
+                                LocaleData.payment_method_new
+                                    .getString(context),
                                 style: const TextStyle(
                                     fontWeight: FontWeight.w500, fontSize: 16),
-                              ),
-                              SizedBox(
-                                width: 300,
-                                child: Text(
-                                  LocaleData.pay_by_e_wallet_des
-                                      .getString(context),
-                                  style: const TextStyle(color: Colors.grey),
-                                ),
                               ),
                             ],
                           ),

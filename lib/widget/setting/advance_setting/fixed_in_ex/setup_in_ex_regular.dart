@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +13,7 @@ import 'package:intl/intl.dart';
 import 'package:money_mate/services/currency_format.dart';
 import 'package:money_mate/services/firestore_helper.dart';
 import 'package:money_mate/services/locales.dart';
-import 'package:money_mate/widget/setting/advance_setting/start_setup.dart';
+import 'package:money_mate/widget/setting/advance_setting/fixed_in_ex/start_setup.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -51,6 +54,8 @@ class _setup_in_ex_regularState extends State<setup_in_ex_regular> {
     prefs.remove('translator_locale_key');
     Set<String> keys = prefs.getKeys();
 
+    data.clear();
+
     if (keys.isNotEmpty) {
       for (String key in keys) {
         final inputData = prefs.getStringList(key);
@@ -60,6 +65,10 @@ class _setup_in_ex_regularState extends State<setup_in_ex_regular> {
         String description = inputData[2];
         double money = double.parse(inputData[3]);
         String cat_id = inputData[4];
+        String icon = inputData[5];
+        String name = inputData[6];
+        bool is_income = bool.parse(inputData[7]);
+        String option = inputData[8];
 
         Map<String, dynamic> content = {
           'id': key,
@@ -68,6 +77,10 @@ class _setup_in_ex_regularState extends State<setup_in_ex_regular> {
           'description': description,
           'money': money,
           'cat_id': cat_id,
+          'icon': icon,
+          'name': name,
+          'is_income': is_income,
+          'option': option
         };
         if (is_mounted) {
           setState(() {
@@ -160,6 +173,10 @@ class _setup_in_ex_regularState extends State<setup_in_ex_regular> {
                         padding: const EdgeInsets.only(bottom: 0),
                         itemCount: data.length,
                         itemBuilder: (BuildContext context, index) {
+                          var formatter = NumberFormat.simpleCurrency(
+                              locale: localization.currentLocale.toString());
+                          String format_money =
+                              formatter.format(data[index]['money']);
                           return Slidable(
                             endActionPane: ActionPane(
                               motion: const ScrollMotion(),
@@ -186,35 +203,35 @@ class _setup_in_ex_regularState extends State<setup_in_ex_regular> {
                                 children: [
                                   Row(
                                     children: [
-                                      // Container(
-                                      //   decoration: BoxDecoration(
-                                      //       boxShadow: is_dark
-                                      //           ? null
-                                      //           : [
-                                      //               BoxShadow(
-                                      //                 color: Colors.grey
-                                      //                     .withOpacity(0.3),
-                                      //                 spreadRadius: 2,
-                                      //                 blurRadius: 7,
-                                      //                 offset:
-                                      //                     const Offset(-5, 5),
-                                      //               )
-                                      //             ],
-                                      //       borderRadius:
-                                      //           BorderRadius.circular(50)),
-                                      //   child: CircleAvatar(
-                                      //       backgroundColor: Colors
-                                      //           .primaries[Random().nextInt(
-                                      //               Colors.primaries.length)]
-                                      //           .shade100
-                                      //           .withOpacity(0.35),
-                                      //       radius: 28,
-                                      //       child: Text(
-                                      //         data[index]['icon'],
-                                      //         style: const TextStyle(
-                                      //             fontSize: 38),
-                                      //       )),
-                                      // ),
+                                      Container(
+                                        decoration: BoxDecoration(
+                                            boxShadow: is_dark
+                                                ? null
+                                                : [
+                                                    BoxShadow(
+                                                      color: Colors.grey
+                                                          .withOpacity(0.3),
+                                                      spreadRadius: 2,
+                                                      blurRadius: 7,
+                                                      offset:
+                                                          const Offset(-5, 5),
+                                                    )
+                                                  ],
+                                            borderRadius:
+                                                BorderRadius.circular(50)),
+                                        child: CircleAvatar(
+                                            backgroundColor: Colors
+                                                .primaries[Random().nextInt(
+                                                    Colors.primaries.length)]
+                                                .shade100
+                                                .withOpacity(0.35),
+                                            radius: 28,
+                                            child: Text(
+                                              data[index]['icon'],
+                                              style:
+                                                  const TextStyle(fontSize: 38),
+                                            )),
+                                      ),
                                       Padding(
                                         padding:
                                             const EdgeInsets.only(left: 12.0),
@@ -225,7 +242,7 @@ class _setup_in_ex_regularState extends State<setup_in_ex_regular> {
                                             SizedBox(
                                               // width: width * 0.4,
                                               child: Text(
-                                                data[index]['description'],
+                                                '${data[index]['description']} (${data[index]['option']})',
                                                 softWrap: true,
                                                 style: const TextStyle(
                                                     fontSize: 16,
@@ -249,22 +266,21 @@ class _setup_in_ex_regularState extends State<setup_in_ex_regular> {
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
                                       Text(
-                                        // '${data[index]['is_income'] ? '+' : '-'} ${format_money}',
-                                        '${data[index]['money']}',
-                                        // style: TextStyle(
-                                        //     fontSize: 14,
-                                        //     fontWeight: FontWeight.w700,
-                                        //     color: data[index]['is_income']
-                                        //         ? Colors.green
-                                        //         : Colors.red),
+                                        '${data[index]['is_income'] ? '+' : '-'} ${format_money}',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w700,
+                                            color: data[index]['is_income']
+                                                ? Colors.green
+                                                : Colors.red),
                                       ),
-                                      // Text(
-                                      //   data[index]['name'],
-                                      //   style: const TextStyle(
-                                      //       fontSize: 16,
-                                      //       fontWeight: FontWeight.w700,
-                                      //       color: Colors.grey),
-                                      // )
+                                      Text(
+                                        data[index]['name'],
+                                        style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w700,
+                                            color: Colors.grey),
+                                      )
                                     ],
                                   )
                                 ],
@@ -294,9 +310,29 @@ class _setup_in_ex_regularState extends State<setup_in_ex_regular> {
     );
   }
 
+  Future<void> removeScheduleInputTask(int idNotification) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    Set<String> keys = prefs.getKeys();
+
+    for (String key in keys) {
+      if (int.parse(key) == idNotification) {
+        AwesomeNotifications().cancel(int.parse(key));
+
+        await prefs.remove(key);
+      }
+    }
+  }
+
+  Future<void> removeAllSchedule() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    AwesomeNotifications().cancelAllSchedules();
+    AwesomeNotifications().cancelAll();
+    await prefs.clear();
+  }
+
   void handle_delete(int input_id, int index) async {
     try {
-      db_helper.removeScheduleInputTask(input_id);
+      removeScheduleInputTask(input_id);
       setState(() {
         data.removeAt(index);
       });
@@ -362,10 +398,11 @@ class _setup_in_ex_regularState extends State<setup_in_ex_regular> {
               CupertinoDialogAction(
                   isDestructiveAction: true,
                   onPressed: () {
-                    db_helper.removeAllSchedule;
                     setState(() {
                       data.clear();
                     });
+                    removeAllSchedule();
+
                     toast.showToast(
                       child: Container(
                         padding: const EdgeInsets.all(8),

@@ -452,27 +452,33 @@ class firestore_helper {
     });
   }
 
-  Future<void> removeScheduleInputTask(int idNotification) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    Set<String> keys = prefs.getKeys();
+  Future<String?> get_paypal_cat_id(String uid) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection("category")
+        .where("name", isEqualTo: 'PayPal')
+        .get();
 
-    for (String key in keys) {
-      if (int.parse(key) == idNotification) {
-        AwesomeNotifications().cancel(int.parse(key));
-
-        await prefs.remove(key);
-      }
+    if (querySnapshot.docs.isNotEmpty) {
+      return querySnapshot.docs.first.id;
+    } else {
+      await add_category(uid, '💳', 'PayPal', false);
+      get_paypal_cat_id(uid);
+      return null;
     }
   }
 
-  Future<void> removeAllSchedule() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    AwesomeNotifications().cancelAll();
-    prefs.remove;
-  }
-
-  Future<void> scheduleInputTask(String uid, String date, String description,
-      double money, String cat_id, String option, BuildContext context) async {
+  Future<void> scheduleInputTask(
+      String uid,
+      String date,
+      String description,
+      double money,
+      String cat_id,
+      String icon,
+      String name,
+      bool is_income,
+      String option) async {
     DateTime schedule = DateFormat('dd/MM/yyyy').parse(date);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String prefs_id = DateTime.now().millisecond.hashCode.toString();
@@ -482,34 +488,61 @@ class firestore_helper {
       description,
       money.toString(),
       cat_id,
+      icon,
+      name,
+      is_income.toString(),
+      option
     ];
 
     await prefs.setStringList(prefs_id, inputData);
 
     switch (option) {
+      case 'never':
+        AwesomeNotifications().createNotification(
+          content: NotificationContent(
+            id: int.parse(prefs_id),
+            channelKey: 'input_channel',
+            groupKey: 'input_channel_group',
+            title: 'Money Mate',
+            body: 'Auto add input successful !',
+          ),
+          actionButtons: [
+            NotificationActionButton(
+              key: 'DISMISS',
+              label: 'OK',
+              actionType: ActionType.Default,
+            ),
+          ],
+          schedule: NotificationCalendar.fromDate(
+            date: schedule,
+            allowWhileIdle: true,
+          ),
+        );
+        break;
       case 'daily':
         AwesomeNotifications().createNotification(
-            content: NotificationContent(
-              id: int.parse(prefs_id),
-              channelKey: 'input_channel',
-              groupKey: 'input_channel_group',
-              title: 'Input data is due',
-              body: 'Auto add input successful !',
+          content: NotificationContent(
+            id: int.parse(prefs_id),
+            channelKey: 'input_channel',
+            groupKey: 'input_channel_group',
+            title: 'Money Mate',
+            body: 'Auto add input successful !',
+          ),
+          actionButtons: [
+            NotificationActionButton(
+              key: 'DISMISS',
+              label: 'OK',
+              actionType: ActionType.Default,
             ),
-            actionButtons: [
-              NotificationActionButton(
-                key: 'DISMISS',
-                label: 'OK',
-                actionType: ActionType.Default,
-              ),
-            ],
-            schedule: NotificationCalendar(
-              hour: 0,
-              minute: 0,
-              second: 0,
-              repeats: true,
-              allowWhileIdle: true,
-            ));
+          ],
+          schedule: NotificationCalendar(
+            hour: 0,
+            minute: 0,
+            second: 0,
+            repeats: true,
+            allowWhileIdle: true,
+          ),
+        );
         break;
       case 'weekly':
         AwesomeNotifications().createNotification(
@@ -517,7 +550,7 @@ class firestore_helper {
             id: int.parse(prefs_id),
             channelKey: 'input_channel',
             groupKey: 'input_channel_group',
-            title: 'Input data is due',
+            title: 'Money Mate',
             body: 'Auto add input successful !',
           ),
           actionButtons: [
@@ -543,7 +576,7 @@ class firestore_helper {
             id: int.parse(prefs_id),
             channelKey: 'input_channel',
             groupKey: 'input_channel_group',
-            title: 'Input data is due',
+            title: 'Money Mate',
             body: 'Auto add input successful !',
           ),
           actionButtons: [
@@ -569,7 +602,7 @@ class firestore_helper {
             id: int.parse(prefs_id),
             channelKey: 'input_channel',
             groupKey: 'input_channel_group',
-            title: 'Input data is due',
+            title: 'Money Mate',
             body: 'Auto add input successful !',
           ),
           actionButtons: [

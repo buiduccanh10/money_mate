@@ -43,8 +43,8 @@ class _settingState extends State<setting> {
                 end: Alignment.bottomRight,
                 colors: is_dark
                     ? [
+                        const Color.fromARGB(255, 203, 122, 0),
                         const Color.fromARGB(255, 0, 112, 204),
-                        const Color.fromARGB(255, 203, 122, 0)
                       ]
                     : [Colors.orange, Colors.blue],
               ),
@@ -73,10 +73,10 @@ class _settingState extends State<setting> {
                           child: Text(
                             '${user_name}',
                             style: const TextStyle(
-                                fontSize: 26,
+                                fontSize: 22,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600),
-                            overflow: TextOverflow.ellipsis,
+                            overflow: TextOverflow.clip,
                           ),
                         ),
                       )

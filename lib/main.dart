@@ -293,8 +293,8 @@ class _MainState extends State<Main> with WidgetsBindingObserver {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
+                          Color.fromARGB(255, 203, 122, 0),
                           Color.fromARGB(255, 0, 112, 204),
-                          Color.fromARGB(255, 203, 122, 0)
                         ],
                       )
                     : const LinearGradient(

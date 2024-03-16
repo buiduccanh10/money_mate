@@ -11,7 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:money_mate/services/currency_format.dart';
 import 'package:money_mate/services/firestore_helper.dart';
 import 'package:money_mate/services/locales.dart';
-import 'package:money_mate/widget/setting/advance_setting/setup_in_ex_regular.dart';
+import 'package:money_mate/widget/setting/advance_setting/fixed_in_ex/setup_in_ex_regular.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
@@ -33,6 +33,9 @@ class _start_setupState extends State<start_setup> {
   bool is_mounted = false;
   int? selectedIndex;
   String? cat_id;
+  String? icon;
+  String? name;
+  bool? is_income;
   FToast toast = FToast();
   firestore_helper db_helper = firestore_helper();
   final uid = FirebaseAuth.instance.currentUser!.uid;
@@ -40,6 +43,7 @@ class _start_setupState extends State<start_setup> {
   double scale = 1.0;
   int selected_option = 0;
   List<String> option = <String>[
+    'never',
     'daily',
     'weekly',
     'monthly',
@@ -243,6 +247,9 @@ class _start_setupState extends State<start_setup> {
                             setState(() {
                               selectedIndex = index;
                               cat_id = cat_data[index]['cat_id'];
+                              icon = cat_data[index]['icon'];
+                              name = cat_data[index]['name'];
+                              is_income = cat_data[index]['is_income'];
                             });
                           },
                           child: Container(
@@ -364,8 +371,15 @@ class _start_setupState extends State<start_setup> {
                   toastDuration: const Duration(seconds: 3),
                 );
               } else {
-                save(date_controller.selectedDate, description_controller.text,
-                    money_controller.text, cat_id!, option[selected_option]);
+                save(
+                    date_controller.selectedDate,
+                    description_controller.text,
+                    money_controller.text,
+                    cat_id!,
+                    icon!,
+                    name!,
+                    is_income!,
+                    option[selected_option]);
               }
 
               setState(() {
@@ -403,7 +417,7 @@ class _start_setupState extends State<start_setup> {
   }
 
   Future<void> save(DateTime? date, String description, String money,
-      String cat_id, String option) async {
+      String cat_id, String icon, String name,bool is_income, String option) async {
     try {
       String format_date;
       String format_money = localization.currentLocale.toString() == 'vi'
@@ -414,12 +428,12 @@ class _start_setupState extends State<start_setup> {
         format_date =
             DateFormat('dd/MM/yyyy').format(date_controller.displayDate!);
         db_helper.scheduleInputTask(uid, format_date, description, money_final,
-            cat_id, option, context);
+            cat_id, icon, name,is_income, option);
       } else {
         format_date =
             DateFormat('dd/MM/yyyy').format(date_controller.selectedDate!);
         db_helper.scheduleInputTask(uid, format_date, description, money_final,
-            cat_id, option, context);
+            cat_id, icon, name,is_income, option);
       }
 
       if (setup_in_ex_regular.getState() != null) {

@@ -106,6 +106,21 @@ mixin LocaleData {
   static const String weekly = 'weekly';
   static const String yearly = 'yearly';
 
+  //pay by e-wallet
+  static const String pay_by_e_wallet = 'pay_by_e_wallet';
+  static const String pay_by_e_wallet_des = 'pay_by_e_wallet_des';
+  static const String pay_by_e_wallet_title = 'pay_by_e_wallet_title';
+  static const String payment_method_title = 'payment_method_title';
+  static const String payment_method_qr = 'payment_method_qr';
+  static const String payment_method_new = 'payment_method_new';
+  static const String paypal_account_holder = 'paypal_account_holder';
+  static const String paypal_content_billing = 'paypal_content_billing';
+  static const String option_category = 'option_category';
+  static const String check_out = 'check_out';
+  static const String paypal_success = 'paypal_success';
+  static const String paypal_fail = 'paypal_fail';
+  static const String paypal_cancel = 'paypal_cancel';
+
   //login
   static const String email = 'email';
   static const String password = 'password';
@@ -243,7 +258,20 @@ mixin LocaleData {
     daily: 'Daily',
     weekly: 'Weekly',
     monthly: 'Monthly',
-    yearly: 'Yearly'
+    yearly: 'Yearly',
+    pay_by_e_wallet: 'Pay by e-wallet',
+    pay_by_e_wallet_des: 'Payment is via e-wallet, and saved as an expense',
+    pay_by_e_wallet_title: 'Choose a e-wallet',
+    payment_method_title: 'Payment method',
+    payment_method_qr: 'QR Code',
+    payment_method_new: 'New beneficiary',
+    paypal_account_holder: 'Account holder',
+    paypal_content_billing: 'Content billing',
+    option_category: 'Category (optional):',
+    check_out: 'Check out',
+    paypal_success: 'Payment success',
+    paypal_fail: 'Payment fail',
+    paypal_cancel: 'Payment cancel',
   };
 
   static const Map<String, dynamic> VI = {
@@ -352,7 +380,21 @@ mixin LocaleData {
     daily: 'Hàng ngày',
     weekly: 'Hàng tuần',
     monthly: 'Hàng tháng',
-    yearly: 'Hàng năm'
+    yearly: 'Hàng năm',
+    pay_by_e_wallet: 'Thanh toán bằng ví điện tử',
+    pay_by_e_wallet_des:
+        'Thanh toán qua ví điện tử và được lưu dưới dạng chi phí',
+    pay_by_e_wallet_title: 'Chọn ví điện tử',
+    payment_method_title: 'Phương thức thanh toán',
+    payment_method_qr: 'Mã QR',
+    payment_method_new: 'Người thụ hưởng mới',
+    paypal_account_holder: 'Chủ tài khoản',
+    paypal_content_billing: 'Nội dung thanh toán',
+    option_category: 'Danh mục (Không bắt buộc):',
+    check_out: 'Thanh toán',
+    paypal_success: 'Thanh toán thành công',
+    paypal_fail: 'Thanh toán không thành công',
+    paypal_cancel: 'Hủy thanh toán',
   };
 
   static const Map<String, dynamic> CN = {
@@ -458,6 +500,19 @@ mixin LocaleData {
     daily: '每日',
     weekly: '每周',
     monthly: '每月',
-    yearly: '每年'
+    yearly: '每年',
+    pay_by_e_wallet: '通过电子钱包支付',
+    pay_by_e_wallet_des: '通过电子钱包付款，并保存为费用',
+    pay_by_e_wallet_title: '选择电子钱包',
+    payment_method_title: '付款方式',
+    payment_method_qr: '二维码',
+    payment_method_new: '新受益人',
+    paypal_account_holder: '账户持有人',
+    paypal_content_billing: '内容计费',
+    option_category: '类别（可选）：',
+    check_out: '签出',
+    paypal_success: '支付成功',
+    paypal_fail: '支付失败',
+    paypal_cancel: '取消付款',
   };
 }
