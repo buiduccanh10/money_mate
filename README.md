@@ -4,7 +4,8 @@ MoneyMate is a spending management app that offers features that allow you to pe
 
 ## Overview
 
-![alt text](http://url/to/img.png)
+![alt text](https://github.com/buiduccanh10/money_mate/blob/main/assets/demo1.png?raw=true)
+![alt text](https://github.com/buiduccanh10/money_mate/blob/main/assets/demo2.png?raw=true)
 
 ## Getting Started with Flutter
 
