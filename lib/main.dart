@@ -54,9 +54,9 @@ class _MyAppState extends State<MyApp> {
       uid = user!.uid;
       get_language();
       get_dark_mode();
-      configureLocalization();
+      config_localization();
     } else {
-      configureLocalization();
+      config_localization();
       setAppTheme(ThemeData.light());
     }
     super.initState();
@@ -109,7 +109,7 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  void configureLocalization() {
+  void config_localization() {
     localization.init(mapLocales: LOCALES, initLanguageCode: language);
     localization.onTranslatedLanguage = onTranslatedLanguage;
   }

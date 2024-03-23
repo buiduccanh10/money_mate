@@ -47,30 +47,8 @@ class _chart_item_detailState extends State<chart_item_detail> {
   @override
   void initState() {
     is_mounted = true;
-    fetchData();
+    fetch_data();
     super.initState();
-  }
-
-  Future<void> fetchData() async {
-    List<Map<String, dynamic>> temp = widget.is_monthly!
-        ? await db_helper.fetch_input_month_by_cat_id(
-            uid,
-            widget.date!,
-            widget.cat_id!,
-            isIncome: widget.is_income!,
-          )
-        : await db_helper.fetch_input_year_by_cat_id(
-            uid,
-            widget.date!,
-            widget.cat_id!,
-            isIncome: widget.is_income!,
-          );
-    if (is_mounted) {
-      setState(() {
-        data = temp;
-        is_loading = false;
-      });
-    }
   }
 
   @override
@@ -519,7 +497,7 @@ class _chart_item_detailState extends State<chart_item_detail> {
           .doc(input_id)
           .delete();
 
-      fetchData();
+      fetch_data();
       chart_widget.getState()!.is_month();
 
       toast.showToast(
@@ -561,6 +539,28 @@ class _chart_item_detailState extends State<chart_item_detail> {
         gravity: ToastGravity.CENTER,
         toastDuration: const Duration(seconds: 2),
       );
+    }
+  }
+
+  Future<void> fetch_data() async {
+    List<Map<String, dynamic>> temp = widget.is_monthly!
+        ? await db_helper.fetch_input_month_by_cat_id(
+            uid,
+            widget.date!,
+            widget.cat_id!,
+            isIncome: widget.is_income!,
+          )
+        : await db_helper.fetch_input_year_by_cat_id(
+            uid,
+            widget.date!,
+            widget.cat_id!,
+            isIncome: widget.is_income!,
+          );
+    if (is_mounted) {
+      setState(() {
+        data = temp;
+        is_loading = false;
+      });
     }
   }
 }

@@ -69,15 +69,6 @@ class _qrcodeState extends State<qrcode> {
                           money: amount)));
             }
           }
-          // if (image != null) {
-          //   showDialog(
-          //     context: context,
-          //     builder: (context) => Image(image: MemoryImage(image)),
-          //   );
-          //   Future.delayed(const Duration(seconds: 5), () {
-          //     Navigator.pop(context);
-          //   });
-          // }
         },
       ),
     );

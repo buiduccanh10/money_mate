@@ -50,25 +50,6 @@ class _paypalState extends State<paypal> {
     super.initState();
   }
 
-  Future<void> fetch_categories() async {
-    List<Map<String, dynamic>> temp =
-        await db_helper.fetch_categories(uid, false);
-    if (mounted) {
-      setState(() {
-        cat_data = temp;
-        is_loading = false;
-      });
-    }
-  }
-
-  void get_value_qr(String account_holder, String des, String money) {
-    setState(() {
-      account_holder_controller.text = account_holder;
-      description_controller.text = des;
-      money_controller.text = money;
-    });
-  }
-
   @override
   void dispose() {
     is_mounted = false;
@@ -434,5 +415,24 @@ class _paypalState extends State<paypal> {
     } catch (err) {
       print(err);
     }
+  }
+
+  Future<void> fetch_categories() async {
+    List<Map<String, dynamic>> temp =
+        await db_helper.fetch_categories(uid, false);
+    if (mounted) {
+      setState(() {
+        cat_data = temp;
+        is_loading = false;
+      });
+    }
+  }
+
+  void get_value_qr(String account_holder, String des, String money) {
+    setState(() {
+      account_holder_controller.text = account_holder;
+      description_controller.text = des;
+      money_controller.text = money;
+    });
   }
 }

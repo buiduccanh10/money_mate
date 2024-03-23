@@ -20,7 +20,6 @@ class _inputState extends State<input> {
   @override
   void initState() {
     super.initState();
-
     is_income = true;
   }
 

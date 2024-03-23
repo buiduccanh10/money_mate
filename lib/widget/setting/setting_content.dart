@@ -38,21 +38,6 @@ class _setting_contentState extends State<setting_content> {
     super.initState();
   }
 
-  Future<void> get_is_lock() async {
-    bool temp = (await db_helper.get_is_lock(uid))!;
-    setState(() {
-      is_lock = temp;
-    });
-  }
-
-  Future<void> get_dark_mode() async {
-    bool temp = (await db_helper.get_dark_mode(uid))!;
-    setState(() {
-      is_dark = temp;
-      update_theme();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     toast.init(context);
@@ -518,6 +503,21 @@ class _setting_contentState extends State<setting_content> {
         ]),
       ),
     );
+  }
+
+  Future<void> get_is_lock() async {
+    bool temp = (await db_helper.get_is_lock(uid))!;
+    setState(() {
+      is_lock = temp;
+    });
+  }
+
+  Future<void> get_dark_mode() async {
+    bool temp = (await db_helper.get_dark_mode(uid))!;
+    setState(() {
+      is_dark = temp;
+      update_theme();
+    });
   }
 
   Future<void> update_dark_mode(String uid, bool is_dark) async {

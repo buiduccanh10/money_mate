@@ -40,10 +40,10 @@ class _home_appbarState extends State<home_appbar> {
 
   @override
   void initState() {
-    formattedDate = getMonthYearString(month, year);
+    formattedDate = get_month_year_string(month, year);
     is_mounted = true;
-    fetchData();
-    fetchUserName();
+    fetch_data();
+    fetch_user_name();
     super.initState();
   }
 
@@ -51,50 +51,6 @@ class _home_appbarState extends State<home_appbar> {
   void dispose() {
     is_mounted = false;
     super.dispose();
-  }
-
-  String getMonthYearString(int month, int year) {
-    final DateTime dateTime = DateTime(year, month);
-    final DateFormat formatter = DateFormat('MMMM yyyy');
-    return formatter.format(dateTime);
-  }
-
-  Future<void> fetchUserName() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      setState(() {
-        user_name = user.email;
-      });
-    }
-  }
-
-  Future<void> fetchData() async {
-    List<Map<String, dynamic>> income_temp = await db_helper
-        .fetch_data_cat_bymonth(uid, formattedDate, isIncome: true);
-    List<Map<String, dynamic>> expense_temp = await db_helper
-        .fetch_data_cat_bymonth(uid, formattedDate, isIncome: false);
-
-    if (is_mounted) {
-      setState(() {
-        income_categories = income_temp;
-        expense_categories = expense_temp;
-        calculateTotals();
-        is_loading = false;
-      });
-    }
-  }
-
-  void calculateTotals() {
-    total_income = income_categories
-        .map<double>((catItem) => (catItem['money']))
-        .fold<double>(0, (prev, amount) => prev + amount);
-
-    total_expense = expense_categories
-        .map<double>((catItem) => (catItem['money']))
-        .fold<double>(0, (prev, amount) => prev + amount);
-
-    total_saving =
-        double.parse((total_income - total_expense).toStringAsFixed(2));
   }
 
   @override
@@ -182,16 +138,16 @@ class _home_appbarState extends State<home_appbar> {
                             onChangedMonth: (newMonth) {
                               setState(() {
                                 month = int.parse(newMonth!);
-                                formattedDate = getMonthYearString(month, year);
-                                fetchData();
+                                formattedDate = get_month_year_string(month, year);
+                                fetch_data();
                                 home_list_item.getState()!.fetch_data_list();
                               });
                             },
                             onChangedYear: (newYear) {
                               setState(() {
                                 year = int.parse(newYear!);
-                                formattedDate = getMonthYearString(month, year);
-                                fetchData();
+                                formattedDate = get_month_year_string(month, year);
+                                fetch_data();
                                 home_list_item.getState()!.fetch_data_list();
                               });
                             },
@@ -365,5 +321,49 @@ class _home_appbarState extends State<home_appbar> {
         ),
       )
     ]);
+  }
+
+  String get_month_year_string(int month, int year) {
+    final DateTime dateTime = DateTime(year, month);
+    final DateFormat formatter = DateFormat('MMMM yyyy');
+    return formatter.format(dateTime);
+  }
+
+  Future<void> fetch_user_name() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        user_name = user.email;
+      });
+    }
+  }
+
+  Future<void> fetch_data() async {
+    List<Map<String, dynamic>> income_temp = await db_helper
+        .fetch_data_cat_bymonth(uid, formattedDate, isIncome: true);
+    List<Map<String, dynamic>> expense_temp = await db_helper
+        .fetch_data_cat_bymonth(uid, formattedDate, isIncome: false);
+
+    if (is_mounted) {
+      setState(() {
+        income_categories = income_temp;
+        expense_categories = expense_temp;
+        calculate_totals();
+        is_loading = false;
+      });
+    }
+  }
+
+  void calculate_totals() {
+    total_income = income_categories
+        .map<double>((catItem) => (catItem['money']))
+        .fold<double>(0, (prev, amount) => prev + amount);
+
+    total_expense = expense_categories
+        .map<double>((catItem) => (catItem['money']))
+        .fold<double>(0, (prev, amount) => prev + amount);
+
+    total_saving =
+        double.parse((total_income - total_expense).toStringAsFixed(2));
   }
 }

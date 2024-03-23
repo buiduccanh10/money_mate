@@ -49,7 +49,7 @@ class _chart_widgetState extends State<chart_widget> {
   void initState() {
     is_income = true;
     is_mounted = true;
-    month_year_formated = getMonthYearString(month, year);
+    month_year_formated = get_month_year_string(month, year);
     tooltipBehavior = TooltipBehavior(enable: true);
     is_month();
     super.initState();
@@ -67,110 +67,6 @@ class _chart_widgetState extends State<chart_widget> {
   void dispose() {
     is_mounted = false;
     super.dispose();
-  }
-
-  String getMonthYearString(int month, int year) {
-    final DateTime dateTime = DateTime(year, month);
-    final DateFormat formatter = DateFormat('MMMM yyyy');
-    return formatter.format(dateTime);
-  }
-
-  void is_month() {
-    if (widget.is_monthly) {
-      fecth_data_bymonth();
-    } else {
-      fecth_data_byyear();
-    }
-  }
-
-  Future<void> fecth_data_bymonth() async {
-    List<Map<String, dynamic>> income_temp = await db_helper
-        .fetch_data_cat_bymonth(uid, month_year_formated, isIncome: true);
-    List<Map<String, dynamic>> expense_temp = await db_helper
-        .fetch_data_cat_bymonth(uid, month_year_formated, isIncome: false);
-
-    if (is_mounted) {
-      setState(() {
-        income_categories = groupBy(income_temp, (item) => '${item['cat_id']}')
-            .values
-            .map((items) => {
-                  'icon': items.first['icon'],
-                  'name': items.first['name'],
-                  'is_income': true,
-                  'cat_id': items.first['cat_id'],
-                  'money': items
-                      .map<double>((item) => item['money'])
-                      .fold<double>(0, (prev, amount) => prev + amount),
-                })
-            .toList();
-        expense_categories =
-            groupBy(expense_temp, (item) => '${item['cat_id']}')
-                .values
-                .map((items) => {
-                      'icon': items.first['icon'],
-                      'name': items.first['name'],
-                      'is_income': true,
-                      'cat_id': items.first['cat_id'],
-                      'money': items
-                          .map<double>((item) => item['money'])
-                          .fold<double>(0, (prev, amount) => prev + amount),
-                    })
-                .toList();
-        calculateTotals();
-        is_loading = false;
-      });
-    }
-  }
-
-  Future<void> fecth_data_byyear() async {
-    List<Map<String, dynamic>> income_temp = await db_helper
-        .fetch_data_cat_byyear(uid, year.toString(), isIncome: true);
-
-    List<Map<String, dynamic>> expense_temp = await db_helper
-        .fetch_data_cat_byyear(uid, year.toString(), isIncome: false);
-
-    if (is_mounted) {
-      setState(() {
-        income_categories = groupBy(income_temp, (item) => '${item['cat_id']}')
-            .values
-            .map((items) => {
-                  'icon': items.first['icon'],
-                  'name': items.first['name'],
-                  'cat_id': items.first['cat_id'],
-                  'money': items
-                      .map<double>((item) => item['money'])
-                      .fold<double>(0, (prev, amount) => prev + amount),
-                })
-            .toList();
-        expense_categories =
-            groupBy(expense_temp, (item) => '${item['cat_id']}')
-                .values
-                .map((items) => {
-                      'icon': items.first['icon'],
-                      'name': items.first['name'],
-                      'cat_id': items.first['cat_id'],
-                      'money': items
-                          .map<double>((item) => item['money'])
-                          .fold<double>(0, (prev, amount) => prev + amount),
-                    })
-                .toList();
-        calculateTotals();
-        is_loading = false;
-      });
-    }
-  }
-
-  void calculateTotals() {
-    total_income = income_categories
-        .map<double>((catItem) => (catItem['money']))
-        .fold<double>(0, (prev, amount) => prev + amount);
-
-    total_expense = expense_categories
-        .map<double>((catItem) => (catItem['money']))
-        .fold<double>(0, (prev, amount) => prev + amount);
-
-    total_saving =
-        double.parse((total_income - total_expense).toStringAsFixed(2));
   }
 
   @override
@@ -232,7 +128,7 @@ class _chart_widgetState extends State<chart_widget> {
                                           setState(() {
                                             month = int.parse(newMonth!);
                                             month_year_formated =
-                                                getMonthYearString(month, year);
+                                                get_month_year_string(month, year);
                                             fecth_data_bymonth();
                                           });
                                         },
@@ -240,7 +136,7 @@ class _chart_widgetState extends State<chart_widget> {
                                           setState(() {
                                             year = int.parse(newYear!);
                                             month_year_formated =
-                                                getMonthYearString(month, year);
+                                                get_month_year_string(month, year);
                                             fecth_data_bymonth();
                                           });
                                         },
@@ -609,5 +505,109 @@ class _chart_widgetState extends State<chart_widget> {
         ),
       ),
     );
+  }
+
+  String get_month_year_string(int month, int year) {
+    final DateTime dateTime = DateTime(year, month);
+    final DateFormat formatter = DateFormat('MMMM yyyy');
+    return formatter.format(dateTime);
+  }
+
+  void is_month() {
+    if (widget.is_monthly) {
+      fecth_data_bymonth();
+    } else {
+      fecth_data_byyear();
+    }
+  }
+
+  Future<void> fecth_data_bymonth() async {
+    List<Map<String, dynamic>> income_temp = await db_helper
+        .fetch_data_cat_bymonth(uid, month_year_formated, isIncome: true);
+    List<Map<String, dynamic>> expense_temp = await db_helper
+        .fetch_data_cat_bymonth(uid, month_year_formated, isIncome: false);
+
+    if (is_mounted) {
+      setState(() {
+        income_categories = groupBy(income_temp, (item) => '${item['cat_id']}')
+            .values
+            .map((items) => {
+                  'icon': items.first['icon'],
+                  'name': items.first['name'],
+                  'is_income': true,
+                  'cat_id': items.first['cat_id'],
+                  'money': items
+                      .map<double>((item) => item['money'])
+                      .fold<double>(0, (prev, amount) => prev + amount),
+                })
+            .toList();
+        expense_categories =
+            groupBy(expense_temp, (item) => '${item['cat_id']}')
+                .values
+                .map((items) => {
+                      'icon': items.first['icon'],
+                      'name': items.first['name'],
+                      'is_income': true,
+                      'cat_id': items.first['cat_id'],
+                      'money': items
+                          .map<double>((item) => item['money'])
+                          .fold<double>(0, (prev, amount) => prev + amount),
+                    })
+                .toList();
+        calculate_totals();
+        is_loading = false;
+      });
+    }
+  }
+
+  Future<void> fecth_data_byyear() async {
+    List<Map<String, dynamic>> income_temp = await db_helper
+        .fetch_data_cat_byyear(uid, year.toString(), isIncome: true);
+
+    List<Map<String, dynamic>> expense_temp = await db_helper
+        .fetch_data_cat_byyear(uid, year.toString(), isIncome: false);
+
+    if (is_mounted) {
+      setState(() {
+        income_categories = groupBy(income_temp, (item) => '${item['cat_id']}')
+            .values
+            .map((items) => {
+                  'icon': items.first['icon'],
+                  'name': items.first['name'],
+                  'cat_id': items.first['cat_id'],
+                  'money': items
+                      .map<double>((item) => item['money'])
+                      .fold<double>(0, (prev, amount) => prev + amount),
+                })
+            .toList();
+        expense_categories =
+            groupBy(expense_temp, (item) => '${item['cat_id']}')
+                .values
+                .map((items) => {
+                      'icon': items.first['icon'],
+                      'name': items.first['name'],
+                      'cat_id': items.first['cat_id'],
+                      'money': items
+                          .map<double>((item) => item['money'])
+                          .fold<double>(0, (prev, amount) => prev + amount),
+                    })
+                .toList();
+        calculate_totals();
+        is_loading = false;
+      });
+    }
+  }
+
+  void calculate_totals() {
+    total_income = income_categories
+        .map<double>((catItem) => (catItem['money']))
+        .fold<double>(0, (prev, amount) => prev + amount);
+
+    total_expense = expense_categories
+        .map<double>((catItem) => (catItem['money']))
+        .fold<double>(0, (prev, amount) => prev + amount);
+
+    total_saving =
+        double.parse((total_income - total_expense).toStringAsFixed(2));
   }
 }

@@ -329,7 +329,7 @@ class _home_list_itemState extends State<home_list_item> {
       fetch_data_list();
 
       if (home_appbar.getState() != null) {
-        home_appbar.getState()!.fetchData();
+        home_appbar.getState()!.fetch_data();
       }
 
       toast.showToast(

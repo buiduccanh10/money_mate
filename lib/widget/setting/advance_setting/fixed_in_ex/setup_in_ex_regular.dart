@@ -49,49 +49,6 @@ class _setup_in_ex_regularState extends State<setup_in_ex_regular> {
     super.initState();
   }
 
-  Future<void> fetch_data_shared_preferences() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove('translator_locale_key');
-    Set<String> keys = prefs.getKeys();
-
-    data.clear();
-
-    if (keys.isNotEmpty) {
-      for (String key in keys) {
-        final inputData = prefs.getStringList(key);
-
-        String uid = inputData![0];
-        String date = inputData[1];
-        String description = inputData[2];
-        double money = double.parse(inputData[3]);
-        String cat_id = inputData[4];
-        String icon = inputData[5];
-        String name = inputData[6];
-        bool is_income = bool.parse(inputData[7]);
-        String option = inputData[8];
-
-        Map<String, dynamic> content = {
-          'id': key,
-          'uid': uid,
-          'date': date,
-          'description': description,
-          'money': money,
-          'cat_id': cat_id,
-          'icon': icon,
-          'name': name,
-          'is_income': is_income,
-          'option': option
-        };
-        if (is_mounted) {
-          setState(() {
-            data.add(content);
-            is_loading = false;
-          });
-        }
-      }
-    }
-  }
-
   @override
   void dispose() {
     is_mounted = false;
@@ -310,7 +267,50 @@ class _setup_in_ex_regularState extends State<setup_in_ex_regular> {
     );
   }
 
-  Future<void> removeScheduleInputTask(int idNotification) async {
+  Future<void> fetch_data_shared_preferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('translator_locale_key');
+    Set<String> keys = prefs.getKeys();
+
+    data.clear();
+
+    if (keys.isNotEmpty) {
+      for (String key in keys) {
+        final inputData = prefs.getStringList(key);
+
+        String uid = inputData![0];
+        String date = inputData[1];
+        String description = inputData[2];
+        double money = double.parse(inputData[3]);
+        String cat_id = inputData[4];
+        String icon = inputData[5];
+        String name = inputData[6];
+        bool is_income = bool.parse(inputData[7]);
+        String option = inputData[8];
+
+        Map<String, dynamic> content = {
+          'id': key,
+          'uid': uid,
+          'date': date,
+          'description': description,
+          'money': money,
+          'cat_id': cat_id,
+          'icon': icon,
+          'name': name,
+          'is_income': is_income,
+          'option': option
+        };
+        if (is_mounted) {
+          setState(() {
+            data.add(content);
+            is_loading = false;
+          });
+        }
+      }
+    }
+  }
+
+  Future<void> remove_schedule_input_task(int idNotification) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     Set<String> keys = prefs.getKeys();
 
@@ -323,7 +323,7 @@ class _setup_in_ex_regularState extends State<setup_in_ex_regular> {
     }
   }
 
-  Future<void> removeAllSchedule() async {
+  Future<void> remove_all_schedule() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     AwesomeNotifications().cancelAllSchedules();
     AwesomeNotifications().cancelAll();
@@ -332,7 +332,7 @@ class _setup_in_ex_regularState extends State<setup_in_ex_regular> {
 
   void handle_delete(int input_id, int index) async {
     try {
-      removeScheduleInputTask(input_id);
+      remove_schedule_input_task(input_id);
       setState(() {
         data.removeAt(index);
       });
@@ -401,7 +401,7 @@ class _setup_in_ex_regularState extends State<setup_in_ex_regular> {
                     setState(() {
                       data.clear();
                     });
-                    removeAllSchedule();
+                    remove_all_schedule();
 
                     toast.showToast(
                       child: Container(

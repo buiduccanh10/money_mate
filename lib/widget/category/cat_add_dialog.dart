@@ -191,8 +191,8 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
 
       if (category_manage.getState() != null &&
           input_content.getState() != null) {
-        category_manage.getState()!.fetchData();
-        input_content.getState()!.fetchData();
+        category_manage.getState()!.fetch_data();
+        input_content.getState()!.fetch_data();
       }
 
       toast.showToast(

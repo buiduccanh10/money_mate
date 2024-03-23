@@ -42,7 +42,7 @@ class _category_manageState extends State<category_manage> {
   @override
   void initState() {
     is_mounted = true;
-    fetchData();
+    fetch_data();
     super.initState();
   }
 
@@ -50,18 +50,6 @@ class _category_manageState extends State<category_manage> {
   void dispose() {
     is_mounted = false;
     super.dispose();
-  }
-
-  Future<void> fetchData() async {
-    List<Map<String, dynamic>> temp =
-        await db_helper.fetch_categories(uid, widget.is_income);
-
-    if (is_mounted) {
-      setState(() {
-        data = temp;
-        is_loading = false;
-      });
-    }
   }
 
   @override
@@ -300,8 +288,8 @@ class _category_manageState extends State<category_manage> {
                             ))
                         .then((value) => Navigator.of(context).pop())
                         .then((value) {
-                      category_manage.getState()!.fetchData();
-                      input_content.getState()!.fetchData();
+                      category_manage.getState()!.fetch_data();
+                      input_content.getState()!.fetch_data();
                     });
                   },
                   child: Text(
@@ -334,7 +322,7 @@ class _category_manageState extends State<category_manage> {
         data.removeAt(index);
       });
 
-      input_content.getState()!.fetchData();
+      input_content.getState()!.fetch_data();
 
       toast.showToast(
         child: Container(
@@ -375,6 +363,18 @@ class _category_manageState extends State<category_manage> {
         gravity: ToastGravity.CENTER,
         toastDuration: const Duration(seconds: 2),
       );
+    }
+  }
+
+  Future<void> fetch_data() async {
+    List<Map<String, dynamic>> temp =
+        await db_helper.fetch_categories(uid, widget.is_income);
+
+    if (is_mounted) {
+      setState(() {
+        data = temp;
+        is_loading = false;
+      });
     }
   }
 }

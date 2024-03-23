@@ -33,10 +33,10 @@ class firestore_helper {
   }
 
   Future<void> init_user_database(String userId) async {
-    CollectionReference user_collection =
+    CollectionReference cat_collection =
         db.collection('users').doc(userId).collection('category');
 
-    QuerySnapshot snapshot = await user_collection.get();
+    QuerySnapshot snapshot = await cat_collection.get();
 
     if (snapshot.docs.isEmpty) {
       List<Map<String, dynamic>> cat_default = [
@@ -50,7 +50,7 @@ class firestore_helper {
       ];
 
       for (var data in cat_default) {
-        DocumentReference docRef = user_collection.doc();
+        DocumentReference docRef = cat_collection.doc();
         await docRef.set({
           ...data,
           'cat_id': docRef.id,
@@ -626,10 +626,10 @@ class firestore_helper {
 
     AwesomeNotifications().setListeners(
         onActionReceivedMethod: onActionReceivedMethod,
-        onNotificationDisplayedMethod: onNotificationDisplayedMethod);
+        onNotificationDisplayedMethod: on_notification_displayed_method);
   }
 
-  static Future<void> onNotificationDisplayedMethod(
+  static Future<void> on_notification_displayed_method(
       ReceivedNotification receivedNotification) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     Set<String> keys = prefs.getKeys();

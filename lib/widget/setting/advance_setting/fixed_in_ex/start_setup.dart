@@ -57,16 +57,6 @@ class _start_setupState extends State<start_setup> {
     super.initState();
   }
 
-  Future<void> fetch_categories() async {
-    List<Map<String, dynamic>> temp = await db_helper.fetch_all_categories(uid);
-    if (mounted) {
-      setState(() {
-        cat_data = temp;
-        is_loading = false;
-      });
-    }
-  }
-
   @override
   void dispose() {
     is_mounted = false;
@@ -416,8 +406,25 @@ class _start_setupState extends State<start_setup> {
     );
   }
 
-  Future<void> save(DateTime? date, String description, String money,
-      String cat_id, String icon, String name,bool is_income, String option) async {
+  Future<void> fetch_categories() async {
+    List<Map<String, dynamic>> temp = await db_helper.fetch_all_categories(uid);
+    if (mounted) {
+      setState(() {
+        cat_data = temp;
+        is_loading = false;
+      });
+    }
+  }
+
+  Future<void> save(
+      DateTime? date,
+      String description,
+      String money,
+      String cat_id,
+      String icon,
+      String name,
+      bool is_income,
+      String option) async {
     try {
       String format_date;
       String format_money = localization.currentLocale.toString() == 'vi'
@@ -428,12 +435,12 @@ class _start_setupState extends State<start_setup> {
         format_date =
             DateFormat('dd/MM/yyyy').format(date_controller.displayDate!);
         db_helper.scheduleInputTask(uid, format_date, description, money_final,
-            cat_id, icon, name,is_income, option);
+            cat_id, icon, name, is_income, option);
       } else {
         format_date =
             DateFormat('dd/MM/yyyy').format(date_controller.selectedDate!);
         db_helper.scheduleInputTask(uid, format_date, description, money_final,
-            cat_id, icon, name,is_income, option);
+            cat_id, icon, name, is_income, option);
       }
 
       if (setup_in_ex_regular.getState() != null) {

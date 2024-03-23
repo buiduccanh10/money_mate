@@ -53,7 +53,7 @@ class _input_contentState extends State<input_content> {
   void initState() {
     is_mounted = true;
     toast.init(context);
-    fetchData();
+    fetch_data();
     super.initState();
   }
 
@@ -61,22 +61,6 @@ class _input_contentState extends State<input_content> {
   void dispose() {
     is_mounted = false;
     super.dispose();
-  }
-
-  Future<void> fetchData() async {
-    List<Map<String, dynamic>> income_temp =
-        await db_helper.fetch_categories(uid, true);
-
-    List<Map<String, dynamic>> expense_temp =
-        await db_helper.fetch_categories(uid, false);
-
-    if (is_mounted) {
-      setState(() {
-        income_categories = income_temp;
-        expense_categories = expense_temp;
-        is_loading = false;
-      });
-    }
   }
 
   @override
@@ -462,6 +446,22 @@ class _input_contentState extends State<input_content> {
         gravity: ToastGravity.CENTER,
         toastDuration: const Duration(seconds: 2),
       );
+    }
+  }
+
+  Future<void> fetch_data() async {
+    List<Map<String, dynamic>> income_temp =
+        await db_helper.fetch_categories(uid, true);
+
+    List<Map<String, dynamic>> expense_temp =
+        await db_helper.fetch_categories(uid, false);
+
+    if (is_mounted) {
+      setState(() {
+        income_categories = income_temp;
+        expense_categories = expense_temp;
+        is_loading = false;
+      });
     }
   }
 }

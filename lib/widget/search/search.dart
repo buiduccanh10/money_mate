@@ -51,26 +51,6 @@ class _searchState extends State<search> {
     super.dispose();
   }
 
-  Future<void> fetch_categories() async {
-    List<Map<String, dynamic>> temp = await db_helper.fetch_all_categories(uid);
-    if (mounted) {
-      setState(() {
-        cat_list = temp;
-        is_loading = false;
-      });
-    }
-  }
-
-  void updated_item(Map<String, dynamic> updated_item) {
-    setState(() {
-      int index =
-          results.indexWhere((item) => item['id'] == updated_item['id']);
-      if (index != -1) {
-        results[index] = updated_item;
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     toast.init(context);
@@ -521,5 +501,25 @@ class _searchState extends State<search> {
         toastDuration: const Duration(seconds: 3),
       );
     }
+  }
+
+  Future<void> fetch_categories() async {
+    List<Map<String, dynamic>> temp = await db_helper.fetch_all_categories(uid);
+    if (mounted) {
+      setState(() {
+        cat_list = temp;
+        is_loading = false;
+      });
+    }
+  }
+
+  void updated_item(Map<String, dynamic> updated_item) {
+    setState(() {
+      int index =
+          results.indexWhere((item) => item['id'] == updated_item['id']);
+      if (index != -1) {
+        results[index] = updated_item;
+      }
+    });
   }
 }

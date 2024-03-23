@@ -24,14 +24,6 @@ class _language_settingState extends State<language_setting> {
     super.initState();
   }
 
-  Future<void> get_language() async {
-    String temp = (await db_helper.get_language(uid))!;
-    setState(() {
-      current_locale = temp;
-      set_locale(current_locale);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,6 +59,14 @@ class _language_settingState extends State<language_setting> {
         ],
       ),
     );
+  }
+
+  Future<void> get_language() async {
+    String temp = (await db_helper.get_language(uid))!;
+    setState(() {
+      current_locale = temp;
+      set_locale(current_locale);
+    });
   }
 
   void set_locale(String value) {

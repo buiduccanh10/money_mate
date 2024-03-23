@@ -61,7 +61,7 @@ class _update_inputState extends State<update_input> {
 
     is_mounted = true;
     toast.init(context);
-    fetchData();
+    fetch_data();
     super.initState();
   }
 
@@ -69,22 +69,6 @@ class _update_inputState extends State<update_input> {
   void dispose() {
     is_mounted = false;
     super.dispose();
-  }
-
-  Future<void> fetchData() async {
-    List<Map<String, dynamic>> income_temp =
-        await db_helper.fetch_categories(uid, true);
-
-    List<Map<String, dynamic>> expense_temp =
-        await db_helper.fetch_categories(uid, false);
-
-    if (is_mounted) {
-      setState(() {
-        income_categories = income_temp;
-        expense_categories = expense_temp;
-        is_loading = false;
-      });
-    }
   }
 
   @override
@@ -455,12 +439,12 @@ class _update_inputState extends State<update_input> {
       }
 
       if (home_appbar.getState() != null && home_list_item.getState() != null) {
-        home_appbar.getState()!.fetchData();
+        home_appbar.getState()!.fetch_data();
         home_list_item.getState()!.fetch_data_list();
       } else if (chart_widget.getState() != null &&
           chart_item_detail.getState() != null) {
         chart_widget.getState()!.is_month();
-        chart_item_detail.getState()!.fetchData();
+        chart_item_detail.getState()!.fetch_data();
       } else {
         final test = await db_helper.fetch_categories(
             uid, widget.input_item['is_income']);
@@ -524,6 +508,22 @@ class _update_inputState extends State<update_input> {
         gravity: ToastGravity.CENTER,
         toastDuration: const Duration(seconds: 2),
       );
+    }
+  }
+
+  Future<void> fetch_data() async {
+    List<Map<String, dynamic>> income_temp =
+        await db_helper.fetch_categories(uid, true);
+
+    List<Map<String, dynamic>> expense_temp =
+        await db_helper.fetch_categories(uid, false);
+
+    if (is_mounted) {
+      setState(() {
+        income_categories = income_temp;
+        expense_categories = expense_temp;
+        is_loading = false;
+      });
     }
   }
 }

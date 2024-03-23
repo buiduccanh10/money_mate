@@ -39,7 +39,6 @@ dependencies:
   emoji_picker_flutter: ^2.1.0
   syncfusion_flutter_datepicker: ^24.1.44
   syncfusion_flutter_charts: ^24.1.45+2
-  intl: ^0.18.1
   custom_sliding_segmented_control: ^1.8.1
   flutter_launcher_icons: ^0.13.1
   flutter_native_splash: ^2.3.9
@@ -58,6 +57,8 @@ dependencies:
   flutter_paypal_checkout: ^1.0.1
   mobile_scanner: ^4.0.1
   image_picker: ^1.0.7
+  vnpay_flutter: ^1.0.1
+  url_launcher: ^6.2.5
   #firebase_messaging: ^14.7.19
 
 flutter_launcher_icons:
@@ -75,6 +76,9 @@ flutter_native_splash:
     color: "#FFFFFF"
     image: assets/splash.png
     branding: assets/splash_brand.png
+
+dependency_overrides:
+  intl: any
 
 dev_dependencies:
   flutter_test:
