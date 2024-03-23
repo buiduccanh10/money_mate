@@ -2,7 +2,11 @@
 
 MoneyMate is a spending management app that offers features that allow you to personalize your spending
 
-## Getting Started
+## Overview
+
+![alt text](http://url/to/img.png)
+
+## Getting Started with Flutter
 
 This project is a starting point for a Flutter application.
 
