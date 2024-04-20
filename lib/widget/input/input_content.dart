@@ -309,7 +309,7 @@ class _input_contentState extends State<input_content> {
               child: FloatingActionButton.extended(
                 backgroundColor: Colors.transparent,
                 onPressed: () async {
-                  await input_vm.addInput(
+                  await input_vm.add_input(
                       input_vm.date_controller.selectedDate,
                       input_vm.description_controller.text,
                       input_vm.money_controller.text,

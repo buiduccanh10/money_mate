@@ -24,7 +24,7 @@ class cat_update_dialog extends StatefulWidget {
 class _cat_update_dialogState extends State<cat_update_dialog> {
   @override
   void initState() {
-    var cat_vm = Provider.of<category_view_model>(context,listen: false);
+    var cat_vm = Provider.of<category_view_model>(context, listen: false);
     cat_vm.icon_controller.text = widget.cat_item['icon'];
     cat_vm.cat_controller.text = widget.cat_item['name'];
 
@@ -154,7 +154,6 @@ class _cat_update_dialogState extends State<cat_update_dialog> {
                           cat_vm.cat_controller.text,
                           widget.cat_item['is_income'],
                           context);
-                      Navigator.of(context).pop();
                     },
                     child: Text(
                       LocaleData.update.getString(context),

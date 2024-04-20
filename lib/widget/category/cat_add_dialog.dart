@@ -138,7 +138,7 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
                           cat_vm.cat_controller.text,
                           widget.is_income,
                           context);
-                      Navigator.of(context).pop();
+                      
                     },
                     child: Text(
                       LocaleData.input_save.getString(context),

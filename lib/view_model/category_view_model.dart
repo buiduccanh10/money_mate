@@ -172,13 +172,15 @@ class category_view_model with ChangeNotifier {
         await db_helper.add_category(uid, icon, name, is_income);
 
         fetch_data(is_income);
-        var input_vm = Provider.of<input_view_model>(context, listen: false);
-        input_vm.fetch_data();
+        await Provider.of<input_view_model>(context, listen: false)
+            .fetch_data();
 
         icon_controller.clear();
         cat_controller.clear();
 
         notifyListeners();
+
+        Navigator.of(context).pop();
 
         toast.showToast(
           child: Container(
@@ -234,13 +236,14 @@ class category_view_model with ChangeNotifier {
         await db_helper.update_category(uid, cat_id, icon, name, is_income);
 
         fetch_data(is_income);
-        var input_vm = Provider.of<input_view_model>(context, listen: false);
-        input_vm.fetch_data();
+        await Provider.of<input_view_model>(context, listen: false).fetch_data();
 
         icon_controller.clear();
         cat_controller.clear();
 
         notifyListeners();
+
+        Navigator.of(context).pop();
 
         toast.showToast(
           child: Container(

@@ -52,7 +52,7 @@ class input_view_model with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addInput(DateTime? date, String description, String money,
+  Future<void> add_input(DateTime? date, String description, String money,
       String? cat_id, context) async {
     if (description_controller.text.isEmpty ||
         money_controller.text.isEmpty ||
