@@ -13,423 +13,259 @@ import 'package:intl/intl.dart';
 import 'package:money_mate/services/currency_format.dart';
 import 'package:money_mate/services/firestore_helper.dart';
 import 'package:money_mate/services/locales.dart';
+import 'package:money_mate/view_model/setting_view_model.dart';
 import 'package:money_mate/widget/setting/advance_setting/fixed_in_ex/start_setup.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class setup_in_ex_regular extends StatefulWidget {
-  static final setup_in_ex_regular_globalkey =
-      GlobalKey<_setup_in_ex_regularState>();
-
-  static _setup_in_ex_regularState? getState() {
-    return setup_in_ex_regular_globalkey.currentState;
-  }
-
-  setup_in_ex_regular()
-      : super(key: setup_in_ex_regular.setup_in_ex_regular_globalkey);
+  const setup_in_ex_regular({super.key});
 
   @override
   State<setup_in_ex_regular> createState() => _setup_in_ex_regularState();
 }
 
 class _setup_in_ex_regularState extends State<setup_in_ex_regular> {
-  List<Map<String, dynamic>> data = [];
-  bool is_loading = true;
-  bool is_mounted = false;
-  FToast toast = FToast();
-  firestore_helper db_helper = firestore_helper();
-  final uid = FirebaseAuth.instance.currentUser!.uid;
-  final localization = FlutterLocalization.instance;
-
   @override
   void initState() {
-    fetch_data_shared_preferences();
-    is_mounted = true;
+    var setting_vm = Provider.of<setting_view_model>(context, listen: false);
+    setting_vm.init(context);
     super.initState();
   }
 
   @override
   void dispose() {
-    is_mounted = false;
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     bool is_dark = Theme.of(context).brightness == Brightness.dark;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(LocaleData.fixed_in_ex.getString(context)),
-        actions: [
-          IconButton(
-              onPressed: () {
-                delete_all_schedule();
-              },
-              icon: const Icon(
-                Icons.delete_sweep,
-                color: Colors.red,
-              ))
-        ],
-      ),
-      body: SingleChildScrollView(
-          child: Column(
-        children: [
-          data.isEmpty
-              ? Padding(
-                  padding: EdgeInsets.only(
-                      top: MediaQuery.of(context).size.height * 0.35),
-                  child: Center(
-                      child: Text(
-                    LocaleData.no_set_up_yet.getString(context),
-                    style: const TextStyle(fontSize: 18),
-                  )),
-                )
-              : is_loading
-                  ? ListView.builder(
-                      padding: const EdgeInsets.only(bottom: 100),
-                      itemCount: 10,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Shimmer.fromColors(
-                          baseColor: Colors.grey[300]!,
-                          highlightColor: Colors.grey[100]!,
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                top: 10, bottom: 10, left: 24, right: 24),
-                            child: ListTile(
-                              title: Container(
-                                height: 20,
-                                color: Colors.white,
-                              ),
-                              subtitle: Container(
-                                height: 15,
-                                color: Colors.white,
-                              ),
-                              leading: Container(
-                                width: 50,
-                                height: 50,
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                              trailing: Container(
-                                width: 60,
-                                height: 20,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        );
-                      },
+    return Consumer<setting_view_model>(
+      builder: (BuildContext context, setting_vm, Widget? child) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(LocaleData.fixed_in_ex.getString(context)),
+            actions: [
+              IconButton(
+                  onPressed: () {
+                    setting_vm.delete_all_schedule(context);
+                  },
+                  icon: const Icon(
+                    Icons.delete_sweep,
+                    color: Colors.red,
+                  ))
+            ],
+          ),
+          body: SingleChildScrollView(
+              child: Column(
+            children: [
+              setting_vm.data.isEmpty
+                  ? Padding(
+                      padding: EdgeInsets.only(
+                          top: MediaQuery.of(context).size.height * 0.35),
+                      child: Center(
+                          child: Text(
+                        LocaleData.no_set_up_yet.getString(context),
+                        style: const TextStyle(fontSize: 18),
+                      )),
                     )
-                  : SizedBox(
-                      height: 500,
-                      width: MediaQuery.of(context).size.width,
-                      child: ListView.builder(
-                        padding: const EdgeInsets.only(bottom: 0),
-                        itemCount: data.length,
-                        itemBuilder: (BuildContext context, index) {
-                          var formatter = NumberFormat.simpleCurrency(
-                              locale: localization.currentLocale.toString());
-                          String format_money =
-                              formatter.format(data[index]['money']);
-                          return Slidable(
-                            endActionPane: ActionPane(
-                              motion: const ScrollMotion(),
-                              children: [
-                                SlidableAction(
-                                  backgroundColor: Colors.transparent,
-                                  onPressed: (context) {
-                                    handle_delete(
-                                        int.parse(data[index]['id']), index);
-                                  },
-                                  foregroundColor: Colors.red,
-                                  icon: Icons.delete,
-                                  label: LocaleData.slide_delete
-                                      .getString(context),
-                                ),
-                              ],
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 14, bottom: 14, left: 24, right: 24),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Container(
-                                        decoration: BoxDecoration(
-                                            boxShadow: is_dark
-                                                ? null
-                                                : [
-                                                    BoxShadow(
-                                                      color: Colors.grey
-                                                          .withOpacity(0.3),
-                                                      spreadRadius: 2,
-                                                      blurRadius: 7,
-                                                      offset:
-                                                          const Offset(-5, 5),
-                                                    )
-                                                  ],
-                                            borderRadius:
-                                                BorderRadius.circular(50)),
-                                        child: CircleAvatar(
-                                            backgroundColor: Colors
-                                                .primaries[Random().nextInt(
-                                                    Colors.primaries.length)]
-                                                .shade100
-                                                .withOpacity(0.35),
-                                            radius: 28,
-                                            child: Text(
-                                              data[index]['icon'],
-                                              style:
-                                                  const TextStyle(fontSize: 38),
-                                            )),
-                                      ),
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 12.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            SizedBox(
-                                              // width: width * 0.4,
-                                              child: Text(
-                                                '${data[index]['description']} (${data[index]['option']})',
-                                                softWrap: true,
-                                                style: const TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight:
-                                                        FontWeight.w700),
-                                              ),
-                                            ),
-                                            Text(
-                                              data[index]['date'],
-                                              style: const TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w700,
-                                                  color: Colors.grey),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ],
+                  : setting_vm.is_loading
+                      ? ListView.builder(
+                          padding: const EdgeInsets.only(bottom: 100),
+                          itemCount: 10,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Shimmer.fromColors(
+                              baseColor: Colors.grey[300]!,
+                              highlightColor: Colors.grey[100]!,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 10, bottom: 10, left: 24, right: 24),
+                                child: ListTile(
+                                  title: Container(
+                                    height: 20,
+                                    color: Colors.white,
                                   ),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                  subtitle: Container(
+                                    height: 15,
+                                    color: Colors.white,
+                                  ),
+                                  leading: Container(
+                                    width: 50,
+                                    height: 50,
+                                    decoration: const BoxDecoration(
+                                      color: Colors.white,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                  trailing: Container(
+                                    width: 60,
+                                    height: 20,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        )
+                      : SizedBox(
+                          height: 500,
+                          width: MediaQuery.of(context).size.width,
+                          child: ListView.builder(
+                            padding: const EdgeInsets.only(bottom: 0),
+                            itemCount: setting_vm.data.length,
+                            itemBuilder: (BuildContext context, index) {
+                              var formatter = NumberFormat.simpleCurrency(
+                                  locale: setting_vm
+                                      .localization.currentLocale
+                                      .toString());
+                              String format_money = formatter
+                                  .format(setting_vm.data[index]['money']);
+                              return Slidable(
+                                endActionPane: ActionPane(
+                                  motion: const ScrollMotion(),
+                                  children: [
+                                    SlidableAction(
+                                      backgroundColor: Colors.transparent,
+                                      onPressed: (context) {
+                                        setting_vm.handle_delete(
+                                            int.parse(
+                                                setting_vm.data[index]['id']),
+                                            index,
+                                            context);
+                                      },
+                                      foregroundColor: Colors.red,
+                                      icon: Icons.delete,
+                                      label: LocaleData.slide_delete
+                                          .getString(context),
+                                    ),
+                                  ],
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 14, bottom: 14, left: 24, right: 24),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(
-                                        '${data[index]['is_income'] ? '+' : '-'} ${format_money}',
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w700,
-                                            color: data[index]['is_income']
-                                                ? Colors.green
-                                                : Colors.red),
+                                      Row(
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                                boxShadow: is_dark
+                                                    ? null
+                                                    : [
+                                                        BoxShadow(
+                                                          color: Colors.grey
+                                                              .withOpacity(0.3),
+                                                          spreadRadius: 2,
+                                                          blurRadius: 7,
+                                                          offset: const Offset(
+                                                              -5, 5),
+                                                        )
+                                                      ],
+                                                borderRadius:
+                                                    BorderRadius.circular(50)),
+                                            child: CircleAvatar(
+                                                backgroundColor: Colors
+                                                    .primaries[Random().nextInt(
+                                                        Colors
+                                                            .primaries.length)]
+                                                    .shade100
+                                                    .withOpacity(0.35),
+                                                radius: 28,
+                                                child: Text(
+                                                  setting_vm.data[index]
+                                                      ['icon'],
+                                                  style: const TextStyle(
+                                                      fontSize: 38),
+                                                )),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 12.0),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                SizedBox(
+                                                  // width: width * 0.4,
+                                                  child: Text(
+                                                    '${setting_vm.data[index]['description']} (${setting_vm.data[index]['option']})',
+                                                    softWrap: true,
+                                                    style: const TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w700),
+                                                  ),
+                                                ),
+                                                Text(
+                                                  setting_vm.data[index]
+                                                      ['date'],
+                                                  style: const TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      color: Colors.grey),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        data[index]['name'],
-                                        style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w700,
-                                            color: Colors.grey),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          Text(
+                                            '${setting_vm.data[index]['is_income'] ? '+' : '-'} ${format_money}',
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w700,
+                                                color: setting_vm.data[index]
+                                                        ['is_income']
+                                                    ? Colors.green
+                                                    : Colors.red),
+                                          ),
+                                          Text(
+                                            setting_vm.data[index]['name'],
+                                            style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w700,
+                                                color: Colors.grey),
+                                          )
+                                        ],
                                       )
                                     ],
-                                  )
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    )
-        ],
-      )),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(right: 15),
-        child: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (builder) => const start_setup()));
-          },
-          backgroundColor: const Color.fromARGB(255, 63, 148, 66),
-          child: const Icon(
-            Icons.add,
-            color: Colors.white,
-            size: 35,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Future<void> fetch_data_shared_preferences() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove('translator_locale_key');
-    Set<String> keys = prefs.getKeys();
-
-    data.clear();
-
-    if (keys.isNotEmpty) {
-      for (String key in keys) {
-        final inputData = prefs.getStringList(key);
-
-        String uid = inputData![0];
-        String date = inputData[1];
-        String description = inputData[2];
-        double money = double.parse(inputData[3]);
-        String cat_id = inputData[4];
-        String icon = inputData[5];
-        String name = inputData[6];
-        bool is_income = bool.parse(inputData[7]);
-        String option = inputData[8];
-
-        Map<String, dynamic> content = {
-          'id': key,
-          'uid': uid,
-          'date': date,
-          'description': description,
-          'money': money,
-          'cat_id': cat_id,
-          'icon': icon,
-          'name': name,
-          'is_income': is_income,
-          'option': option
-        };
-        if (is_mounted) {
-          setState(() {
-            data.add(content);
-            is_loading = false;
-          });
-        }
-      }
-    }
-  }
-
-  Future<void> remove_schedule_input_task(int idNotification) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    Set<String> keys = prefs.getKeys();
-
-    for (String key in keys) {
-      if (int.parse(key) == idNotification) {
-        AwesomeNotifications().cancel(int.parse(key));
-
-        await prefs.remove(key);
-      }
-    }
-  }
-
-  Future<void> remove_all_schedule() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    AwesomeNotifications().cancelAllSchedules();
-    AwesomeNotifications().cancelAll();
-    await prefs.clear();
-  }
-
-  void handle_delete(int input_id, int index) async {
-    try {
-      remove_schedule_input_task(input_id);
-      setState(() {
-        data.removeAt(index);
-      });
-
-      toast.showToast(
-        child: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.0),
-            color: Colors.green,
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              const Icon(Icons.check),
-              Text(LocaleData.toast_delete_success.getString(context)),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        )
             ],
-          ),
-        ),
-        gravity: ToastGravity.CENTER,
-        toastDuration: const Duration(seconds: 2),
-      );
-    } catch (err) {
-      toast.showToast(
-        child: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.0),
-            color: Colors.red,
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              const Icon(Icons.do_disturb),
-              Text(LocaleData.toast_delete_fail.getString(context)),
-            ],
-          ),
-        ),
-        gravity: ToastGravity.CENTER,
-        toastDuration: const Duration(seconds: 2),
-      );
-    }
-  }
-
-  void delete_all_schedule() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return CupertinoAlertDialog(
-            title: Text(LocaleData.delete_all_schedule.getString(context)),
-            actions: [
-              CupertinoDialogAction(
-                isDefaultAction: true,
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text(
-                  LocaleData.cancel.getString(context),
-                ),
+          )),
+          floatingActionButton: Padding(
+            padding: const EdgeInsets.only(right: 15),
+            child: FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (builder) => const start_setup()));
+              },
+              backgroundColor: const Color.fromARGB(255, 63, 148, 66),
+              child: const Icon(
+                Icons.add,
+                color: Colors.white,
+                size: 35,
               ),
-              CupertinoDialogAction(
-                  isDestructiveAction: true,
-                  onPressed: () {
-                    setState(() {
-                      data.clear();
-                    });
-                    remove_all_schedule();
-
-                    toast.showToast(
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          color: Colors.green,
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            const Icon(Icons.check),
-                            Text(LocaleData.toast_delete_success
-                                .getString(context)),
-                          ],
-                        ),
-                      ),
-                      gravity: ToastGravity.CENTER,
-                      toastDuration: const Duration(seconds: 2),
-                    );
-                    Navigator.of(context).pop();
-                  },
-                  child: Text(
-                    LocaleData.confirm.getString(context),
-                  )),
-            ],
-          );
-        });
+            ),
+          ),
+        );
+      },
+    );
   }
 }

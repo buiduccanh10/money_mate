@@ -9,13 +9,21 @@ import 'package:local_auth/local_auth.dart';
 import 'package:money_mate/services/firestore_helper.dart';
 import 'package:money_mate/services/local_notification.dart';
 import 'package:money_mate/services/locales.dart';
+import 'package:money_mate/view_model/auth_view_model.dart';
+import 'package:money_mate/view_model/category_view_model.dart';
+import 'package:money_mate/view_model/chart_view_model.dart';
+import 'package:money_mate/view_model/home_view_model.dart';
+import 'package:money_mate/view_model/input_view_model.dart';
+import 'package:money_mate/view_model/search_view_model.dart';
+import 'package:money_mate/view_model/setting_view_model.dart';
 import 'package:money_mate/widget/chart/chart.dart';
 import 'package:money_mate/firebase_options.dart';
 import 'package:money_mate/widget/home/home.dart';
 import 'package:money_mate/widget/input/input.dart';
-import 'package:money_mate/widget/accounts/login.dart';
+import 'package:money_mate/widget/auth/login.dart';
 import 'package:money_mate/widget/search/search.dart';
 import 'package:money_mate/widget/setting/setting.dart';
+import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -97,15 +105,29 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: theme,
-      title: 'Money Mate',
-      debugShowCheckedModeBanner: false,
-      home: user != null ? Main() : const login(),
-      builder: FToastBuilder(),
-      supportedLocales: localization.supportedLocales,
-      localizationsDelegates: localization.localizationsDelegates,
-      locale: localization.currentLocale,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => home_view_model()),
+        ChangeNotifierProvider(create: (context) => category_view_model()),
+        ChangeNotifierProvider(create: (context) => input_view_model()),
+        ChangeNotifierProvider(create: (context) => search_view_model()),
+        ChangeNotifierProvider(create: (context) => chart_view_model()),
+        ChangeNotifierProvider(create: (context) => setting_view_model()),
+        ChangeNotifierProvider(create: (context) => auth_view_model()),
+      ],
+      child: PopScope(
+        canPop: false,
+        child: MaterialApp(
+          theme: theme,
+          title: 'Money Mate',
+          debugShowCheckedModeBanner: false,
+          home: user != null ? Main() : const login(),
+          builder: FToastBuilder(),
+          supportedLocales: localization.supportedLocales,
+          localizationsDelegates: localization.localizationsDelegates,
+          locale: localization.currentLocale,
+        ),
+      ),
     );
   }
 
@@ -208,30 +230,6 @@ class _MainState extends State<Main> with WidgetsBindingObserver {
       });
     } else {
       await db_helper.update_is_lock(uid, false);
-      toast.showToast(
-        child: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.0),
-            color: Colors.orange,
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              const Icon(Icons.warning),
-              Flexible(
-                child: Text(
-                  LocaleData.local_auth_warning.getString(context),
-                  overflow: TextOverflow.clip,
-                ),
-              ),
-            ],
-          ),
-        ),
-        gravity: ToastGravity.CENTER,
-        toastDuration: const Duration(seconds: 3),
-      );
     }
   }
 

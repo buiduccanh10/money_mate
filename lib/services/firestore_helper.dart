@@ -6,6 +6,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:money_mate/model/category.dart';
+import 'package:money_mate/model/input.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class firestore_helper {
@@ -26,9 +28,7 @@ class firestore_helper {
     };
 
     await user_ref.set(users);
-
     String uid = user_ref.id;
-
     init_user_database(uid);
   }
 
@@ -138,7 +138,9 @@ class firestore_helper {
     return categories;
   }
 
-  Future<List<Map<String, dynamic>>> fetch_all_categories(String uid) async {
+  Future<List<Map<String, dynamic>>> fetch_all_categories(
+    String uid,
+  ) async {
     List<Map<String, dynamic>> categories = [];
 
     QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
@@ -168,7 +170,6 @@ class firestore_helper {
         .collection('users')
         .doc(uid)
         .collection('input')
-        .orderBy('money', descending: true)
         .get();
 
     for (var inputDoc in snapshot.docs) {
@@ -412,14 +413,10 @@ class firestore_helper {
         db.collection('users').doc(uid).collection("category").doc();
     String cat_id = doc_ref.id;
 
-    final cat = <String, dynamic>{
-      "cat_id": cat_id,
-      "icon": icon,
-      "name": name,
-      "is_income": is_income
-    };
+    category_model cat = category_model(
+        cat_id: cat_id, icon: icon, name: name, is_income: is_income);
 
-    await doc_ref.set(cat);
+    await doc_ref.set(cat.toMap());
   }
 
   Future<void> update_category(
@@ -430,13 +427,10 @@ class firestore_helper {
         .collection("category")
         .doc(catId);
 
-    Map<String, dynamic> updatedData = {
-      "icon": icon,
-      "name": name,
-      "is_income": isIncome,
-    };
+    category_model updatedData = category_model(
+        cat_id: catId, icon: icon, name: name, is_income: isIncome);
 
-    await docRef.update(updatedData);
+    await docRef.update(updatedData.toMap());
   }
 
   Future<void> delete_all_category(String uid, bool isIncome) async {
@@ -452,7 +446,9 @@ class firestore_helper {
     });
   }
 
-  Future<String?> get_paypal_cat_id(String uid) async {
+  Future<String?> get_paypal_cat_id(
+    String uid,
+  ) async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('users')
         .doc(uid)
@@ -513,8 +509,11 @@ class firestore_helper {
               actionType: ActionType.Default,
             ),
           ],
-          schedule: NotificationCalendar.fromDate(
-            date: schedule,
+          schedule: NotificationCalendar(
+            hour: 0,
+            minute: 0,
+            second: 0,
+            repeats: false,
             allowWhileIdle: true,
           ),
         );
@@ -587,7 +586,7 @@ class firestore_helper {
             ),
           ],
           schedule: NotificationCalendar(
-            weekday: schedule.day,
+            day: schedule.day,
             hour: 0,
             minute: 0,
             second: 0,
@@ -613,7 +612,7 @@ class firestore_helper {
             ),
           ],
           schedule: NotificationCalendar(
-            weekday: schedule.month,
+            month: schedule.month,
             hour: 0,
             minute: 0,
             second: 0,
@@ -672,34 +671,36 @@ class firestore_helper {
         categorySnapshot.data() as Map<String, dynamic>?;
     bool is_income = categoryData!['is_income'];
 
-    final data = <String, dynamic>{
-      "id": id,
-      "date": date,
-      "description": description,
-      "money": money,
-      "cat_id": cat_id,
-      'is_income': is_income
-    };
+    input_model data = input_model(
+        id: id,
+        date: date,
+        description: description,
+        money: money,
+        cat_id: cat_id,
+        is_income: is_income);
 
-    await doc_ref.set(data);
+    await doc_ref.set(data.toMap());
   }
 
   Future<void> update_input(String uid, String id, String date,
-      String description, double money, String cat_id) async {
+      String description, bool is_income, double money, String cat_id) async {
     DocumentReference doc_ref =
         db.collection('users').doc(uid).collection("input").doc(id);
 
-    final data = <String, dynamic>{
-      "date": date,
-      "description": description,
-      "money": money,
-      "cat_id": cat_id
-    };
+    input_model data = input_model(
+        id: id,
+        date: date,
+        description: description,
+        money: money,
+        cat_id: cat_id,
+        is_income: is_income);
 
-    await doc_ref.update(data);
+    await doc_ref.update(data.toMap());
   }
 
-  Future<void> delete_all_data(String uid) async {
+  Future<void> delete_all_data(
+    String uid,
+  ) async {
     CollectionReference cat_ref =
         db.collection('users').doc(uid).collection('category');
 
@@ -719,7 +720,9 @@ class firestore_helper {
     });
   }
 
-  Future<void> delete_user(String uid) async {
+  Future<void> delete_user(
+    String uid,
+  ) async {
     WriteBatch batch = db.batch();
 
     QuerySnapshot inputSnapshot = await db.collection('users/$uid/input').get();

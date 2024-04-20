@@ -6,9 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:money_mate/services/locales.dart';
+import 'package:money_mate/view_model/category_view_model.dart';
 import 'package:money_mate/widget/category/category_manage.dart';
 import 'package:money_mate/services/firestore_helper.dart';
 import 'package:money_mate/widget/input/input_content.dart';
+import 'package:provider/provider.dart';
 
 typedef void cat_callback();
 
@@ -21,151 +23,148 @@ class cat_add_dialog extends StatefulWidget {
 }
 
 class _cat_add_dialogState extends State<cat_add_dialog> {
-  TextEditingController icon_controller = TextEditingController();
-  TextEditingController cat_controller = TextEditingController();
-  bool icon_validate = false;
-  bool cat_validate = false;
-  firestore_helper db_helper = firestore_helper();
-  FToast toast = FToast();
-  final uid = FirebaseAuth.instance.currentUser!.uid;
-
   @override
   void initState() {
     super.initState();
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    toast.init(context);
     bool is_dark = Theme.of(context).brightness == Brightness.dark;
-    return Builder(builder: (context) {
-      return AlertDialog(
-        title: Text(
-          LocaleData.add_cat_dialog_title.getString(context),
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-        ),
-        elevation: 100,
-        scrollable: true,
-        content: SizedBox(
-          width: BouncingScrollSimulation.maxSpringTransferVelocity,
-          child: Column(
-            children: [
-              TextField(
-                controller: icon_controller,
-                keyboardType: TextInputType.text,
-                onTap: () {
-                  showEmojiPicker(context);
-                },
-                decoration: InputDecoration(
-                  errorText: icon_validate
-                      ? LocaleData.cat_icon_validator.getString(context)
-                      : null,
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.blue),
-                    borderRadius: BorderRadius.circular(10),
+    return Consumer<category_view_model>(
+      builder: (BuildContext context, cat_vm, Widget? child) {
+        cat_vm.toast.init(context);
+        return Builder(builder: (context) {
+          return AlertDialog(
+            title: Text(
+              LocaleData.add_cat_dialog_title.getString(context),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+            ),
+            elevation: 100,
+            scrollable: true,
+            content: SizedBox(
+              width: BouncingScrollSimulation.maxSpringTransferVelocity,
+              child: Column(
+                children: [
+                  TextField(
+                    controller: cat_vm.icon_controller,
+                    keyboardType: TextInputType.text,
+                    onTap: () {
+                      showEmojiPicker(context);
+                    },
+                    decoration: InputDecoration(
+                      errorText: cat_vm.icon_validate
+                          ? LocaleData.cat_icon_validator.getString(context)
+                          : null,
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.blue),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(color: Colors.blue),
+                          borderRadius: BorderRadius.circular(10)),
+                      label: Text(
+                        LocaleData.choose_an_icon.getString(context),
+                      ),
+                      labelStyle: TextStyle(color: Colors.grey.withOpacity(1)),
+                      prefixIcon: const Icon(Icons.insert_emoticon),
+                      floatingLabelStyle: TextStyle(
+                          color: is_dark ? Colors.white : Colors.black),
+                      prefixIconColor: Colors.orange,
+                    ),
                   ),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.blue),
-                      borderRadius: BorderRadius.circular(10)),
-                  label: Text(
-                    LocaleData.choose_an_icon.getString(context),
+                  const SizedBox(
+                    height: 10,
                   ),
-                  labelStyle: TextStyle(color: Colors.grey.withOpacity(1)),
-                  prefixIcon: const Icon(Icons.insert_emoticon),
-                  floatingLabelStyle:
-                      TextStyle(color: is_dark ? Colors.white : Colors.black),
-                  prefixIconColor: Colors.orange,
-                ),
+                  TextField(
+                    keyboardType: TextInputType.text,
+                    controller: cat_vm.cat_controller,
+                    decoration: InputDecoration(
+                      errorText: cat_vm.cat_validate
+                          ? LocaleData.cat_name_validator.getString(context)
+                          : null,
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.blue),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(color: Colors.blue),
+                          borderRadius: BorderRadius.circular(10)),
+                      label: Text(
+                        LocaleData.category_name.getString(context),
+                      ),
+                      labelStyle: TextStyle(color: Colors.grey.withOpacity(1)),
+                      floatingLabelStyle: TextStyle(
+                          color: is_dark ? Colors.white : Colors.black),
+                      prefixIcon: const Icon(Icons.new_label),
+                      prefixIconColor: Colors.blueAccent,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(
-                height: 10,
+            ),
+            actions: [
+              Container(
+                width: 80,
+                decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(10)),
+                child: TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(
+                      LocaleData.cancel.getString(context),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: Color.fromARGB(255, 127, 127, 127)),
+                    )),
               ),
-              TextField(
-                keyboardType: TextInputType.text,
-                controller: cat_controller,
-                decoration: InputDecoration(
-                  errorText: cat_validate
-                      ? LocaleData.cat_name_validator.getString(context)
-                      : null,
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.blue),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.blue),
-                      borderRadius: BorderRadius.circular(10)),
-                  label: Text(
-                    LocaleData.category_name.getString(context),
-                  ),
-                  labelStyle: TextStyle(color: Colors.grey.withOpacity(1)),
-                  floatingLabelStyle:
-                      TextStyle(color: is_dark ? Colors.white : Colors.black),
-                  prefixIcon: const Icon(Icons.new_label),
-                  prefixIconColor: Colors.blueAccent,
-                ),
-              ),
+              Container(
+                width: 80,
+                decoration: BoxDecoration(
+                    color: Colors.green,
+                    border: Border.all(color: Colors.green),
+                    borderRadius: BorderRadius.circular(10)),
+                child: TextButton(
+                    onPressed: () {
+                      cat_vm.add_category(
+                          cat_vm.icon_controller.text,
+                          cat_vm.cat_controller.text,
+                          widget.is_income,
+                          context);
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(
+                      LocaleData.input_save.getString(context),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    )),
+              )
             ],
-          ),
-        ),
-        actions: [
-          Container(
-            width: 80,
-            decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(10)),
-            child: TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text(
-                  LocaleData.cancel.getString(context),
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      color: Color.fromARGB(255, 127, 127, 127)),
-                )),
-          ),
-          Container(
-            width: 80,
-            decoration: BoxDecoration(
-                color: Colors.green,
-                border: Border.all(color: Colors.green),
-                borderRadius: BorderRadius.circular(10)),
-            child: TextButton(
-                onPressed: () {
-                  if (icon_controller.text.isEmpty ||
-                      cat_controller.text.isEmpty) {
-                    setState(() {
-                      icon_validate = icon_controller.text.isEmpty;
-                      cat_validate = cat_controller.text.isEmpty;
-                    });
-                  } else {
-                    add_category(icon_controller.text, cat_controller.text,
-                        widget.is_income);
-                    Navigator.of(context).pop();
-                  }
-                },
-                child: Text(
-                  LocaleData.input_save.getString(context),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                  ),
-                )),
-          )
-        ],
-      );
-    });
+          );
+        });
+      },
+    );
   }
 
   void showEmojiPicker(BuildContext context) {
     bool is_dark = Theme.of(context).brightness == Brightness.dark;
+    var cat_vm = Provider.of<category_view_model>(context, listen: false);
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
         return SizedBox(
           height: 300,
           child: EmojiPicker(
-            textEditingController: icon_controller,
+            textEditingController: cat_vm.icon_controller,
             config: Config(
                 checkPlatformCompatibility: true,
                 bottomActionBarConfig:
@@ -183,57 +182,5 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
         );
       },
     );
-  }
-
-  Future<void> add_category(String icon, String name, bool is_income) async {
-    try {
-      await db_helper.add_category(uid, icon, name, is_income);
-
-      if (category_manage.getState() != null &&
-          input_content.getState() != null) {
-        category_manage.getState()!.fetch_data();
-        input_content.getState()!.fetch_data();
-      }
-
-      toast.showToast(
-        child: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.0),
-            color: Colors.green,
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              const Icon(Icons.check),
-              Text(LocaleData.toast_add_success.getString(context)),
-            ],
-          ),
-        ),
-        gravity: ToastGravity.CENTER,
-        toastDuration: const Duration(seconds: 2),
-      );
-    } catch (err) {
-      toast.showToast(
-        child: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.0),
-            color: Colors.red,
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              const Icon(Icons.do_disturb),
-              Text(LocaleData.toast_add_fail.getString(context)),
-            ],
-          ),
-        ),
-        gravity: ToastGravity.CENTER,
-        toastDuration: const Duration(seconds: 2),
-      );
-    }
   }
 }
