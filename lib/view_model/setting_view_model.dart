@@ -3,10 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
-import 'package:flutter_paypal_checkout/flutter_paypal_checkout.dart';
+// import 'package:flutter_paypal_checkout/flutter_paypal_checkout.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_auth/local_auth.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
+// import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:money_mate/main.dart';
 import 'package:money_mate/services/firestore_helper.dart';
 import 'package:money_mate/services/locales.dart';
@@ -667,115 +667,115 @@ class setting_view_model with ChangeNotifier {
   }
 
   //pay
-  void onDetect(capture, context) {
-    final List<Barcode> barcodes = capture.barcodes;
-    //final Uint8List? image = capture.image;
-    for (final barcode in barcodes) {
-      debugPrint('Barcode found! ${barcode.rawValue}');
+  // void onDetect(capture, context) {
+  //   final List<Barcode> barcodes = capture.barcodes;
+  //   //final Uint8List? image = capture.image;
+  //   for (final barcode in barcodes) {
+  //     debugPrint('Barcode found! ${barcode.rawValue}');
 
-      Navigator.pop(context);
-      Uri uri = Uri.parse(barcode.rawValue!);
+  //     Navigator.pop(context);
+  //     Uri uri = Uri.parse(barcode.rawValue!);
 
-      String? business = uri.queryParameters['business'];
-      String? amount = uri.queryParameters['amount'];
-      String? itemName = uri.queryParameters['item_name'];
+  //     String? business = uri.queryParameters['business'];
+  //     String? amount = uri.queryParameters['amount'];
+  //     String? itemName = uri.queryParameters['item_name'];
 
-      if (amount != null && itemName != null && business != null) {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => paypal(
-                    account_holder: business,
-                    content_billing: itemName,
-                    money: amount)));
-      }
-    }
-  }
+  //     if (amount != null && itemName != null && business != null) {
+  //       Navigator.push(
+  //           context,
+  //           MaterialPageRoute(
+  //               builder: (context) => paypal(
+  //                   account_holder: business,
+  //                   content_billing: itemName,
+  //                   money: amount)));
+  //     }
+  //   }
+  // }
 
-  Future<void> paypal_checkout(context) async {
-    if (cat_id != null) {
-      Navigator.of(context).push(MaterialPageRoute(
-        builder: (BuildContext context) => PaypalCheckout(
-          sandboxMode: true,
-          clientId:
-              "AfgGaYrVY1a8sz81Gxv0ZAcy1JhH9pmWxp90OQ_oB9IODqGiOZZ17qruwVpqhx8jF473KtlvV5JLW7Hg",
-          secretKey:
-              "EBH-aksQ9DIwhNaKS4RhoqJEa4JdGk3xcSpj9y89q0lXzcPz9hs6-CinZayi2R9MdWk7ZYkiHN4uK4Z9",
-          returnURL: "success.snippetcoder.com",
-          cancelURL: "cancel.snippetcoder.com",
-          transactions: [
-            {
-              "amount": {
-                "total": money_controller.text,
-                "currency": "USD",
-              },
-              "description":
-                  '${description_controller.text} to {$account_holder_controller.text}',
-            }
-          ],
-          note: description_controller.text,
-          onSuccess: (Map params) {
-            on_pay_success(uid, description_controller.text,
-                money_controller.text, cat_id!, context);
-          },
-          onError: (error) {
-            toast.showToast(
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  color: Colors.red,
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    const Icon(Icons.do_disturb),
-                    Text(LocaleData.paypal_fail.getString(context)),
-                  ],
-                ),
-              ),
-              gravity: ToastGravity.CENTER,
-              toastDuration: const Duration(seconds: 2),
-            );
-            Navigator.pop(context);
-            Navigator.pop(context);
-          },
-          onCancel: () {
-            toast.showToast(
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  color: Colors.orange,
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    const Icon(Icons.warning),
-                    Text(LocaleData.paypal_cancel.getString(context)),
-                  ],
-                ),
-              ),
-              gravity: ToastGravity.CENTER,
-              toastDuration: const Duration(seconds: 2),
-            );
-            Navigator.pop(context);
-            Navigator.pop(context);
-          },
-        ),
-      ));
-    } else {
-      String? paypal_id = await db_helper.get_paypal_cat_id(uid);
+  // Future<void> paypal_checkout(context) async {
+  //   if (cat_id != null) {
+  //     Navigator.of(context).push(MaterialPageRoute(
+  //       builder: (BuildContext context) => PaypalCheckout(
+  //         sandboxMode: true,
+  //         clientId:
+  //             "AfgGaYrVY1a8sz81Gxv0ZAcy1JhH9pmWxp90OQ_oB9IODqGiOZZ17qruwVpqhx8jF473KtlvV5JLW7Hg",
+  //         secretKey:
+  //             "EBH-aksQ9DIwhNaKS4RhoqJEa4JdGk3xcSpj9y89q0lXzcPz9hs6-CinZayi2R9MdWk7ZYkiHN4uK4Z9",
+  //         returnURL: "success.snippetcoder.com",
+  //         cancelURL: "cancel.snippetcoder.com",
+  //         transactions: [
+  //           {
+  //             "amount": {
+  //               "total": money_controller.text,
+  //               "currency": "USD",
+  //             },
+  //             "description":
+  //                 '${description_controller.text} to {$account_holder_controller.text}',
+  //           }
+  //         ],
+  //         note: description_controller.text,
+  //         onSuccess: (Map params) {
+  //           on_pay_success(uid, description_controller.text,
+  //               money_controller.text, cat_id!, context);
+  //         },
+  //         onError: (error) {
+  //           toast.showToast(
+  //             child: Container(
+  //               padding: const EdgeInsets.all(8),
+  //               decoration: BoxDecoration(
+  //                 borderRadius: BorderRadius.circular(10.0),
+  //                 color: Colors.red,
+  //               ),
+  //               child: Row(
+  //                 mainAxisSize: MainAxisSize.min,
+  //                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //                 children: [
+  //                   const Icon(Icons.do_disturb),
+  //                   Text(LocaleData.paypal_fail.getString(context)),
+  //                 ],
+  //               ),
+  //             ),
+  //             gravity: ToastGravity.CENTER,
+  //             toastDuration: const Duration(seconds: 2),
+  //           );
+  //           Navigator.pop(context);
+  //           Navigator.pop(context);
+  //         },
+  //         onCancel: () {
+  //           toast.showToast(
+  //             child: Container(
+  //               padding: const EdgeInsets.all(8),
+  //               decoration: BoxDecoration(
+  //                 borderRadius: BorderRadius.circular(10.0),
+  //                 color: Colors.orange,
+  //               ),
+  //               child: Row(
+  //                 mainAxisSize: MainAxisSize.min,
+  //                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //                 children: [
+  //                   const Icon(Icons.warning),
+  //                   Text(LocaleData.paypal_cancel.getString(context)),
+  //                 ],
+  //               ),
+  //             ),
+  //             gravity: ToastGravity.CENTER,
+  //             toastDuration: const Duration(seconds: 2),
+  //           );
+  //           Navigator.pop(context);
+  //           Navigator.pop(context);
+  //         },
+  //       ),
+  //     ));
+  //   } else {
+  //     String? paypal_id = await db_helper.get_paypal_cat_id(uid);
 
-      cat_id = paypal_id;
+  //     cat_id = paypal_id;
 
-      paypal_checkout(context);
+  //     paypal_checkout(context);
 
-      notifyListeners();
-    }
-  }
+  //     notifyListeners();
+  //   }
+  // }
 
   Future<void> on_pay_success(String uid, String description, String money,
       String cat_id, context) async {

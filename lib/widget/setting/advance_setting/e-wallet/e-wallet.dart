@@ -57,45 +57,45 @@ class ewallet extends StatelessWidget {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 0.0, bottom: 0),
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const vnpay()));
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Padding(
-                              padding: const EdgeInsets.only(right: 18),
-                              child: Image.asset(
-                                'assets/vnpay.png',
-                                width: MediaQuery.of(context).size.width * 0.1,
-                              )),
-                          const Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // ignore: prefer_const_constructors
-                              Text(
-                                'VNPAY',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w500, fontSize: 16),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const Icon(Icons.navigate_next)
-                    ],
-                  ),
-                ),
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.only(top: 0.0, bottom: 0),
+            //   child: InkWell(
+            //     onTap: () {
+            //       Navigator.push(context,
+            //           MaterialPageRoute(builder: (context) => const vnpay()));
+            //     },
+            //     child: Padding(
+            //       padding: const EdgeInsets.all(12.0),
+            //       child: Row(
+            //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //         children: [
+            //           Row(
+            //             children: [
+            //               Padding(
+            //                   padding: const EdgeInsets.only(right: 18),
+            //                   child: Image.asset(
+            //                     'assets/vnpay.png',
+            //                     width: MediaQuery.of(context).size.width * 0.1,
+            //                   )),
+            //               const Column(
+            //                 crossAxisAlignment: CrossAxisAlignment.start,
+            //                 children: [
+            //                   // ignore: prefer_const_constructors
+            //                   Text(
+            //                     'VNPAY',
+            //                     style: TextStyle(
+            //                         fontWeight: FontWeight.w500, fontSize: 16),
+            //                   ),
+            //                 ],
+            //               ),
+            //             ],
+            //           ),
+            //           const Icon(Icons.navigate_next)
+            //         ],
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),

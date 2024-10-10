@@ -15,41 +15,41 @@ class payment_method extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 0.0, bottom: 0),
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const qrcode()));
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          const Padding(
-                              padding: EdgeInsets.only(right: 18),
-                              child: Icon(Icons.qr_code_scanner)),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                LocaleData.payment_method_qr.getString(context),
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w500, fontSize: 16),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const Icon(Icons.navigate_next)
-                    ],
-                  ),
-                ),
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.only(top: 0.0, bottom: 0),
+            //   child: InkWell(
+            //     onTap: () {
+            //       Navigator.push(context,
+            //           MaterialPageRoute(builder: (context) => const qrcode()));
+            //     },
+            //     child: Padding(
+            //       padding: const EdgeInsets.all(12.0),
+            //       child: Row(
+            //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //         children: [
+            //           Row(
+            //             children: [
+            //               const Padding(
+            //                   padding: EdgeInsets.only(right: 18),
+            //                   child: Icon(Icons.qr_code_scanner)),
+            //               Column(
+            //                 crossAxisAlignment: CrossAxisAlignment.start,
+            //                 children: [
+            //                   Text(
+            //                     LocaleData.payment_method_qr.getString(context),
+            //                     style: const TextStyle(
+            //                         fontWeight: FontWeight.w500, fontSize: 16),
+            //                   ),
+            //                 ],
+            //               ),
+            //             ],
+            //           ),
+            //           const Icon(Icons.navigate_next)
+            //         ],
+            //       ),
+            //     ),
+            //   ),
+            // ),
             Padding(
               padding: const EdgeInsets.only(top: 0.0, bottom: 0),
               child: InkWell(

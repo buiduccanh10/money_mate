@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localization/flutter_localization.dart';
-import 'package:flutter_paypal_checkout/flutter_paypal_checkout.dart';
+// import 'package:flutter_paypal_checkout/flutter_paypal_checkout.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:money_mate/services/currency_format.dart';
@@ -243,58 +243,58 @@ class _paypalState extends State<paypal> {
               ),
             ),
           ),
-          floatingActionButton: AnimatedScale(
-            scale: setting_vm.scale,
-            duration: const Duration(milliseconds: 200),
-            child: Container(
-              width: 130,
-              height: 60,
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.green,
-                    Colors.lightGreen,
-                    Colors.lightGreenAccent,
-                  ],
-                ),
-              ),
-              child: FloatingActionButton.extended(
-                backgroundColor: Colors.transparent,
-                onPressed: () {
-                  setting_vm.paypal_checkout(context);
+          // floatingActionButton: AnimatedScale(
+          //   scale: setting_vm.scale,
+          //   duration: const Duration(milliseconds: 200),
+          //   child: Container(
+          //     width: 130,
+          //     height: 60,
+          //     decoration: const BoxDecoration(
+          //       borderRadius: BorderRadius.all(Radius.circular(10)),
+          //       gradient: LinearGradient(
+          //         colors: [
+          //           Colors.green,
+          //           Colors.lightGreen,
+          //           Colors.lightGreenAccent,
+          //         ],
+          //       ),
+          //     ),
+          //     child: FloatingActionButton.extended(
+          //       backgroundColor: Colors.transparent,
+          //       onPressed: () {
+          //         setting_vm.paypal_checkout(context);
 
-                  setState(() {
-                    setting_vm.scale = 1.1;
-                  });
-                  Future.delayed(const Duration(milliseconds: 200), () {
-                    setState(() {
-                      setting_vm.scale = 1.0;
-                    });
-                  });
-                },
-                label: Row(
-                  children: [
-                    const Icon(
-                      Icons.payment,
-                      size: 35,
-                      color: Colors.white,
-                    ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    Text(
-                      LocaleData.check_out.getString(context),
-                      style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white),
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ),
+          //         setState(() {
+          //           setting_vm.scale = 1.1;
+          //         });
+          //         Future.delayed(const Duration(milliseconds: 200), () {
+          //           setState(() {
+          //             setting_vm.scale = 1.0;
+          //           });
+          //         });
+          //       },
+          //       label: Row(
+          //         children: [
+          //           const Icon(
+          //             Icons.payment,
+          //             size: 35,
+          //             color: Colors.white,
+          //           ),
+          //           const SizedBox(
+          //             width: 5,
+          //           ),
+          //           Text(
+          //             LocaleData.check_out.getString(context),
+          //             style: const TextStyle(
+          //                 fontSize: 18,
+          //                 fontWeight: FontWeight.w500,
+          //                 color: Colors.white),
+          //           )
+          //         ],
+          //       ),
+          //     ),
+          //   ),
+          // ),
         );
       },
     );

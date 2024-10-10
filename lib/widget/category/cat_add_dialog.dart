@@ -170,7 +170,6 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
                 bottomActionBarConfig:
                     const BottomActionBarConfig(enabled: false),
                 categoryViewConfig: CategoryViewConfig(
-                    showBackspaceButton: true,
                     backgroundColor: is_dark ? Colors.black : Colors.white,
                     backspaceColor: Colors.red),
                 emojiViewConfig: EmojiViewConfig(
