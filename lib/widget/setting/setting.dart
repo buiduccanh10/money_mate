@@ -89,7 +89,7 @@ class _settingState extends State<setting> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.all(12.0),
                       child: Material(
                         color: is_dark ? Colors.grey[500] : Colors.white,
                         borderRadius: BorderRadius.circular(10),

@@ -197,9 +197,9 @@ class _setting_contentState extends State<setting_content> {
                             value: setting_vm.is_dark,
                             inactiveThumbColor: Colors.orange,
                             inactiveTrackColor: Colors.amber[200],
-                            thumbIcon: MaterialStateProperty.resolveWith<Icon?>(
-                              (Set<MaterialState> states) {
-                                if (states.contains(MaterialState.selected)) {
+                            thumbIcon: WidgetStateProperty.resolveWith<Icon?>(
+                              (Set<WidgetState> states) {
+                                if (states.contains(WidgetState.selected)) {
                                   return const Icon(Icons.dark_mode_outlined);
                                 }
                                 return const Icon(Icons.light_mode_outlined);
@@ -271,10 +271,10 @@ class _setting_contentState extends State<setting_content> {
                                   value: setting_vm.is_lock,
                                   activeColor: Colors.lightGreen,
                                   thumbIcon:
-                                      MaterialStateProperty.resolveWith<Icon?>(
-                                    (Set<MaterialState> states) {
+                                      WidgetStateProperty.resolveWith<Icon?>(
+                                    (Set<WidgetState> states) {
                                       if (states
-                                          .contains(MaterialState.selected)) {
+                                          .contains(WidgetState.selected)) {
                                         return const Icon(Icons.check);
                                       }
                                       return const Icon(Icons.close);

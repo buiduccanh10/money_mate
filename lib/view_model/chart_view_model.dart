@@ -20,6 +20,7 @@ class chart_view_model with ChangeNotifier {
   String month_year_formated = '';
   bool? is_income;
   bool is_loading = true;
+  bool is_overlimit = false;
   double total_income = 0;
   double total_expense = 0;
   double total_saving = 0;
@@ -36,14 +37,14 @@ class chart_view_model with ChangeNotifier {
     tooltipBehavior = TooltipBehavior(enable: true);
   }
 
-  
-  Future<void> details_cat_item(String cat_id, String date, bool is_income,
-      bool is_monthly, context) async {
+  Future<void> details_cat_item(String cat_id, double over, String date,
+      bool is_income, bool is_monthly, context) async {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => chart_item_detail(
           cat_id: cat_id,
+          over: over,
           date: date,
           is_income: is_income,
           is_monthly: is_monthly,
@@ -116,6 +117,25 @@ class chart_view_model with ChangeNotifier {
                   .fold<double>(0, (prev, amount) => prev + amount),
             })
         .toList();
+
+    for (var category in expense_categories) {
+      String cat_id = category['cat_id'];
+
+      double? limit = await db_helper.get_category_limit(uid, cat_id);
+
+      if (limit != null && limit > 0) {
+        double moneySpent = category['money'] ?? 0.0;
+        if (moneySpent > limit) {
+          category['over'] = moneySpent - limit;
+          category['is_overlimit'] = true;
+        } else {
+          category['is_overlimit'] = false;
+        }
+      } else {
+        category['is_overlimit'] = false;
+      }
+    }
+
     calculate_totals();
     is_loading = false;
     notifyListeners();
@@ -172,8 +192,7 @@ class chart_view_model with ChangeNotifier {
 
   // chart detail item
 
-  void handle_edit(
-      Map<String, dynamic> input_item, context) async {
+  void handle_edit(Map<String, dynamic> input_item, context) async {
     Navigator.push(
         context,
         MaterialPageRoute(
@@ -236,8 +255,8 @@ class chart_view_model with ChangeNotifier {
     }
   }
 
-  Future<void> fetch_data(uid,
-      bool? is_monthly, bool? is_income, String? date, String? cat_id) async {
+  Future<void> fetch_data(uid, bool? is_monthly, bool? is_income, String? date,
+      String? cat_id) async {
     List<Map<String, dynamic>> temp = is_monthly!
         ? await db_helper.fetch_input_month_by_cat_id(
             uid,

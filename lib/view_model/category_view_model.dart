@@ -32,6 +32,7 @@ class category_view_model with ChangeNotifier {
   }
 
   void edit_cat(Map<String, dynamic> cat_item, context) {
+
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -166,6 +167,13 @@ class category_view_model with ChangeNotifier {
     if (icon_controller.text.isEmpty || cat_controller.text.isEmpty) {
       icon_validate = icon_controller.text.isEmpty;
       cat_validate = cat_controller.text.isEmpty;
+
+      Future.delayed(Duration(seconds: 3), () {
+        icon_validate = false;
+        cat_validate = false;
+        notifyListeners();
+      });
+
       notifyListeners();
     } else {
       try {
@@ -236,7 +244,8 @@ class category_view_model with ChangeNotifier {
         await db_helper.update_category(uid, cat_id, icon, name, is_income);
 
         fetch_data(is_income);
-        await Provider.of<input_view_model>(context, listen: false).fetch_data();
+        await Provider.of<input_view_model>(context, listen: false)
+            .fetch_data();
 
         icon_controller.clear();
         cat_controller.clear();

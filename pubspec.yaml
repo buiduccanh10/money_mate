@@ -60,6 +60,7 @@ dependencies:
   # vnpay_flutter: ^1.0.1
   # url_launcher: ^6.2.5
   provider: 
+  speech_to_text:
   #firebase_messaging: ^14.7.19
 
 flutter_launcher_icons:

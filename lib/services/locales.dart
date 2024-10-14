@@ -91,6 +91,14 @@ mixin LocaleData {
   static const String delete_acc = 'delete_acc';
   static const String delete_acc_des = 'delete_acc_des';
   static const String advanced_settings = 'advanced_settings';
+  static const String setting_limit_title = 'setting_limit_tile';
+  static const String setting_limit_des = 'setting_limit_des';
+  static const String restore_all_limit_title = 'restore_all_limit_title';
+  static const String restore_limit = 'restore_limit';
+  static const String no_limit = 'no_limit';
+  static const String limit_dialog = 'limit_dialog';
+  static const String over_limit = 'over_limit';
+  static const String over = 'over';
 
   //fixed income and expense
   static const String fixed_in_ex = 'fixed_in_ex';
@@ -272,6 +280,15 @@ mixin LocaleData {
     paypal_success: 'Payment success',
     paypal_fail: 'Payment fail',
     paypal_cancel: 'Payment cancel',
+
+    setting_limit_title: 'Spending limit',
+    setting_limit_des: 'Set limit for each spending category',
+    restore_limit: 'Restore',
+    restore_all_limit_title: 'Restore all limit',
+    no_limit: 'No limit yet',
+    limit_dialog: 'Set limit for',
+    over_limit: 'Exceeded the expense limit of',
+    over: 'over',
   };
 
   static const Map<String, dynamic> VI = {
@@ -395,6 +412,15 @@ mixin LocaleData {
     paypal_success: 'Thanh toán thành công',
     paypal_fail: 'Thanh toán không thành công',
     paypal_cancel: 'Hủy thanh toán',
+
+    setting_limit_title: 'Giới hạn chi tiêu',
+    setting_limit_des: 'Thiết lập giới hạn cho mỗi danh mục chi tiêu',
+    restore_all_limit_title: 'Khôi phục tất cả giới hạn',
+    restore_limit: 'Khôi phục',
+    no_limit: 'Chưa có giới hạn',
+    limit_dialog: 'Thiết lập giới hạn cho',
+    over_limit: 'Vượt giới hạn chi tiêu của',
+    over: 'vượt',
   };
 
   static const Map<String, dynamic> CN = {
@@ -514,5 +540,13 @@ mixin LocaleData {
     paypal_success: '支付成功',
     paypal_fail: '支付失败',
     paypal_cancel: '取消付款',
+    setting_limit_title: '限制',
+    setting_limit_des: '为每个类别设置限制',
+    restore_all_limit_title: '恢复所有限制',
+    restore_limit: '恢复',
+    no_limit: '无限制',
+    limit_dialog: '为',
+    over_limit: '超过限制',
+    over: '超过',
   };
 }

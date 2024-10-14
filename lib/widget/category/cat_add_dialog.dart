@@ -38,6 +38,9 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
     bool is_dark = Theme.of(context).brightness == Brightness.dark;
     return Consumer<category_view_model>(
       builder: (BuildContext context, cat_vm, Widget? child) {
+        cat_vm.icon_controller.clear();
+        cat_vm.cat_controller.clear();
+
         cat_vm.toast.init(context);
         return Builder(builder: (context) {
           return AlertDialog(
@@ -138,7 +141,6 @@ class _cat_add_dialogState extends State<cat_add_dialog> {
                           cat_vm.cat_controller.text,
                           widget.is_income,
                           context);
-                      
                     },
                     child: Text(
                       LocaleData.input_save.getString(context),

@@ -392,6 +392,9 @@ class _chart_widgetState extends State<chart_widget> {
                                           ? chart_vm.income_categories[index]
                                           : chart_vm.expense_categories[index];
 
+                                      bool isOverLimit =
+                                          cat_item['is_overlimit'] ?? false;
+
                                       String money_format =
                                           formatter.format(cat_item['money']);
 
@@ -400,6 +403,7 @@ class _chart_widgetState extends State<chart_widget> {
                                           if (widget.is_monthly) {
                                             chart_vm.details_cat_item(
                                                 cat_item['cat_id'],
+                                                cat_item['over'] ?? 0,
                                                 chart_vm.month_year_formated,
                                                 chart_vm.is_income!,
                                                 widget.is_monthly,
@@ -407,6 +411,7 @@ class _chart_widgetState extends State<chart_widget> {
                                           } else {
                                             chart_vm.details_cat_item(
                                                 cat_item['cat_id'],
+                                                cat_item['over'] ?? 0,
                                                 chart_vm.year.toString(),
                                                 chart_vm.is_income!,
                                                 widget.is_monthly,
@@ -447,6 +452,18 @@ class _chart_widgetState extends State<chart_widget> {
                                                       style: const TextStyle(
                                                           fontSize: 18),
                                                     ),
+                                                    isOverLimit
+                                                        ? Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 10),
+                                                            child: Icon(
+                                                              Icons.warning,
+                                                              color:
+                                                                  Colors.orange,
+                                                            ),
+                                                          )
+                                                        : SizedBox()
                                                   ],
                                                 ),
                                                 Row(

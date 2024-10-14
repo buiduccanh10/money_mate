@@ -20,7 +20,7 @@ import 'package:shimmer/shimmer.dart';
 
 class category_manage extends StatefulWidget {
   bool is_income;
-  category_manage({super.key,required this.is_income});
+  category_manage({super.key, required this.is_income});
 
   @override
   State<category_manage> createState() => _category_manageState();
@@ -91,7 +91,7 @@ class _category_manageState extends State<category_manage> {
                 children: [
                   BackButton(
                     style: const ButtonStyle(
-                        padding: MaterialStatePropertyAll(
+                        padding: WidgetStatePropertyAll(
                             EdgeInsets.only(bottom: 10))),
                     onPressed: () {
                       Navigator.pop(context);

@@ -8,6 +8,8 @@ import 'package:money_mate/services/firestore_helper.dart';
 import 'package:intl/intl.dart';
 import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/widget/input/update_input.dart';
+import 'package:speech_to_text/speech_recognition_result.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 
 class home_view_model with ChangeNotifier {
   var month = DateTime.now().month;
@@ -26,6 +28,10 @@ class home_view_model with ChangeNotifier {
   final uid = FirebaseAuth.instance.currentUser!.uid;
   final localization = FlutterLocalization.instance;
 
+  SpeechToText speechToText = SpeechToText();
+  bool speechEnabled = false;
+  String lastWords = '';
+
   home_view_model() {
     init();
   }
@@ -35,7 +41,71 @@ class home_view_model with ChangeNotifier {
     fetch_data();
     fetch_user_name();
     fetch_data_list();
+    // initSpeech();
   }
+
+  // void initSpeech() async {
+  //   speechEnabled = await speechToText.initialize();
+  //   notifyListeners();
+  // }
+
+  // void startListening() async {
+  //   await speechToText.listen(
+  //       onResult: onSpeechResult,
+  //       listenMode: ListenMode.confirmation,
+  //       localeId: 'vi-VN',
+  //       listenFor: Duration(seconds: 10));
+  //   notifyListeners();
+  // }
+
+  // void stopListening() async {
+  //   await speechToText.stop();
+  //   notifyListeners();
+  // }
+
+  // void onSpeechResult(SpeechRecognitionResult result) {
+  //   lastWords = result.recognizedWords;
+  //   handleVoiceInput(lastWords);
+  //   notifyListeners();
+  // }
+
+  // void handleVoiceInput(String input) {
+  //   RegExp exp = RegExp(r'(.+?) mục (.+?) tiền (.+)');
+  //   var match = exp.firstMatch(input);
+
+  //   if (match != null) {
+  //     String description = match.group(1) ?? ''; // Mô tả chi tiêu
+  //     String category = match.group(2) ?? ''; // Danh mục chi tiêu
+  //     String amountText = match.group(3) ?? ''; // Số tiền
+  //     double amount =
+  //         double.parse(amountText.replaceAll('.', '')); // Chuyển về double
+
+  //     print('Description: $description'); // In ra mô tả
+  //     print('Category: $category'); // In ra danh mục
+  //     print('Amount text: $amount'); // In ra số tiền ở dạng văn bản
+  //   }
+  //   // else {
+  //   //   toast.showToast(
+  //   //     child: Container(
+  //   //       padding: const EdgeInsets.all(8),
+  //   //       decoration: BoxDecoration(
+  //   //         borderRadius: BorderRadius.circular(10.0),
+  //   //         color: Colors.red,
+  //   //       ),
+  //   //       child: Row(
+  //   //         mainAxisSize: MainAxisSize.min,
+  //   //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //   //         children: [
+  //   //           const Icon(Icons.do_disturb),
+  //   //           Text('Not match pattern'),
+  //   //         ],
+  //   //       ),
+  //   //     ),
+  //   //     gravity: ToastGravity.CENTER,
+  //   //     toastDuration: const Duration(seconds: 2),
+  //   //   );
+  //   // }
+  // }
 
   //home appbar
   String get_month_year_string(int month, int year) {

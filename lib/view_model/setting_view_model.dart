@@ -30,10 +30,12 @@ class setting_view_model with ChangeNotifier {
   List<Map<String, dynamic>> data = [];
   bool is_loading = true;
   List<Map<String, dynamic>> cat_data = [];
+  List<Map<String, dynamic>> ex_cat_data = [];
   DateRangePickerController date_controller = DateRangePickerController();
   TextEditingController description_controller = TextEditingController();
   TextEditingController money_controller = TextEditingController();
   TextEditingController account_holder_controller = TextEditingController();
+  TextEditingController limit_controller = TextEditingController();
   bool des_validate = false;
   bool money_validate = false;
   int? selectedIndex;
@@ -60,6 +62,7 @@ class setting_view_model with ChangeNotifier {
     current_locale = localization.currentLocale!.languageCode;
     fetch_data_shared_preferences();
     fetch_categories();
+    fetch_ex_categories();
   }
 
   //setting content
@@ -506,11 +509,22 @@ class setting_view_model with ChangeNotifier {
         });
   }
 
+  Future<void> fetch_ex_categories() async {
+    List<Map<String, dynamic>> temp =
+        await db_helper.fetch_categories(uid, false);
+
+    ex_cat_data = temp;
+
+    is_loading = false;
+    notifyListeners();
+  }
+
   // add fixed inex
   Future<void> fetch_categories() async {
     List<Map<String, dynamic>> temp = await db_helper.fetch_all_categories(uid);
 
     cat_data = temp;
+
     is_loading = false;
     notifyListeners();
   }
@@ -575,6 +589,13 @@ class setting_view_model with ChangeNotifier {
         (selectedIndex == null || cat_id == null)) {
       des_validate = description_controller.text.isEmpty;
       money_validate = money_controller.text.isEmpty;
+
+      Future.delayed(Duration(seconds: 3), () {
+        money_validate = false;
+        des_validate = false;
+        notifyListeners();
+      });
+
       notifyListeners();
       toast.showToast(
         child: Container(
@@ -583,14 +604,7 @@ class setting_view_model with ChangeNotifier {
             borderRadius: BorderRadius.circular(10.0),
             color: Colors.orange,
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              const Icon(Icons.warning),
-              Text(LocaleData.cat_validator.getString(context)),
-            ],
-          ),
+          child: Text(LocaleData.cat_validator.getString(context)),
         ),
         gravity: ToastGravity.CENTER,
         toastDuration: const Duration(seconds: 3),
@@ -777,14 +791,66 @@ class setting_view_model with ChangeNotifier {
   //   }
   // }
 
-  Future<void> on_pay_success(String uid, String description, String money,
-      String cat_id, context) async {
-    try {
-      double money_format = double.parse(money);
-      String format_date = DateFormat('dd/MM/yyyy').format(DateTime.now());
+  // Future<void> on_pay_success(String uid, String description, String money,
+  //     String cat_id, context) async {
+  //   try {
+  //     double money_format = double.parse(money);
+  //     String format_date = DateFormat('dd/MM/yyyy').format(DateTime.now());
 
-      await db_helper.add_input(
-          uid, format_date, description, money_format, cat_id);
+  //     await db_helper.add_input(
+  //         uid, format_date, description, money_format, cat_id);
+
+  //     toast.showToast(
+  //       child: Container(
+  //         padding: const EdgeInsets.all(8),
+  //         decoration: BoxDecoration(
+  //           borderRadius: BorderRadius.circular(10.0),
+  //           color: Colors.green,
+  //         ),
+  //         child: Row(
+  //           mainAxisSize: MainAxisSize.min,
+  //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //           children: [
+  //             const Icon(Icons.check),
+  //             Text(LocaleData.paypal_success.getString(context)),
+  //           ],
+  //         ),
+  //       ),
+  //       gravity: ToastGravity.CENTER,
+  //       toastDuration: const Duration(seconds: 2),
+  //     );
+  //     Navigator.pop(context);
+  //     Navigator.pop(context);
+  //   } catch (err) {
+  //     print(err);
+  //   }
+  // }
+
+  // void get_value_qr(String account_holder, String des, String money) {
+  //   account_holder_controller.text = account_holder;
+  //   description_controller.text = des;
+  //   money_controller.text = money;
+  // }
+
+  // void onChooseCatPay(int index) {
+  //   selectedIndex = index;
+  //   cat_id = cat_data[index]['cat_id'];
+  //   notifyListeners();
+  // }
+
+  Future<void> handle_limit(String cat_id) async {
+    try {
+      String money = limit_controller.text;
+      String format_money = localization.currentLocale.toString() == 'vi'
+          ? money.replaceAll('.', '')
+          : money.replaceAll(',', '.');
+      double money_final = double.parse(format_money);
+
+      await db_helper.update_limit(uid, cat_id, money_final);
+
+      fetch_ex_categories();
+
+      notifyListeners();
 
       toast.showToast(
         child: Container(
@@ -798,29 +864,156 @@ class setting_view_model with ChangeNotifier {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               const Icon(Icons.check),
-              Text(LocaleData.paypal_success.getString(context)),
+              Text('Limit success'),
             ],
           ),
         ),
         gravity: ToastGravity.CENTER,
         toastDuration: const Duration(seconds: 2),
       );
-      Navigator.pop(context);
-      Navigator.pop(context);
     } catch (err) {
-      print(err);
+      toast.showToast(
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.0),
+              color: Colors.red,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                const Icon(Icons.do_disturb),
+                Text('Limit fail'),
+              ],
+            ),
+          ),
+          gravity: ToastGravity.CENTER,
+          toastDuration: const Duration(seconds: 2));
     }
   }
 
-  void get_value_qr(String account_holder, String des, String money) {
-    account_holder_controller.text = account_holder;
-    description_controller.text = des;
-    money_controller.text = money;
+  Future<void> handle_restore_cat_limit(cat_id) async {
+    try {
+      await db_helper.restore_limit(uid, cat_id);
+
+      fetch_ex_categories();
+
+      notifyListeners();
+
+      toast.showToast(
+        child: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10.0),
+            color: Colors.green,
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              const Icon(Icons.check),
+              Text('Reset success'),
+            ],
+          ),
+        ),
+        gravity: ToastGravity.CENTER,
+        toastDuration: const Duration(seconds: 2),
+      );
+    } catch (err) {
+      toast.showToast(
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.0),
+              color: Colors.red,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                const Icon(Icons.do_disturb),
+                Text('Reset fail'),
+              ],
+            ),
+          ),
+          gravity: ToastGravity.CENTER,
+          toastDuration: const Duration(seconds: 2));
+    }
   }
 
-  void onChooseCatPay(int index) {
-    selectedIndex = index;
-    cat_id = cat_data[index]['cat_id'];
-    notifyListeners();
+  Future<void> restore_all_limit(context) async {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+            title: Text(
+                '${LocaleData.restore_all_limit_title.getString(context)} ?'),
+            actions: [
+              CupertinoDialogAction(
+                  isDefaultAction: true,
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    LocaleData.cancel.getString(context),
+                  )),
+              CupertinoDialogAction(
+                  isDestructiveAction: true,
+                  onPressed: () async {
+                    try {
+                      await db_helper.restore_all_limit(uid);
+
+                      fetch_ex_categories();
+
+                      notifyListeners();
+
+                      toast.showToast(
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            color: Colors.green,
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              const Icon(Icons.check),
+                              Text('Reset all success'),
+                            ],
+                          ),
+                        ),
+                        gravity: ToastGravity.CENTER,
+                        toastDuration: const Duration(seconds: 2),
+                      );
+                      Navigator.of(context).pop();
+                    } catch (err) {
+                      toast.showToast(
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10.0),
+                              color: Colors.red,
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                const Icon(Icons.do_disturb),
+                                Text('Reset all fail'),
+                              ],
+                            ),
+                          ),
+                          gravity: ToastGravity.CENTER,
+                          toastDuration: const Duration(seconds: 2));
+                    }
+                  },
+                  child: Text(
+                    LocaleData.confirm.getString(context),
+                  )),
+            ],
+          );
+        });
   }
 }

@@ -29,7 +29,6 @@ class input_content extends StatefulWidget {
 }
 
 class _input_contentState extends State<input_content> {
-
   @override
   void initState() {
     super.initState();
@@ -309,7 +308,7 @@ class _input_contentState extends State<input_content> {
               child: FloatingActionButton.extended(
                 backgroundColor: Colors.transparent,
                 onPressed: () async {
-                  await input_vm.add_input(
+                  await input_vm.add_input_validate(
                       input_vm.date_controller.selectedDate,
                       input_vm.description_controller.text,
                       input_vm.money_controller.text,

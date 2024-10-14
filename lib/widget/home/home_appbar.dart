@@ -92,40 +92,57 @@ class _home_appbarState extends State<home_appbar> {
                           ],
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 26.0, bottom: 8),
-                        child: SizedBox(
-                            height: 50,
-                            width: width * 0.6,
-                            child: DropdownDatePicker(
-                                width: 5,
-                                selectedMonth: home_vm.month,
-                                selectedYear: home_vm.year,
-                                boxDecoration: BoxDecoration(
-                                    color: is_dark
-                                        ? Colors.grey[700]
-                                        : Colors.grey[100],
-                                    borderRadius: BorderRadius.circular(10)),
-                                inputDecoration: const InputDecoration(
-                                  border: InputBorder.none,
-                                ),
-                                textStyle: TextStyle(
-                                    color:
-                                        is_dark ? Colors.white : Colors.black),
-                                icon: const Icon(
-                                  Icons.arrow_drop_down,
-                                  color: Colors.grey,
-                                  size: 30,
-                                ),
-                                onChangedMonth: (newMonth) {
-                                  home_vm.onChangedMonth(newMonth);
-                                },
-                                onChangedYear: (newYear) {
-                                  home_vm.onChangedYear(newYear);
-                                },
-                                showDay: false,
-                                yearFlex: 2,
-                                monthFlex: 3)),
+                      Row(
+                        children: [
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(top: 26.0, bottom: 8),
+                            child: SizedBox(
+                                height: 50,
+                                width: width * 0.6,
+                                child: DropdownDatePicker(
+                                    width: 5,
+                                    selectedMonth: home_vm.month,
+                                    selectedYear: home_vm.year,
+                                    boxDecoration: BoxDecoration(
+                                        color: is_dark
+                                            ? Colors.grey[700]
+                                            : Colors.grey[100],
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    inputDecoration: const InputDecoration(
+                                      border: InputBorder.none,
+                                    ),
+                                    textStyle: TextStyle(
+                                        color: is_dark
+                                            ? Colors.white
+                                            : Colors.black),
+                                    icon: const Icon(
+                                      Icons.arrow_drop_down,
+                                      color: Colors.grey,
+                                      size: 30,
+                                    ),
+                                    onChangedMonth: (newMonth) {
+                                      home_vm.onChangedMonth(newMonth);
+                                    },
+                                    onChangedYear: (newYear) {
+                                      home_vm.onChangedYear(newYear);
+                                    },
+                                    showDay: false,
+                                    yearFlex: 2,
+                                    monthFlex: 3)),
+                          ),
+                          // IconButton(
+                          //     onPressed: home_vm.speechToText.isNotListening
+                          //           ? home_vm.startListening
+                          //           : home_vm.stopListening,
+                          //     icon: Icon(
+                          //       home_vm.speechToText.isNotListening
+                          //           ? Icons.mic_off  :
+                          //       Icons.mic,
+                          //       color: Colors.white,
+                          //     ))
+                        ],
                       ),
                       Row(
                         children: [

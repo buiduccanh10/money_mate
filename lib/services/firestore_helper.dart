@@ -40,13 +40,18 @@ class firestore_helper {
 
     if (snapshot.docs.isEmpty) {
       List<Map<String, dynamic>> cat_default = [
-        {'name': 'Salary', 'icon': '💵', 'is_income': true},
-        {'name': 'Business', 'icon': '🤝🏻', 'is_income': true},
-        {'name': 'Others', 'icon': '🗒️', 'is_income': true},
-        {"name": "Medical", "icon": "💊", "is_income": false},
-        {"name": "Food", "icon": "🍽️", "is_income": false},
-        {"name": "Clothes", "icon": "👕", "is_income": false},
-        {"name": "Transportation", "icon": "🚘", "is_income": false},
+        {'name': 'Salary', 'icon': '💵', 'is_income': true, 'limit': 0},
+        {'name': 'Business', 'icon': '🤝🏻', 'is_income': true, 'limit': 0},
+        {'name': 'Others', 'icon': '🗒️', 'is_income': true, 'limit': 0},
+        {"name": "Medical", "icon": "💊", "is_income": false, 'limit': 0},
+        {"name": "Food", "icon": "🍽️", "is_income": false, 'limit': 0},
+        {"name": "Clothes", "icon": "👕", "is_income": false, 'limit': 0},
+        {
+          "name": "Transportation",
+          "icon": "🚘",
+          "is_income": false,
+          'limit': 0
+        },
       ];
 
       for (var data in cat_default) {
@@ -414,7 +419,7 @@ class firestore_helper {
     String cat_id = doc_ref.id;
 
     category_model cat = category_model(
-        cat_id: cat_id, icon: icon, name: name, is_income: is_income);
+        cat_id: cat_id, icon: icon, name: name, is_income: is_income, limit: 0);
 
     await doc_ref.set(cat.toMap());
   }
@@ -427,10 +432,22 @@ class firestore_helper {
         .collection("category")
         .doc(catId);
 
-    category_model updatedData = category_model(
-        cat_id: catId, icon: icon, name: name, is_income: isIncome);
+    DocumentSnapshot snapshot = await docRef.get();
 
-    await docRef.update(updatedData.toMap());
+    if (snapshot.exists) {
+      var existingData = snapshot.data() as Map<String, dynamic>;
+      double currentLimit = existingData['limit'].toDouble();
+
+      category_model updatedData = category_model(
+        cat_id: catId,
+        icon: icon,
+        name: name,
+        is_income: isIncome,
+        limit: currentLimit,
+      );
+
+      await docRef.update(updatedData.toMap());
+    }
   }
 
   Future<void> delete_all_category(String uid, bool isIncome) async {
@@ -849,5 +866,90 @@ class firestore_helper {
     }
 
     return results;
+  }
+
+  Future<void> update_limit(
+      String uid, String cat_id, double money_final) async {
+    DocumentReference docRef = FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
+        .collection("category")
+        .doc(cat_id);
+    DocumentSnapshot snapshot = await docRef.get();
+
+    if (snapshot.exists) {
+      var existingData = snapshot.data() as Map<String, dynamic>;
+
+      category_model updatedData = category_model(
+        cat_id: cat_id,
+        icon: existingData['icon'],
+        name: existingData['name'],
+        is_income: existingData['is_income'],
+        limit: money_final,
+      );
+
+      docRef.update(updatedData.toMap());
+    }
+  }
+
+  Future<void> restore_limit(String uid, cat_id) async {
+    DocumentReference docRef = FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
+        .collection("category")
+        .doc(cat_id);
+    DocumentSnapshot snapshot = await docRef.get();
+
+    if (snapshot.exists) {
+      var existingData = snapshot.data() as Map<String, dynamic>;
+
+      category_model updatedData = category_model(
+        cat_id: cat_id,
+        icon: existingData['icon'],
+        name: existingData['name'],
+        is_income: existingData['is_income'],
+        limit: 0,
+      );
+
+      docRef.update(updatedData.toMap());
+    }
+  }
+
+  Future<void> restore_all_limit(String uid) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('category')
+        .get();
+
+    for (var doc in querySnapshot.docs) {
+      var data = doc.data() as Map<String, dynamic>;
+
+      category_model updatedData = category_model(
+        cat_id: data['cat_id'],
+        icon: data['icon'],
+        name: data['name'],
+        is_income: data['is_income'],
+        limit: 0,
+      );
+
+      await doc.reference.update(updatedData.toMap());
+    }
+  }
+
+  Future<double?> get_category_limit(String uid, String cat_id) async {
+    DocumentReference docRef = FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
+        .collection("category")
+        .doc(cat_id);
+
+    DocumentSnapshot snapshot = await docRef.get();
+
+    if (snapshot.exists) {
+      var data = snapshot.data() as Map<String, dynamic>;
+
+      return data['limit'] as double?;
+    }
   }
 }

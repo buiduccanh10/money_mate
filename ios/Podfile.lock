@@ -112,7 +112,12 @@ PODS:
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
+  - speech_to_text (0.0.1):
+    - Flutter
+    - FlutterMacOS
+    - Try
   - Toast (4.1.1)
+  - Try (2.1.1)
 
 DEPENDENCIES:
   - awesome_notifications (from `.symlinks/plugins/awesome_notifications/ios`)
@@ -129,6 +134,7 @@ DEPENDENCIES:
   - local_auth_darwin (from `.symlinks/plugins/local_auth_darwin/darwin`)
   - rive_common (from `.symlinks/plugins/rive_common/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
+  - speech_to_text (from `.symlinks/plugins/speech_to_text/darwin`)
 
 SPEC REPOS:
   trunk:
@@ -153,6 +159,7 @@ SPEC REPOS:
     - nanopb
     - RecaptchaInterop
     - Toast
+    - Try
 
 EXTERNAL SOURCES:
   awesome_notifications:
@@ -184,6 +191,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/rive_common/ios"
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
+  speech_to_text:
+    :path: ".symlinks/plugins/speech_to_text/darwin"
 
 CHECKOUT OPTIONS:
   FirebaseFirestore:
@@ -225,7 +234,9 @@ SPEC CHECKSUMS:
   RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
   rive_common: cbbac3192af00d7341f19dae2f26298e9e37d99e
   shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
+  speech_to_text: 627d3fd2194770b51abb324ba45c2d39398f24a8
   Toast: 1f5ea13423a1e6674c4abdac5be53587ae481c4e
+  Try: 5ef669ae832617b3cee58cb2c6f99fb767a4ff96
 
 PODFILE CHECKSUM: 87954d8ac39319c6a38d0a05d1ea5d6f125bc9e2
 
