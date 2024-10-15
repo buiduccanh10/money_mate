@@ -99,6 +99,12 @@ mixin LocaleData {
   static const String limit_dialog = 'limit_dialog';
   static const String over_limit = 'over_limit';
   static const String over = 'over';
+  static const String limit_success = 'limit_success';
+  static const String limit_fail = 'limit_fail';
+  static const String restore_limit_success = 'restore_limit_success';
+  static const String restore_limit_fail = 'restore_limit_fail';
+  static const String restore_all_limit_success = 'restore_all_limit_success';
+  static const String restore_all_limit_fail = 'restore_all_limit_fail';
 
   //fixed income and expense
   static const String fixed_in_ex = 'fixed_in_ex';
@@ -289,6 +295,12 @@ mixin LocaleData {
     limit_dialog: 'Set limit for',
     over_limit: 'Exceeded the expense limit of',
     over: 'over',
+    limit_success: 'Set limit success',
+    limit_fail: 'Set limit fail',
+    restore_limit_success: 'Restore limit success',
+    restore_limit_fail: 'Restore limit fail',
+    restore_all_limit_success: 'Restore all limit success',
+    restore_all_limit_fail: 'Restore all limit fail',
   };
 
   static const Map<String, dynamic> VI = {
@@ -421,6 +433,12 @@ mixin LocaleData {
     limit_dialog: 'Thiết lập giới hạn cho',
     over_limit: 'Vượt giới hạn chi tiêu của',
     over: 'vượt',
+    limit_success: 'Thiết lập giới hạn thành công',
+    limit_fail: 'Thiết lập giới hạn thất bại',
+    restore_limit_success: 'Khôi phục giới hạn thành công',
+    restore_limit_fail: 'Khôi phục giới hạn thất bại',
+    restore_all_limit_success: 'Khôi phục tất cả giới hạn thành công',
+    restore_all_limit_fail: 'Khôi phục tất cả giới hạn thất bại',
   };
 
   static const Map<String, dynamic> CN = {
@@ -548,5 +566,11 @@ mixin LocaleData {
     limit_dialog: '为',
     over_limit: '超过限制',
     over: '超过',
+    limit_success: '限制设置成功',
+    limit_fail: '限制设置失败',
+    restore_limit_success: '恢复限制成功',
+    restore_limit_fail: '恢复限制失败',
+    restore_all_limit_success: '恢复所有限制成功',
+    restore_all_limit_fail: '恢复所有限制失败',
   };
 }

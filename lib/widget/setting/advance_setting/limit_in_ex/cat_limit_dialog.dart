@@ -127,7 +127,7 @@ class _cat_limit_dialogState extends State<cat_limit_dialog> {
                     borderRadius: BorderRadius.circular(10)),
                 child: TextButton(
                     onPressed: () {
-                      set_vm.handle_limit(widget.cat_id);
+                      set_vm.handle_limit(widget.cat_id,context);
                       Navigator.of(context).pop();
                     },
                     child: Text(

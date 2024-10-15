@@ -155,9 +155,9 @@ class _setup_in_ex_limitState extends State<setup_in_ex_limit> {
                                       backgroundColor: Colors.transparent,
                                       onPressed: (context) {
                                         setting_vm.handle_restore_cat_limit(
-                                          setting_vm.ex_cat_data[index]
-                                              ['cat_id'],
-                                        );
+                                            setting_vm.ex_cat_data[index]
+                                                ['cat_id'],
+                                            context);
                                       },
                                       foregroundColor: Colors.red,
                                       icon: Icons.restore,

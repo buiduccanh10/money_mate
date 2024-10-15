@@ -20,7 +20,7 @@ class _inputState extends State<input> {
   @override
   void initState() {
     super.initState();
-    is_income = true;
+    is_income = false;
   }
 
   @override
@@ -70,7 +70,7 @@ class _inputState extends State<input> {
                         ],
                 ),
                 child: CustomSlidingSegmentedControl<int>(
-                  initialValue: 1,
+                  initialValue: 2,
                   fixedWidth: 125,
                   height: 50,
                   children: {

@@ -101,8 +101,9 @@ class _chart_item_detailState extends State<chart_item_detail> {
         return PopScope(
           onPopInvokedWithResult: (didPop, result) {
             if (didPop) {
-              chart_vm.fecth_data_byyear();
-              chart_vm.fecth_data_bymonth();
+              widget.is_monthly!
+                  ? chart_vm.fecth_data_bymonth() 
+                  : chart_vm.fecth_data_byyear();
             }
           },
           child: Scaffold(

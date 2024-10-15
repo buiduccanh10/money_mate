@@ -259,7 +259,7 @@ class _chart_widgetState extends State<chart_widget> {
                                         bottom:
                                             BorderSide(color: Colors.grey))),
                                 child: CustomSlidingSegmentedControl<int>(
-                                  initialValue: 1,
+                                  initialValue: 2,
                                   fixedWidth: width * 0.5,
                                   innerPadding: const EdgeInsets.all(0),
                                   children: {

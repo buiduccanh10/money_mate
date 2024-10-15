@@ -838,7 +838,7 @@ class setting_view_model with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  Future<void> handle_limit(String cat_id) async {
+  Future<void> handle_limit(String cat_id, context) async {
     try {
       String money = limit_controller.text;
       String format_money = localization.currentLocale.toString() == 'vi'
@@ -864,7 +864,7 @@ class setting_view_model with ChangeNotifier {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               const Icon(Icons.check),
-              Text('Limit success'),
+              Text(LocaleData.limit_success.getString(context)),
             ],
           ),
         ),
@@ -884,7 +884,7 @@ class setting_view_model with ChangeNotifier {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 const Icon(Icons.do_disturb),
-                Text('Limit fail'),
+                Text(LocaleData.limit_fail.getString(context)),
               ],
             ),
           ),
@@ -893,7 +893,7 @@ class setting_view_model with ChangeNotifier {
     }
   }
 
-  Future<void> handle_restore_cat_limit(cat_id) async {
+  Future<void> handle_restore_cat_limit(cat_id, context) async {
     try {
       await db_helper.restore_limit(uid, cat_id);
 
@@ -913,7 +913,7 @@ class setting_view_model with ChangeNotifier {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               const Icon(Icons.check),
-              Text('Reset success'),
+              Text(LocaleData.restore_limit_success.getString(context)),
             ],
           ),
         ),
@@ -933,7 +933,7 @@ class setting_view_model with ChangeNotifier {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 const Icon(Icons.do_disturb),
-                Text('Reset fail'),
+                Text(LocaleData.restore_limit_fail.getString(context)),
               ],
             ),
           ),
@@ -980,7 +980,8 @@ class setting_view_model with ChangeNotifier {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               const Icon(Icons.check),
-                              Text('Reset all success'),
+                              Text(LocaleData.restore_all_limit_success
+                                  .getString(context)),
                             ],
                           ),
                         ),
@@ -1001,7 +1002,8 @@ class setting_view_model with ChangeNotifier {
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 const Icon(Icons.do_disturb),
-                                Text('Reset all fail'),
+                                Text(LocaleData.restore_all_limit_fail
+                                    .getString(context)),
                               ],
                             ),
                           ),

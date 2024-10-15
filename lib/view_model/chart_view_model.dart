@@ -32,7 +32,7 @@ class chart_view_model with ChangeNotifier {
   FToast toast = FToast();
 
   chart_view_model() {
-    is_income = true;
+    is_income = false;
     month_year_formated = get_month_year_string(month, year);
     tooltipBehavior = TooltipBehavior(enable: true);
   }
@@ -68,6 +68,7 @@ class chart_view_model with ChangeNotifier {
   }
 
   void onChangedMonth(newMonth) {
+    is_loading = true;
     month = int.parse(newMonth!);
     month_year_formated = get_month_year_string(month, year);
     fecth_data_bymonth();
@@ -75,6 +76,7 @@ class chart_view_model with ChangeNotifier {
   }
 
   void onChangedMonthYear(newYear) {
+    is_loading = true;
     year = int.parse(newYear!);
     month_year_formated = get_month_year_string(month, year);
     fecth_data_bymonth();

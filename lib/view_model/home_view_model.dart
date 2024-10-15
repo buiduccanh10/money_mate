@@ -151,6 +151,7 @@ class home_view_model with ChangeNotifier {
   }
 
   void onChangedMonth(newMonth) {
+    is_loading = true;
     month = int.parse(newMonth!);
     formattedDate = get_month_year_string(month, year);
     notifyListeners();
@@ -159,6 +160,7 @@ class home_view_model with ChangeNotifier {
   }
 
   void onChangedYear(newYear) {
+    is_loading = true;
     year = int.parse(newYear!);
     formattedDate = get_month_year_string(month, year);
     notifyListeners();
