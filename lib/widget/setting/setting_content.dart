@@ -1,47 +1,30 @@
-import 'dart:io';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localization/flutter_localization.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:local_auth/local_auth.dart';
-import 'package:money_mate/main.dart';
-import 'package:money_mate/services/firestore_helper.dart';
 import 'package:money_mate/services/locales.dart';
-import 'package:money_mate/view_model/setting_view_model.dart';
-import 'package:money_mate/widget/auth/login.dart';
+import 'package:money_mate/bloc/setting/setting_cubit.dart';
+import 'package:money_mate/bloc/setting/setting_state.dart';
+import 'package:money_mate/bloc/auth/auth_bloc.dart';
+import 'package:money_mate/bloc/auth/auth_event.dart';
 import 'package:money_mate/widget/setting/advance_setting/advance_setting.dart';
 import 'package:money_mate/widget/setting/language_setting.dart';
 import 'package:money_mate/widget/setting/privacy_setting.dart';
-import 'package:provider/provider.dart';
+import 'package:money_mate/widget/auth/login.dart';
 
-class setting_content extends StatefulWidget {
-  const setting_content({super.key});
-
-  @override
-  State<setting_content> createState() => _setting_contentState();
-}
-
-class _setting_contentState extends State<setting_content> {
-  @override
-  void initState() {
-    var setting_vm = Provider.of<setting_view_model>(context, listen: false);
-    setting_vm.init(context);
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
+class SettingContent extends StatelessWidget {
+  const SettingContent({super.key});
 
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
-    return Consumer<setting_view_model>(
-      builder: (BuildContext context, setting_vm, Widget? child) {
-        setting_vm.toast.init(context);
+
+    return BlocBuilder<SettingCubit, SettingState>(
+      builder: (context, state) {
+        bool isDark = state.isDark;
+        final bgColor = isDark ? Colors.grey[700] : Colors.grey[200];
+
         return Scaffold(
           body: SingleChildScrollView(
             padding: EdgeInsets.only(
@@ -51,443 +34,259 @@ class _setting_contentState extends State<setting_content> {
                 bottom: height * 0.15),
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 0.0, bottom: 16),
-                child: Material(
-                  color:
-                      setting_vm.is_dark ? Colors.grey[700] : Colors.grey[200],
-                  borderRadius: BorderRadius.circular(10),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(10),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (builder) => const advance_setting()));
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 10.0, right: 18),
-                                child: Icon(
-                                  Icons.settings_suggest,
-                                  color: setting_vm.is_dark
-                                      ? Colors.brown[100]
-                                      : Colors.brown,
-                                  size: 30,
-                                ),
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    LocaleData.advanced_settings
-                                        .getString(context),
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 16),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          const Icon(Icons.navigate_next)
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
+              _buildSettingItem(
+                context,
+                icon: Icons.settings_suggest,
+                iconColor: isDark ? Colors.brown[100]! : Colors.brown,
+                label: LocaleData.advanced_settings.getString(context),
+                bgColor: bgColor!,
+                onTap: () => Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => const AdvanceSetting())),
               ),
-              Material(
-                color: setting_vm.is_dark ? Colors.grey[700] : Colors.grey[200],
-                borderRadius: BorderRadius.circular(10),
+              const SizedBox(height: 16),
+              Container(
+                decoration: BoxDecoration(
+                    color: bgColor, borderRadius: BorderRadius.circular(10)),
                 child: Column(children: [
-                  InkWell(
-                    borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        topRight: Radius.circular(10)),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  const language_setting()));
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              const Padding(
-                                padding: EdgeInsets.only(left: 10.0, right: 18),
-                                child: Icon(
-                                  Icons.language,
-                                  color: Colors.blue,
-                                  size: 26,
-                                ),
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    LocaleData.language.getString(context),
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 16),
-                                  ),
-                                  Text(
-                                    LocaleData.language_des.getString(context),
-                                    style: const TextStyle(color: Colors.grey),
-                                  )
-                                ],
-                              ),
-                            ],
-                          ),
-                          const Icon(Icons.navigate_next)
-                        ],
-                      ),
-                    ),
+                  _buildSubItem(
+                    context,
+                    icon: Icons.language,
+                    iconColor: Colors.blue,
+                    label: LocaleData.language.getString(context),
+                    subLabel: LocaleData.language_des.getString(context),
+                    onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const LanguageSetting())),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 10.0, right: 18),
-                              child: Icon(
-                                Icons.dark_mode,
-                                color: Colors.purple[700],
-                                size: 26,
-                              ),
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  LocaleData.appearance.getString(context),
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 16),
-                                ),
-                                Text(
-                                  setting_vm.is_dark
-                                      ? LocaleData.darkmode_dark_des
-                                          .getString(context)
-                                      : LocaleData.darkmode_light_des
-                                          .getString(context),
-                                  style: const TextStyle(color: Colors.grey),
-                                )
-                              ],
-                            ),
-                          ],
-                        ),
-                        Switch(
-                            value: setting_vm.is_dark,
-                            inactiveThumbColor: Colors.orange,
-                            inactiveTrackColor: Colors.amber[200],
-                            thumbIcon: WidgetStateProperty.resolveWith<Icon?>(
-                              (Set<WidgetState> states) {
-                                if (states.contains(WidgetState.selected)) {
-                                  return const Icon(Icons.dark_mode_outlined);
-                                }
-                                return const Icon(Icons.light_mode_outlined);
-                              },
-                            ),
-                            onChanged: (value) {
-                              setting_vm.onChangedTheme(value, context);
-                            })
-                      ],
-                    ),
-                  )
+                  _buildSwitchItem(
+                    context,
+                    icon: Icons.dark_mode,
+                    iconColor: Colors.purple[700]!,
+                    label: LocaleData.appearance.getString(context),
+                    subLabel: isDark
+                        ? LocaleData.darkmode_dark_des.getString(context)
+                        : LocaleData.darkmode_light_des.getString(context),
+                    value: isDark,
+                    onChanged: (val) =>
+                        context.read<SettingCubit>().toggleDarkMode(val),
+                  ),
                 ]),
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 18.0),
-                child: Material(
-                  color:
-                      setting_vm.is_dark ? Colors.grey[700] : Colors.grey[200],
-                  borderRadius: BorderRadius.circular(10),
-                  child: Column(
-                    children: [
-                      InkWell(
-                        borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(10),
-                            topRight: Radius.circular(10)),
-                        onTap: () {},
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  const Padding(
-                                    padding:
-                                        EdgeInsets.only(left: 10.0, right: 18),
-                                    child: Icon(
-                                      Icons.lock,
-                                      color: Colors.green,
-                                      size: 26,
-                                    ),
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        LocaleData.application_lock
-                                            .getString(context),
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 16),
-                                      ),
-                                      SizedBox(
-                                        width: width * 0.6,
-                                        child: Text(
-                                          LocaleData.application_lock_des
-                                              .getString(context),
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                              color: Colors.grey),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              Switch(
-                                  value: setting_vm.is_lock,
-                                  activeColor: Colors.lightGreen,
-                                  thumbIcon:
-                                      WidgetStateProperty.resolveWith<Icon?>(
-                                    (Set<WidgetState> states) {
-                                      if (states
-                                          .contains(WidgetState.selected)) {
-                                        return const Icon(Icons.check);
-                                      }
-                                      return const Icon(Icons.close);
-                                    },
-                                  ),
-                                  onChanged: (value) {
-                                    setting_vm.onChangedLock(value, context);
-                                  })
-                            ],
-                          ),
-                        ),
-                      ),
-                      InkWell(
-                        borderRadius: const BorderRadius.only(
-                            bottomLeft: Radius.circular(10),
-                            bottomRight: Radius.circular(10)),
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      const privacy_setting()));
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  const Padding(
-                                    padding:
-                                        EdgeInsets.only(left: 10.0, right: 18),
-                                    child: Icon(
-                                      Icons.privacy_tip,
-                                      color: Colors.red,
-                                      size: 26,
-                                    ),
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        LocaleData.privacy.getString(context),
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 16),
-                                      ),
-                                      Text(
-                                        LocaleData.privacy_des
-                                            .getString(context),
-                                        style:
-                                            const TextStyle(color: Colors.grey),
-                                      )
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              const Icon(Icons.navigate_next)
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
+              const SizedBox(height: 16),
+              Container(
+                decoration: BoxDecoration(
+                    color: bgColor, borderRadius: BorderRadius.circular(10)),
+                child: Column(children: [
+                  _buildSwitchItem(
+                    context,
+                    icon: Icons.lock,
+                    iconColor: Colors.green,
+                    label: LocaleData.application_lock.getString(context),
+                    subLabel:
+                        LocaleData.application_lock_des.getString(context),
+                    value: state.isLock,
+                    onChanged: (val) =>
+                        context.read<SettingCubit>().toggleLock(val),
                   ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 18.0),
-                child: Material(
-                  color:
-                      setting_vm.is_dark ? Colors.grey[700] : Colors.grey[200],
-                  borderRadius: BorderRadius.circular(10),
-                  child: Column(children: [
-                    InkWell(
-                      borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(10),
-                          topRight: Radius.circular(10)),
-                      onTap: () {
-                        showAboutDialog(context: context);
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                const Padding(
-                                  padding:
-                                      EdgeInsets.only(left: 10.0, right: 18),
-                                  child: Icon(
-                                    Icons.info,
-                                    color: Colors.orange,
-                                    size: 26,
-                                  ),
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      LocaleData.about.getString(context),
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 16),
-                                    ),
-                                    Text(
-                                      LocaleData.about_des.getString(context),
-                                      style:
-                                          const TextStyle(color: Colors.grey),
-                                    )
-                                  ],
-                                ),
-                              ],
-                            ),
-                            const Icon(Icons.navigate_next)
-                          ],
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      borderRadius: const BorderRadius.only(
-                          bottomLeft: Radius.circular(10),
-                          bottomRight: Radius.circular(10)),
-                      onTap: () {},
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                const Padding(
-                                  padding:
-                                      EdgeInsets.only(left: 10.0, right: 18),
-                                  child: Icon(
-                                    Icons.feedback,
-                                    size: 26,
-                                    color: Colors.cyan,
-                                  ),
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      LocaleData.send_feedback
-                                          .getString(context),
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 16),
-                                    ),
-                                    SizedBox(
-                                      width: width * 0.6,
-                                      child: Text(
-                                        LocaleData.send_feedback_des
-                                            .getString(context),
-                                        overflow: TextOverflow.ellipsis,
-                                        style:
-                                            const TextStyle(color: Colors.grey),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ],
-                            ),
-                            const Icon(Icons.navigate_next)
-                          ],
-                        ),
-                      ),
-                    ),
-                  ]),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 28.0),
-                child: Material(
-                  color:
-                      setting_vm.is_dark ? Colors.grey[700] : Colors.grey[200],
-                  borderRadius: BorderRadius.circular(10),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(10),
-                    onTap: () {
-                      setting_vm.show_curpetino_action(context);
-                    },
-                    child: SizedBox(
-                      height: 50,
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  LocaleData.log_out.getString(context),
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 18,
-                                      color: setting_vm.is_dark
-                                          ? Colors.redAccent
-                                          : Colors.red),
-                                ),
-                              ],
-                            ),
-                          ]),
-                    ),
+                  _buildSubItem(
+                    context,
+                    icon: Icons.privacy_tip,
+                    iconColor: Colors.red,
+                    label: LocaleData.privacy.getString(context),
+                    subLabel: LocaleData.privacy_des.getString(context),
+                    onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const PrivacySetting())),
                   ),
-                ),
+                ]),
               ),
+              const SizedBox(height: 16),
+              Container(
+                decoration: BoxDecoration(
+                    color: bgColor, borderRadius: BorderRadius.circular(10)),
+                child: Column(children: [
+                  _buildSubItem(
+                    context,
+                    icon: Icons.info,
+                    iconColor: Colors.orange,
+                    label: LocaleData.about.getString(context),
+                    subLabel: LocaleData.about_des.getString(context),
+                    onTap: () => showAboutDialog(context: context),
+                  ),
+                  _buildSubItem(
+                    context,
+                    icon: Icons.feedback,
+                    iconColor: Colors.cyan,
+                    label: LocaleData.send_feedback.getString(context),
+                    subLabel: LocaleData.send_feedback_des.getString(context),
+                    onTap: () {},
+                  ),
+                ]),
+              ),
+              const SizedBox(height: 24),
+              _buildLogoutButton(context, isDark, bgColor),
             ]),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildSettingItem(BuildContext context,
+      {required IconData icon,
+      required Color iconColor,
+      required String label,
+      required Color bgColor,
+      required VoidCallback onTap}) {
+    return Material(
+      color: bgColor,
+      borderRadius: BorderRadius.circular(10),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(10),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(children: [
+                Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    child: Icon(icon, color: iconColor, size: 30)),
+                Text(label,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w500, fontSize: 16)),
+              ]),
+              const Icon(Icons.navigate_next)
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSubItem(BuildContext context,
+      {required IconData icon,
+      required Color iconColor,
+      required String label,
+      required String subLabel,
+      required VoidCallback onTap}) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(children: [
+              Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  child: Icon(icon, color: iconColor, size: 26)),
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(label,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w500, fontSize: 16)),
+                Text(subLabel,
+                    style: const TextStyle(color: Colors.grey, fontSize: 12)),
+              ]),
+            ]),
+            const Icon(Icons.navigate_next)
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSwitchItem(BuildContext context,
+      {required IconData icon,
+      required Color iconColor,
+      required String label,
+      required String subLabel,
+      required bool value,
+      required ValueChanged<bool> onChanged}) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(children: [
+            Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                child: Icon(icon, color: iconColor, size: 26)),
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(label,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w500, fontSize: 16)),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.5,
+                child: Text(subLabel,
+                    style: const TextStyle(color: Colors.grey, fontSize: 12),
+                    overflow: TextOverflow.ellipsis),
+              ),
+            ]),
+          ]),
+          Switch(
+            value: value,
+            onChanged: onChanged,
+            thumbIcon: WidgetStateProperty.resolveWith<Icon?>((states) =>
+                states.contains(WidgetState.selected)
+                    ? const Icon(Icons.check)
+                    : const Icon(Icons.close)),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLogoutButton(BuildContext context, bool isDark, Color bgColor) {
+    return Material(
+      color: bgColor,
+      borderRadius: BorderRadius.circular(10),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(10),
+        onTap: () => _showLogoutDialog(context),
+        child: SizedBox(
+          height: 50,
+          child: Center(
+            child: Text(
+              LocaleData.log_out.getString(context),
+              style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 18,
+                  color: isDark ? Colors.redAccent : Colors.red),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showLogoutDialog(BuildContext context) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) => CupertinoActionSheet(
+        title: Text(LocaleData.log_out.getString(context)),
+        message: Text(LocaleData.log_out_dialog.getString(context)),
+        actions: [
+          CupertinoActionSheetAction(
+            onPressed: () {
+              context.read<AuthBloc>().add(LogoutRequested());
+              Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => const Login()),
+                (route) => false,
+              );
+            },
+            isDestructiveAction: true,
+            child: Text(LocaleData.log_out.getString(context)),
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () => Navigator.pop(context),
+          child: Text(LocaleData.cancel.getString(context)),
+        ),
+      ),
     );
   }
 }

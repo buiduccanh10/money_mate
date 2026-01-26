@@ -11,10 +11,10 @@ class currency_format extends TextInputFormatter {
     double value = double.parse(newValue.text);
     final money = NumberFormat("#,###", "vi_VN");
 
-    String new_text = money.format(value);
+    String newText = money.format(value);
 
     return newValue.copyWith(
-        text: new_text,
-        selection: TextSelection.collapsed(offset: new_text.length));
+        text: newText,
+        selection: TextSelection.collapsed(offset: newText.length));
   }
 }

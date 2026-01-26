@@ -1,323 +1,267 @@
 import 'dart:math';
-import 'dart:ui';
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localization/flutter_localization.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:money_mate/services/currency_format.dart';
-import 'package:money_mate/services/firestore_helper.dart';
 import 'package:money_mate/services/locales.dart';
-import 'package:money_mate/view_model/setting_view_model.dart';
-import 'package:money_mate/widget/setting/advance_setting/fixed_in_ex/setup_in_ex_regular.dart';
-import 'package:provider/provider.dart';
+import 'package:money_mate/bloc/category/category_cubit.dart';
+import 'package:money_mate/bloc/category/category_state.dart';
+import 'package:money_mate/bloc/schedule/schedule_cubit.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
-class start_setup extends StatefulWidget {
-  const start_setup({super.key});
+class StartSetup extends StatefulWidget {
+  const StartSetup({super.key});
 
   @override
-  State<start_setup> createState() => _start_setupState();
+  State<StartSetup> createState() => _StartSetupState();
 }
 
-class _start_setupState extends State<start_setup> {
+class _StartSetupState extends State<StartSetup> {
+  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _moneyController = TextEditingController();
+  final DateRangePickerController _dateController = DateRangePickerController();
+  String? _selectedCatId;
+  int _selectedOptionIndex = 0;
+
+  final List<String> _options = [
+    'Never',
+    'Daily',
+    'Weekly',
+    'Monthly',
+    'Yearly',
+  ];
+
   @override
   void initState() {
-    var setting_vm = Provider.of<setting_view_model>(context, listen: false);
-    setting_vm.init(context);
     super.initState();
+    _dateController.selectedDate = DateTime.now();
+    context.read<CategoryCubit>().fetchCategories();
   }
 
   @override
   void dispose() {
+    _descriptionController.dispose();
+    _moneyController.dispose();
+    _dateController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // List<String> option = <String>[
-    //   LocaleData.never_repeat.getString(context),
-    //   LocaleData.daily.getString(context),
-    //   LocaleData.weekly.getString(context),
-    //   LocaleData.yearly.getString(context),
-    // ];
-    bool is_dark = Theme.of(context).brightness == Brightness.dark;
-    return Consumer<setting_view_model>(
-      builder: (BuildContext context, setting_vm, Widget? child) {
-        return Scaffold(
-          appBar: AppBar(title: Text(LocaleData.set_up.getString(context))),
-          body: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                          color: is_dark ? Colors.orange : Colors.amber),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: SfDateRangePicker(
-                      showNavigationArrow: true,
-                      selectionColor: Colors.deepOrangeAccent,
-                      selectionMode: DateRangePickerSelectionMode.single,
-                      headerHeight: 60,
-                      todayHighlightColor: Colors.red,
-                      controller: setting_vm.date_controller,
-                      headerStyle: const DateRangePickerHeaderStyle(
-                          textAlign: TextAlign.center,
-                          textStyle: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 20)),
-                      monthViewSettings: const DateRangePickerMonthViewSettings(
-                          firstDayOfWeek: 1,
-                          viewHeaderStyle: DateRangePickerViewHeaderStyle(
-                              textStyle: TextStyle(
-                                  fontWeight: FontWeight.w600, fontSize: 16))),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  TextField(
-                    minLines: 1,
-                    maxLines: 2,
-                    keyboardType: TextInputType.text,
-                    controller: setting_vm.description_controller,
-                    decoration: InputDecoration(
-                        errorText: setting_vm.des_validate
-                            ? LocaleData.des_validator.getString(context)
-                            : null,
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: is_dark ? Colors.orange : Colors.amber),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.amber),
-                            borderRadius: BorderRadius.circular(10)),
-                        label: Text(
-                          LocaleData.input_description.getString(context),
-                        ),
-                        labelStyle:
-                            TextStyle(color: Colors.grey.withOpacity(1)),
-                        floatingLabelStyle: TextStyle(
-                            color: is_dark ? Colors.white : Colors.black),
-                        prefixIcon: const Icon(Icons.description),
-                        prefixIconColor: Colors.blue),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  TextField(
-                    keyboardType: setting_vm.localization.currentLocale
-                                .toString() ==
-                            'vi'
-                        ? const TextInputType.numberWithOptions(decimal: false)
-                        : const TextInputType.numberWithOptions(decimal: true),
-                    controller: setting_vm.money_controller,
-                    inputFormatters:
-                        setting_vm.localization.currentLocale.toString() == 'vi'
-                            ? [
-                                FilteringTextInputFormatter.digitsOnly,
-                                currency_format(),
-                              ]
-                            : [],
-                    onTapOutside: (event) {
-                      FocusScope.of(context).unfocus();
-                    },
-                    decoration: InputDecoration(
-                        errorText: setting_vm.money_validate
-                            ? LocaleData.money_validator.getString(context)
-                            : null,
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: is_dark ? Colors.orange : Colors.amber),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.amber),
-                            borderRadius: BorderRadius.circular(10)),
-                        label: Text(
-                          LocaleData.input_money.getString(context),
-                        ),
-                        labelStyle:
-                            TextStyle(color: Colors.grey.withOpacity(1)),
-                        floatingLabelStyle: TextStyle(
-                            color: is_dark ? Colors.white : Colors.black),
-                        prefixIcon: const Icon(Icons.attach_money),
-                        prefixIconColor: Colors.green,
-                        suffixStyle: const TextStyle(fontSize: 20),
-                        suffixText:
-                            setting_vm.localization.currentLocale.toString() ==
-                                    'vi'
-                                ? 'đ'
-                                : setting_vm.localization.currentLocale
-                                            .toString() ==
-                                        'zh'
-                                    ? '¥'
-                                    : '\$'),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 14.0, bottom: 8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                          LocaleData.select_category.getString(context),
-                          style: const TextStyle(fontSize: 22),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Wrap(
-                    spacing: 10,
-                    runSpacing: 10,
-                    children:
-                        List.generate((setting_vm.cat_data.length), (index) {
-                      bool is_selected = index == setting_vm.selectedIndex;
-                      return setting_vm.is_loading
-                          ? Shimmer.fromColors(
-                              baseColor: Colors.grey[300]!,
-                              highlightColor: Colors.grey[100]!,
-                              child: Container(
-                                width: 70,
-                                height: 40,
-                                decoration: BoxDecoration(
-                                    color: Colors
-                                        .primaries[Random()
-                                            .nextInt(Colors.primaries.length)]
-                                        .shade100
-                                        .withOpacity(0.35),
-                                    borderRadius: BorderRadius.circular(10)),
-                                padding: const EdgeInsets.all(8),
-                              ),
-                            )
-                          : InkWell(
-                              borderRadius: BorderRadius.circular(10),
-                              onTap: () {
-                                setting_vm.onChooseCat(index);
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                        width: 1.5,
-                                        color: is_selected
-                                            ? Colors.orange
-                                            : Colors.transparent),
-                                    color: Colors
-                                        .primaries[Random()
-                                            .nextInt(Colors.primaries.length)]
-                                        .shade100
-                                        .withOpacity(0.35),
-                                    borderRadius: BorderRadius.circular(10)),
-                                padding: const EdgeInsets.all(8),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      setting_vm.cat_data[index]['icon'],
-                                      style: const TextStyle(fontSize: 20),
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(setting_vm.cat_data[index]['name'])
-                                  ],
-                                ),
-                              ),
-                            );
-                    }),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          LocaleData.repeat.getString(context),
-                          style: const TextStyle(fontSize: 22),
-                        ),
-                        CupertinoButton(
-                          padding: const EdgeInsets.all(8),
-                          onPressed: () => setting_vm.showDialogRepeat(context),
-                          child: Text(
-                            setting_vm.option[setting_vm.selected_option],
-                            style: const TextStyle(
-                                fontSize: 24.0, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          floatingActionButton: AnimatedScale(
-            scale: setting_vm.scale,
-            duration: const Duration(milliseconds: 200),
-            child: Container(
-              width: 120,
-              height: 60,
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.green,
-                    Colors.lightGreen,
-                    Colors.lightGreenAccent,
-                  ],
-                ),
-              ),
-              child: FloatingActionButton.extended(
-                backgroundColor: Colors.transparent,
-                onPressed: () {
-                  setting_vm.save(
-                      setting_vm.date_controller.selectedDate,
-                      setting_vm.description_controller.text,
-                      setting_vm.money_controller.text,
-                      setting_vm.cat_id,
-                      setting_vm.icon,
-                      setting_vm.name,
-                      setting_vm.is_income,
-                      setting_vm.option[setting_vm.selected_option],
-                      context);
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final locale = FlutterLocalization.instance.currentLocale.toString();
 
-                  setState(() {
-                    setting_vm.scale = 1.1;
-                  });
-                  Future.delayed(const Duration(milliseconds: 200), () {
-                    setState(() {
-                      setting_vm.scale = 1.0;
-                    });
-                  });
-                },
-                label: Row(
-                  children: [
-                    const Icon(
-                      Icons.schedule,
-                      size: 35,
-                      color: Colors.white,
-                    ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    Text(
-                      LocaleData.set_up.getString(context),
-                      style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white),
-                    )
-                  ],
-                ),
-              ),
-            ),
+    return Scaffold(
+      appBar: AppBar(title: Text(LocaleData.set_up.getString(context))),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            children: [
+              _buildDatePicker(isDark),
+              const SizedBox(height: 16),
+              _buildTextField(
+                  _descriptionController,
+                  LocaleData.input_description.getString(context),
+                  Icons.description,
+                  Colors.blue,
+                  isDark),
+              const SizedBox(height: 12),
+              _buildMoneyField(isDark, locale),
+              const SizedBox(height: 16),
+              _buildCategorySection(isDark),
+              const SizedBox(height: 16),
+              _buildRepeatSection(context),
+            ],
           ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _handleSave,
+        backgroundColor: Colors.green,
+        icon: const Icon(Icons.schedule, color: Colors.white),
+        label: Text(LocaleData.set_up.getString(context),
+            style: const TextStyle(color: Colors.white)),
+      ),
+    );
+  }
+
+  Widget _buildDatePicker(bool isDark) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: isDark ? Colors.orange : Colors.amber),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: SfDateRangePicker(
+        showNavigationArrow: true,
+        selectionColor: Colors.deepOrangeAccent,
+        controller: _dateController,
+        headerStyle: const DateRangePickerHeaderStyle(
+            textAlign: TextAlign.center,
+            textStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 18)),
+      ),
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String label,
+      IconData icon, Color iconColor, bool isDark) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        enabledBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: isDark ? Colors.orange : Colors.amber),
+            borderRadius: BorderRadius.circular(10)),
+        focusedBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Colors.amber),
+            borderRadius: BorderRadius.circular(10)),
+        labelText: label,
+        prefixIcon: Icon(icon, color: iconColor),
+      ),
+    );
+  }
+
+  Widget _buildMoneyField(bool isDark, String locale) {
+    return TextField(
+      controller: _moneyController,
+      keyboardType: locale == 'vi'
+          ? const TextInputType.numberWithOptions(decimal: false)
+          : const TextInputType.numberWithOptions(decimal: true),
+      inputFormatters: locale == 'vi'
+          ? [FilteringTextInputFormatter.digitsOnly, currency_format()]
+          : [],
+      decoration: InputDecoration(
+        enabledBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: isDark ? Colors.orange : Colors.amber),
+            borderRadius: BorderRadius.circular(10)),
+        focusedBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Colors.amber),
+            borderRadius: BorderRadius.circular(10)),
+        labelText: LocaleData.input_money.getString(context),
+        prefixIcon: const Icon(Icons.attach_money, color: Colors.green),
+        suffixText: locale == 'vi' ? 'đ' : (locale == 'zh' ? '¥' : '\$'),
+      ),
+    );
+  }
+
+  Widget _buildCategorySection(bool isDark) {
+    return BlocBuilder<CategoryCubit, CategoryState>(
+      builder: (context, state) {
+        final categories = state.expenseCategories + state.incomeCategories;
+        if (state.status == CategoryStatus.loading && categories.isEmpty) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(LocaleData.select_category.getString(context),
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: categories.map((cat) {
+                final isSelected = _selectedCatId == cat['catId'];
+                return InkWell(
+                  onTap: () => setState(() => _selectedCatId = cat['catId']),
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors
+                          .primaries[Random().nextInt(Colors.primaries.length)]
+                          .withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                          color:
+                              isSelected ? Colors.orange : Colors.transparent,
+                          width: 2),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(cat['icon'] ?? '💰'),
+                        const SizedBox(width: 4),
+                        Text(cat['name'] ?? ''),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ],
         );
       },
     );
+  }
+
+  Widget _buildRepeatSection(BuildContext context) {
+    return Row(
+      children: [
+        Text(LocaleData.repeat.getString(context),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        const SizedBox(width: 8),
+        CupertinoButton(
+          padding: EdgeInsets.zero,
+          onPressed: _showRepeatPicker,
+          child: Text(_options[_selectedOptionIndex],
+              style:
+                  const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        ),
+      ],
+    );
+  }
+
+  void _showRepeatPicker() {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (_) => Container(
+        height: 250,
+        color: CupertinoColors.systemBackground.resolveFrom(context),
+        child: CupertinoPicker(
+          itemExtent: 32,
+          onSelectedItemChanged: (index) =>
+              setState(() => _selectedOptionIndex = index),
+          children: _options.map((o) => Center(child: Text(o))).toList(),
+        ),
+      ),
+    );
+  }
+
+  void _handleSave() {
+    if (_selectedCatId == null || _moneyController.text.isEmpty) return;
+
+    final locale = FlutterLocalization.instance.currentLocale.toString();
+    double money = 0;
+    if (locale == 'vi') {
+      money = double.tryParse(_moneyController.text.replaceAll('.', '')) ?? 0;
+    } else {
+      money = double.tryParse(_moneyController.text.replaceAll(',', '.')) ?? 0;
+    }
+
+    final catCubit = context.read<CategoryCubit>();
+    final allCats =
+        catCubit.state.incomeCategories + catCubit.state.expenseCategories;
+    final cat = allCats.firstWhere((c) => c['catId'] == _selectedCatId);
+
+    final data = {
+      'date': DateFormat('dd/MM/yyyy').format(_dateController.selectedDate!),
+      'description': _descriptionController.text,
+      'money': money,
+      'catId': _selectedCatId,
+      'icon': cat['icon'],
+      'name': cat['name'],
+      'isIncome': cat['isIncome'],
+      'option': _options[_selectedOptionIndex],
+    };
+
+    context.read<ScheduleCubit>().addSchedule(data);
+    Navigator.pop(context);
   }
 }

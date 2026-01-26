@@ -1,146 +1,132 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localization/flutter_localization.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:money_mate/services/firestore_helper.dart';
 import 'package:money_mate/services/locales.dart';
+import 'package:money_mate/bloc/auth/auth_bloc.dart';
+import 'package:money_mate/bloc/auth/auth_event.dart';
+import 'package:money_mate/bloc/auth/auth_state.dart';
 
-class sign_up_page extends StatefulWidget {
-  const sign_up_page({super.key});
+class SignUpPage extends StatefulWidget {
+  const SignUpPage({super.key});
 
   @override
-  _sign_up_pageState createState() => _sign_up_pageState();
+  _SignUpPageState createState() => _SignUpPageState();
 }
 
-class _sign_up_pageState extends State<sign_up_page> {
-  final db_helper = firestore_helper();
-  final email = TextEditingController();
-  final password = TextEditingController();
-  final confirm_password = TextEditingController();
-  GlobalKey<FormState> sign_up_key = GlobalKey<FormState>();
+class _SignUpPageState extends State<SignUpPage> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(LocaleData.sign_up.getString(context))),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Form(
-            key: sign_up_key,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                TextFormField(
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Email can not empty';
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                    labelText: LocaleData.email.getString(context),
-                    hintText: 'example@gmail.com',
-                    prefixIcon: const Icon(Icons.email),
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state.status == AuthStatus.success) {
+          Navigator.pop(context);
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(title: Text(LocaleData.sign_up.getString(context))),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  TextFormField(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Email cannot be empty';
+                      }
+                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                        return 'Enter a valid email';
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      labelText: LocaleData.email.getString(context),
+                      hintText: 'example@gmail.com',
+                      prefixIcon: const Icon(Icons.email),
+                    ),
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
                   ),
-                  controller: email,
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Password can not empty';
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                    labelText: LocaleData.password.getString(context),
-                    prefixIcon: const Icon(Icons.lock),
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Password cannot be empty';
+                      }
+                      if (value.length < 6) {
+                        return 'Password must be at least 6 characters';
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      labelText: LocaleData.password.getString(context),
+                      prefixIcon: const Icon(Icons.lock),
+                    ),
+                    controller: _passwordController,
+                    obscureText: true,
                   ),
-                  controller: password,
-                  obscureText: true,
-                ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Confirm password can not empty';
-                    }
-                    if (value != password.text) {
-                      return 'Password does not match';
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                    labelText: 'Confirm password',
-                    prefixIcon: const Icon(Icons.lock_reset),
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Confirm password cannot be empty';
+                      }
+                      if (value != _passwordController.text) {
+                        return 'Passwords do not match';
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'Confirm password',
+                      prefixIcon: const Icon(Icons.lock_reset),
+                    ),
+                    controller: _confirmPasswordController,
+                    obscureText: true,
                   ),
-                  controller: confirm_password,
-                  obscureText: true,
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    if (sign_up_key.currentState!.validate()) {
-                      sign_up_submit();
-                    }
-                  },
-                  child: Text(LocaleData.sign_up.getString(context)),
-                ),
-              ],
+                  const SizedBox(height: 20),
+                  BlocBuilder<AuthBloc, AuthState>(
+                    builder: (context, state) {
+                      return ElevatedButton(
+                        onPressed: state.status == AuthStatus.loading
+                            ? null
+                            : () {
+                                if (_formKey.currentState!.validate()) {
+                                  context.read<AuthBloc>().add(RegisterRequested(
+                                        _emailController.text,
+                                        _passwordController.text,
+                                        _confirmPasswordController.text,
+                                      ));
+                                }
+                              },
+                        child: state.status == AuthStatus.loading
+                            ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                            : Text(LocaleData.sign_up.getString(context)),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       ),
     );
-  }
-
-  Future<void> sign_up_submit() async {
-    try {
-      final UserCredential cre =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: email.text,
-        password: password.text,
-      );
-
-      String uid = cre.user!.uid;
-      await cre.user!.sendEmailVerification();
-
-      await db_helper
-          .get_user(uid, email.text, '')
-          .then((value) => Fluttertoast.showToast(
-                msg: LocaleData.toast_sign_up_success.getString(context),
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.CENTER,
-                timeInSecForIosWeb: 1,
-                backgroundColor: Colors.green,
-                textColor: Colors.white,
-                fontSize: 16.0,
-              ))
-          .then((value) => Navigator.pop(context));
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'weak-password') {
-        Fluttertoast.showToast(
-          msg: LocaleData.toast_sign_up_weakpass.getString(context),
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
-      } else if (e.code == 'email-already-in-use') {
-        Fluttertoast.showToast(
-          msg: LocaleData.toast_user_exist.getString(context),
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
-      }
-    }
   }
 }

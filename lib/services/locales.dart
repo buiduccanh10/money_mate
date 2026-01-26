@@ -1,5 +1,4 @@
 import 'package:flutter_localization/flutter_localization.dart';
-import 'package:money_mate/widget/setting/advance_setting/advance_setting.dart';
 
 const List<MapLocale> LOCALES = [
   MapLocale('vi', LocaleData.VI),
@@ -156,6 +155,7 @@ mixin LocaleData {
   static const String toast_login_success = 'toast_login_success';
   static const String toast_login_fail = 'toast_login_fail';
   static const String toast_sign_up_success = 'toast_sign_up_success';
+  static const String toast_sign_up_fail = 'toast_sign_up_fail';
   static const String toast_sign_up_weakpass = 'toast_sign_up_weakpass';
   static const String toast_user_exist = 'toast_user_exist';
   static const String toast_not_found = 'toast_not_found';
@@ -243,6 +243,7 @@ mixin LocaleData {
     toast_login_fail: 'Wrong user or password !',
     toast_sign_up_success:
         'Sign up successful, check the link in your email to verify !',
+    toast_sign_up_fail: 'Sign up failed !',
     toast_sign_up_weakpass: 'Password too weak !',
     toast_user_exist: 'Email already exists',
     toast_not_found: 'Not found !',
@@ -286,7 +287,6 @@ mixin LocaleData {
     paypal_success: 'Payment success',
     paypal_fail: 'Payment fail',
     paypal_cancel: 'Payment cancel',
-
     setting_limit_title: 'Spending limit',
     setting_limit_des: 'Set limit for each spending category',
     restore_limit: 'Restore',
@@ -380,6 +380,7 @@ mixin LocaleData {
     toast_login_fail: 'Sai tên người dùng hoặc mật khẩu!',
     toast_sign_up_success:
         'Đăng ký thành công, kiểm tra liên kết trong email của bạn để xác minh!',
+    toast_sign_up_fail: 'Đăng ký thất bại!',
     toast_sign_up_weakpass: 'Mật khẩu quá yếu!',
     toast_user_exist: 'Email đã tồn tại',
     toast_not_found: 'Không tìm thấy!',
@@ -424,7 +425,6 @@ mixin LocaleData {
     paypal_success: 'Thanh toán thành công',
     paypal_fail: 'Thanh toán không thành công',
     paypal_cancel: 'Hủy thanh toán',
-
     setting_limit_title: 'Giới hạn chi tiêu',
     setting_limit_des: 'Thiết lập giới hạn cho mỗi danh mục chi tiêu',
     restore_all_limit_title: 'Khôi phục tất cả giới hạn',
@@ -517,6 +517,7 @@ mixin LocaleData {
     toast_login_success: '登录成功！',
     toast_login_fail: '用户名或密码错误！',
     toast_sign_up_success: '注册成功，请查看您的电子邮件中的链接以进行验证！',
+    toast_sign_up_fail: '注册失败！',
     toast_sign_up_weakpass: '密码太弱！',
     toast_user_exist: '电子邮件已存在',
     toast_not_found: '未找到！',

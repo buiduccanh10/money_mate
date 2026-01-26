@@ -1,270 +1,335 @@
-import 'dart:ui';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localization/flutter_localization.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:money_mate/services/locales.dart';
-import 'package:money_mate/view_model/auth_view_model.dart';
+import 'package:money_mate/bloc/auth/auth_bloc.dart';
+import 'package:money_mate/bloc/auth/auth_event.dart';
+import 'package:money_mate/bloc/auth/auth_state.dart';
 import 'package:money_mate/widget/auth/forgot_pass.dart';
-import 'package:money_mate/widget/home/home.dart';
-import 'package:money_mate/main.dart';
-import 'package:money_mate/services/firestore_helper.dart';
 import 'package:money_mate/widget/auth/sign_up.dart';
-import 'package:provider/provider.dart';
 import 'package:rive/rive.dart' hide LinearGradient;
 import 'package:sign_in_button/sign_in_button.dart';
+import 'package:money_mate/main.dart';
 
-class login extends StatefulWidget {
-  const login({super.key});
+class Login extends StatefulWidget {
+  const Login({super.key});
 
   @override
-  State<login> createState() => _loginState();
+  State<Login> createState() => _LoginState();
 }
 
-class _loginState extends State<login> {
+class _LoginState extends State<Login> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final emailFocusNode = FocusNode();
+  final passwordFocusNode = FocusNode();
+
+  StateMachineController? stateController;
+  SMIInput<bool>? isChecking;
+  SMIInput<bool>? isHandsUp;
+  SMIInput<bool>? trigSuccess;
+  SMIInput<bool>? trigFail;
+  SMIInput<double>? numLook;
+
+  double scale = 1.0;
+
   @override
   void initState() {
     super.initState();
+    emailFocusNode.addListener(_emailFocus);
+    passwordFocusNode.addListener(_passwordFocus);
   }
 
   @override
   void dispose() {
+    emailFocusNode.removeListener(_emailFocus);
+    passwordFocusNode.removeListener(_passwordFocus);
+    emailController.dispose();
+    passwordController.dispose();
+    emailFocusNode.dispose();
+    passwordFocusNode.dispose();
     super.dispose();
+  }
+
+  void _emailFocus() {
+    isChecking?.change(emailFocusNode.hasFocus);
+  }
+
+  void _passwordFocus() {
+    isHandsUp?.change(passwordFocusNode.hasFocus);
+  }
+
+  void _onInitAnimation(Artboard artboard) {
+    stateController =
+        StateMachineController.fromArtboard(artboard, "Login Machine");
+    if (stateController == null) return;
+    artboard.addController(stateController!);
+    isChecking = stateController?.findInput("isChecking");
+    isHandsUp = stateController?.findInput("isHandsUp");
+    numLook = stateController?.findInput("numLook");
+    trigSuccess = stateController?.findInput("trigSuccess");
+    trigFail = stateController?.findInput("trigFail");
+  }
+
+  void _onChangedEmail(String value) {
+    isHandsUp?.change(false);
+    isChecking?.change(true);
+    numLook?.change(value.length.toDouble() * 5);
+  }
+
+  void _onChangedPassword(String value) {
+    isChecking?.change(false);
+    isHandsUp?.change(true);
   }
 
   @override
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      child: Consumer<auth_view_model>(
-        builder: (BuildContext context, auth_vm, Widget? child) {
-          return Scaffold(
-            backgroundColor: const Color(0xffD6E2EA),
-            appBar: AppBar(
-                backgroundColor: Colors.transparent,
-                automaticallyImplyLeading: false,
-                actions: [
-                  DropdownButton(
+      child: BlocListener<AuthBloc, AuthState>(
+        listener: (context, state) {
+          if (state.status == AuthStatus.success) {
+            isChecking?.change(false);
+            isHandsUp?.change(false);
+            trigSuccess?.change(true);
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => Main()));
+          } else if (state.status == AuthStatus.failure) {
+            isChecking?.change(false);
+            isHandsUp?.change(false);
+            trigFail?.change(true);
+          }
+        },
+        child: Scaffold(
+          backgroundColor: const Color(0xffD6E2EA),
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            automaticallyImplyLeading: false,
+            actions: [
+              BlocBuilder<AuthBloc, AuthState>(
+                buildWhen: (previous, current) =>
+                    previous.currentLocale != current.currentLocale,
+                builder: (context, state) {
+                  return DropdownButton<String>(
                     underline: Container(),
                     borderRadius: BorderRadius.circular(10),
-                    icon: const Icon(
-                      Icons.language,
-                      color: Colors.blue,
-                      size: 28,
-                    ),
+                    icon: const Icon(Icons.language,
+                        color: Colors.blue, size: 28),
                     padding: const EdgeInsets.all(14),
+                    value: state.currentLocale,
                     items: [
                       DropdownMenuItem(
-                        value: 'vi',
-                        alignment: AlignmentDirectional.center,
-                        child: Text(LocaleData.op_vi.getString(context)),
-                      ),
+                          value: 'vi',
+                          child: Text(LocaleData.op_vi.getString(context))),
                       DropdownMenuItem(
-                        value: 'en',
-                        alignment: AlignmentDirectional.center,
-                        child: Text(LocaleData.op_en.getString(context)),
-                      ),
+                          value: 'en',
+                          child: Text(LocaleData.op_en.getString(context))),
                       DropdownMenuItem(
-                        value: 'zh',
-                        alignment: AlignmentDirectional.center,
-                        child: Text(LocaleData.op_cn.getString(context)),
-                      ),
+                          value: 'zh',
+                          child: Text(LocaleData.op_cn.getString(context))),
                     ],
                     onChanged: (value) {
-                      auth_vm.set_locale(value);
+                      if (value != null) {
+                        context.read<AuthBloc>().add(LocaleChanged(value));
+                      }
                     },
-                  )
-                ]),
-            body: SingleChildScrollView(
-              child: SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 14, right: 14),
-                  child: Column(
-                    children: [
-                      SizedBox(
-                          height: 250,
-                          child: RiveAnimation.asset(
-                            'animations/animated_login_character.riv',
-                            stateMachines: ["Login Machine"],
-                            onInit: (artboard) {
-                              auth_vm.onInitAnimation(artboard);
-                            },
-                          )),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 15, right: 15),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.white),
-                          child: Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: Column(
-                              children: [
-                                TextField(
-                                  keyboardType: TextInputType.emailAddress,
-                                  focusNode: auth_vm.email_focus_node,
-                                  controller: auth_vm.email_controller,
-                                  onChanged: (value) {
-                                    auth_vm.onChangedEmail(value);
-                                  },
-                                  decoration: InputDecoration(
-                                      label: Text(
-                                          LocaleData.email.getString(context)),
-                                      hintText: 'example@gmail.com',
-                                      prefixIcon: const Icon(
-                                        Icons.email,
-                                      ),
-                                      border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10))),
+                  );
+                },
+              )
+            ],
+          ),
+          body: SingleChildScrollView(
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 250,
+                      child: RiveAnimation.asset(
+                        'animations/animated_login_character.riv',
+                        stateMachines: const ["Login Machine"],
+                        onInit: _onInitAnimation,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.white,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Column(
+                            children: [
+                              TextField(
+                                keyboardType: TextInputType.emailAddress,
+                                focusNode: emailFocusNode,
+                                controller: emailController,
+                                onChanged: _onChangedEmail,
+                                decoration: InputDecoration(
+                                  label:
+                                      Text(LocaleData.email.getString(context)),
+                                  hintText: 'example@gmail.com',
+                                  prefixIcon: const Icon(Icons.email),
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10)),
                                 ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                TextField(
-                                  controller: auth_vm.password_controller,
-                                  obscureText: auth_vm.is_show! ? true : false,
-                                  focusNode: auth_vm.password_focus_node,
-                                  keyboardType: TextInputType.visiblePassword,
-                                  onChanged: (value) {
-                                    auth_vm.onChangedPassword(value);
-                                  },
-                                  decoration: InputDecoration(
+                              ),
+                              const SizedBox(height: 10),
+                              BlocBuilder<AuthBloc, AuthState>(
+                                buildWhen: (previous, current) =>
+                                    previous.isShow != current.isShow,
+                                builder: (context, state) {
+                                  return TextField(
+                                    controller: passwordController,
+                                    obscureText: state.isShow,
+                                    focusNode: passwordFocusNode,
+                                    keyboardType: TextInputType.visiblePassword,
+                                    onChanged: _onChangedPassword,
+                                    decoration: InputDecoration(
                                       label: Text(LocaleData.password
                                           .getString(context)),
-                                      prefixIcon: const Icon(
-                                        Icons.lock,
-                                      ),
+                                      prefixIcon: const Icon(Icons.lock),
                                       suffixIcon: IconButton(
                                         onPressed: () {
-                                          auth_vm.onPressedIsShow();
+                                          context
+                                              .read<AuthBloc>()
+                                              .add(TogglePasswordVisibility());
                                         },
-                                        icon: const Icon(Icons.remove_red_eye),
-                                        color: auth_vm.is_show!
-                                            ? Colors.black
-                                            : Colors.blue,
+                                        icon: Icon(
+                                          Icons.remove_red_eye,
+                                          color: state.isShow
+                                              ? Colors.black
+                                              : Colors.blue,
+                                        ),
                                       ),
                                       border: OutlineInputBorder(
                                           borderRadius:
-                                              BorderRadius.circular(10))),
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    TextButton(
-                                      child: Text(
-                                        LocaleData.forgot_pass
-                                            .getString(context),
-                                        style: const TextStyle(
-                                            decoration:
-                                                TextDecoration.underline),
-                                      ),
-                                      onPressed: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (_) =>
-                                                    const forgot_pass()));
-                                      },
+                                              BorderRadius.circular(10)),
                                     ),
-                                  ],
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    auth_vm.login(context);
+                                  );
+                                },
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  TextButton(
+                                    child: Text(
+                                      LocaleData.forgot_pass.getString(context),
+                                      style: const TextStyle(
+                                          decoration: TextDecoration.underline),
+                                    ),
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (_) =>
+                                                  const ForgotPass()));
+                                    },
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              GestureDetector(
+                                onTap: () {
+                                  context.read<AuthBloc>().add(LoginRequested(
+                                        emailController.text,
+                                        passwordController.text,
+                                      ));
+                                  setState(() {
+                                    scale = 1.03;
+                                  });
+                                  Future.delayed(
+                                      const Duration(milliseconds: 200), () {
                                     setState(() {
-                                      auth_vm.scale = 1.03;
+                                      scale = 1.0;
                                     });
-                                    Future.delayed(
-                                        const Duration(milliseconds: 200), () {
-                                      setState(() {
-                                        auth_vm.scale = 1.0;
-                                      });
-                                    });
-                                  },
-                                  child: AnimatedScale(
-                                    duration: const Duration(milliseconds: 200),
-                                    scale: auth_vm.scale,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.blue,
-                                        gradient: const LinearGradient(
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                          colors: [
-                                            Colors.blueAccent,
-                                            Colors.orangeAccent
-                                          ],
-                                        ),
-                                        borderRadius: BorderRadius.circular(10),
+                                  });
+                                },
+                                child: AnimatedScale(
+                                  duration: const Duration(milliseconds: 200),
+                                  scale: scale,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.blue,
+                                      gradient: const LinearGradient(
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                        colors: [
+                                          Colors.blueAccent,
+                                          Colors.orangeAccent
+                                        ],
                                       ),
-                                      height: 50,
-                                      width: 350,
-                                      child: Center(
-                                        child: Text(
-                                          LocaleData.login.getString(context),
-                                          style: const TextStyle(
-                                              fontSize: 18,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w500),
-                                        ),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    height: 50,
+                                    width: double.infinity,
+                                    child: Center(
+                                      child: BlocBuilder<AuthBloc, AuthState>(
+                                        builder: (context, state) {
+                                          if (state.status ==
+                                              AuthStatus.loading) {
+                                            return const CircularProgressIndicator(
+                                                color: Colors.white);
+                                          }
+                                          return Text(
+                                            LocaleData.login.getString(context),
+                                            style: const TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w500),
+                                          );
+                                        },
                                       ),
                                     ),
                                   ),
                                 ),
-                                Row(
-                                  children: [
-                                    Text(LocaleData.dont_have_acc
-                                        .getString(context)),
-                                    TextButton(
-                                      child: Text(
-                                        LocaleData.sign_up.getString(context),
-                                        style: const TextStyle(
-                                            color: Colors.blue,
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 15),
-                                      ),
-                                      onPressed: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (_) =>
-                                                    const sign_up_page()));
-                                      },
-                                    )
-                                  ],
-                                ),
-                                Center(
-                                  child: Text(
-                                      LocaleData.or_sign_in.getString(context)),
-                                ),
-                                SignInButton(
-                                  Buttons.google,
-                                  text:
-                                      LocaleData.sign_in_gg.getString(context),
-                                  onPressed: () {
-                                    auth_vm.login_google(context);
-                                  },
-                                ),
-                                // SignInButton(
-                                //   Buttons.facebook,
-                                //   text: 'Sign up with Facebook',
-                                //   onPressed: () {
-                                //     login_facebook();
-                                //   },
-                                // )
-                              ],
-                            ),
+                              ),
+                              Row(
+                                children: [
+                                  Text(LocaleData.dont_have_acc
+                                      .getString(context)),
+                                  TextButton(
+                                    child: Text(
+                                      LocaleData.sign_up.getString(context),
+                                      style: const TextStyle(
+                                          color: Colors.blue,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 15),
+                                    ),
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (_) =>
+                                                  const SignUpPage()));
+                                    },
+                                  )
+                                ],
+                              ),
+                              Center(
+                                  child: Text(LocaleData.or_sign_in
+                                      .getString(context))),
+                              SignInButton(
+                                Buttons.google,
+                                text: LocaleData.sign_in_gg.getString(context),
+                                onPressed: () {
+                                  // context.read<AuthBloc>().add(GoogleLoginRequested());
+                                },
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }

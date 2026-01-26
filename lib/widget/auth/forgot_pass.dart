@@ -1,71 +1,79 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localization/flutter_localization.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:money_mate/services/firestore_helper.dart';
 import 'package:money_mate/services/locales.dart';
+import 'package:money_mate/bloc/auth/auth_bloc.dart';
+import 'package:money_mate/bloc/auth/auth_event.dart';
+import 'package:money_mate/bloc/auth/auth_state.dart';
 
-class forgot_pass extends StatefulWidget {
-  const forgot_pass({super.key});
+class ForgotPass extends StatefulWidget {
+  const ForgotPass({super.key});
 
   @override
-  _forgot_passState createState() => _forgot_passState();
+  _ForgotPassState createState() => _ForgotPassState();
 }
 
-class _forgot_passState extends State<forgot_pass> {
-  final db_helper = firestore_helper();
-  final forgot_email = TextEditingController();
+class _ForgotPassState extends State<ForgotPass> {
+  final _emailController = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Forgot your password')),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              TextField(
-                decoration: InputDecoration(
-                    labelText: LocaleData.email.getString(context),
-                    prefixIcon: const Icon(Icons.email),
-                    hintText: 'example@gmail.com'),
-                controller: forgot_email,
-                keyboardType: TextInputType.emailAddress,
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  send_request();
-                },
-                child: Text('Send request'),
-              ),
-            ],
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state.status == AuthStatus.success) {
+          Navigator.pop(context);
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(title: const Text('Forgot your password')),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                TextField(
+                  decoration: InputDecoration(
+                      labelText: LocaleData.email.getString(context),
+                      prefixIcon: const Icon(Icons.email),
+                      hintText: 'example@gmail.com'),
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                ),
+                const SizedBox(height: 20),
+                BlocBuilder<AuthBloc, AuthState>(
+                  builder: (context, state) {
+                    return ElevatedButton(
+                      onPressed: state.status == AuthStatus.loading
+                          ? null
+                          : () {
+                              if (_emailController.text.isNotEmpty) {
+                                context.read<AuthBloc>().add(
+                                    ForgotPasswordRequested(
+                                        _emailController.text));
+                              }
+                            },
+                      child: state.status == AuthStatus.loading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2))
+                          : const Text('Send request'),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
-  }
-
-  Future<void> send_request() async {
-    try {
-      await FirebaseAuth.instance
-          .sendPasswordResetEmail(email: forgot_email.text)
-          .then((value) => Navigator.pop(context));
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        Fluttertoast.showToast(
-          msg: LocaleData.toast_user_not_exist.getString(context),
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
-      }
-    }
   }
 }

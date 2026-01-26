@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:money_mate/services/locales.dart';
-import 'package:money_mate/widget/setting/advance_setting/e-wallet/e-wallet.dart';
 import 'package:money_mate/widget/setting/advance_setting/fixed_in_ex/setup_in_ex_regular.dart';
 import 'package:money_mate/widget/setting/advance_setting/limit_in_ex/setup_in_ex_limit.dart';
 
-class advance_setting extends StatelessWidget {
-  const advance_setting({super.key});
+class AdvanceSetting extends StatelessWidget {
+  const AdvanceSetting({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +22,7 @@ class advance_setting extends StatelessWidget {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (builder) => setup_in_ex_regular()));
+                          builder: (builder) => SetupInExRegular()));
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
@@ -71,7 +70,7 @@ class advance_setting extends StatelessWidget {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (builder) => setup_in_ex_limit()));
+                          builder: (builder) => SetupInExLimit()));
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),

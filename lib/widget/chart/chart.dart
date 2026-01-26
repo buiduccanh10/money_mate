@@ -1,40 +1,34 @@
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:money_mate/services/locales.dart';
+import 'package:money_mate/bloc/chart/chart_cubit.dart';
+import 'package:money_mate/bloc/chart/chart_state.dart';
 import 'package:money_mate/widget/chart/chart_widget.dart';
 
-class chart extends StatefulWidget {
-  const chart({super.key});
+class Chart extends StatefulWidget {
+  const Chart({super.key});
 
   @override
-  State<chart> createState() => _chartState();
+  State<Chart> createState() => _ChartState();
 }
 
-class _chartState extends State<chart> {
-  int selected_index = 0;
-  bool? is_monthly;
-
-  @override
-  void initState() {
-    is_monthly = true;
-    super.initState();
-  }
-
+class _ChartState extends State<Chart> {
   @override
   Widget build(BuildContext context) {
-    bool is_dark = Theme.of(context).brightness == Brightness.dark;
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       body: Stack(children: [
-        chart_widget(is_monthly: is_monthly!),
+        const ChartWidget(),
         Container(
           height: 100,
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: is_dark
+              colors: isDark
                   ? [
                       const Color.fromARGB(255, 0, 112, 204),
                       const Color.fromARGB(255, 203, 122, 0)
@@ -51,7 +45,7 @@ class _chartState extends State<chart> {
               Container(
                 height: 50,
                 decoration: BoxDecoration(
-                  boxShadow: is_dark
+                  boxShadow: isDark
                       ? null
                       : [
                           BoxShadow(
@@ -62,62 +56,59 @@ class _chartState extends State<chart> {
                           ),
                         ],
                 ),
-                child: CustomSlidingSegmentedControl<int>(
-                  initialValue: 1,
-                  fixedWidth: 125,
-                  height: 50,
-                  children: {
-                    1: Text(
-                      LocaleData.switch_monthly.getString(context),
-                      style: TextStyle(
-                          color: is_monthly! ? Colors.black : Colors.white,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16),
-                    ),
-                    2: Text(
-                      LocaleData.switch_yearly.getString(context),
-                      style: TextStyle(
-                          color: is_monthly! ? Colors.white : Colors.black,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16),
-                    ),
-                  },
-                  decoration: BoxDecoration(
-                    color: CupertinoColors.lightBackgroundGray,
-                    borderRadius: BorderRadius.circular(8),
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [Colors.orange[400]!, Colors.blue[400]!],
-                    ),
-                  ),
-                  thumbDecoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(6),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(.3),
-                        blurRadius: 4.0,
-                        spreadRadius: 1.0,
-                        offset: const Offset(
-                          0.0,
-                          2.0,
+                child: BlocBuilder<ChartCubit, ChartState>(
+                  buildWhen: (previous, current) =>
+                      previous.isMonthly != current.isMonthly,
+                  builder: (context, state) {
+                    return CustomSlidingSegmentedControl<int>(
+                      initialValue: state.isMonthly ? 1 : 2,
+                      fixedWidth: 125,
+                      height: 50,
+                      children: {
+                        1: Text(
+                          LocaleData.switch_monthly.getString(context),
+                          style: TextStyle(
+                              color:
+                                  state.isMonthly ? Colors.black : Colors.white,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16),
+                        ),
+                        2: Text(
+                          LocaleData.switch_yearly.getString(context),
+                          style: TextStyle(
+                              color: !state.isMonthly
+                                  ? Colors.black
+                                  : Colors.white,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16),
+                        ),
+                      },
+                      decoration: BoxDecoration(
+                        color: CupertinoColors.lightBackgroundGray,
+                        borderRadius: BorderRadius.circular(8),
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [Colors.orange[400]!, Colors.blue[400]!],
                         ),
                       ),
-                    ],
-                  ),
-                  curve: Curves.ease,
-                  onValueChanged: (value) {
-                    if (value == 1) {
-                      setState(() {
-                        is_monthly = true;
-                      });
-                    }
-                    if (value == 2) {
-                      setState(() {
-                        is_monthly = false;
-                      });
-                    }
+                      thumbDecoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(6),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(.3),
+                            blurRadius: 4.0,
+                            spreadRadius: 1.0,
+                            offset: const Offset(0.0, 2.0),
+                          ),
+                        ],
+                      ),
+                      curve: Curves.ease,
+                      onValueChanged: (value) {
+                        context.read<ChartCubit>().toggleView(value == 1);
+                      },
+                    );
                   },
                 ),
               ),

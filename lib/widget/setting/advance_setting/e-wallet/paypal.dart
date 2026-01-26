@@ -89,7 +89,7 @@
 //                             LocaleData.paypal_account_holder.getString(context),
 //                           ),
 //                           labelStyle:
-//                               TextStyle(color: Colors.grey.withOpacity(1)),
+//                               TextStyle(color: Colors.grey.withValues(alpha: 1)),
 //                           floatingLabelStyle: TextStyle(
 //                               color: is_dark ? Colors.white : Colors.black),
 //                           prefixIcon: const Icon(Icons.person),
@@ -118,7 +118,7 @@
 //                                 .getString(context),
 //                           ),
 //                           labelStyle:
-//                               TextStyle(color: Colors.grey.withOpacity(1)),
+//                               TextStyle(color: Colors.grey.withValues(alpha: 1)),
 //                           floatingLabelStyle: TextStyle(
 //                               color: is_dark ? Colors.white : Colors.black),
 //                           prefixIcon: const Icon(Icons.description),
@@ -158,7 +158,7 @@
 //                             LocaleData.input_money.getString(context),
 //                           ),
 //                           labelStyle:
-//                               TextStyle(color: Colors.grey.withOpacity(1)),
+//                               TextStyle(color: Colors.grey.withValues(alpha: 1)),
 //                           floatingLabelStyle: TextStyle(
 //                               color: is_dark ? Colors.white : Colors.black),
 //                           prefixIcon: const Icon(Icons.attach_money),
@@ -196,7 +196,7 @@
 //                                             .primaries[Random().nextInt(
 //                                                 Colors.primaries.length)]
 //                                             .shade100
-//                                             .withOpacity(0.35),
+//                                             .withValues(alpha: 0.35),
 //                                         borderRadius:
 //                                             BorderRadius.circular(10)),
 //                                     padding: const EdgeInsets.all(8),
@@ -218,7 +218,7 @@
 //                                             .primaries[Random().nextInt(
 //                                                 Colors.primaries.length)]
 //                                             .shade100
-//                                             .withOpacity(0.35),
+//                                             .withValues(alpha: 0.35),
 //                                         borderRadius:
 //                                             BorderRadius.circular(10)),
 //                                     padding: const EdgeInsets.all(8),
