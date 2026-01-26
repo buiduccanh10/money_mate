@@ -12,7 +12,7 @@
 //   Widget build(BuildContext context) {
 //     return Scaffold(
 //       appBar: AppBar(
-//         title: Text(LocaleData.pay_by_e_wallet_title.getString(context)),
+//         title: Text(LocaleData.payByEWalletTitle.getString(context)),
 //       ),
 //       body: SingleChildScrollView(
 //         child: Column(

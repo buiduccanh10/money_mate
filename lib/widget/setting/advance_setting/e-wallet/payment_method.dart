@@ -10,7 +10,7 @@
 //   Widget build(BuildContext context) {
 //     return Scaffold(
 //       appBar: AppBar(
-//         title: Text(LocaleData.payment_method_title.getString(context)),
+//         title: Text(LocaleData.paymentMethodTitle.getString(context)),
 //       ),
 //       body: SingleChildScrollView(
 //         child: Column(
@@ -36,7 +36,7 @@
 //             //                 crossAxisAlignment: CrossAxisAlignment.start,
 //             //                 children: [
 //             //                   Text(
-//             //                     LocaleData.payment_method_qr.getString(context),
+//             //                     LocaleData.paymentMethodQr.getString(context),
 //             //                     style: const TextStyle(
 //             //                         fontWeight: FontWeight.w500, fontSize: 16),
 //             //                   ),
@@ -68,7 +68,7 @@
 //                             crossAxisAlignment: CrossAxisAlignment.start,
 //                             children: [
 //                               Text(
-//                                 LocaleData.payment_method_new
+//                                 LocaleData.paymentMethodNew
 //                                     .getString(context),
 //                                 style: const TextStyle(
 //                                     fontWeight: FontWeight.w500, fontSize: 16),

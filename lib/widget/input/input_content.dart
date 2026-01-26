@@ -105,7 +105,7 @@ class _InputContentState extends State<InputContent> {
                             borderSide: const BorderSide(color: Colors.amber),
                             borderRadius: BorderRadius.circular(10)),
                         label: Text(
-                            LocaleData.input_description.getString(context)),
+                            LocaleData.inputDescription.getString(context)),
                         labelStyle: const TextStyle(color: Colors.grey),
                         floatingLabelStyle: TextStyle(
                             color: isDark ? Colors.white : Colors.black),
@@ -121,7 +121,7 @@ class _InputContentState extends State<InputContent> {
                     inputFormatters: locale == 'vi'
                         ? [
                             FilteringTextInputFormatter.digitsOnly,
-                            currency_format()
+                            CurrencyFormat()
                           ]
                         : [],
                     onTapOutside: (_) => FocusScope.of(context).unfocus(),
@@ -134,7 +134,7 @@ class _InputContentState extends State<InputContent> {
                         focusedBorder: OutlineInputBorder(
                             borderSide: const BorderSide(color: Colors.amber),
                             borderRadius: BorderRadius.circular(10)),
-                        label: Text(LocaleData.input_money.getString(context)),
+                        label: Text(LocaleData.inputMoney.getString(context)),
                         labelStyle: const TextStyle(color: Colors.grey),
                         floatingLabelStyle: TextStyle(
                             color: isDark ? Colors.white : Colors.black),
@@ -155,8 +155,8 @@ class _InputContentState extends State<InputContent> {
                 children: [
                   Text(
                     widget.isIncome
-                        ? LocaleData.income_category.getString(context)
-                        : LocaleData.expense_category.getString(context),
+                        ? LocaleData.incomeCategory.getString(context)
+                        : LocaleData.expenseCategory.getString(context),
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.w700),
                   ),
@@ -223,7 +223,7 @@ class _InputContentState extends State<InputContent> {
                   color: Colors
                       .primaries[Random().nextInt(Colors.primaries.length)]
                       .shade100
-                      .withOpacity(0.35),
+                      .withValues(alpha: 0.35),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Column(
@@ -291,7 +291,7 @@ class _InputContentState extends State<InputContent> {
               const Icon(Icons.add, size: 35, color: Colors.white),
               const SizedBox(width: 5),
               Text(
-                LocaleData.input_save.getString(context),
+                LocaleData.inputVave.getString(context),
                 style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w500,

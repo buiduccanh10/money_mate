@@ -48,7 +48,7 @@ class _SearchState extends State<Search> {
                     context.read<SearchCubit>().searchTransactions(query);
                   });
                 },
-                hintText: LocaleData.type_any_to_search.getString(context),
+                hintText: LocaleData.typeAnyToSearch.getString(context),
                 leading: const Icon(Icons.search, size: 28),
               ),
               const SizedBox(height: 20),
@@ -82,7 +82,7 @@ class _SearchState extends State<Search> {
                   color: Colors
                       .primaries[Random().nextInt(Colors.primaries.length)]
                       .shade100
-                      .withOpacity(0.35),
+                      .withValues(alpha: 0.35),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 padding: const EdgeInsets.all(8),
@@ -137,7 +137,7 @@ class _SearchState extends State<Search> {
                       },
                       foregroundColor: Colors.blue,
                       icon: Icons.edit,
-                      label: LocaleData.slide_edit.getString(context),
+                      label: LocaleData.slideEdit.getString(context),
                     ),
                     SlidableAction(
                       backgroundColor: Colors.transparent,
@@ -146,7 +146,7 @@ class _SearchState extends State<Search> {
                       },
                       foregroundColor: Colors.red,
                       icon: Icons.delete,
-                      label: LocaleData.slide_delete.getString(context),
+                      label: LocaleData.slideDelete.getString(context),
                     ),
                   ],
                 ),
@@ -216,7 +216,7 @@ class _SearchState extends State<Search> {
             ? null
             : [
                 BoxShadow(
-                    color: Colors.grey.withOpacity(0.3),
+                    color: Colors.grey.withValues(alpha: 0.3),
                     spreadRadius: 2,
                     blurRadius: 7,
                     offset: const Offset(-5, 5))
@@ -226,7 +226,7 @@ class _SearchState extends State<Search> {
       child: CircleAvatar(
         backgroundColor: Colors
             .primaries[Random().nextInt(Colors.primaries.length)].shade100
-            .withOpacity(0.35),
+            .withValues(alpha: 0.35),
         radius: 28,
         child: Text(icon, style: const TextStyle(fontSize: 38)),
       ),

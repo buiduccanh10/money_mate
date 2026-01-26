@@ -33,7 +33,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<void> updateDarkMode(bool isDark) async {
     try {
-      await _dio.patch('/users/me/settings', data: {'is_dark': isDark});
+      await _dio.patch('/users/me/settings', data: {'isDark': isDark});
     } catch (e) {
       rethrow;
     }

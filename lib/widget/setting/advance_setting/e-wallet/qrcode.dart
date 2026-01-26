@@ -32,7 +32,7 @@
 //       builder: (BuildContext context, setting_vm, Widget? child) {
 //         return Scaffold(
 //           appBar: AppBar(
-//             title: Text(LocaleData.payment_method_qr.getString(context)),
+//             title: Text(LocaleData.paymentMethodQr.getString(context)),
 //             actions: [
 //               IconButton(
 //                   onPressed: () {

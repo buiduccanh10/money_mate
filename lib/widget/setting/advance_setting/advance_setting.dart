@@ -11,7 +11,7 @@ class AdvanceSetting extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar:
-          AppBar(title: Text(LocaleData.advanced_settings.getString(context))),
+          AppBar(title: Text(LocaleData.advancedSettings.getString(context))),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -42,14 +42,14 @@ class AdvanceSetting extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                LocaleData.fixed_in_ex.getString(context),
+                                LocaleData.fixedInEx.getString(context),
                                 style: const TextStyle(
                                     fontWeight: FontWeight.w500, fontSize: 16),
                               ),
                               SizedBox(
                                 width: 300,
                                 child: Text(
-                                  LocaleData.fixed_in_ex_des.getString(context),
+                                  LocaleData.fixedInExDes.getString(context),
                                   style: const TextStyle(color: Colors.grey),
                                 ),
                               ),
@@ -90,16 +90,14 @@ class AdvanceSetting extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                LocaleData.setting_limit_title
-                                    .getString(context),
+                                LocaleData.settingLimitTitle.getString(context),
                                 style: const TextStyle(
                                     fontWeight: FontWeight.w500, fontSize: 16),
                               ),
                               SizedBox(
                                 width: 300,
                                 child: Text(
-                                  LocaleData.setting_limit_des
-                                      .getString(context),
+                                  LocaleData.settingLimitDes.getString(context),
                                   style: const TextStyle(color: Colors.grey),
                                 ),
                               ),
@@ -138,14 +136,14 @@ class AdvanceSetting extends StatelessWidget {
             //                 crossAxisAlignment: CrossAxisAlignment.start,
             //                 children: [
             //                   Text(
-            //                     LocaleData.pay_by_e_wallet.getString(context),
+            //                     LocaleData.payByEWallet.getString(context),
             //                     style: const TextStyle(
             //                         fontWeight: FontWeight.w500, fontSize: 16),
             //                   ),
             //                   SizedBox(
             //                     width: 300,
             //                     child: Text(
-            //                       LocaleData.pay_by_e_wallet_des
+            //                       LocaleData.payByEWalletDes
             //                           .getString(context),
             //                       style: const TextStyle(color: Colors.grey),
             //                     ),

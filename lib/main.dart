@@ -31,6 +31,7 @@ import 'package:money_mate/widget/setting/setting.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await FlutterLocalization.instance.ensureInitialized();
   await NotificationService.initializeNotification();
   runApp(const MyApp());
 }
@@ -48,7 +49,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    localization.init(mapLocales: LOCALES, initLanguageCode: 'en');
+    localization.init(mapLocales: locales, initLanguageCode: 'en');
     localization.onTranslatedLanguage = (_) => setState(() {});
   }
 
@@ -186,8 +187,8 @@ class _MainState extends State<Main> with WidgetsBindingObserver {
             boxShadow: [
               BoxShadow(
                 color: isDark
-                    ? Colors.white.withOpacity(0.1)
-                    : Colors.black.withOpacity(0.2),
+                    ? Colors.white.withValues(alpha: 0.1)
+                    : Colors.black.withValues(alpha: 0.2),
                 spreadRadius: 7,
                 blurRadius: 8,
                 offset: const Offset(0, 7),

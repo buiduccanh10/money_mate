@@ -10,7 +10,7 @@ class ForgotPass extends StatefulWidget {
   const ForgotPass({super.key});
 
   @override
-  _ForgotPassState createState() => _ForgotPassState();
+  State<ForgotPass> createState() => _ForgotPassState();
 }
 
 class _ForgotPassState extends State<ForgotPass> {

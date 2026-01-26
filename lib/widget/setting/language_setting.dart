@@ -14,36 +14,36 @@ class LanguageSetting extends StatelessWidget {
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
-            title: Text(LocaleData.language_appbar.getString(context)),
+            title: Text(LocaleData.languageAppbar.getString(context)),
           ),
           body: Column(
             children: [
-              RadioListTile<String>(
-                title: Text(LocaleData.op_vi.getString(context)),
-                value: "vi",
+              RadioGroup<String>(
                 groupValue: state.language,
                 onChanged: (value) {
-                  if (value != null)
+                  if (value != null) {
                     context.read<SettingCubit>().changeLanguage(value);
+                  }
                 },
+                child: Text(LocaleData.opVi.getString(context)),
               ),
-              RadioListTile<String>(
-                title: Text(LocaleData.op_en.getString(context)),
-                value: "en",
+              RadioGroup<String>(
                 groupValue: state.language,
                 onChanged: (value) {
-                  if (value != null)
+                  if (value != null) {
                     context.read<SettingCubit>().changeLanguage(value);
+                  }
                 },
+                child: Text(LocaleData.opEn.getString(context)),
               ),
-              RadioListTile<String>(
-                title: Text(LocaleData.op_cn.getString(context)),
-                value: "zh",
+              RadioGroup<String>(
                 groupValue: state.language,
                 onChanged: (value) {
-                  if (value != null)
+                  if (value != null) {
                     context.read<SettingCubit>().changeLanguage(value);
+                  }
                 },
+                child: Text(LocaleData.opCn.getString(context)),
               ),
             ],
           ),

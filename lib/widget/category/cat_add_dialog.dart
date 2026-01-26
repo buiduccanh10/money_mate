@@ -30,7 +30,7 @@ class _CatAddDialogState extends State<CatAddDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(
-        LocaleData.add_cat_dialog_title.getString(context),
+        LocaleData.addCatDialogTitle.getString(context),
         style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
       ),
       scrollable: true,
@@ -50,7 +50,7 @@ class _CatAddDialogState extends State<CatAddDialog> {
                 focusedBorder: OutlineInputBorder(
                     borderSide: const BorderSide(color: Colors.blue),
                     borderRadius: BorderRadius.circular(10)),
-                label: Text(LocaleData.choose_an_icon.getString(context)),
+                label: Text(LocaleData.chooseAnIcon.getString(context)),
                 prefixIcon:
                     const Icon(Icons.insert_emoticon, color: Colors.orange),
               ),
@@ -66,7 +66,7 @@ class _CatAddDialogState extends State<CatAddDialog> {
                 focusedBorder: OutlineInputBorder(
                     borderSide: const BorderSide(color: Colors.blue),
                     borderRadius: BorderRadius.circular(10)),
-                label: Text(LocaleData.category_name.getString(context)),
+                label: Text(LocaleData.categoryName.getString(context)),
                 prefixIcon:
                     const Icon(Icons.new_label, color: Colors.blueAccent),
               ),
@@ -86,7 +86,7 @@ class _CatAddDialogState extends State<CatAddDialog> {
               backgroundColor: Colors.green,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10))),
-          child: Text(LocaleData.input_save.getString(context),
+          child: Text(LocaleData.inputVave.getString(context),
               style: const TextStyle(color: Colors.white)),
         ),
       ],
@@ -96,10 +96,10 @@ class _CatAddDialogState extends State<CatAddDialog> {
   void _onSave() {
     setState(() {
       _iconError = _iconController.text.isEmpty
-          ? LocaleData.cat_icon_validator.getString(context)
+          ? LocaleData.catIconValidator.getString(context)
           : null;
       _nameError = _nameController.text.isEmpty
-          ? LocaleData.cat_name_validator.getString(context)
+          ? LocaleData.catNameValidator.getString(context)
           : null;
     });
 

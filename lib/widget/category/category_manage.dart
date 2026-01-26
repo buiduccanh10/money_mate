@@ -60,7 +60,7 @@ class _CategoryManageState extends State<CategoryManage> {
 
               if (categories.isEmpty) {
                 return Center(
-                    child: Text(LocaleData.no_cat_yet.getString(context)));
+                    child: Text(LocaleData.noCatYet.getString(context)));
               }
 
               return ListView.builder(
@@ -100,8 +100,8 @@ class _CategoryManageState extends State<CategoryManage> {
             const BackButton(color: Colors.white),
             Text(
               widget.isIncome
-                  ? LocaleData.in_category_manage_appbar.getString(context)
-                  : LocaleData.ex_category_manage_appbar.getString(context),
+                  ? LocaleData.inCategoryManageAppbar.getString(context)
+                  : LocaleData.exCategoryManageAppbar.getString(context),
               style: const TextStyle(color: Colors.white, fontSize: 18),
             ),
             IconButton(
@@ -125,7 +125,7 @@ class _CategoryManageState extends State<CategoryManage> {
             onPressed: (context) => _showUpdateDialog(catItem),
             foregroundColor: Colors.blue,
             icon: Icons.edit,
-            label: LocaleData.slide_edit.getString(context),
+            label: LocaleData.slideEdit.getString(context),
           ),
           SlidableAction(
             backgroundColor: Colors.transparent,
@@ -133,7 +133,7 @@ class _CategoryManageState extends State<CategoryManage> {
                 context.read<CategoryCubit>().deleteCategory(catItem['catId']),
             foregroundColor: Colors.red,
             icon: Icons.delete,
-            label: LocaleData.slide_delete.getString(context),
+            label: LocaleData.slideDelete.getString(context),
           ),
         ],
       ),
@@ -158,8 +158,8 @@ class _CategoryManageState extends State<CategoryManage> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(widget.isIncome
-            ? LocaleData.in_delete_all_title.getString(context)
-            : LocaleData.ex_delete_all_title.getString(context)),
+            ? LocaleData.inDeleteAllTitle.getString(context)
+            : LocaleData.exDeleteAllTitle.getString(context)),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context),

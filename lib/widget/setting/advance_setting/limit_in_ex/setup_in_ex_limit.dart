@@ -31,7 +31,7 @@ class _SetupInExLimitState extends State<SetupInExLimit> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(LocaleData.setting_limit_title.getString(context)),
+        title: Text(LocaleData.settingLimitTitle.getString(context)),
         actions: [
           IconButton(
               onPressed: () => _confirmRestoreAll(context),
@@ -48,7 +48,7 @@ class _SetupInExLimitState extends State<SetupInExLimit> {
 
           if (categories.isEmpty) {
             return Center(
-                child: Text(LocaleData.no_set_up_yet.getString(context)));
+                child: Text(LocaleData.noSetUpYet.getString(context)));
           }
 
           return ListView.builder(
@@ -77,14 +77,14 @@ class _SetupInExLimitState extends State<SetupInExLimit> {
             onPressed: (_) => _showLimitDialog(cat),
             foregroundColor: Colors.blue,
             icon: Icons.edit,
-            label: LocaleData.slide_edit.getString(context),
+            label: LocaleData.slideEdit.getString(context),
           ),
           SlidableAction(
             onPressed: (_) =>
                 context.read<CategoryCubit>().restoreLimit(cat['catId']),
             foregroundColor: Colors.red,
             icon: Icons.restore,
-            label: LocaleData.restore_limit.getString(context),
+            label: LocaleData.restoreLimit.getString(context),
           ),
         ],
       ),
@@ -93,14 +93,14 @@ class _SetupInExLimitState extends State<SetupInExLimit> {
         leading: CircleAvatar(
           backgroundColor: Colors
               .primaries[Random().nextInt(Colors.primaries.length)]
-              .withOpacity(0.2),
+              .withValues(alpha: 0.2),
           child:
               Text(cat['icon'] ?? '💰', style: const TextStyle(fontSize: 24)),
         ),
         title: Text(cat['name'] ?? '',
             style: const TextStyle(fontWeight: FontWeight.bold)),
         trailing: Text(
-          limit > 0 ? formatMoney : LocaleData.no_limit.getString(context),
+          limit > 0 ? formatMoney : LocaleData.noLimit.getString(context),
           style:
               const TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
         ),
@@ -123,7 +123,7 @@ class _SetupInExLimitState extends State<SetupInExLimit> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text(LocaleData.restore_limit.getString(context)),
+        title: Text(LocaleData.restoreLimit.getString(context)),
         content: Text(LocaleData.confirm.getString(context)),
         actions: [
           TextButton(

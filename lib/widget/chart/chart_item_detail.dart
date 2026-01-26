@@ -82,8 +82,8 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
                     ? const Center(child: CircularProgressIndicator())
                     : data.isEmpty
                         ? Center(
-                            child: Text(
-                                LocaleData.no_input_data.getString(context)))
+                            child:
+                                Text(LocaleData.noInputData.getString(context)))
                         : Column(
                             children: [
                               _buildChart(sortedDates, dateGroup, locale),
@@ -114,7 +114,7 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
       bool isDark, List<Map<String, dynamic>> data, NumberFormat formatter) {
     String title = data.isNotEmpty
         ? data.first['name']
-        : LocaleData.no_input_data.getString(context);
+        : LocaleData.noInputData.getString(context);
     if (widget.over > 0) {
       title +=
           ': ${LocaleData.over.getString(context)} ${formatter.format(widget.over)}';
@@ -211,7 +211,7 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
         leading: CircleAvatar(
           backgroundColor: Colors
               .primaries[Random().nextInt(Colors.primaries.length)]
-              .withOpacity(0.2),
+              .withValues(alpha: 0.2),
           child: Text(tx['icon'] ?? '💰'),
         ),
         title: Text(tx['description'] ?? '',

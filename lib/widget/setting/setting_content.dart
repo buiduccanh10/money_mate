@@ -38,7 +38,7 @@ class SettingContent extends StatelessWidget {
                 context,
                 icon: Icons.settings_suggest,
                 iconColor: isDark ? Colors.brown[100]! : Colors.brown,
-                label: LocaleData.advanced_settings.getString(context),
+                label: LocaleData.advancedSettings.getString(context),
                 bgColor: bgColor!,
                 onTap: () => Navigator.push(context,
                     MaterialPageRoute(builder: (_) => const AdvanceSetting())),
@@ -53,7 +53,7 @@ class SettingContent extends StatelessWidget {
                     icon: Icons.language,
                     iconColor: Colors.blue,
                     label: LocaleData.language.getString(context),
-                    subLabel: LocaleData.language_des.getString(context),
+                    subLabel: LocaleData.languageDes.getString(context),
                     onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -65,8 +65,8 @@ class SettingContent extends StatelessWidget {
                     iconColor: Colors.purple[700]!,
                     label: LocaleData.appearance.getString(context),
                     subLabel: isDark
-                        ? LocaleData.darkmode_dark_des.getString(context)
-                        : LocaleData.darkmode_light_des.getString(context),
+                        ? LocaleData.darkmodeDarkDes.getString(context)
+                        : LocaleData.darkmodeLightDes.getString(context),
                     value: isDark,
                     onChanged: (val) =>
                         context.read<SettingCubit>().toggleDarkMode(val),
@@ -82,9 +82,8 @@ class SettingContent extends StatelessWidget {
                     context,
                     icon: Icons.lock,
                     iconColor: Colors.green,
-                    label: LocaleData.application_lock.getString(context),
-                    subLabel:
-                        LocaleData.application_lock_des.getString(context),
+                    label: LocaleData.applicationLock.getString(context),
+                    subLabel: LocaleData.applicationLockDes.getString(context),
                     value: state.isLock,
                     onChanged: (val) =>
                         context.read<SettingCubit>().toggleLock(val),
@@ -94,7 +93,7 @@ class SettingContent extends StatelessWidget {
                     icon: Icons.privacy_tip,
                     iconColor: Colors.red,
                     label: LocaleData.privacy.getString(context),
-                    subLabel: LocaleData.privacy_des.getString(context),
+                    subLabel: LocaleData.privacyDes.getString(context),
                     onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -112,15 +111,15 @@ class SettingContent extends StatelessWidget {
                     icon: Icons.info,
                     iconColor: Colors.orange,
                     label: LocaleData.about.getString(context),
-                    subLabel: LocaleData.about_des.getString(context),
+                    subLabel: LocaleData.aboutDes.getString(context),
                     onTap: () => showAboutDialog(context: context),
                   ),
                   _buildSubItem(
                     context,
                     icon: Icons.feedback,
                     iconColor: Colors.cyan,
-                    label: LocaleData.send_feedback.getString(context),
-                    subLabel: LocaleData.send_feedback_des.getString(context),
+                    label: LocaleData.sendFeedback.getString(context),
+                    subLabel: LocaleData.sendFeedbackDes.getString(context),
                     onTap: () {},
                   ),
                 ]),
@@ -251,7 +250,7 @@ class SettingContent extends StatelessWidget {
           height: 50,
           child: Center(
             child: Text(
-              LocaleData.log_out.getString(context),
+              LocaleData.logOut.getString(context),
               style: TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 18,
@@ -267,8 +266,8 @@ class SettingContent extends StatelessWidget {
     showCupertinoModalPopup(
       context: context,
       builder: (context) => CupertinoActionSheet(
-        title: Text(LocaleData.log_out.getString(context)),
-        message: Text(LocaleData.log_out_dialog.getString(context)),
+        title: Text(LocaleData.logOut.getString(context)),
+        message: Text(LocaleData.logOutDialog.getString(context)),
         actions: [
           CupertinoActionSheetAction(
             onPressed: () {
@@ -279,7 +278,7 @@ class SettingContent extends StatelessWidget {
               );
             },
             isDestructiveAction: true,
-            child: Text(LocaleData.log_out.getString(context)),
+            child: Text(LocaleData.logOut.getString(context)),
           ),
         ],
         cancelButton: CupertinoActionSheetAction(

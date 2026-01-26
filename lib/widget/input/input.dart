@@ -52,7 +52,7 @@ class _InputState extends State<Input> {
                       ? null
                       : [
                           BoxShadow(
-                            color: Colors.grey.withOpacity(0.3),
+                            color: Colors.grey.withValues(alpha: 0.3),
                             spreadRadius: 6,
                             blurRadius: 9,
                             offset: const Offset(0, 5),
@@ -87,7 +87,7 @@ class _InputState extends State<Input> {
                     borderRadius: BorderRadius.circular(6),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(.3),
+                        color: Colors.black.withValues(alpha: .3),
                         blurRadius: 4.0,
                         spreadRadius: 1.0,
                         offset: const Offset(0.0, 2.0),

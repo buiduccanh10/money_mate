@@ -120,13 +120,13 @@ class _LoginState extends State<Login> {
                     items: [
                       DropdownMenuItem(
                           value: 'vi',
-                          child: Text(LocaleData.op_vi.getString(context))),
+                          child: Text(LocaleData.opVi.getString(context))),
                       DropdownMenuItem(
                           value: 'en',
-                          child: Text(LocaleData.op_en.getString(context))),
+                          child: Text(LocaleData.opEn.getString(context))),
                       DropdownMenuItem(
                           value: 'zh',
-                          child: Text(LocaleData.op_cn.getString(context))),
+                          child: Text(LocaleData.opCn.getString(context))),
                     ],
                     onChanged: (value) {
                       if (value != null) {
@@ -217,7 +217,7 @@ class _LoginState extends State<Login> {
                                 children: [
                                   TextButton(
                                     child: Text(
-                                      LocaleData.forgot_pass.getString(context),
+                                      LocaleData.forgotPass.getString(context),
                                       style: const TextStyle(
                                           decoration: TextDecoration.underline),
                                     ),
@@ -289,11 +289,11 @@ class _LoginState extends State<Login> {
                               ),
                               Row(
                                 children: [
-                                  Text(LocaleData.dont_have_acc
+                                  Text(LocaleData.dontHaveAcc
                                       .getString(context)),
                                   TextButton(
                                     child: Text(
-                                      LocaleData.sign_up.getString(context),
+                                      LocaleData.signUp.getString(context),
                                       style: const TextStyle(
                                           color: Colors.blue,
                                           fontWeight: FontWeight.w500,
@@ -310,11 +310,11 @@ class _LoginState extends State<Login> {
                                 ],
                               ),
                               Center(
-                                  child: Text(LocaleData.or_sign_in
-                                      .getString(context))),
+                                  child: Text(
+                                      LocaleData.orSignIn.getString(context))),
                               SignInButton(
                                 Buttons.google,
-                                text: LocaleData.sign_in_gg.getString(context),
+                                text: LocaleData.signInGg.getString(context),
                                 onPressed: () {
                                   // context.read<AuthBloc>().add(GoogleLoginRequested());
                                 },

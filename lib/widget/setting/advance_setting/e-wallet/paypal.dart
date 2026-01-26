@@ -46,7 +46,7 @@
 
 //   @override
 //   Widget build(BuildContext context) {
-//     bool is_dark = Theme.of(context).brightness == Brightness.dark;
+//     bool isDark = Theme.of(context).brightness == Brightness.dark;
 //     return Consumer<setting_view_model>(
 //       builder: (BuildContext context, setting_vm, Widget? child) {
 //         setting_vm.toast.init(context);
@@ -79,19 +79,19 @@
 //                       decoration: InputDecoration(
 //                           enabledBorder: OutlineInputBorder(
 //                             borderSide: BorderSide(
-//                                 color: is_dark ? Colors.orange : Colors.amber),
+//                                 color: isDark ? Colors.orange : Colors.amber),
 //                             borderRadius: BorderRadius.circular(10),
 //                           ),
 //                           focusedBorder: OutlineInputBorder(
 //                               borderSide: const BorderSide(color: Colors.amber),
 //                               borderRadius: BorderRadius.circular(10)),
 //                           label: Text(
-//                             LocaleData.paypal_account_holder.getString(context),
+//                             LocaleData.paypalAccountHolder.getString(context),
 //                           ),
 //                           labelStyle:
 //                               TextStyle(color: Colors.grey.withValues(alpha: 1)),
 //                           floatingLabelStyle: TextStyle(
-//                               color: is_dark ? Colors.white : Colors.black),
+//                               color: isDark ? Colors.white : Colors.black),
 //                           prefixIcon: const Icon(Icons.person),
 //                           prefixIconColor: Colors.brown),
 //                     ),
@@ -107,20 +107,20 @@
 //                       decoration: InputDecoration(
 //                           enabledBorder: OutlineInputBorder(
 //                             borderSide: BorderSide(
-//                                 color: is_dark ? Colors.orange : Colors.amber),
+//                                 color: isDark ? Colors.orange : Colors.amber),
 //                             borderRadius: BorderRadius.circular(10),
 //                           ),
 //                           focusedBorder: OutlineInputBorder(
 //                               borderSide: const BorderSide(color: Colors.amber),
 //                               borderRadius: BorderRadius.circular(10)),
 //                           label: Text(
-//                             LocaleData.paypal_content_billing
+//                             LocaleData.paypalContentBilling
 //                                 .getString(context),
 //                           ),
 //                           labelStyle:
 //                               TextStyle(color: Colors.grey.withValues(alpha: 1)),
 //                           floatingLabelStyle: TextStyle(
-//                               color: is_dark ? Colors.white : Colors.black),
+//                               color: isDark ? Colors.white : Colors.black),
 //                           prefixIcon: const Icon(Icons.description),
 //                           prefixIconColor: Colors.blue),
 //                     ),
@@ -148,19 +148,19 @@
 //                         decoration: InputDecoration(
 //                           enabledBorder: OutlineInputBorder(
 //                             borderSide: BorderSide(
-//                                 color: is_dark ? Colors.orange : Colors.amber),
+//                                 color: isDark ? Colors.orange : Colors.amber),
 //                             borderRadius: BorderRadius.circular(10),
 //                           ),
 //                           focusedBorder: OutlineInputBorder(
 //                               borderSide: const BorderSide(color: Colors.amber),
 //                               borderRadius: BorderRadius.circular(10)),
 //                           label: Text(
-//                             LocaleData.input_money.getString(context),
+//                             LocaleData.inputMoney.getString(context),
 //                           ),
 //                           labelStyle:
 //                               TextStyle(color: Colors.grey.withValues(alpha: 1)),
 //                           floatingLabelStyle: TextStyle(
-//                               color: is_dark ? Colors.white : Colors.black),
+//                               color: isDark ? Colors.white : Colors.black),
 //                           prefixIcon: const Icon(Icons.attach_money),
 //                           prefixIconColor: Colors.green,
 //                         )),
@@ -170,7 +170,7 @@
 //                         mainAxisAlignment: MainAxisAlignment.start,
 //                         children: [
 //                           Text(
-//                             LocaleData.option_category.getString(context),
+//                             LocaleData.optionCategory.getString(context),
 //                             style: const TextStyle(fontSize: 18),
 //                           ),
 //                         ],
@@ -284,7 +284,7 @@
 //           //             width: 5,
 //           //           ),
 //           //           Text(
-//           //             LocaleData.check_out.getString(context),
+//           //             LocaleData.checkOut.getString(context),
 //           //             style: const TextStyle(
 //           //                 fontSize: 18,
 //           //                 fontWeight: FontWeight.w500,

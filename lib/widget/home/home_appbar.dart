@@ -73,7 +73,7 @@ class _HomeAppbarState extends State<HomeAppbar> {
                             Expanded(
                               flex: 1,
                               child: Text(
-                                '${LocaleData.hello_home_appbar.getString(context)}${state.userName ?? ""}',
+                                '${LocaleData.helloHomeAppbar.getString(context)}${state.userName ?? ""}',
                                 style: const TextStyle(
                                     overflow: TextOverflow.ellipsis,
                                     color: Colors.white,
@@ -133,7 +133,7 @@ class _HomeAppbarState extends State<HomeAppbar> {
                       Row(
                         children: [
                           Text(
-                            LocaleData.total_saving.getString(context),
+                            LocaleData.totalSaving.getString(context),
                             style: const TextStyle(
                                 color: Colors.amber,
                                 fontSize: 22,
@@ -217,7 +217,7 @@ class _HomeAppbarState extends State<HomeAppbar> {
             ? null
             : [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.3),
+                  color: Colors.grey.withValues(alpha: 0.3),
                   spreadRadius: 6,
                   blurRadius: 9,
                   offset: const Offset(0, 5),

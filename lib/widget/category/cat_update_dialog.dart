@@ -39,7 +39,7 @@ class _CatUpdateDialogState extends State<CatUpdateDialog> {
       title: Row(
         children: [
           Text(
-            LocaleData.update_cat_title.getString(context),
+            LocaleData.updateCatTitle.getString(context),
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
           const SizedBox(width: 8),
@@ -69,7 +69,7 @@ class _CatUpdateDialogState extends State<CatUpdateDialog> {
                 focusedBorder: OutlineInputBorder(
                     borderSide: const BorderSide(color: Colors.blue),
                     borderRadius: BorderRadius.circular(10)),
-                label: Text(LocaleData.choose_an_icon.getString(context)),
+                label: Text(LocaleData.chooseAnIcon.getString(context)),
                 prefixIcon:
                     const Icon(Icons.insert_emoticon, color: Colors.orange),
               ),
@@ -85,7 +85,7 @@ class _CatUpdateDialogState extends State<CatUpdateDialog> {
                 focusedBorder: OutlineInputBorder(
                     borderSide: const BorderSide(color: Colors.blue),
                     borderRadius: BorderRadius.circular(10)),
-                label: Text(LocaleData.category_name.getString(context)),
+                label: Text(LocaleData.categoryName.getString(context)),
                 prefixIcon:
                     const Icon(Icons.new_label, color: Colors.blueAccent),
               ),
@@ -115,10 +115,10 @@ class _CatUpdateDialogState extends State<CatUpdateDialog> {
   void _onUpdate() {
     setState(() {
       _iconError = _iconController.text.isEmpty
-          ? LocaleData.cat_icon_validator.getString(context)
+          ? LocaleData.catIconValidator.getString(context)
           : null;
       _nameError = _nameController.text.isEmpty
-          ? LocaleData.cat_name_validator.getString(context)
+          ? LocaleData.catNameValidator.getString(context)
           : null;
     });
 

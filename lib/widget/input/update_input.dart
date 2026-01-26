@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+// import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:intl/intl.dart';
@@ -53,7 +53,7 @@ class _UpdateInputState extends State<UpdateInput> {
                   const SizedBox(height: 10),
                   _buildTextField(
                       _descriptionController,
-                      LocaleData.input_description.getString(context),
+                      LocaleData.inputDescription.getString(context),
                       Icons.description,
                       Colors.blue,
                       isDark),
@@ -116,7 +116,7 @@ class _UpdateInputState extends State<UpdateInput> {
         focusedBorder: OutlineInputBorder(
             borderSide: const BorderSide(color: Colors.amber),
             borderRadius: BorderRadius.circular(10)),
-        label: Text(LocaleData.input_money.getString(context)),
+        label: Text(LocaleData.inputMoney.getString(context)),
         prefixIcon: const Icon(Icons.attach_money, color: Colors.green),
       ),
     );
@@ -131,8 +131,8 @@ class _UpdateInputState extends State<UpdateInput> {
           children: [
             Text(
                 isIncome
-                    ? LocaleData.income_category.getString(context)
-                    : LocaleData.expense_category.getString(context),
+                    ? LocaleData.incomeCategory.getString(context)
+                    : LocaleData.expenseCategory.getString(context),
                 style:
                     const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             TextButton(
@@ -175,7 +175,7 @@ class _UpdateInputState extends State<UpdateInput> {
                     color: Colors
                         .primaries[Random().nextInt(Colors.primaries.length)]
                         .shade100
-                        .withOpacity(0.35),
+                        .withValues(alpha: 0.35),
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
                         color: isSelected

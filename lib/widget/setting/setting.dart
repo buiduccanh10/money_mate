@@ -108,7 +108,7 @@ class Setting extends StatelessWidget {
                               fontSize: 16),
                         ),
                         Text(
-                          LocaleData.modify_des.getString(context),
+                          LocaleData.modifyDes.getString(context),
                           style: TextStyle(
                               color: isDark ? Colors.grey[100] : Colors.grey),
                         )

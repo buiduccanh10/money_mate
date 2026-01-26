@@ -45,12 +45,12 @@ class _CatLimitDialogState extends State<CatLimitDialog> {
 
   @override
   Widget build(BuildContext context) {
-    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    // bool isDark = Theme.of(context).brightness == Brightness.dark;
     final locale = FlutterLocalization.instance.currentLocale.toString();
 
     return AlertDialog(
       title: Text(
-        "${LocaleData.limit_dialog.getString(context)}: ${widget.catName}",
+        "${LocaleData.limitDialog.getString(context)}: ${widget.catName}",
         style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
       ),
       scrollable: true,
@@ -62,7 +62,7 @@ class _CatLimitDialogState extends State<CatLimitDialog> {
               : const TextInputType.numberWithOptions(decimal: true),
           controller: _limitController,
           inputFormatters: locale == 'vi'
-              ? [FilteringTextInputFormatter.digitsOnly, currency_format()]
+              ? [FilteringTextInputFormatter.digitsOnly, CurrencyFormat()]
               : [],
           decoration: InputDecoration(
             enabledBorder: OutlineInputBorder(
@@ -71,7 +71,7 @@ class _CatLimitDialogState extends State<CatLimitDialog> {
             focusedBorder: OutlineInputBorder(
                 borderSide: const BorderSide(color: Colors.blue),
                 borderRadius: BorderRadius.circular(10)),
-            label: Text(LocaleData.input_money.getString(context)),
+            label: Text(LocaleData.inputMoney.getString(context)),
             prefixIcon: const Icon(Icons.money_off, color: Colors.green),
           ),
         ),
@@ -100,7 +100,7 @@ class _CatLimitDialogState extends State<CatLimitDialog> {
               backgroundColor: Colors.green,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10))),
-          child: Text(LocaleData.input_save.getString(context),
+          child: Text(LocaleData.inputVave.getString(context),
               style: const TextStyle(color: Colors.white)),
         ),
       ],

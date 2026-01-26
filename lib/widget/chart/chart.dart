@@ -49,7 +49,7 @@ class _ChartState extends State<Chart> {
                       ? null
                       : [
                           BoxShadow(
-                            color: Colors.grey.withOpacity(0.3),
+                            color: Colors.grey.withValues(alpha: 0.3),
                             spreadRadius: 6,
                             blurRadius: 9,
                             offset: const Offset(0, 5),
@@ -66,7 +66,7 @@ class _ChartState extends State<Chart> {
                       height: 50,
                       children: {
                         1: Text(
-                          LocaleData.switch_monthly.getString(context),
+                          LocaleData.switchMonthly.getString(context),
                           style: TextStyle(
                               color:
                                   state.isMonthly ? Colors.black : Colors.white,
@@ -74,7 +74,7 @@ class _ChartState extends State<Chart> {
                               fontSize: 16),
                         ),
                         2: Text(
-                          LocaleData.switch_yearly.getString(context),
+                          LocaleData.switchYearly.getString(context),
                           style: TextStyle(
                               color: !state.isMonthly
                                   ? Colors.black
@@ -97,7 +97,7 @@ class _ChartState extends State<Chart> {
                         borderRadius: BorderRadius.circular(6),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(.3),
+                            color: Colors.black.withValues(alpha: .3),
                             blurRadius: 4.0,
                             spreadRadius: 1.0,
                             offset: const Offset(0.0, 2.0),

@@ -29,16 +29,16 @@ Triển khai các endpoint quản lý định danh người dùng.
 
 Quản lý các danh mục thu chi của người dùng.
 
-| Endpoint                         | Method | Body Schema                   | Description                                             |
-| :------------------------------- | :----- | :---------------------------- | :------------------------------------------------------ |
-| `/categories`                    | GET    | Query: `isIncome` (optional)  | Lấy danh sách danh mục (có thể lọc theo thu/chi).       |
-| `/categories/:id`                | GET    | -                             | Lấy chi tiết một danh mục.                              |
-| `/categories`                    | POST   | `icon, name, isIncome, limit` | Tạo danh mục mới (mặc định limit = 0).                  |
-| `/categories/:id`                | PUT    | `icon, name, isIncome, limit` | Cập nhật thông tin danh mục.                            |
-| `/categories/:id`                | DELETE | -                             | Xóa một danh mục.                                       |
-| `/categories`                    | DELETE | Query: `isIncome`             | Xóa tất cả danh mục của người dùng theo loại (thu/chi). |
-| `/categories/:id/limit`          | PATCH  | `limit` (number)              | Cập nhật định mức (limit) cho danh mục.                 |
-| `/categories/restore-all-limits` | POST   | -                             | Đặt tất cả định mức về 0.                               |
+| Endpoint                         | Method | Body Schema                   | Description                                       |
+| :------------------------------- | :----- | :---------------------------- | :------------------------------------------------ |
+| `/categories`                    | GET    | Query: `isIncome` (optional)  | Lấy danh sách danh mục (có thể lọc theo thu/chi). |
+| `/categories/:id`                | GET    | -                             | Lấy chi tiết một danh mục.                        |
+| `/categories`                    | POST   | `icon, name, isIncome, limit` | Tạo danh mục mới (mặc định limit = 0).            |
+| `/categories/:id`                | PUT    | `icon, name, isIncome, limit` | Cập nhật thông tin danh mục.                      |
+| `/categories/:id`                | DELETE | -                             | Xóa một danh mục.                                 |
+| `/categories`                    | DELETE | Query: `isIncome` (optional)  | Xóa tất cả hoặc theo loại (thu/chi) danh mục.     |
+| `/categories/:id/limit`          | PATCH  | `limit` (number)              | Cập nhật định mức (limit) cho danh mục.           |
+| `/categories/restore-all-limits` | POST   | -                             | Đặt tất cả định mức về 0.                         |
 
 ---
 
@@ -79,6 +79,7 @@ Quản lý thông tin cá nhân và cấu hình ứng dụng.
 | :------------------- | :----- | :------------------------- | :-------------------------------------------------------------- |
 | `/users/me`          | GET    | -                          | Lấy thông tin profile người dùng hiện tại.                      |
 | `/users/me`          | DELETE | -                          | Xóa tài khoản người dùng và tất cả dữ liệu liên quan.           |
+| `/users/me/settings` | GET    | -                          | Lấy cấu hình ứng dụng (Ngôn ngữ, Dark mode, Khóa ứng dụng).     |
 | `/users/me/settings` | PATCH  | `language, isDark, isLock` | Cập nhật cài đặt ứng dụng (Dark mode, Ngôn ngữ, Khóa ứng dụng). |
 
 ---

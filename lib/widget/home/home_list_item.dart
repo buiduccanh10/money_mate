@@ -39,7 +39,7 @@ class _HomeListItemState extends State<HomeListItem> {
         if (state.allTransactions.isEmpty) {
           return Expanded(
             child: Center(
-              child: Text(LocaleData.no_input_data.getString(context)),
+              child: Text(LocaleData.noInputData.getString(context)),
             ),
           );
         }
@@ -96,7 +96,7 @@ class _HomeListItemState extends State<HomeListItem> {
                             },
                             foregroundColor: Colors.blue,
                             icon: Icons.edit,
-                            label: LocaleData.slide_edit.getString(context),
+                            label: LocaleData.slideEdit.getString(context),
                           ),
                           SlidableAction(
                             backgroundColor: Colors.transparent,
@@ -107,7 +107,7 @@ class _HomeListItemState extends State<HomeListItem> {
                             },
                             foregroundColor: Colors.red,
                             icon: Icons.delete,
-                            label: LocaleData.slide_delete.getString(context),
+                            label: LocaleData.slideDelete.getString(context),
                           ),
                         ],
                       ),
@@ -201,7 +201,7 @@ class _HomeListItemState extends State<HomeListItem> {
             ? null
             : [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.3),
+                  color: Colors.grey.withValues(alpha: 0.3),
                   spreadRadius: 2,
                   blurRadius: 7,
                   offset: const Offset(-5, 5),
@@ -212,7 +212,7 @@ class _HomeListItemState extends State<HomeListItem> {
       child: CircleAvatar(
         backgroundColor: Colors
             .primaries[Random().nextInt(Colors.primaries.length)].shade100
-            .withOpacity(0.35),
+            .withValues(alpha: 0.35),
         radius: 28,
         child: Text(icon, style: const TextStyle(fontSize: 38)),
       ),

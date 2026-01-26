@@ -10,7 +10,7 @@ class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
 
   @override
-  _SignUpPageState createState() => _SignUpPageState();
+  State<SignUpPage> createState() => _SignUpPageState();
 }
 
 class _SignUpPageState extends State<SignUpPage> {
@@ -36,7 +36,7 @@ class _SignUpPageState extends State<SignUpPage> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(title: Text(LocaleData.sign_up.getString(context))),
+        appBar: AppBar(title: Text(LocaleData.signUp.getString(context))),
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(20.0),
@@ -51,7 +51,8 @@ class _SignUpPageState extends State<SignUpPage> {
                       if (value == null || value.isEmpty) {
                         return 'Email cannot be empty';
                       }
-                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                          .hasMatch(value)) {
                         return 'Enter a valid email';
                       }
                       return null;
@@ -108,7 +109,9 @@ class _SignUpPageState extends State<SignUpPage> {
                             ? null
                             : () {
                                 if (_formKey.currentState!.validate()) {
-                                  context.read<AuthBloc>().add(RegisterRequested(
+                                  context
+                                      .read<AuthBloc>()
+                                      .add(RegisterRequested(
                                         _emailController.text,
                                         _passwordController.text,
                                         _confirmPasswordController.text,
@@ -116,8 +119,12 @@ class _SignUpPageState extends State<SignUpPage> {
                                 }
                               },
                         child: state.status == AuthStatus.loading
-                            ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                            : Text(LocaleData.sign_up.getString(context)),
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child:
+                                    CircularProgressIndicator(strokeWidth: 2))
+                            : Text(LocaleData.signUp.getString(context)),
                       );
                     },
                   ),

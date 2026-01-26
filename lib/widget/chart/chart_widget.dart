@@ -1,6 +1,6 @@
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
 import 'package:datepicker_dropdown/datepicker_dropdown.dart';
-import 'package:flutter/cupertino.dart';
+// import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localization/flutter_localization.dart';
@@ -115,7 +115,7 @@ class ChartWidget extends StatelessWidget {
               LocaleData.income.getString(context), inc, Colors.green, isDark),
           _buildRow(
               LocaleData.expense.getString(context), exp, Colors.red, isDark),
-          _buildRow(LocaleData.total_saving.getString(context), tot,
+          _buildRow(LocaleData.totalSaving.getString(context), tot,
               isDark ? Colors.white : Colors.black, isDark,
               isBold: true),
         ],

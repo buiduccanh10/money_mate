@@ -31,7 +31,7 @@ class _SetupInExRegularState extends State<SetupInExRegular> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(LocaleData.fixed_in_ex.getString(context)),
+        title: Text(LocaleData.fixedInEx.getString(context)),
         actions: [
           IconButton(
               onPressed: () => _confirmDeleteAll(context),
@@ -47,7 +47,7 @@ class _SetupInExRegularState extends State<SetupInExRegular> {
 
           if (state.schedules.isEmpty) {
             return Center(
-                child: Text(LocaleData.no_set_up_yet.getString(context)));
+                child: Text(LocaleData.noSetUpYet.getString(context)));
           }
 
           return ListView.builder(
@@ -84,7 +84,7 @@ class _SetupInExRegularState extends State<SetupInExRegular> {
             },
             foregroundColor: Colors.red,
             icon: Icons.delete,
-            label: LocaleData.slide_delete.getString(context),
+            label: LocaleData.slideDelete.getString(context),
           ),
         ],
       ),
@@ -92,7 +92,7 @@ class _SetupInExRegularState extends State<SetupInExRegular> {
         leading: CircleAvatar(
           backgroundColor: Colors
               .primaries[Random().nextInt(Colors.primaries.length)]
-              .withOpacity(0.2),
+              .withValues(alpha: 0.2),
           child: Text(schedule['icon'] ?? '📅',
               style: const TextStyle(fontSize: 24)),
         ),
@@ -121,7 +121,7 @@ class _SetupInExRegularState extends State<SetupInExRegular> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text(LocaleData.slide_delete.getString(context)),
+        title: Text(LocaleData.slideDelete.getString(context)),
         content: Text(LocaleData.confirm.getString(context)),
         actions: [
           TextButton(
