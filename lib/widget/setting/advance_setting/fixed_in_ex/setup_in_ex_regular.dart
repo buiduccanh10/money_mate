@@ -8,6 +8,7 @@ import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/bloc/schedule/schedule_cubit.dart';
 import 'package:money_mate/bloc/schedule/schedule_state.dart';
 import 'package:money_mate/widget/setting/advance_setting/fixed_in_ex/start_setup.dart';
+import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger.dart';
 import 'package:shimmer/shimmer.dart';
 
 class SetupInExRegular extends StatefulWidget {
@@ -69,9 +70,9 @@ class _SetupInExRegularState extends State<SetupInExRegular> {
   }
 
   Widget _buildScheduleItem(BuildContext context, bool isDark,
-      Map<String, dynamic> schedule, String locale) {
+      ScheduleResponseDto schedule, String locale) {
     final formatter = NumberFormat.simpleCurrency(locale: locale);
-    final formatMoney = formatter.format(schedule['money']);
+    final formatMoney = formatter.format(schedule.money);
 
     return Slidable(
       endActionPane: ActionPane(
@@ -79,8 +80,9 @@ class _SetupInExRegularState extends State<SetupInExRegular> {
         children: [
           SlidableAction(
             onPressed: (_) {
-              final id = int.tryParse(schedule['id'].toString());
-              if (id != null) context.read<ScheduleCubit>().deleteSchedule(id);
+              context
+                  .read<ScheduleCubit>()
+                  .deleteSchedule(schedule.id.toString());
             },
             foregroundColor: Colors.red,
             icon: Icons.delete,
@@ -93,23 +95,22 @@ class _SetupInExRegularState extends State<SetupInExRegular> {
           backgroundColor: Colors
               .primaries[Random().nextInt(Colors.primaries.length)]
               .withValues(alpha: 0.2),
-          child: Text(schedule['icon'] ?? '📅',
-              style: const TextStyle(fontSize: 24)),
+          child: Text(schedule.icon, style: const TextStyle(fontSize: 24)),
         ),
-        title: Text('${schedule['description']} (${schedule['option']})',
+        title: Text('${schedule.description} (${schedule.option.name})',
             style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(schedule['date']),
+        subtitle: Text(schedule.date),
         trailing: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              '${schedule['is_income'] ? '+' : '-'} $formatMoney',
+              '${schedule.isIncome ? '+' : '-'} $formatMoney',
               style: TextStyle(
-                  color: schedule['is_income'] ? Colors.green : Colors.red,
+                  color: schedule.isIncome ? Colors.green : Colors.red,
                   fontWeight: FontWeight.bold),
             ),
-            Text(schedule['name'] ?? '',
+            Text(schedule.name,
                 style: const TextStyle(color: Colors.grey, fontSize: 12)),
           ],
         ),

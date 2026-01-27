@@ -1,17 +1,16 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:money_mate/data/network/dio_client.dart';
+import 'package:money_mate/data/repository/transaction_repository.dart';
 import 'chart_state.dart';
 
 class ChartCubit extends Cubit<ChartState> {
-  // Directly using Dio for now as there might not be a specific chart repo yet
-  final _dio = DioClient().dio;
+  final TransactionRepository _transactionRepo;
 
-  ChartCubit()
-      : super(ChartState(
-          month: DateTime.now().month,
-          year: DateTime.now().year,
-        )) {
+  ChartCubit({required TransactionRepository transactionRepo})
+    : _transactionRepo = transactionRepo,
+      super(
+        ChartState(month: DateTime.now().month, year: DateTime.now().year),
+      ) {
     fetchData();
   }
 
@@ -34,39 +33,40 @@ class ChartCubit extends Cubit<ChartState> {
     try {
       String formatDate = getMonthYearString(state.month, state.year);
 
-      final incomeRes = await _dio.get('/transactions', queryParameters: {
-        'monthYear': formatDate,
-        'isIncome': true,
-      });
-      final expenseRes = await _dio.get('/transactions', queryParameters: {
-        'monthYear': formatDate,
-        'isIncome': false,
-      });
+      final income = await _transactionRepo.getTransactions(
+        monthYear: formatDate,
+        isIncome: true,
+      );
+      final expense = await _transactionRepo.getTransactions(
+        monthYear: formatDate,
+        isIncome: false,
+      );
 
-      emit(state.copyWith(
-        status: ChartStatus.success,
-        incomeData: List<Map<String, dynamic>>.from(incomeRes.data),
-        expenseData: List<Map<String, dynamic>>.from(expenseRes.data),
-      ));
+      emit(
+        state.copyWith(
+          status: ChartStatus.success,
+          incomeTransactions: income,
+          expenseTransactions: expense,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-          status: ChartStatus.failure, errorMessage: e.toString()));
+      emit(
+        state.copyWith(status: ChartStatus.failure, errorMessage: e.toString()),
+      );
     }
   }
 
   Future<void> fetchYearlyData() async {
     emit(state.copyWith(status: ChartStatus.loading));
     try {
-      final res = await _dio.get('/transactions/yearly', queryParameters: {
-        'year': state.year,
-      });
-      emit(state.copyWith(
-        status: ChartStatus.success,
-        yearlyData: List<Map<String, dynamic>>.from(res.data),
-      ));
+      final data = await _transactionRepo.getTransactions(
+        year: state.year.toString(),
+      );
+      emit(state.copyWith(status: ChartStatus.success, allTransactions: data));
     } catch (e) {
-      emit(state.copyWith(
-          status: ChartStatus.failure, errorMessage: e.toString()));
+      emit(
+        state.copyWith(status: ChartStatus.failure, errorMessage: e.toString()),
+      );
     }
   }
 
@@ -101,20 +101,17 @@ class ChartCubit extends Cubit<ChartState> {
   }) async {
     emit(state.copyWith(status: ChartStatus.loading));
     try {
-      final queryParams = <String, dynamic>{};
-      if (isMonthly && date != null) queryParams['monthYear'] = date;
-      if (!isMonthly && date != null) queryParams['year'] = date;
-      if (isIncome != null) queryParams['isIncome'] = isIncome;
-      if (catId != null) queryParams['catId'] = catId;
-
-      final res = await _dio.get('/transactions', queryParameters: queryParams);
-      emit(state.copyWith(
-        status: ChartStatus.success,
-        detailData: List<Map<String, dynamic>>.from(res.data),
-      ));
+      final data = await _transactionRepo.getTransactions(
+        monthYear: isMonthly ? date : null,
+        year: !isMonthly ? date : null,
+        isIncome: isIncome,
+        catId: catId,
+      );
+      emit(state.copyWith(status: ChartStatus.success, detailData: data));
     } catch (e) {
-      emit(state.copyWith(
-          status: ChartStatus.failure, errorMessage: e.toString()));
+      emit(
+        state.copyWith(status: ChartStatus.failure, errorMessage: e.toString()),
+      );
     }
   }
 }

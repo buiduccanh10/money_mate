@@ -41,7 +41,8 @@ class _SearchState extends State<Search> {
             children: [
               SearchBar(
                 padding: const WidgetStatePropertyAll<EdgeInsets>(
-                    EdgeInsets.symmetric(horizontal: 16.0)),
+                  EdgeInsets.symmetric(horizontal: 16.0),
+                ),
                 onChanged: (query) {
                   _debounce?.cancel();
                   _debounce = Timer(const Duration(milliseconds: 500), () {
@@ -67,7 +68,7 @@ class _SearchState extends State<Search> {
       builder: (context, state) {
         final categories = [
           ...state.incomeCategories,
-          ...state.expenseCategories
+          ...state.expenseCategories,
         ];
         return Wrap(
           spacing: 10,
@@ -75,8 +76,7 @@ class _SearchState extends State<Search> {
           children: categories.map((cat) {
             return InkWell(
               borderRadius: BorderRadius.circular(10),
-              onTap: () =>
-                  context.read<SearchCubit>().searchByCategory(cat['catId']),
+              onTap: () => context.read<SearchCubit>().searchByCategory(cat.id),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors
@@ -89,9 +89,9 @@ class _SearchState extends State<Search> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(cat['icon'], style: const TextStyle(fontSize: 20)),
+                    Text(cat.icon, style: const TextStyle(fontSize: 20)),
                     const SizedBox(width: 4),
-                    Text(cat['name']),
+                    Text(cat.name),
                   ],
                 ),
               ),
@@ -107,7 +107,8 @@ class _SearchState extends State<Search> {
       builder: (context, state) {
         if (state.status == SearchStatus.loading) {
           return const Expanded(
-              child: Center(child: CircularProgressIndicator()));
+            child: Center(child: CircularProgressIndicator()),
+          );
         }
 
         if (state.searchResults.isEmpty) {
@@ -120,7 +121,7 @@ class _SearchState extends State<Search> {
             itemBuilder: (context, index) {
               final result = state.searchResults[index];
               final formatter = NumberFormat.simpleCurrency(locale: locale);
-              final String formatMoney = formatter.format(result['money']);
+              final String formatMoney = formatter.format(result.money);
 
               return Slidable(
                 endActionPane: ActionPane(
@@ -130,10 +131,11 @@ class _SearchState extends State<Search> {
                       backgroundColor: Colors.transparent,
                       onPressed: (context) {
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) =>
-                                    UpdateInput(inputItem: result)));
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => UpdateInput(inputItem: result),
+                          ),
+                        );
                       },
                       foregroundColor: Colors.blue,
                       icon: Icons.edit,
@@ -152,29 +154,43 @@ class _SearchState extends State<Search> {
                 ),
                 child: InkWell(
                   onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => UpdateInput(inputItem: result))),
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => UpdateInput(inputItem: result),
+                    ),
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
-                        vertical: 14, horizontal: 24),
+                      vertical: 14,
+                      horizontal: 24,
+                    ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Row(
                           children: [
-                            _buildIconCircle(result['icon'], isDark),
+                            _buildIconCircle(
+                              result.category?.icon ?? '💰',
+                              isDark,
+                            ),
                             const SizedBox(width: 12),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(result['description'],
-                                    style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold)),
-                                Text(result['date'],
-                                    style: const TextStyle(
-                                        fontSize: 14, color: Colors.grey)),
+                                Text(
+                                  result.description ?? '',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  result.date,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey,
+                                  ),
+                                ),
                               ],
                             ),
                           ],
@@ -183,18 +199,22 @@ class _SearchState extends State<Search> {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
-                              '${result['isIncome'] ? '+' : '-'} $formatMoney',
+                              '${result.isIncome ? '+' : '-'} $formatMoney',
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
-                                color: result['isIncome']
+                                color: result.isIncome
                                     ? Colors.green
                                     : Colors.red,
                               ),
                             ),
-                            Text(result['name'],
-                                style: const TextStyle(
-                                    fontSize: 16, color: Colors.grey)),
+                            Text(
+                              result.category?.name ?? '',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey,
+                              ),
+                            ),
                           ],
                         ),
                       ],
@@ -216,16 +236,18 @@ class _SearchState extends State<Search> {
             ? null
             : [
                 BoxShadow(
-                    color: Colors.grey.withValues(alpha: 0.3),
-                    spreadRadius: 2,
-                    blurRadius: 7,
-                    offset: const Offset(-5, 5))
+                  color: Colors.grey.withValues(alpha: 0.3),
+                  spreadRadius: 2,
+                  blurRadius: 7,
+                  offset: const Offset(-5, 5),
+                ),
               ],
         borderRadius: BorderRadius.circular(50),
       ),
       child: CircleAvatar(
         backgroundColor: Colors
-            .primaries[Random().nextInt(Colors.primaries.length)].shade100
+            .primaries[Random().nextInt(Colors.primaries.length)]
+            .shade100
             .withValues(alpha: 0.35),
         radius: 28,
         child: Text(icon, style: const TextStyle(fontSize: 38)),

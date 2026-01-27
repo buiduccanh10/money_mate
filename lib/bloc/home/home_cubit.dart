@@ -11,12 +11,11 @@ class HomeCubit extends Cubit<HomeState> {
   HomeCubit({
     required TransactionRepository transactionRepo,
     required UserRepository userRepo,
-  })  : _transactionRepo = transactionRepo,
-        _userRepo = userRepo,
-        super(HomeState(
-          month: DateTime.now().month,
-          year: DateTime.now().year,
-        )) {
+  }) : _transactionRepo = transactionRepo,
+       _userRepo = userRepo,
+       super(
+         HomeState(month: DateTime.now().month, year: DateTime.now().year),
+       ) {
     init();
   }
 
@@ -36,7 +35,7 @@ class HomeCubit extends Cubit<HomeState> {
   Future<void> fetchUserName() async {
     try {
       final profile = await _userRepo.getUserProfile();
-      emit(state.copyWith(userName: profile['email']));
+      emit(state.copyWith(userName: profile.email));
     } catch (e) {
       // Handle error
     }
@@ -58,28 +57,30 @@ class HomeCubit extends Cubit<HomeState> {
       );
 
       final totalIncome = incomeTemp
-          .map<double>(
-              (item) => (double.tryParse(item['money'].toString()) ?? 0))
+          .map<double>((item) => (item.money))
           .fold<double>(0, (prev, amount) => prev + amount);
 
       final totalExpense = expenseTemp
-          .map<double>(
-              (item) => (double.tryParse(item['money'].toString()) ?? 0))
+          .map<double>((item) => (item.money))
           .fold<double>(0, (prev, amount) => prev + amount);
 
-      emit(state.copyWith(
-        status: HomeStatus.success,
-        incomeTransactions: incomeTemp,
-        expenseTransactions: expenseTemp,
-        allTransactions: allTemp,
-        totalIncome: totalIncome,
-        totalExpense: totalExpense,
-        totalSaving:
-            double.parse((totalIncome - totalExpense).toStringAsFixed(2)),
-      ));
+      emit(
+        state.copyWith(
+          status: HomeStatus.success,
+          incomeTransactions: incomeTemp,
+          expenseTransactions: expenseTemp,
+          allTransactions: allTemp,
+          totalIncome: totalIncome,
+          totalExpense: totalExpense,
+          totalSaving: double.parse(
+            (totalIncome - totalExpense).toStringAsFixed(2),
+          ),
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-          status: HomeStatus.failure, errorMessage: e.toString()));
+      emit(
+        state.copyWith(status: HomeStatus.failure, errorMessage: e.toString()),
+      );
     }
   }
 

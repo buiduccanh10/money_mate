@@ -6,8 +6,8 @@ class SearchCubit extends Cubit<SearchState> {
   final TransactionRepository _transactionRepo;
 
   SearchCubit({required TransactionRepository transactionRepo})
-      : _transactionRepo = transactionRepo,
-        super(const SearchState());
+    : _transactionRepo = transactionRepo,
+      super(const SearchState());
 
   Future<void> searchTransactions(String query) async {
     if (query.isEmpty) {
@@ -19,10 +19,15 @@ class SearchCubit extends Cubit<SearchState> {
     try {
       final results = await _transactionRepo.searchTransactions(query);
       emit(
-          state.copyWith(status: SearchStatus.success, searchResults: results));
+        state.copyWith(status: SearchStatus.success, searchResults: results),
+      );
     } catch (e) {
-      emit(state.copyWith(
-          status: SearchStatus.failure, errorMessage: e.toString()));
+      emit(
+        state.copyWith(
+          status: SearchStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
@@ -31,10 +36,15 @@ class SearchCubit extends Cubit<SearchState> {
     try {
       final results = await _transactionRepo.getTransactions(catId: catId);
       emit(
-          state.copyWith(status: SearchStatus.success, searchResults: results));
+        state.copyWith(status: SearchStatus.success, searchResults: results),
+      );
     } catch (e) {
-      emit(state.copyWith(
-          status: SearchStatus.failure, errorMessage: e.toString()));
+      emit(
+        state.copyWith(
+          status: SearchStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 }

@@ -55,125 +55,156 @@ class _InputContentState extends State<InputContent> {
           );
         } else if (state.status == InputStatus.failure) {
           ScaffoldMessenger.of(context).showToast(
-              msg: state.errorMessage ?? "Error", backgroundColor: Colors.red);
+            msg: state.errorMessage ?? "Error",
+            backgroundColor: Colors.red,
+          );
         }
       },
       child: Scaffold(
         body: SingleChildScrollView(
-          child: Column(children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 15, right: 15, top: 135),
-              child: Column(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                          color: isDark ? Colors.orange : Colors.amber),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: SfDateRangePicker(
-                      showNavigationArrow: true,
-                      selectionColor: Colors.deepOrangeAccent,
-                      selectionMode: DateRangePickerSelectionMode.single,
-                      headerHeight: 60,
-                      todayHighlightColor: Colors.red,
-                      controller: dateCameraController,
-                      headerStyle: const DateRangePickerHeaderStyle(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 15, right: 15, top: 135),
+                child: Column(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: isDark ? Colors.orange : Colors.amber,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: SfDateRangePicker(
+                        showNavigationArrow: true,
+                        selectionColor: Colors.deepOrangeAccent,
+                        selectionMode: DateRangePickerSelectionMode.single,
+                        headerHeight: 60,
+                        todayHighlightColor: Colors.red,
+                        controller: dateCameraController,
+                        headerStyle: const DateRangePickerHeaderStyle(
                           textAlign: TextAlign.center,
                           textStyle: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 20)),
-                      monthViewSettings: const DateRangePickerMonthViewSettings(
-                          firstDayOfWeek: 1,
-                          viewHeaderStyle: DateRangePickerViewHeaderStyle(
-                              textStyle: TextStyle(
-                                  fontWeight: FontWeight.w600, fontSize: 16))),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 20,
+                          ),
+                        ),
+                        monthViewSettings:
+                            const DateRangePickerMonthViewSettings(
+                              firstDayOfWeek: 1,
+                              viewHeaderStyle: DateRangePickerViewHeaderStyle(
+                                textStyle: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  TextField(
-                    minLines: 1,
-                    maxLines: 2,
-                    keyboardType: TextInputType.text,
-                    controller: descriptionController,
-                    decoration: InputDecoration(
+                    const SizedBox(height: 10),
+                    TextField(
+                      minLines: 1,
+                      maxLines: 2,
+                      keyboardType: TextInputType.text,
+                      controller: descriptionController,
+                      decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(
-                              color: isDark ? Colors.orange : Colors.amber),
+                            color: isDark ? Colors.orange : Colors.amber,
+                          ),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.amber),
-                            borderRadius: BorderRadius.circular(10)),
+                          borderSide: const BorderSide(color: Colors.amber),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                         label: Text(
-                            LocaleData.inputDescription.getString(context)),
+                          LocaleData.inputDescription.getString(context),
+                        ),
                         labelStyle: const TextStyle(color: Colors.grey),
                         floatingLabelStyle: TextStyle(
-                            color: isDark ? Colors.white : Colors.black),
+                          color: isDark ? Colors.white : Colors.black,
+                        ),
                         prefixIcon: const Icon(Icons.description),
-                        prefixIconColor: Colors.blue),
-                  ),
-                  const SizedBox(height: 10),
-                  TextField(
-                    keyboardType: locale == 'vi'
-                        ? const TextInputType.numberWithOptions(decimal: false)
-                        : const TextInputType.numberWithOptions(decimal: true),
-                    controller: moneyController,
-                    inputFormatters: locale == 'vi'
-                        ? [
-                            FilteringTextInputFormatter.digitsOnly,
-                            CurrencyFormat()
-                          ]
-                        : [],
-                    onTapOutside: (_) => FocusScope.of(context).unfocus(),
-                    decoration: InputDecoration(
+                        prefixIconColor: Colors.blue,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    TextField(
+                      keyboardType: locale == 'vi'
+                          ? const TextInputType.numberWithOptions(
+                              decimal: false,
+                            )
+                          : const TextInputType.numberWithOptions(
+                              decimal: true,
+                            ),
+                      controller: moneyController,
+                      inputFormatters: locale == 'vi'
+                          ? [
+                              FilteringTextInputFormatter.digitsOnly,
+                              CurrencyFormat(),
+                            ]
+                          : [],
+                      onTapOutside: (_) => FocusScope.of(context).unfocus(),
+                      decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(
-                              color: isDark ? Colors.orange : Colors.amber),
+                            color: isDark ? Colors.orange : Colors.amber,
+                          ),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.amber),
-                            borderRadius: BorderRadius.circular(10)),
+                          borderSide: const BorderSide(color: Colors.amber),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                         label: Text(LocaleData.inputMoney.getString(context)),
                         labelStyle: const TextStyle(color: Colors.grey),
                         floatingLabelStyle: TextStyle(
-                            color: isDark ? Colors.white : Colors.black),
+                          color: isDark ? Colors.white : Colors.black,
+                        ),
                         prefixIcon: const Icon(Icons.attach_money),
                         prefixIconColor: Colors.green,
                         suffixStyle: const TextStyle(fontSize: 20),
                         suffixText: locale == 'vi'
                             ? 'đ'
-                            : (locale == 'zh' ? '¥' : '\$')),
-                  ),
-                ],
+                            : (locale == 'zh' ? '¥' : '\$'),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 15.0, right: 15, top: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    widget.isIncome
-                        ? LocaleData.incomeCategory.getString(context)
-                        : LocaleData.expenseCategory.getString(context),
-                    style: const TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.w700),
-                  ),
-                  TextButton(
+              Padding(
+                padding: const EdgeInsets.only(left: 15.0, right: 15, top: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      widget.isIncome
+                          ? LocaleData.incomeCategory.getString(context)
+                          : LocaleData.expenseCategory.getString(context),
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    TextButton(
                       onPressed: () {
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    CategoryManage(isIncome: widget.isIncome)));
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                CategoryManage(isIncome: widget.isIncome),
+                          ),
+                        );
                       },
-                      child: Text(LocaleData.more.getString(context)))
-                ],
+                      child: Text(LocaleData.more.getString(context)),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            _buildCategoryGrid(context, isDark),
-          ]),
+              _buildCategoryGrid(context, isDark),
+            ],
+          ),
         ),
         floatingActionButton: _buildSaveButton(context),
       ),
@@ -188,8 +219,9 @@ class _InputContentState extends State<InputContent> {
           return _buildShimmerGrid(isDark);
         }
 
-        final categories =
-            widget.isIncome ? state.incomeCategories : state.expenseCategories;
+        final categories = widget.isIncome
+            ? state.incomeCategories
+            : state.expenseCategories;
 
         return GridView.builder(
           shrinkWrap: true,
@@ -204,22 +236,21 @@ class _InputContentState extends State<InputContent> {
           itemCount: categories.length,
           itemBuilder: (BuildContext context, int index) {
             final catItem = categories[index];
-            bool isSelected = state.catId == catItem['catId'];
+            bool isSelected = state.catId == catItem.id;
             return InkWell(
               borderRadius: BorderRadius.circular(10),
               onTap: () {
-                context
-                    .read<InputCubit>()
-                    .selectCategory(index, catItem['cat_id']);
+                context.read<InputCubit>().selectCategory(index, catItem.id);
               },
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
                 decoration: BoxDecoration(
                   border: Border.all(
-                      width: 1.5,
-                      color: isSelected
-                          ? (isDark ? Colors.orange : Colors.amber)
-                          : Colors.transparent),
+                    width: 1.5,
+                    color: isSelected
+                        ? (isDark ? Colors.orange : Colors.amber)
+                        : Colors.transparent,
+                  ),
                   color: Colors
                       .primaries[Random().nextInt(Colors.primaries.length)]
                       .shade100
@@ -229,13 +260,14 @@ class _InputContentState extends State<InputContent> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(catItem['icon'], style: const TextStyle(fontSize: 20)),
+                    Text(catItem.icon, style: const TextStyle(fontSize: 20)),
                     Text(
-                      catItem['name'],
+                      catItem.name,
                       style: TextStyle(
-                          fontSize: 14,
-                          overflow: TextOverflow.ellipsis,
-                          color: isDark ? Colors.white : Colors.black),
+                        fontSize: 14,
+                        overflow: TextOverflow.ellipsis,
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
                     ),
                   ],
                 ),
@@ -267,16 +299,17 @@ class _InputContentState extends State<InputContent> {
             final state = context.read<InputCubit>().state;
             if (state.catId == null) {
               ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Select a category")));
+                const SnackBar(content: Text("Select a category")),
+              );
               return;
             }
             context.read<InputCubit>().addTransaction(
-                  date: dateCameraController.selectedDate ?? DateTime.now(),
-                  description: descriptionController.text,
-                  money: moneyController.text,
-                  catId: state.catId!,
-                  context: context,
-                );
+              date: dateCameraController.selectedDate ?? DateTime.now(),
+              description: descriptionController.text,
+              money: moneyController.text,
+              catId: state.catId!,
+              context: context,
+            );
             setState(() {
               scale = 1.1;
             });
@@ -293,10 +326,11 @@ class _InputContentState extends State<InputContent> {
               Text(
                 LocaleData.inputVave.getString(context),
                 style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white),
-              )
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white,
+                ),
+              ),
             ],
           ),
         ),
@@ -320,9 +354,11 @@ class _InputContentState extends State<InputContent> {
           baseColor: isDark ? Colors.grey[700]! : Colors.grey[300]!,
           highlightColor: Colors.grey[100]!,
           child: Container(
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(5.0))),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(5.0),
+            ),
+          ),
         );
       },
     );
@@ -331,10 +367,12 @@ class _InputContentState extends State<InputContent> {
 
 extension ScaffoldToast on ScaffoldMessengerState {
   void showToast({required String msg, Color backgroundColor = Colors.black}) {
-    showSnackBar(SnackBar(
-      content: Text(msg),
-      backgroundColor: backgroundColor,
-      behavior: SnackBarBehavior.floating,
-    ));
+    showSnackBar(
+      SnackBar(
+        content: Text(msg),
+        backgroundColor: backgroundColor,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
   }
 }

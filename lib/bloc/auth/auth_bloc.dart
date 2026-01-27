@@ -34,8 +34,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       final response = await _authRepo.login(event.email, event.password);
       await _authRepo.saveTokens(
-        response['accessToken'],
-        response['refreshToken'] ?? '',
+        response.accessToken,
+        response.refreshToken,
       );
       emit(state.copyWith(status: AuthStatus.success));
     } catch (e) {

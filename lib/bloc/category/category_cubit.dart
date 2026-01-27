@@ -32,9 +32,9 @@ class CategoryCubit extends Cubit<CategoryState> {
     if (index >= 0 && index < list.length) {
       emit(state.copyWith(
         selectedIndex: index,
-        selectedIcon: list[index]['icon'],
-        selectedName: list[index]['name'],
-        isIncome: list[index]['isIncome'],
+        selectedIcon: list[index].icon,
+        selectedName: list[index].name,
+        isIncome: list[index].isIncome,
       ));
     }
   }

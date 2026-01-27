@@ -13,9 +13,9 @@ class InputCubit extends Cubit<InputState> {
   InputCubit({
     required CategoryRepository categoryRepo,
     required TransactionRepository transactionRepo,
-  })  : _categoryRepo = categoryRepo,
-        _transactionRepo = transactionRepo,
-        super(const InputState()) {
+  }) : _categoryRepo = categoryRepo,
+       _transactionRepo = transactionRepo,
+       super(const InputState()) {
     fetchData();
   }
 
@@ -24,14 +24,17 @@ class InputCubit extends Cubit<InputState> {
     try {
       final incomeTemp = await _categoryRepo.getCategories(isIncome: true);
       final expenseTemp = await _categoryRepo.getCategories(isIncome: false);
-      emit(state.copyWith(
-        status: InputStatus.initial,
-        incomeCategories: incomeTemp,
-        expenseCategories: expenseTemp,
-      ));
+      emit(
+        state.copyWith(
+          status: InputStatus.initial,
+          incomeCategories: incomeTemp,
+          expenseCategories: expenseTemp,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-          status: InputStatus.failure, errorMessage: e.toString()));
+      emit(
+        state.copyWith(status: InputStatus.failure, errorMessage: e.toString()),
+      );
     }
   }
 
@@ -50,7 +53,7 @@ class InputCubit extends Cubit<InputState> {
     required String description,
     required String money,
     required String catId,
-    required context, // Still needed for some locale strings if not available elsewhere
+    required context,
   }) async {
     emit(state.copyWith(status: InputStatus.loading));
     try {
@@ -63,7 +66,7 @@ class InputCubit extends Cubit<InputState> {
 
       // Limit Check
       final category = await _categoryRepo.getCategory(catId);
-      double? limit = (category['limit'] as num?)?.toDouble();
+      double? limit = category.limit;
 
       if (limit != null && limit > 0) {
         final categoryTransactions = await _transactionRepo.getTransactions(
@@ -73,34 +76,41 @@ class InputCubit extends Cubit<InputState> {
         );
 
         double totalSpent = categoryTransactions
-            .map<double>(
-                (item) => (double.tryParse(item['money'].toString()) ?? 0))
+            .map<double>((item) => (item.money))
             .fold<double>(0, (prev, amount) => prev + amount);
 
         if (totalSpent + moneyFinal > limit) {
           var formatter = NumberFormat.simpleCurrency(
-              locale: _localization.currentLocale.toString());
+            locale: _localization.currentLocale.toString(),
+          );
           String limitStr = formatter.format((totalSpent + moneyFinal) - limit);
 
-          emit(state.copyWith(
-            status: InputStatus.overLimit,
-            overLimitMessage: "${category['name']}: $limitStr",
-          ));
+          emit(
+            state.copyWith(
+              status: InputStatus.overLimit,
+              overLimitMessage: "${category.name}: $limitStr",
+            ),
+          );
           return;
         }
       }
 
       String finalDate = DateFormat('dd/MM/yyyy').format(date);
-      bool isIncome = category['isIncome'];
+      bool isIncome = category.isIncome;
 
       await _transactionRepo.addTransaction(
-          finalDate, description, moneyFinal, catId, isIncome);
+        finalDate,
+        description,
+        moneyFinal,
+        catId,
+        isIncome,
+      );
 
       emit(state.copyWith(status: InputStatus.success));
-      // Reset after success if needed, or caller handles it
     } catch (e) {
-      emit(state.copyWith(
-          status: InputStatus.failure, errorMessage: e.toString()));
+      emit(
+        state.copyWith(status: InputStatus.failure, errorMessage: e.toString()),
+      );
     }
   }
 
@@ -120,19 +130,29 @@ class InputCubit extends Cubit<InputState> {
       double moneyFinal = double.parse(formatMoney);
 
       await _transactionRepo.updateTransaction(
-          id, date, description, moneyFinal, catId, isIncome);
+        id,
+        date,
+        description,
+        moneyFinal,
+        catId,
+        isIncome,
+      );
 
       emit(state.copyWith(status: InputStatus.success));
     } catch (e) {
-      emit(state.copyWith(
-          status: InputStatus.failure, errorMessage: e.toString()));
+      emit(
+        state.copyWith(status: InputStatus.failure, errorMessage: e.toString()),
+      );
     }
   }
 
   void resetStatus() {
-    emit(state.copyWith(
+    emit(
+      state.copyWith(
         status: InputStatus.initial,
         overLimitMessage: null,
-        errorMessage: null));
+        errorMessage: null,
+      ),
+    );
   }
 }

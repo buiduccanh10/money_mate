@@ -10,7 +10,7 @@ import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/bloc/category/category_cubit.dart';
 import 'package:money_mate/bloc/category/category_state.dart';
 import 'package:money_mate/bloc/schedule/schedule_cubit.dart';
-// import 'package:shimmer/shimmer.dart';
+import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class StartSetup extends StatefulWidget {
@@ -28,11 +28,11 @@ class _StartSetupState extends State<StartSetup> {
   int _selectedOptionIndex = 0;
 
   final List<String> _options = [
-    'Never',
-    'Daily',
-    'Weekly',
-    'Monthly',
-    'Yearly',
+    'never',
+    'daily',
+    'weekly',
+    'monthly',
+    'yearly',
   ];
 
   @override
@@ -65,11 +65,12 @@ class _StartSetupState extends State<StartSetup> {
               _buildDatePicker(isDark),
               const SizedBox(height: 16),
               _buildTextField(
-                  _descriptionController,
-                  LocaleData.inputDescription.getString(context),
-                  Icons.description,
-                  Colors.blue,
-                  isDark),
+                _descriptionController,
+                LocaleData.inputDescription.getString(context),
+                Icons.description,
+                Colors.blue,
+                isDark,
+              ),
               const SizedBox(height: 12),
               _buildMoneyField(isDark, locale),
               const SizedBox(height: 16),
@@ -84,8 +85,10 @@ class _StartSetupState extends State<StartSetup> {
         onPressed: _handleSave,
         backgroundColor: Colors.green,
         icon: const Icon(Icons.schedule, color: Colors.white),
-        label: Text(LocaleData.setUp.getString(context),
-            style: const TextStyle(color: Colors.white)),
+        label: Text(
+          LocaleData.setUp.getString(context),
+          style: const TextStyle(color: Colors.white),
+        ),
       ),
     );
   }
@@ -101,24 +104,31 @@ class _StartSetupState extends State<StartSetup> {
         selectionColor: Colors.deepOrangeAccent,
         controller: _dateController,
         headerStyle: const DateRangePickerHeaderStyle(
-            textAlign: TextAlign.center,
-            textStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 18)),
+          textAlign: TextAlign.center,
+          textStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+        ),
       ),
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String label,
-      IconData icon, Color iconColor, bool isDark) {
+  Widget _buildTextField(
+    TextEditingController controller,
+    String label,
+    IconData icon,
+    Color iconColor,
+    bool isDark,
+  ) {
     return TextField(
       controller: controller,
       decoration: InputDecoration(
         enabledBorder: OutlineInputBorder(
-            borderSide:
-                BorderSide(color: isDark ? Colors.orange : Colors.amber),
-            borderRadius: BorderRadius.circular(10)),
+          borderSide: BorderSide(color: isDark ? Colors.orange : Colors.amber),
+          borderRadius: BorderRadius.circular(10),
+        ),
         focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: Colors.amber),
-            borderRadius: BorderRadius.circular(10)),
+          borderSide: const BorderSide(color: Colors.amber),
+          borderRadius: BorderRadius.circular(10),
+        ),
         labelText: label,
         prefixIcon: Icon(icon, color: iconColor),
       ),
@@ -136,12 +146,13 @@ class _StartSetupState extends State<StartSetup> {
           : [],
       decoration: InputDecoration(
         enabledBorder: OutlineInputBorder(
-            borderSide:
-                BorderSide(color: isDark ? Colors.orange : Colors.amber),
-            borderRadius: BorderRadius.circular(10)),
+          borderSide: BorderSide(color: isDark ? Colors.orange : Colors.amber),
+          borderRadius: BorderRadius.circular(10),
+        ),
         focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: Colors.amber),
-            borderRadius: BorderRadius.circular(10)),
+          borderSide: const BorderSide(color: Colors.amber),
+          borderRadius: BorderRadius.circular(10),
+        ),
         labelText: LocaleData.inputMoney.getString(context),
         prefixIcon: const Icon(Icons.attach_money, color: Colors.green),
         suffixText: locale == 'vi' ? 'đ' : (locale == 'zh' ? '¥' : '\$'),
@@ -159,36 +170,39 @@ class _StartSetupState extends State<StartSetup> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(LocaleData.selectCategory.getString(context),
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(
+              LocaleData.selectCategory.getString(context),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 8),
             Wrap(
               spacing: 8,
               runSpacing: 8,
               children: categories.map((cat) {
-                final isSelected = _selectedCatId == cat['catId'];
+                final isSelected = _selectedCatId == cat.id;
                 return InkWell(
-                  onTap: () => setState(() => _selectedCatId = cat['catId']),
+                  onTap: () => setState(() => _selectedCatId = cat.id),
                   child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors
                           .primaries[Random().nextInt(Colors.primaries.length)]
                           .withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                          color:
-                              isSelected ? Colors.orange : Colors.transparent,
-                          width: 2),
+                        color: isSelected ? Colors.orange : Colors.transparent,
+                        width: 2,
+                      ),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(cat['icon'] ?? '💰'),
+                        Text(cat.icon),
                         const SizedBox(width: 4),
-                        Text(cat['name'] ?? ''),
+                        Text(cat.name),
                       ],
                     ),
                   ),
@@ -204,15 +218,18 @@ class _StartSetupState extends State<StartSetup> {
   Widget _buildRepeatSection(BuildContext context) {
     return Row(
       children: [
-        Text(LocaleData.repeat.getString(context),
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        Text(
+          LocaleData.repeat.getString(context),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
         const SizedBox(width: 8),
         CupertinoButton(
           padding: EdgeInsets.zero,
           onPressed: _showRepeatPicker,
-          child: Text(_options[_selectedOptionIndex],
-              style:
-                  const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          child: Text(
+            _options[_selectedOptionIndex],
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
         ),
       ],
     );
@@ -248,20 +265,20 @@ class _StartSetupState extends State<StartSetup> {
     final catCubit = context.read<CategoryCubit>();
     final allCats =
         catCubit.state.incomeCategories + catCubit.state.expenseCategories;
-    final cat = allCats.firstWhere((c) => c['catId'] == _selectedCatId);
+    final cat = allCats.firstWhere((c) => c.id == _selectedCatId);
 
-    final data = {
-      'date': DateFormat('dd/MM/yyyy').format(_dateController.selectedDate!),
-      'description': _descriptionController.text,
-      'money': money,
-      'catId': _selectedCatId,
-      'icon': cat['icon'],
-      'name': cat['name'],
-      'isIncome': cat['isIncome'],
-      'option': _options[_selectedOptionIndex],
-    };
-
-    context.read<ScheduleCubit>().addSchedule(data);
+    context.read<ScheduleCubit>().addSchedule(
+      date: DateFormat('dd/MM/yyyy').format(_dateController.selectedDate!),
+      description: _descriptionController.text,
+      money: money,
+      catId: _selectedCatId!,
+      icon: cat.icon,
+      name: cat.name,
+      isIncome: cat.isIncome,
+      option: CreateScheduleDtoOption.values.firstWhere(
+        (e) => e.name.toLowerCase() == _options[_selectedOptionIndex],
+      ),
+    );
     Navigator.pop(context);
   }
 }

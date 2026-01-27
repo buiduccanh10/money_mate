@@ -7,6 +7,7 @@ import 'package:money_mate/bloc/category/category_cubit.dart';
 import 'package:money_mate/bloc/category/category_state.dart';
 import 'package:money_mate/widget/category/cat_add_dialog.dart';
 import 'package:money_mate/widget/category/cat_update_dialog.dart';
+import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger.dart';
 import 'package:shimmer/shimmer.dart';
 
 class CategoryManage extends StatefulWidget {
@@ -114,8 +115,7 @@ class _CategoryManageState extends State<CategoryManage> {
     );
   }
 
-  Widget _buildSlidableItem(
-      Map<String, dynamic> catItem, BuildContext context) {
+  Widget _buildSlidableItem(CategoryResponseDto catItem, BuildContext context) {
     return Slidable(
       endActionPane: ActionPane(
         motion: const ScrollMotion(),
@@ -130,7 +130,7 @@ class _CategoryManageState extends State<CategoryManage> {
           SlidableAction(
             backgroundColor: Colors.transparent,
             onPressed: (context) =>
-                context.read<CategoryCubit>().deleteCategory(catItem['catId']),
+                context.read<CategoryCubit>().deleteCategory(catItem.id),
             foregroundColor: Colors.red,
             icon: Icons.delete,
             label: LocaleData.slideDelete.getString(context),
@@ -139,14 +139,14 @@ class _CategoryManageState extends State<CategoryManage> {
       ),
       child: ListTile(
         onTap: () => _showUpdateDialog(catItem),
-        leading: Text(catItem['icon'], style: const TextStyle(fontSize: 28)),
-        title: Text(catItem['name'], style: const TextStyle(fontSize: 18)),
+        leading: Text(catItem.icon, style: const TextStyle(fontSize: 28)),
+        title: Text(catItem.name, style: const TextStyle(fontSize: 18)),
         trailing: const Icon(Icons.navigate_next),
       ),
     );
   }
 
-  void _showUpdateDialog(Map<String, dynamic> catItem) {
+  void _showUpdateDialog(CategoryResponseDto catItem) {
     showDialog(
       context: context,
       builder: (_) => CatUpdateDialog(catItem: catItem),

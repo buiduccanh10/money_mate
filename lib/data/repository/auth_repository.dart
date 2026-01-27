@@ -1,60 +1,56 @@
-import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:money_mate/data/network/api_constants.dart';
-import 'package:money_mate/data/network/dio_client.dart';
+import 'package:money_mate/data/network/api_client.dart';
+import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger.dart';
 
 abstract class AuthRepository {
-  Future<Map<String, dynamic>> login(String email, String password);
-  Future<Map<String, dynamic>> register(String email, String password,
-      String confirmPassword); // Adjusted signature
+  Future<AuthResponseDto> login(String email, String password);
+  Future<AuthResponseDto> register(
+      String email, String password, String confirmPassword);
   Future<void> logout();
   Future<void> saveTokens(String accessToken, String refreshToken);
   Future<void> forgotPassword(String email);
 }
 
 class AuthRepositoryImpl implements AuthRepository {
-  final Dio _dio = DioClient().dio;
+  final _api = ApiClient.api;
   final _storage = const FlutterSecureStorage();
 
   @override
-  Future<Map<String, dynamic>> login(String email, String password) async {
-    try {
-      final response = await _dio.post(
-        ApiConstants.loginEndpoint,
-        data: {
-          'email': email,
-          'password': password,
-        },
-      );
-      return response.data;
-    } catch (e) {
-      rethrow;
+  Future<AuthResponseDto> login(String email, String password) async {
+    final response = await _api.apiAuthLoginPost(
+      body: LoginDto(email: email, password: password),
+    );
+
+    if (response.isSuccessful && response.body != null) {
+      return response.body!;
+    } else {
+      throw Exception(response.error ?? 'Login failed');
     }
   }
 
   @override
-  Future<Map<String, dynamic>> register(
+  Future<AuthResponseDto> register(
       String email, String password, String confirmPassword) async {
-    try {
-      final response = await _dio.post(
-        ApiConstants.registerEndpoint,
-        data: {
-          'email': email,
-          'password': password,
-          'confirmPassword': confirmPassword
-        },
-      );
-      return response.data;
-    } catch (e) {
-      rethrow;
+    final response = await _api.apiAuthRegisterPost(
+      body: RegisterDto(
+        email: email,
+        password: password,
+        confirmPassword: confirmPassword,
+      ),
+    );
+
+    if (response.isSuccessful && response.body != null) {
+      return response.body!;
+    } else {
+      throw Exception(response.error ?? 'Registration failed');
     }
   }
 
   @override
   Future<void> logout() async {
     try {
-      await _dio.post(ApiConstants.logoutEndpoint);
-    } catch (e) {
+      await _api.apiAuthLogoutPost();
+    } catch (_) {
       // Ignore errors on logout
     } finally {
       await _storage.deleteAll();
@@ -69,11 +65,12 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<void> forgotPassword(String email) async {
-    try {
-      await _dio
-          .post(ApiConstants.forgotPasswordEndpoint, data: {'email': email});
-    } catch (e) {
-      rethrow;
+    final response = await _api.apiAuthForgotPasswordPost(
+      body: ForgotPasswordDto(email: email),
+    );
+
+    if (!response.isSuccessful) {
+      throw Exception(response.error ?? 'Forgot password failed');
     }
   }
 }

@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-// import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:intl/intl.dart';
@@ -9,11 +8,12 @@ import 'package:money_mate/bloc/input/input_cubit.dart';
 import 'package:money_mate/bloc/category/category_cubit.dart';
 import 'package:money_mate/bloc/category/category_state.dart';
 import 'package:money_mate/widget/category/category_manage.dart';
+import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class UpdateInput extends StatefulWidget {
-  final Map<String, dynamic> inputItem;
+  final TransactionResponseDto inputItem;
   const UpdateInput({super.key, required this.inputItem});
 
   @override
@@ -29,17 +29,17 @@ class _UpdateInputState extends State<UpdateInput> {
   @override
   void initState() {
     super.initState();
-    _descriptionController.text = widget.inputItem['description'];
-    _moneyController.text = widget.inputItem['money'].toString();
+    _descriptionController.text = widget.inputItem.description ?? '';
+    _moneyController.text = widget.inputItem.money.toString();
     _dateController.selectedDate =
-        DateFormat("dd/MM/yyyy").parse(widget.inputItem['date']);
-    _selectedCatId = widget.inputItem['catId'];
+        DateFormat("dd/MM/yyyy").parse(widget.inputItem.date);
+    _selectedCatId = widget.inputItem.catId;
   }
 
   @override
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
-    final isIncome = widget.inputItem['isIncome'];
+    final isIncome = widget.inputItem.isIncome;
 
     return Scaffold(
       body: Stack(children: [
@@ -165,10 +165,10 @@ class _UpdateInputState extends State<UpdateInput> {
             itemCount: cats.length,
             itemBuilder: (context, index) {
               final cat = cats[index];
-              final isSelected = _selectedCatId == cat['catId'];
+              final isSelected = _selectedCatId == cat.id;
               return InkWell(
                 onTap: () => setState(() {
-                  _selectedCatId = cat['catId'];
+                  _selectedCatId = cat.id;
                 }),
                 child: Container(
                   decoration: BoxDecoration(
@@ -186,8 +186,8 @@ class _UpdateInputState extends State<UpdateInput> {
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(cat['icon'], style: const TextStyle(fontSize: 20)),
-                        Text(cat['name'], overflow: TextOverflow.ellipsis),
+                        Text(cat.icon, style: const TextStyle(fontSize: 20)),
+                        Text(cat.name, overflow: TextOverflow.ellipsis),
                       ]),
                 ),
               );
@@ -221,7 +221,7 @@ class _UpdateInputState extends State<UpdateInput> {
                   fontWeight: FontWeight.bold)),
           const SizedBox(width: 8),
           Expanded(
-              child: Text('(${widget.inputItem['description']})',
+              child: Text('(${widget.inputItem.description})',
                   style: const TextStyle(color: Colors.white70),
                   overflow: TextOverflow.ellipsis)),
         ]),
@@ -234,7 +234,7 @@ class _UpdateInputState extends State<UpdateInput> {
       onPressed: () {
         if (_selectedCatId != null && _moneyController.text.isNotEmpty) {
           context.read<InputCubit>().updateTransaction(
-                id: widget.inputItem['id'],
+                id: widget.inputItem.id,
                 date: DateFormat("dd/MM/yyyy")
                     .format(_dateController.selectedDate!),
                 description: _descriptionController.text,

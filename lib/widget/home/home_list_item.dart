@@ -8,6 +8,7 @@ import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/bloc/home/home_cubit.dart';
 import 'package:money_mate/bloc/home/home_state.dart';
 import 'package:money_mate/widget/input/update_input.dart';
+import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger.dart';
 import 'package:shimmer/shimmer.dart';
 
 class HomeListItem extends StatefulWidget {
@@ -44,17 +45,19 @@ class _HomeListItemState extends State<HomeListItem> {
           );
         }
 
-        final dateGroup = <String, List<Map<String, dynamic>>>{};
+        final dateGroup = <String, List<TransactionResponseDto>>{};
         for (final item in state.allTransactions) {
-          final date = item['date'] as String;
+          final date = item.date;
           dateGroup.putIfAbsent(date, () => []);
           dateGroup[date]!.add(item);
         }
 
         final sortedDates = dateGroup.keys.toList()
-          ..sort((a, b) => DateFormat('dd/MM/yyyy')
-              .parse(b)
-              .compareTo(DateFormat('dd/MM/yyyy').parse(a)));
+          ..sort(
+            (a, b) => DateFormat(
+              'dd/MM/yyyy',
+            ).parse(b).compareTo(DateFormat('dd/MM/yyyy').parse(a)),
+          );
 
         return Expanded(
           child: ListView.builder(
@@ -71,16 +74,19 @@ class _HomeListItemState extends State<HomeListItem> {
                     width: width,
                     padding: const EdgeInsets.only(left: 10, top: 8, bottom: 8),
                     decoration: BoxDecoration(
-                        color: isDark ? Colors.grey[700] : Colors.grey[200]),
+                      color: isDark ? Colors.grey[700] : Colors.grey[200],
+                    ),
                     child: Text(
                       date,
                       style: const TextStyle(
-                          fontSize: 14, fontWeight: FontWeight.bold),
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   ...transactions.map((transaction) {
                     var formatter = NumberFormat.simpleCurrency(locale: locale);
-                    String formatMoney = formatter.format(transaction['money']);
+                    String formatMoney = formatter.format(transaction.money);
                     return Slidable(
                       endActionPane: ActionPane(
                         motion: const ScrollMotion(),
@@ -89,10 +95,12 @@ class _HomeListItemState extends State<HomeListItem> {
                             backgroundColor: Colors.transparent,
                             onPressed: (context) {
                               Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                          UpdateInput(inputItem: transaction)));
+                                context,
+                                MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      UpdateInput(inputItem: transaction),
+                                ),
+                              );
                             },
                             foregroundColor: Colors.blue,
                             icon: Icons.edit,
@@ -101,9 +109,9 @@ class _HomeListItemState extends State<HomeListItem> {
                           SlidableAction(
                             backgroundColor: Colors.transparent,
                             onPressed: (context) {
-                              context
-                                  .read<HomeCubit>()
-                                  .deleteTransaction(transaction['id']);
+                              context.read<HomeCubit>().deleteTransaction(
+                                transaction.id,
+                              );
                             },
                             foregroundColor: Colors.red,
                             icon: Icons.delete,
@@ -114,21 +122,27 @@ class _HomeListItemState extends State<HomeListItem> {
                       child: InkWell(
                         onTap: () {
                           Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      UpdateInput(inputItem: transaction)));
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  UpdateInput(inputItem: transaction),
+                            ),
+                          );
                         },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
-                              vertical: 14, horizontal: 20),
+                            vertical: 14,
+                            horizontal: 20,
+                          ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Row(
                                 children: [
                                   _buildCategoryCircle(
-                                      transaction['icon'], isDark),
+                                    transaction.category?.icon ?? '💰',
+                                    isDark,
+                                  ),
                                   Padding(
                                     padding: const EdgeInsets.only(left: 12.0),
                                     child: Column(
@@ -138,20 +152,22 @@ class _HomeListItemState extends State<HomeListItem> {
                                         SizedBox(
                                           width: width * 0.4,
                                           child: Text(
-                                            transaction['description'],
+                                            transaction.description ?? '',
                                             softWrap: true,
                                             style: const TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w700),
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w700,
+                                            ),
                                           ),
                                         ),
                                         Text(
-                                          transaction['date'],
+                                          transaction.date,
                                           style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w700,
-                                              color: Colors.grey),
-                                        )
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w700,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -161,24 +177,25 @@ class _HomeListItemState extends State<HomeListItem> {
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
                                   Text(
-                                    '${transaction['isIncome'] ? '+' : '-'} $formatMoney',
+                                    '${transaction.isIncome ? '+' : '-'} $formatMoney',
                                     style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w700,
-                                      color: transaction['isIncome']
+                                      color: transaction.isIncome
                                           ? Colors.green
                                           : Colors.red,
                                     ),
                                   ),
                                   Text(
-                                    transaction['name'],
+                                    transaction.category?.name ?? '',
                                     style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w700,
-                                        color: Colors.grey),
-                                  )
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
                                 ],
-                              )
+                              ),
                             ],
                           ),
                         ),
@@ -205,13 +222,14 @@ class _HomeListItemState extends State<HomeListItem> {
                   spreadRadius: 2,
                   blurRadius: 7,
                   offset: const Offset(-5, 5),
-                )
+                ),
               ],
         borderRadius: BorderRadius.circular(50),
       ),
       child: CircleAvatar(
         backgroundColor: Colors
-            .primaries[Random().nextInt(Colors.primaries.length)].shade100
+            .primaries[Random().nextInt(Colors.primaries.length)]
+            .shade100
             .withValues(alpha: 0.35),
         radius: 28,
         child: Text(icon, style: const TextStyle(fontSize: 38)),
@@ -237,7 +255,9 @@ class _HomeListItemState extends State<HomeListItem> {
                   width: 50,
                   height: 50,
                   decoration: const BoxDecoration(
-                      color: Colors.white, shape: BoxShape.circle),
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
                 ),
                 trailing: Container(width: 60, height: 20, color: Colors.white),
               ),

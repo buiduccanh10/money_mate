@@ -1,13 +1,14 @@
 import 'package:equatable/equatable.dart';
+import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger.dart';
 
 enum ChartStatus { initial, loading, success, failure }
 
 class ChartState extends Equatable {
   final ChartStatus status;
-  final List<Map<String, dynamic>> incomeData;
-  final List<Map<String, dynamic>> expenseData;
-  final List<Map<String, dynamic>> yearlyData;
-  final List<Map<String, dynamic>> detailData;
+  final List<TransactionResponseDto> incomeTransactions; // For aggregate
+  final List<TransactionResponseDto> expenseTransactions;
+  final List<TransactionResponseDto> allTransactions;
+  final List<TransactionResponseDto> detailData;
   final bool isMonthly;
   final bool isIncome;
   final int month;
@@ -16,9 +17,9 @@ class ChartState extends Equatable {
 
   const ChartState({
     this.status = ChartStatus.initial,
-    this.incomeData = const [],
-    this.expenseData = const [],
-    this.yearlyData = const [],
+    this.incomeTransactions = const [],
+    this.expenseTransactions = const [],
+    this.allTransactions = const [],
     this.detailData = const [],
     this.isMonthly = true,
     this.isIncome = false,
@@ -29,10 +30,10 @@ class ChartState extends Equatable {
 
   ChartState copyWith({
     ChartStatus? status,
-    List<Map<String, dynamic>>? incomeData,
-    List<Map<String, dynamic>>? expenseData,
-    List<Map<String, dynamic>>? yearlyData,
-    List<Map<String, dynamic>>? detailData,
+    List<TransactionResponseDto>? incomeTransactions,
+    List<TransactionResponseDto>? expenseTransactions,
+    List<TransactionResponseDto>? allTransactions,
+    List<TransactionResponseDto>? detailData,
     bool? isMonthly,
     bool? isIncome,
     int? month,
@@ -41,9 +42,9 @@ class ChartState extends Equatable {
   }) {
     return ChartState(
       status: status ?? this.status,
-      incomeData: incomeData ?? this.incomeData,
-      expenseData: expenseData ?? this.expenseData,
-      yearlyData: yearlyData ?? this.yearlyData,
+      incomeTransactions: incomeTransactions ?? this.incomeTransactions,
+      expenseTransactions: expenseTransactions ?? this.expenseTransactions,
+      allTransactions: allTransactions ?? this.allTransactions,
       detailData: detailData ?? this.detailData,
       isMonthly: isMonthly ?? this.isMonthly,
       isIncome: isIncome ?? this.isIncome,
@@ -55,15 +56,15 @@ class ChartState extends Equatable {
 
   @override
   List<Object?> get props => [
-        status,
-        incomeData,
-        expenseData,
-        yearlyData,
-        detailData,
-        isMonthly,
-        isIncome,
-        month,
-        year,
-        errorMessage,
-      ];
+    status,
+    incomeTransactions,
+    expenseTransactions,
+    allTransactions,
+    detailData,
+    isMonthly,
+    isIncome,
+    month,
+    year,
+    errorMessage,
+  ];
 }

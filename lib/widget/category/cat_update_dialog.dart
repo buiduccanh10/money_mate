@@ -4,9 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/bloc/category/category_cubit.dart';
+import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger.dart';
 
 class CatUpdateDialog extends StatefulWidget {
-  final Map<String, dynamic> catItem;
+  final CategoryResponseDto catItem;
   const CatUpdateDialog({super.key, required this.catItem});
 
   @override
@@ -22,8 +23,8 @@ class _CatUpdateDialogState extends State<CatUpdateDialog> {
   @override
   void initState() {
     super.initState();
-    _iconController = TextEditingController(text: widget.catItem['icon']);
-    _nameController = TextEditingController(text: widget.catItem['name']);
+    _iconController = TextEditingController(text: widget.catItem.icon);
+    _nameController = TextEditingController(text: widget.catItem.name);
   }
 
   @override
@@ -45,7 +46,7 @@ class _CatUpdateDialogState extends State<CatUpdateDialog> {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              '(${widget.catItem['name']})',
+              '(${widget.catItem.name})',
               style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
               overflow: TextOverflow.ellipsis,
             ),
@@ -124,11 +125,11 @@ class _CatUpdateDialogState extends State<CatUpdateDialog> {
 
     if (_iconError == null && _nameError == null) {
       context.read<CategoryCubit>().updateCategory(
-            widget.catItem['catId'],
+            widget.catItem.id,
             _iconController.text,
             _nameController.text,
-            widget.catItem['isIncome'],
-            widget.catItem['limit']?.toDouble() ?? 0.0,
+            widget.catItem.isIncome,
+            widget.catItem.limit ?? 0.0,
           );
       Navigator.pop(context);
     }

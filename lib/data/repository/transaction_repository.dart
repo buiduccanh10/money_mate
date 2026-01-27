@@ -1,15 +1,15 @@
-import 'package:dio/dio.dart';
-import 'package:money_mate/data/network/dio_client.dart';
+import 'package:money_mate/data/network/api_client.dart';
+import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger.dart';
 
 abstract class TransactionRepository {
-  Future<List<Map<String, dynamic>>> getTransactions({
-    String? monthYear, // Format "MMMM yyyy"
+  Future<List<TransactionResponseDto>> getTransactions({
+    String? monthYear,
     String? year,
     bool? isIncome,
     String? catId,
   });
 
-  Future<void> addTransaction(
+  Future<TransactionResponseDto> addTransaction(
     String date,
     String description,
     double money,
@@ -17,7 +17,7 @@ abstract class TransactionRepository {
     bool isIncome,
   );
 
-  Future<void> updateTransaction(
+  Future<TransactionResponseDto> updateTransaction(
     String id,
     String date,
     String description,
@@ -30,57 +30,60 @@ abstract class TransactionRepository {
 
   Future<void> deleteAllTransactions();
 
-  Future<List<Map<String, dynamic>>> searchTransactions(String query);
+  Future<List<TransactionResponseDto>> searchTransactions(String query);
 }
 
 class TransactionRepositoryImpl implements TransactionRepository {
-  final Dio _dio = DioClient().dio;
+  final _api = ApiClient.api;
 
   @override
-  Future<List<Map<String, dynamic>>> getTransactions({
+  Future<List<TransactionResponseDto>> getTransactions({
     String? monthYear,
     String? year,
     bool? isIncome,
     String? catId,
   }) async {
-    try {
-      final queryParams = <String, dynamic>{};
-      if (monthYear != null) queryParams['monthYear'] = monthYear;
-      if (year != null) queryParams['year'] = year;
-      if (isIncome != null) queryParams['isIncome'] = isIncome;
-      if (catId != null) queryParams['catId'] = catId;
+    final response = await _api.apiTransactionsGet(
+      monthYear: monthYear,
+      year: year,
+      isIncome: isIncome?.toString(),
+      catId: catId,
+    );
 
-      final response =
-          await _dio.get('/transactions', queryParameters: queryParams);
-      return List<Map<String, dynamic>>.from(response.data);
-    } catch (e) {
-      rethrow;
+    if (response.isSuccessful && response.body != null) {
+      return response.body!;
+    } else {
+      throw Exception(response.error ?? 'Failed to fetch transactions');
     }
   }
 
   @override
-  Future<void> addTransaction(
+  Future<TransactionResponseDto> addTransaction(
     String date,
     String description,
     double money,
     String catId,
     bool isIncome,
   ) async {
-    try {
-      await _dio.post('/transactions', data: {
-        'date': date,
-        'description': description,
-        'money': money,
-        'catId': catId,
-        'isIncome': isIncome,
-      });
-    } catch (e) {
-      rethrow;
+    final response = await _api.apiTransactionsPost(
+      body: CreateTransactionDto(
+        date: date,
+        description: description,
+        money: money,
+        catId: catId,
+        isIncome: isIncome,
+      ),
+    );
+
+    if (response.isSuccessful && response.body != null) {
+      return response.body!;
+    } else {
+      throw Exception(response.error ?? 'Failed to create transaction');
     }
   }
 
   @override
-  Future<void> updateTransaction(
+  Future<TransactionResponseDto> updateTransaction(
     String id,
     String date,
     String description,
@@ -88,45 +91,47 @@ class TransactionRepositoryImpl implements TransactionRepository {
     String catId,
     bool isIncome,
   ) async {
-    try {
-      await _dio.put('/transactions/$id', data: {
-        'date': date,
-        'description': description,
-        'money': money,
-        'catId': catId,
-        'isIncome': isIncome,
-      });
-    } catch (e) {
-      rethrow;
+    final response = await _api.apiTransactionsIdPut(
+      id: id,
+      body: UpdateTransactionDto(
+        date: date,
+        description: description,
+        money: money,
+        catId: catId,
+        isIncome: isIncome,
+      ),
+    );
+
+    if (response.isSuccessful && response.body != null) {
+      return response.body!;
+    } else {
+      throw Exception(response.error ?? 'Failed to update transaction');
     }
   }
 
   @override
   Future<void> deleteTransaction(String id) async {
-    try {
-      await _dio.delete('/transactions/$id');
-    } catch (e) {
-      rethrow;
+    final response = await _api.apiTransactionsIdDelete(id: id);
+    if (!response.isSuccessful) {
+      throw Exception(response.error ?? 'Failed to delete transaction');
     }
   }
 
   @override
   Future<void> deleteAllTransactions() async {
-    try {
-      await _dio.delete('/transactions');
-    } catch (e) {
-      rethrow;
+    final response = await _api.apiTransactionsDelete();
+    if (!response.isSuccessful) {
+      throw Exception(response.error ?? 'Failed to delete all transactions');
     }
   }
 
   @override
-  Future<List<Map<String, dynamic>>> searchTransactions(String query) async {
-    try {
-      final response =
-          await _dio.get('/transactions/search', queryParameters: {'q': query});
-      return List<Map<String, dynamic>>.from(response.data);
-    } catch (e) {
-      rethrow;
+  Future<List<TransactionResponseDto>> searchTransactions(String query) async {
+    final response = await _api.apiTransactionsSearchGet(q: query);
+    if (response.isSuccessful && response.body != null) {
+      return response.body!;
+    } else {
+      throw Exception(response.error ?? 'Failed to search transactions');
     }
   }
 }

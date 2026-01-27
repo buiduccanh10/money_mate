@@ -29,10 +29,15 @@ import 'package:money_mate/widget/auth/login.dart';
 import 'package:money_mate/widget/search/search.dart';
 import 'package:money_mate/widget/setting/setting.dart';
 
+import 'package:money_mate/data/network/api_client.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterLocalization.instance.ensureInitialized();
   await NotificationService.initializeNotification();
+
+  ApiClient.init(baseUrl: 'http://localhost:3000');
+
   runApp(const MyApp());
 }
 
@@ -59,32 +64,38 @@ class _MyAppState extends State<MyApp> {
       providers: [
         BlocProvider(create: (_) => AuthBloc(authRepo: AuthRepositoryImpl())),
         BlocProvider(
-            create: (_) => HomeCubit(
-                  transactionRepo: TransactionRepositoryImpl(),
-                  userRepo: UserRepositoryImpl(),
-                )),
+          create: (_) => HomeCubit(
+            transactionRepo: TransactionRepositoryImpl(),
+            userRepo: UserRepositoryImpl(),
+          ),
+        ),
         BlocProvider(
-            create: (_) =>
-                CategoryCubit(categoryRepo: CategoryRepositoryImpl())),
+          create: (_) => CategoryCubit(categoryRepo: CategoryRepositoryImpl()),
+        ),
         BlocProvider(
-            create: (_) => InputCubit(
-                  categoryRepo: CategoryRepositoryImpl(),
-                  transactionRepo: TransactionRepositoryImpl(),
-                )),
+          create: (_) => InputCubit(
+            categoryRepo: CategoryRepositoryImpl(),
+            transactionRepo: TransactionRepositoryImpl(),
+          ),
+        ),
         BlocProvider(
-            create: (_) =>
-                SearchCubit(transactionRepo: TransactionRepositoryImpl())),
-        BlocProvider(create: (_) => ChartCubit()),
+          create: (_) =>
+              SearchCubit(transactionRepo: TransactionRepositoryImpl()),
+        ),
         BlocProvider(
-            create: (_) => SettingCubit(
-                  settingsRepo: SettingsRepositoryImpl(),
-                  userRepo: UserRepositoryImpl(),
-                  transactionRepo: TransactionRepositoryImpl(),
-                )),
+          create: (_) =>
+              ChartCubit(transactionRepo: TransactionRepositoryImpl()),
+        ),
         BlocProvider(
-            create: (_) => ScheduleCubit(
-                  scheduleRepo: ScheduleRepositoryImpl(),
-                )),
+          create: (_) => SettingCubit(
+            settingsRepo: SettingsRepositoryImpl(),
+            userRepo: UserRepositoryImpl(),
+            transactionRepo: TransactionRepositoryImpl(),
+          ),
+        ),
+        BlocProvider(
+          create: (_) => ScheduleCubit(scheduleRepo: ScheduleRepositoryImpl()),
+        ),
       ],
       child: BlocBuilder<SettingCubit, SettingState>(
         builder: (context, state) {
@@ -149,7 +160,8 @@ class _MainState extends State<Main> with WidgetsBindingObserver {
     final state = context.read<SettingCubit>().state;
     if (state.isLock) {
       final authenticated = await localAuth.authenticate(
-          localizedReason: 'Authenticate to access Money Mate');
+        localizedReason: 'Authenticate to access Money Mate',
+      );
       setState(() {
         isAuthorized = authenticated;
       });
@@ -210,31 +222,35 @@ class _MainState extends State<Main> with WidgetsBindingObserver {
                 ? const LinearGradient(
                     colors: [
                       Color.fromARGB(255, 203, 122, 0),
-                      Color.fromARGB(255, 0, 112, 204)
+                      Color.fromARGB(255, 0, 112, 204),
                     ],
                   )
-                : const LinearGradient(
-                    colors: [Colors.orange, Colors.blue],
-                  ),
+                : const LinearGradient(colors: [Colors.orange, Colors.blue]),
             padding: const EdgeInsets.all(20),
             gap: width * 0.01,
             activeColor: Colors.white,
             tabBorderRadius: 20,
             tabs: [
               GButton(
-                  icon: Icons.home, text: LocaleData.home.getString(context)),
+                icon: Icons.home,
+                text: LocaleData.home.getString(context),
+              ),
               GButton(
-                  icon: Icons.mode_edit_outline_rounded,
-                  text: LocaleData.input.getString(context)),
+                icon: Icons.mode_edit_outline_rounded,
+                text: LocaleData.input.getString(context),
+              ),
               GButton(
-                  icon: Icons.search_outlined,
-                  text: LocaleData.search.getString(context)),
+                icon: Icons.search_outlined,
+                text: LocaleData.search.getString(context),
+              ),
               GButton(
-                  icon: Icons.pie_chart,
-                  text: LocaleData.chart.getString(context)),
+                icon: Icons.pie_chart,
+                text: LocaleData.chart.getString(context),
+              ),
               GButton(
-                  icon: Icons.settings,
-                  text: LocaleData.setting.getString(context)),
+                icon: Icons.settings,
+                text: LocaleData.setting.getString(context),
+              ),
             ],
           ),
         ),

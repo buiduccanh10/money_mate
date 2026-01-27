@@ -19,7 +19,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ">=3.2.3 <4.0.0"
+  sdk: ">=3.8.0 <4.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -50,7 +50,6 @@ dependencies:
   flutter_localization: ^0.3.3
   local_auth: ^3.0.0
   awesome_notifications: ^0.10.1
-  shared_preferences: ^2.5.4
   image_picker: ^1.2.1
   flutter_bloc: ^8.1.6
   equatable: ^2.0.5
@@ -60,6 +59,8 @@ dependencies:
   collection: any
   dio: ^5.9.0
   flutter_secure_storage: ^10.0.0
+  chopper: ^8.5.0
+  json_annotation: ^4.9.0
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
@@ -89,6 +90,10 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+  swagger_dart_code_generator: ^4.1.1
+  build_runner: ^2.10.5
+  json_serializable: ^6.11.4
+  chopper_generator: ^8.5.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

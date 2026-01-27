@@ -1,10 +1,11 @@
 import 'package:equatable/equatable.dart';
+import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger.dart';
 
 enum ScheduleStatus { initial, loading, success, failure }
 
 class ScheduleState extends Equatable {
   final ScheduleStatus status;
-  final List<Map<String, dynamic>> schedules;
+  final List<ScheduleResponseDto> schedules;
   final String? errorMessage;
 
   const ScheduleState({
@@ -15,7 +16,7 @@ class ScheduleState extends Equatable {
 
   ScheduleState copyWith({
     ScheduleStatus? status,
-    List<Map<String, dynamic>>? schedules,
+    List<ScheduleResponseDto>? schedules,
     String? errorMessage,
   }) {
     return ScheduleState(

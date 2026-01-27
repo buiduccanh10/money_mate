@@ -1,6 +1,5 @@
 class ApiConstants {
-  static const String baseUrl =
-      'http://localhost:3000/api'; // Replace with actual Next.js BE URL
+  static const String baseUrl = 'http://localhost:3000';
   static const String loginEndpoint = '/auth/login';
   static const String registerEndpoint = '/auth/register';
   static const String refreshTokenEndpoint = '/auth/refresh';

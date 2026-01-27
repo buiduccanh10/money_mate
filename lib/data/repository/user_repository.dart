@@ -1,50 +1,55 @@
-import 'package:dio/dio.dart';
-import 'package:money_mate/data/network/dio_client.dart';
+import 'package:money_mate/data/network/api_client.dart';
+import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger.dart';
 
 abstract class UserRepository {
-  Future<Map<String, dynamic>> getUserProfile();
-  Future<void> updateLanguage(String language);
-  Future<void> updateDarkMode(bool isDark);
+  Future<UserResponseDto> getUserProfile();
+  Future<UserSettingsResponseDto> updateLanguage(String language);
+  Future<UserSettingsResponseDto> updateDarkMode(bool isDark);
   Future<void> deleteAccount();
 }
 
 class UserRepositoryImpl implements UserRepository {
-  final Dio _dio = DioClient().dio;
+  final _api = ApiClient.api;
 
   @override
-  Future<Map<String, dynamic>> getUserProfile() async {
-    try {
-      final response = await _dio.get('/users/me');
-      return response.data;
-    } catch (e) {
-      rethrow;
+  Future<UserResponseDto> getUserProfile() async {
+    final response = await _api.apiUsersMeGet();
+    if (response.isSuccessful && response.body != null) {
+      return response.body!;
+    } else {
+      throw Exception(response.error ?? 'Failed to fetch user profile');
     }
   }
 
   @override
-  Future<void> updateLanguage(String language) async {
-    try {
-      await _dio.patch('/users/me/settings', data: {'language': language});
-    } catch (e) {
-      rethrow;
+  Future<UserSettingsResponseDto> updateLanguage(String language) async {
+    final response = await _api.apiUsersMeSettingsPatch(
+      body: UpdateSettingsDto(language: language),
+    );
+    if (response.isSuccessful && response.body != null) {
+      return response.body!;
+    } else {
+      throw Exception(response.error ?? 'Failed to update language');
     }
   }
 
   @override
-  Future<void> updateDarkMode(bool isDark) async {
-    try {
-      await _dio.patch('/users/me/settings', data: {'isDark': isDark});
-    } catch (e) {
-      rethrow;
+  Future<UserSettingsResponseDto> updateDarkMode(bool isDark) async {
+    final response = await _api.apiUsersMeSettingsPatch(
+      body: UpdateSettingsDto(isDark: isDark),
+    );
+    if (response.isSuccessful && response.body != null) {
+      return response.body!;
+    } else {
+      throw Exception(response.error ?? 'Failed to update dark mode');
     }
   }
 
   @override
   Future<void> deleteAccount() async {
-    try {
-      await _dio.delete('/users/me');
-    } catch (e) {
-      rethrow;
+    final response = await _api.apiUsersMeDelete();
+    if (!response.isSuccessful) {
+      throw Exception(response.error ?? 'Failed to delete account');
     }
   }
 }

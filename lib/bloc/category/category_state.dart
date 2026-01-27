@@ -1,11 +1,12 @@
 import 'package:equatable/equatable.dart';
+import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger.dart';
 
 enum CategoryStatus { initial, loading, success, failure }
 
 class CategoryState extends Equatable {
   final CategoryStatus status;
-  final List<Map<String, dynamic>> incomeCategories;
-  final List<Map<String, dynamic>> expenseCategories;
+  final List<CategoryResponseDto> incomeCategories;
+  final List<CategoryResponseDto> expenseCategories;
   final String? errorMessage;
   final int? selectedIndex;
   final String? selectedIcon;
@@ -25,8 +26,8 @@ class CategoryState extends Equatable {
 
   CategoryState copyWith({
     CategoryStatus? status,
-    List<Map<String, dynamic>>? incomeCategories,
-    List<Map<String, dynamic>>? expenseCategories,
+    List<CategoryResponseDto>? incomeCategories,
+    List<CategoryResponseDto>? expenseCategories,
     String? errorMessage,
     int? selectedIndex,
     String? selectedIcon,

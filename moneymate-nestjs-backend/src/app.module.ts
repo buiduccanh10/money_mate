@@ -11,6 +11,7 @@ import { UsersModule } from './users/users.module';
 import { CategoriesModule } from './categories/categories.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { SchedulesModule } from './schedules/schedules.module';
+import { SupabaseModule } from './supabase/supabase.module';
 
 import { IdempotencyMiddleware } from './common/middleware/idempotency.middleware';
 
@@ -37,7 +38,7 @@ import {
         type: 'postgres',
         url: configService.get('DATABASE_URL'),
         entities: [User, Category, Transaction, Schedule, RefreshToken],
-        synchronize: configService.get('NODE_ENV') === 'development', // Auto-sync in dev only
+        synchronize: false,
         ssl:
           configService.get('NODE_ENV') === 'production'
             ? { rejectUnauthorized: false }
@@ -72,6 +73,7 @@ import {
     CategoriesModule,
     TransactionsModule,
     SchedulesModule,
+    SupabaseModule,
   ],
   providers: [
     // Global Rate Limiting Guard

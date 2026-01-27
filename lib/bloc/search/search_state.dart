@@ -1,10 +1,11 @@
 import 'package:equatable/equatable.dart';
+import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger.dart';
 
 enum SearchStatus { initial, loading, success, failure }
 
 class SearchState extends Equatable {
   final SearchStatus status;
-  final List<Map<String, dynamic>> searchResults;
+  final List<TransactionResponseDto> searchResults;
   final String? errorMessage;
   final String query;
 
@@ -17,7 +18,7 @@ class SearchState extends Equatable {
 
   SearchState copyWith({
     SearchStatus? status,
-    List<Map<String, dynamic>>? searchResults,
+    List<TransactionResponseDto>? searchResults,
     String? errorMessage,
     String? query,
   }) {

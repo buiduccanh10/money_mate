@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger.dart';
 
 enum HomeStatus { initial, loading, success, failure }
 
@@ -7,9 +8,9 @@ class HomeState extends Equatable {
   final int month;
   final int year;
   final String formattedDate;
-  final List<Map<String, dynamic>> incomeTransactions;
-  final List<Map<String, dynamic>> expenseTransactions;
-  final List<Map<String, dynamic>> allTransactions;
+  final List<TransactionResponseDto> incomeTransactions;
+  final List<TransactionResponseDto> expenseTransactions;
+  final List<TransactionResponseDto> allTransactions;
   final double totalIncome;
   final double totalExpense;
   final double totalSaving;
@@ -36,9 +37,9 @@ class HomeState extends Equatable {
     int? month,
     int? year,
     String? formattedDate,
-    List<Map<String, dynamic>>? incomeTransactions,
-    List<Map<String, dynamic>>? expenseTransactions,
-    List<Map<String, dynamic>>? allTransactions,
+    List<TransactionResponseDto>? incomeTransactions,
+    List<TransactionResponseDto>? expenseTransactions,
+    List<TransactionResponseDto>? allTransactions,
     double? totalIncome,
     double? totalExpense,
     double? totalSaving,

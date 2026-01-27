@@ -1,118 +1,125 @@
-import 'package:dio/dio.dart';
-import 'package:money_mate/data/network/dio_client.dart';
+import 'package:money_mate/data/network/api_client.dart';
+import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger.dart';
 
 abstract class CategoryRepository {
-  Future<List<Map<String, dynamic>>> getCategories({bool? isIncome});
-  Future<void> addCategory(String icon, String name, bool isIncome,
+  Future<List<CategoryResponseDto>> getCategories({bool? isIncome});
+  Future<CategoryResponseDto> addCategory(
+      String icon, String name, bool isIncome,
       [double? limit]);
-  Future<void> updateCategory(
+  Future<CategoryResponseDto> updateCategory(
       String id, String icon, String name, bool isIncome, double limit);
   Future<void> deleteCategory(String id);
   Future<void> deleteAllCategories(bool isIncome);
-  Future<Map<String, dynamic>> getCategory(String id);
+  Future<CategoryResponseDto> getCategory(String id);
   Future<void> updateLimit(String catId, double limit);
   Future<void> restoreLimit(String catId);
   Future<void> restoreAllLimit();
 }
 
 class CategoryRepositoryImpl implements CategoryRepository {
-  final Dio _dio = DioClient().dio;
+  final _api = ApiClient.api;
 
   @override
-  Future<List<Map<String, dynamic>>> getCategories({bool? isIncome}) async {
-    try {
-      final response = await _dio.get(
-        '/categories',
-        queryParameters: isIncome != null ? {'isIncome': isIncome} : null,
-      );
-      return List<Map<String, dynamic>>.from(response.data);
-    } catch (e) {
-      rethrow;
+  Future<List<CategoryResponseDto>> getCategories({bool? isIncome}) async {
+    final response = await _api.apiCategoriesGet(
+      isIncome: isIncome?.toString(),
+    );
+
+    if (response.isSuccessful && response.body != null) {
+      return response.body!;
+    } else {
+      throw Exception(response.error ?? 'Failed to fetch categories');
     }
   }
 
   @override
-  Future<void> addCategory(String icon, String name, bool isIncome,
+  Future<CategoryResponseDto> addCategory(
+      String icon, String name, bool isIncome,
       [double? limit]) async {
-    try {
-      await _dio.post('/categories', data: {
-        'icon': icon,
-        'name': name,
-        'isIncome': isIncome,
-        'limit': limit ?? 0,
-      });
-    } catch (e) {
-      rethrow;
+    final response = await _api.apiCategoriesPost(
+      body: CreateCategoryDto(
+        icon: icon,
+        name: name,
+        isIncome: isIncome,
+        limit: limit,
+      ),
+    );
+
+    if (response.isSuccessful && response.body != null) {
+      return response.body!;
+    } else {
+      throw Exception(response.error ?? 'Failed to create category');
     }
   }
 
   @override
-  Future<void> updateCategory(
+  Future<CategoryResponseDto> updateCategory(
       String id, String icon, String name, bool isIncome, double limit) async {
-    try {
-      await _dio.put('/categories/$id', data: {
-        'icon': icon,
-        'name': name,
-        'isIncome': isIncome,
-        'limit': limit,
-      });
-    } catch (e) {
-      rethrow;
+    final response = await _api.apiCategoriesIdPut(
+      id: id,
+      body: UpdateCategoryDto(
+        icon: icon,
+        name: name,
+        isIncome: isIncome,
+        limit: limit,
+      ),
+    );
+
+    if (response.isSuccessful && response.body != null) {
+      return response.body!;
+    } else {
+      throw Exception(response.error ?? 'Failed to update category');
     }
   }
 
   @override
   Future<void> deleteCategory(String id) async {
-    try {
-      await _dio.delete('/categories/$id');
-    } catch (e) {
-      rethrow;
+    final response = await _api.apiCategoriesIdDelete(id: id);
+    if (!response.isSuccessful) {
+      throw Exception(response.error ?? 'Failed to delete category');
     }
   }
 
   @override
   Future<void> deleteAllCategories(bool isIncome) async {
-    try {
-      await _dio.delete('/categories', queryParameters: {'isIncome': isIncome});
-    } catch (e) {
-      rethrow;
+    final response =
+        await _api.apiCategoriesDelete(isIncome: isIncome.toString());
+    if (!response.isSuccessful) {
+      throw Exception(response.error ?? 'Failed to delete all categories');
     }
   }
 
   @override
-  Future<Map<String, dynamic>> getCategory(String id) async {
-    try {
-      final response = await _dio.get('/categories/$id');
-      return response.data;
-    } catch (e) {
-      rethrow;
+  Future<CategoryResponseDto> getCategory(String id) async {
+    final response = await _api.apiCategoriesIdGet(id: id);
+    if (response.isSuccessful && response.body != null) {
+      return response.body!;
+    } else {
+      throw Exception(response.error ?? 'Failed to fetch category');
     }
   }
 
   @override
   Future<void> updateLimit(String catId, double limit) async {
-    try {
-      await _dio.patch('/categories/$catId/limit', data: {'limit': limit});
-    } catch (e) {
-      rethrow;
+    final response = await _api.apiCategoriesIdLimitPatch(
+      id: catId,
+      body: UpdateLimitDto(limit: limit),
+    );
+    if (!response.isSuccessful) {
+      throw Exception(response.error ?? 'Failed to update limit');
     }
   }
 
   @override
   Future<void> restoreLimit(String catId) async {
-    try {
-      await _dio.patch('/categories/$catId/limit', data: {'limit': 0});
-    } catch (e) {
-      rethrow;
-    }
+    await updateLimit(catId, 0);
   }
 
   @override
   Future<void> restoreAllLimit() async {
-    try {
-      await _dio.post('/categories/restore-all-limits');
-    } catch (e) {
-      rethrow;
+    final response = await _api.apiCategoriesRestoreAllLimitsPost();
+    if (!response.isSuccessful) {
+      throw Exception(response.error ?? 'Failed to restore all limits');
     }
   }
 }

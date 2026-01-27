@@ -44,8 +44,8 @@ class SettingCubit extends Cubit<SettingState> {
     try {
       final profile = await _userRepo.getUserProfile();
       emit(state.copyWith(
-        userName: profile['email'],
-        image: profile['image'],
+        userName: profile.email,
+        // image: profile.image,
       ));
     } catch (e) {
       // Handle error quietly or update state

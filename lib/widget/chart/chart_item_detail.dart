@@ -8,6 +8,7 @@ import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/bloc/chart/chart_cubit.dart';
 import 'package:money_mate/bloc/chart/chart_state.dart';
 import 'package:money_mate/widget/input/update_input.dart';
+import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class ChartItemDetail extends StatefulWidget {
@@ -38,9 +39,12 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
   }
 
   void _fetchDetail() {
-    // context.read<ChartCubit>().fetchDetail(isMonthly: widget.isMonthly, isIncome: widget.isIncome, date: widget.date, catId: widget.catId);
-    // For now, using the global chart data if it has what we need, but we likely need a specific fetch.
-    // I'll implement fetchDetail in ChartCubit.
+    context.read<ChartCubit>().fetchDetail(
+      isMonthly: widget.isMonthly,
+      isIncome: widget.isIncome,
+      date: widget.date,
+      catId: widget.catId,
+    );
   }
 
   @override
@@ -51,25 +55,30 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
     return BlocBuilder<ChartCubit, ChartState>(
       builder: (context, state) {
         final data = state.detailData;
-        final dateGroup = <String, List<Map<String, dynamic>>>{};
+        final dateGroup = <String, List<TransactionResponseDto>>{};
         List<String> sortedDates = [];
 
         for (final item in data) {
-          final date = item['date'] as String;
+          final date = item.date;
           final key = widget.isMonthly ? date : date.substring(3);
           dateGroup.putIfAbsent(key, () => []);
           dateGroup[key]!.add(item);
         }
 
         sortedDates = dateGroup.keys.toList()
-          ..sort((a, b) => (widget.isMonthly
-                  ? DateFormat('dd/MM/yyyy')
-                  : DateFormat('MM/yyyy'))
-              .parse(b)
-              .compareTo((widget.isMonthly
-                      ? DateFormat('dd/MM/yyyy')
-                      : DateFormat('MM/yyyy'))
-                  .parse(a)));
+          ..sort(
+            (a, b) =>
+                (widget.isMonthly
+                        ? DateFormat('dd/MM/yyyy')
+                        : DateFormat('MM/yyyy'))
+                    .parse(b)
+                    .compareTo(
+                      (widget.isMonthly
+                              ? DateFormat('dd/MM/yyyy')
+                              : DateFormat('MM/yyyy'))
+                          .parse(a),
+                    ),
+          );
 
         final formatter = NumberFormat.simpleCurrency(locale: locale);
 
@@ -81,27 +90,31 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
                 child: state.status == ChartStatus.loading
                     ? const Center(child: CircularProgressIndicator())
                     : data.isEmpty
-                        ? Center(
-                            child:
-                                Text(LocaleData.noInputData.getString(context)))
-                        : Column(
-                            children: [
-                              _buildChart(sortedDates, dateGroup, locale),
-                              Expanded(
-                                child: ListView.builder(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 10),
-                                  itemCount: sortedDates.length,
-                                  itemBuilder: (context, index) {
-                                    final date = sortedDates[index];
-                                    final transactions = dateGroup[date]!;
-                                    return _buildDateSection(context, isDark,
-                                        date, transactions, locale);
-                                  },
-                                ),
-                              ),
-                            ],
+                    ? Center(
+                        child: Text(LocaleData.noInputData.getString(context)),
+                      )
+                    : Column(
+                        children: [
+                          _buildChart(sortedDates, dateGroup, locale),
+                          Expanded(
+                            child: ListView.builder(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              itemCount: sortedDates.length,
+                              itemBuilder: (context, index) {
+                                final date = sortedDates[index];
+                                final transactions = dateGroup[date]!;
+                                return _buildDateSection(
+                                  context,
+                                  isDark,
+                                  date,
+                                  transactions,
+                                  locale,
+                                );
+                              },
+                            ),
                           ),
+                        ],
+                      ),
               ),
             ],
           ),
@@ -111,9 +124,12 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
   }
 
   Widget _buildHeader(
-      bool isDark, List<Map<String, dynamic>> data, NumberFormat formatter) {
+    bool isDark,
+    List<TransactionResponseDto> data,
+    NumberFormat formatter,
+  ) {
     String title = data.isNotEmpty
-        ? data.first['name']
+        ? (data.first.category?.name ?? '')
         : LocaleData.noInputData.getString(context);
     if (widget.over > 0) {
       title +=
@@ -134,20 +150,28 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
           children: [
             const BackButton(color: Colors.white),
             Expanded(
-                child: Text(title,
-                    style: const TextStyle(color: Colors.white, fontSize: 18),
-                    overflow: TextOverflow.ellipsis)),
+              child: Text(
+                title,
+                style: const TextStyle(color: Colors.white, fontSize: 18),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildChart(List<String> sortedDates,
-      Map<String, List<Map<String, dynamic>>> dateGroup, String locale) {
+  Widget _buildChart(
+    List<String> sortedDates,
+    Map<String, List<TransactionResponseDto>> dateGroup,
+    String locale,
+  ) {
     final chartData = sortedDates.reversed.map((date) {
-      final total = dateGroup[date]!
-          .fold<double>(0, (prev, item) => prev + (item['money'] as double));
+      final total = dateGroup[date]!.fold<double>(
+        0,
+        (prev, item) => prev + item.money,
+      );
       return {'date': date, 'money': total};
     }).toList();
 
@@ -169,8 +193,13 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
     );
   }
 
-  Widget _buildDateSection(BuildContext context, bool isDark, String date,
-      List<Map<String, dynamic>> transactions, String locale) {
+  Widget _buildDateSection(
+    BuildContext context,
+    bool isDark,
+    String date,
+    List<TransactionResponseDto> transactions,
+    String locale,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -178,32 +207,43 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
           color: isDark ? Colors.grey[800] : Colors.grey[200],
-          child:
-              Text(date, style: const TextStyle(fontWeight: FontWeight.bold)),
+          child: Text(
+            date,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
         ),
-        ...transactions
-            .map((tx) => _buildTransactionItem(context, isDark, tx, locale)),
+        ...transactions.map(
+          (tx) => _buildTransactionItem(context, isDark, tx, locale),
+        ),
       ],
     );
   }
 
-  Widget _buildTransactionItem(BuildContext context, bool isDark,
-      Map<String, dynamic> tx, String locale) {
+  Widget _buildTransactionItem(
+    BuildContext context,
+    bool isDark,
+    TransactionResponseDto tx,
+    String locale,
+  ) {
     final formatter = NumberFormat.simpleCurrency(locale: locale);
     return Slidable(
       endActionPane: ActionPane(
         motion: const ScrollMotion(),
         children: [
           SlidableAction(
-              onPressed: (_) => _editTx(tx),
-              icon: Icons.edit,
-              label: 'Edit',
-              foregroundColor: Colors.blue),
+            onPressed: (_) => _editTx(tx),
+            icon: Icons.edit,
+            label: 'Edit',
+            foregroundColor: Colors.blue,
+          ),
           SlidableAction(
-              onPressed: (_) => _deleteTx(tx['id']),
-              icon: Icons.delete,
-              label: 'Delete',
-              foregroundColor: Colors.red),
+            onPressed: (_) {
+              // Handle delete if needed
+            },
+            icon: Icons.delete,
+            label: 'Delete',
+            foregroundColor: Colors.red,
+          ),
         ],
       ),
       child: ListTile(
@@ -212,27 +252,28 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
           backgroundColor: Colors
               .primaries[Random().nextInt(Colors.primaries.length)]
               .withValues(alpha: 0.2),
-          child: Text(tx['icon'] ?? '💰'),
+          child: Text(tx.category?.icon ?? '💰'),
         ),
-        title: Text(tx['description'] ?? '',
-            style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(tx['date']),
+        title: Text(
+          tx.description ?? '',
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        subtitle: Text(tx.date),
         trailing: Text(
-          '${tx['isIncome'] ? '+' : '-'} ${formatter.format(tx['money'])}',
+          '${tx.isIncome ? '+' : '-'} ${formatter.format(tx.money)}',
           style: TextStyle(
-              color: tx['isIncome'] ? Colors.green : Colors.red,
-              fontWeight: FontWeight.bold),
+            color: tx.isIncome ? Colors.green : Colors.red,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );
   }
 
-  void _editTx(Map<String, dynamic> tx) {
+  void _editTx(TransactionResponseDto tx) {
     Navigator.push(
-        context, MaterialPageRoute(builder: (_) => UpdateInput(inputItem: tx)));
-  }
-
-  void _deleteTx(String id) {
-    // context.read<ChartCubit>().deleteTransaction(id);
+      context,
+      MaterialPageRoute(builder: (_) => UpdateInput(inputItem: tx)),
+    );
   }
 }

@@ -8,6 +8,7 @@ import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/bloc/category/category_cubit.dart';
 import 'package:money_mate/bloc/category/category_state.dart';
 import 'package:money_mate/widget/setting/advance_setting/limit_in_ex/cat_limit_dialog.dart';
+import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger.dart';
 import 'package:shimmer/shimmer.dart';
 
 class SetupInExLimit extends StatefulWidget {
@@ -64,9 +65,9 @@ class _SetupInExLimitState extends State<SetupInExLimit> {
   }
 
   Widget _buildSlidableItem(BuildContext context, bool isDark,
-      Map<String, dynamic> cat, String locale) {
+      CategoryResponseDto cat, String locale) {
     final formatter = NumberFormat.simpleCurrency(locale: locale);
-    final limit = (cat['limit'] as num?)?.toDouble() ?? 0.0;
+    final limit = cat.limit ?? 0.0;
     final formatMoney = formatter.format(limit);
 
     return Slidable(
@@ -81,7 +82,7 @@ class _SetupInExLimitState extends State<SetupInExLimit> {
           ),
           SlidableAction(
             onPressed: (_) =>
-                context.read<CategoryCubit>().restoreLimit(cat['catId']),
+                context.read<CategoryCubit>().restoreLimit(cat.id),
             foregroundColor: Colors.red,
             icon: Icons.restore,
             label: LocaleData.restoreLimit.getString(context),
@@ -94,11 +95,10 @@ class _SetupInExLimitState extends State<SetupInExLimit> {
           backgroundColor: Colors
               .primaries[Random().nextInt(Colors.primaries.length)]
               .withValues(alpha: 0.2),
-          child:
-              Text(cat['icon'] ?? '💰', style: const TextStyle(fontSize: 24)),
+          child: Text(cat.icon, style: const TextStyle(fontSize: 24)),
         ),
-        title: Text(cat['name'] ?? '',
-            style: const TextStyle(fontWeight: FontWeight.bold)),
+        title:
+            Text(cat.name, style: const TextStyle(fontWeight: FontWeight.bold)),
         trailing: Text(
           limit > 0 ? formatMoney : LocaleData.noLimit.getString(context),
           style:
@@ -108,13 +108,13 @@ class _SetupInExLimitState extends State<SetupInExLimit> {
     );
   }
 
-  void _showLimitDialog(Map<String, dynamic> cat) {
+  void _showLimitDialog(CategoryResponseDto cat) {
     showDialog(
       context: context,
       builder: (_) => CatLimitDialog(
-        catId: cat['catId'],
-        catName: cat['name'],
-        limit: (cat['limit'] as num?)?.toDouble() ?? 0.0,
+        catId: cat.id,
+        catName: cat.name,
+        limit: cat.limit ?? 0.0,
       ),
     );
   }
