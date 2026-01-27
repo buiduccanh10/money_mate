@@ -1,10 +1,9 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localization/flutter_localization.dart';
+import 'package:money_mate/l10n/app_localizations.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
-import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/bloc/home/home_cubit.dart';
 import 'package:money_mate/bloc/home/home_state.dart';
 import 'package:money_mate/widget/input/update_input.dart';
@@ -29,7 +28,7 @@ class _HomeListItemState extends State<HomeListItem> {
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
     final width = MediaQuery.of(context).size.width;
-    final locale = FlutterLocalization.instance.currentLocale.toString();
+    final locale = Localizations.localeOf(context).toString();
 
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) {
@@ -40,7 +39,7 @@ class _HomeListItemState extends State<HomeListItem> {
         if (state.allTransactions.isEmpty) {
           return Expanded(
             child: Center(
-              child: Text(LocaleData.noInputData.getString(context)),
+              child: Text(AppLocalizations.of(context)!.noInputData),
             ),
           );
         }
@@ -104,7 +103,7 @@ class _HomeListItemState extends State<HomeListItem> {
                             },
                             foregroundColor: Colors.blue,
                             icon: Icons.edit,
-                            label: LocaleData.slideEdit.getString(context),
+                            label: AppLocalizations.of(context)!.slideEdit,
                           ),
                           SlidableAction(
                             backgroundColor: Colors.transparent,
@@ -115,7 +114,7 @@ class _HomeListItemState extends State<HomeListItem> {
                             },
                             foregroundColor: Colors.red,
                             icon: Icons.delete,
-                            label: LocaleData.slideDelete.getString(context),
+                            label: AppLocalizations.of(context)!.slideDelete,
                           ),
                         ],
                       ),

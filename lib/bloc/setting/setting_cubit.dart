@@ -13,10 +13,10 @@ class SettingCubit extends Cubit<SettingState> {
     required SettingsRepository settingsRepo,
     required UserRepository userRepo,
     required TransactionRepository transactionRepo,
-  })  : _settingsRepo = settingsRepo,
-        _userRepo = userRepo,
-        _transactionRepo = transactionRepo,
-        super(const SettingState()) {
+  }) : _settingsRepo = settingsRepo,
+       _userRepo = userRepo,
+       _transactionRepo = transactionRepo,
+       super(const SettingState()) {
     loadSettings();
     loadUserProfile();
   }
@@ -28,25 +28,33 @@ class SettingCubit extends Cubit<SettingState> {
       final isLock = await _settingsRepo.getIsLock();
       final language = await _settingsRepo.getLanguage();
 
-      emit(state.copyWith(
-        status: SettingStatus.success,
-        isDark: isDark ?? false,
-        isLock: isLock ?? false,
-        language: language ?? 'en',
-      ));
+      emit(
+        state.copyWith(
+          status: SettingStatus.success,
+          isDark: isDark ?? false,
+          isLock: isLock ?? false,
+          language: language ?? 'en',
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-          status: SettingStatus.failure, errorMessage: e.toString()));
+      emit(
+        state.copyWith(
+          status: SettingStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
   Future<void> loadUserProfile() async {
     try {
       final profile = await _userRepo.getUserProfile();
-      emit(state.copyWith(
-        userName: profile.email,
-        // image: profile.image,
-      ));
+      emit(
+        state.copyWith(
+          userName: profile.email,
+          // image: profile.image,
+        ),
+      );
     } catch (e) {
       // Handle error quietly or update state
     }
@@ -80,6 +88,10 @@ class SettingCubit extends Cubit<SettingState> {
   }
 
   Future<void> changeLanguage(String lang) => setLanguage(lang);
+
+  void updateLanguageLocale(String lang) {
+    emit(state.copyWith(language: lang));
+  }
 
   Future<void> deleteAllData() async {
     try {

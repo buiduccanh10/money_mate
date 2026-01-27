@@ -1,10 +1,9 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
-import 'package:money_mate/services/locales.dart';
+import 'package:money_mate/l10n/app_localizations.dart';
 import 'package:money_mate/bloc/chart/chart_cubit.dart';
 import 'package:money_mate/bloc/chart/chart_state.dart';
 import 'package:money_mate/widget/input/update_input.dart';
@@ -50,7 +49,7 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
   @override
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
-    final locale = FlutterLocalization.instance.currentLocale.toString();
+    final locale = Localizations.localeOf(context).toString();
 
     return BlocBuilder<ChartCubit, ChartState>(
       builder: (context, state) {
@@ -91,7 +90,7 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
                     ? const Center(child: CircularProgressIndicator())
                     : data.isEmpty
                     ? Center(
-                        child: Text(LocaleData.noInputData.getString(context)),
+                        child: Text(AppLocalizations.of(context)!.noInputData),
                       )
                     : Column(
                         children: [
@@ -130,10 +129,10 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
   ) {
     String title = data.isNotEmpty
         ? (data.first.category?.name ?? '')
-        : LocaleData.noInputData.getString(context);
+        : AppLocalizations.of(context)!.noInputData;
     if (widget.over > 0) {
       title +=
-          ': ${LocaleData.over.getString(context)} ${formatter.format(widget.over)}';
+          ': ${AppLocalizations.of(context)!.over} ${formatter.format(widget.over)}';
     }
 
     return Container(

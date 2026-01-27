@@ -1,14 +1,13 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:money_mate/data/repository/category_repository.dart';
 import 'package:money_mate/data/repository/transaction_repository.dart';
-import 'package:flutter_localization/flutter_localization.dart';
 import 'input_state.dart';
 
 class InputCubit extends Cubit<InputState> {
   final CategoryRepository _categoryRepo;
   final TransactionRepository _transactionRepo;
-  final FlutterLocalization _localization = FlutterLocalization.instance;
 
   InputCubit({
     required CategoryRepository categoryRepo,
@@ -39,7 +38,27 @@ class InputCubit extends Cubit<InputState> {
   }
 
   void selectCategory(int index, String catId) {
-    emit(state.copyWith(selectedIndex: index, catId: catId));
+    emit(
+      state.copyWith(
+        selectedIndex: index,
+        catId: catId,
+        status: InputStatus.initial,
+      ),
+    );
+  }
+
+  void resetSelection() {
+    emit(
+      InputState(
+        status: state.status,
+        incomeCategories: state.incomeCategories,
+        expenseCategories: state.expenseCategories,
+        selectedIndex: null,
+        catId: null,
+        errorMessage: state.errorMessage,
+        overLimitMessage: state.overLimitMessage,
+      ),
+    );
   }
 
   String getMonthYearString(int month, int year) {
@@ -50,23 +69,24 @@ class InputCubit extends Cubit<InputState> {
 
   Future<void> addTransaction({
     required DateTime date,
+    required TimeOfDay time,
     required String description,
     required String money,
     required String catId,
-    required context,
+    required BuildContext context,
   }) async {
     emit(state.copyWith(status: InputStatus.loading));
     try {
-      String formatMoney = _localization.currentLocale.toString() == 'vi'
+      final locale = Localizations.localeOf(context).toString();
+      String formatMoney = locale == 'vi'
           ? money.replaceAll('.', '')
           : money.replaceAll(',', '.');
       double moneyFinal = double.parse(formatMoney);
 
-      String formatDateString = getMonthYearString(date.month, date.year);
-
       // Limit Check
       final category = await _categoryRepo.getCategory(catId);
       double? limit = category.limit;
+      String formatDateString = getMonthYearString(date.month, date.year);
 
       if (limit != null && limit > 0) {
         final categoryTransactions = await _transactionRepo.getTransactions(
@@ -80,9 +100,7 @@ class InputCubit extends Cubit<InputState> {
             .fold<double>(0, (prev, amount) => prev + amount);
 
         if (totalSpent + moneyFinal > limit) {
-          var formatter = NumberFormat.simpleCurrency(
-            locale: _localization.currentLocale.toString(),
-          );
+          var formatter = NumberFormat.simpleCurrency(locale: locale);
           String limitStr = formatter.format((totalSpent + moneyFinal) - limit);
 
           emit(
@@ -95,11 +113,14 @@ class InputCubit extends Cubit<InputState> {
         }
       }
 
-      String finalDate = DateFormat('dd/MM/yyyy').format(date);
+      String finalDate = DateFormat('yyyy-MM-dd').format(date);
+      String finalTime =
+          '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
       bool isIncome = category.isIncome;
 
       await _transactionRepo.addTransaction(
         finalDate,
+        finalTime,
         description,
         moneyFinal,
         catId,
@@ -121,10 +142,12 @@ class InputCubit extends Cubit<InputState> {
     required String description,
     required String money,
     required String catId,
+    required BuildContext context,
   }) async {
     emit(state.copyWith(status: InputStatus.loading));
     try {
-      String formatMoney = _localization.currentLocale.toString() == 'vi'
+      final locale = Localizations.localeOf(context).toString();
+      String formatMoney = locale == 'vi'
           ? money.replaceAll('.', '')
           : money.replaceAll(',', '.');
       double moneyFinal = double.parse(formatMoney);

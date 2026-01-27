@@ -1,9 +1,8 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localization/flutter_localization.dart';
 import 'package:intl/intl.dart';
-import 'package:money_mate/services/locales.dart';
+import 'package:money_mate/l10n/app_localizations.dart';
 import 'package:money_mate/bloc/input/input_cubit.dart';
 import 'package:money_mate/bloc/category/category_cubit.dart';
 import 'package:money_mate/bloc/category/category_state.dart';
@@ -31,8 +30,9 @@ class _UpdateInputState extends State<UpdateInput> {
     super.initState();
     _descriptionController.text = widget.inputItem.description ?? '';
     _moneyController.text = widget.inputItem.money.toString();
-    _dateController.selectedDate =
-        DateFormat("dd/MM/yyyy").parse(widget.inputItem.date);
+    _dateController.selectedDate = DateFormat(
+      "dd/MM/yyyy",
+    ).parse(widget.inputItem.date);
     _selectedCatId = widget.inputItem.catId;
   }
 
@@ -42,31 +42,36 @@ class _UpdateInputState extends State<UpdateInput> {
     final isIncome = widget.inputItem.isIncome;
 
     return Scaffold(
-      body: Stack(children: [
-        SingleChildScrollView(
-          child: Column(children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 15, right: 15, top: 115),
-              child: Column(
-                children: [
-                  _buildDatePicker(isDark),
-                  const SizedBox(height: 10),
-                  _buildTextField(
-                      _descriptionController,
-                      LocaleData.inputDescription.getString(context),
-                      Icons.description,
-                      Colors.blue,
-                      isDark),
-                  const SizedBox(height: 10),
-                  _buildMoneyField(isDark),
-                ],
-              ),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 15, right: 15, top: 115),
+                  child: Column(
+                    children: [
+                      _buildDatePicker(isDark),
+                      const SizedBox(height: 10),
+                      _buildTextField(
+                        _descriptionController,
+                        AppLocalizations.of(context)!.inputDescription,
+                        Icons.description,
+                        Colors.blue,
+                        isDark,
+                      ),
+                      const SizedBox(height: 10),
+                      _buildMoneyField(isDark),
+                    ],
+                  ),
+                ),
+                _buildCategorySection(isIncome, isDark),
+              ],
             ),
-            _buildCategorySection(isIncome, isDark),
-          ]),
-        ),
-        _buildHeader(isIncome, isDark),
-      ]),
+          ),
+          _buildHeader(isIncome, isDark),
+        ],
+      ),
       floatingActionButton: _buildSaveButton(isIncome),
     );
   }
@@ -74,30 +79,42 @@ class _UpdateInputState extends State<UpdateInput> {
   Widget _buildDatePicker(bool isDark) {
     return Container(
       decoration: BoxDecoration(
-          border: Border.all(color: Colors.amber),
-          borderRadius: BorderRadius.circular(10)),
-      child: SfDateRangePicker(
-        showNavigationArrow: true,
-        selectionColor: Colors.deepOrangeAccent,
-        controller: _dateController,
-        headerStyle: const DateRangePickerHeaderStyle(
+        border: Border.all(color: Colors.amber),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: SfDateRangePicker(
+          showNavigationArrow: true,
+          selectionColor: Colors.deepOrangeAccent,
+          controller: _dateController,
+          headerStyle: const DateRangePickerHeaderStyle(
             textAlign: TextAlign.center,
-            textStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 20)),
+            textStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String label,
-      IconData icon, Color iconColor, bool isDark) {
+  Widget _buildTextField(
+    TextEditingController controller,
+    String label,
+    IconData icon,
+    Color iconColor,
+    bool isDark,
+  ) {
     return TextField(
       controller: controller,
       decoration: InputDecoration(
         enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: Colors.amber),
-            borderRadius: BorderRadius.circular(10)),
+          borderSide: const BorderSide(color: Colors.amber),
+          borderRadius: BorderRadius.circular(10),
+        ),
         focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: Colors.amber),
-            borderRadius: BorderRadius.circular(10)),
+          borderSide: const BorderSide(color: Colors.amber),
+          borderRadius: BorderRadius.circular(10),
+        ),
         label: Text(label),
         prefixIcon: Icon(icon, color: iconColor),
       ),
@@ -110,92 +127,106 @@ class _UpdateInputState extends State<UpdateInput> {
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
       decoration: InputDecoration(
         enabledBorder: OutlineInputBorder(
-            borderSide:
-                BorderSide(color: isDark ? Colors.orange : Colors.amber),
-            borderRadius: BorderRadius.circular(10)),
+          borderSide: BorderSide(color: isDark ? Colors.orange : Colors.amber),
+          borderRadius: BorderRadius.circular(10),
+        ),
         focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: Colors.amber),
-            borderRadius: BorderRadius.circular(10)),
-        label: Text(LocaleData.inputMoney.getString(context)),
+          borderSide: const BorderSide(color: Colors.amber),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        label: Text(AppLocalizations.of(context)!.inputMoney),
         prefixIcon: const Icon(Icons.attach_money, color: Colors.green),
       ),
     );
   }
 
   Widget _buildCategorySection(bool isIncome, bool isDark) {
-    return Column(children: [
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
                 isIncome
-                    ? LocaleData.incomeCategory.getString(context)
-                    : LocaleData.expenseCategory.getString(context),
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            TextButton(
+                    ? AppLocalizations.of(context)!.incomeCategory
+                    : AppLocalizations.of(context)!.expenseCategory,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              TextButton(
                 onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => CategoryManage(isIncome: isIncome))),
-                child: Text(LocaleData.more.getString(context))),
-          ],
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => CategoryManage(isIncome: isIncome),
+                  ),
+                ),
+                child: Text(AppLocalizations.of(context)!.more),
+              ),
+            ],
+          ),
         ),
-      ),
-      BlocBuilder<CategoryCubit, CategoryState>(
-        builder: (context, state) {
-          final cats =
-              isIncome ? state.incomeCategories : state.expenseCategories;
-          if (state.status == CategoryStatus.loading) {
-            return const Shimmer(
+        BlocBuilder<CategoryCubit, CategoryState>(
+          builder: (context, state) {
+            final cats = isIncome
+                ? state.incomeCategories
+                : state.expenseCategories;
+            if (state.status == CategoryStatus.loading) {
+              return const Shimmer(
                 gradient: LinearGradient(colors: [Colors.grey, Colors.white]),
-                child: SizedBox(height: 100));
-          }
-          return GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            padding: const EdgeInsets.only(left: 15, right: 15, bottom: 85),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                child: SizedBox(height: 100),
+              );
+            }
+            return GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              padding: const EdgeInsets.only(left: 15, right: 15, bottom: 85),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 childAspectRatio: 1.6,
                 crossAxisCount: 4,
                 crossAxisSpacing: 8,
-                mainAxisSpacing: 8),
-            itemCount: cats.length,
-            itemBuilder: (context, index) {
-              final cat = cats[index];
-              final isSelected = _selectedCatId == cat.id;
-              return InkWell(
-                onTap: () => setState(() {
-                  _selectedCatId = cat.id;
-                }),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors
-                        .primaries[Random().nextInt(Colors.primaries.length)]
-                        .shade100
-                        .withValues(alpha: 0.35),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
+                mainAxisSpacing: 8,
+              ),
+              itemCount: cats.length,
+              itemBuilder: (context, index) {
+                final cat = cats[index];
+                final isSelected = _selectedCatId == cat.id;
+                return InkWell(
+                  onTap: () => setState(() {
+                    _selectedCatId = cat.id;
+                  }),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors
+                          .primaries[Random().nextInt(Colors.primaries.length)]
+                          .shade100
+                          .withValues(alpha: 0.35),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
                         color: isSelected
                             ? (isDark ? Colors.orange : Colors.amber)
                             : Colors.transparent,
-                        width: 2),
-                  ),
-                  child: Column(
+                        width: 2,
+                      ),
+                    ),
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(cat.icon, style: const TextStyle(fontSize: 20)),
                         Text(cat.name, overflow: TextOverflow.ellipsis),
-                      ]),
-                ),
-              );
-            },
-          );
-        },
-      ),
-    ]);
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        ),
+      ],
+    );
   }
 
   Widget _buildHeader(bool isIncome, bool isDark) {
@@ -209,22 +240,29 @@ class _UpdateInputState extends State<UpdateInput> {
         ),
       ),
       child: SafeArea(
-        child: Row(children: [
-          const BackButton(color: Colors.white),
-          Text(
+        child: Row(
+          children: [
+            const BackButton(color: Colors.white),
+            Text(
               isIncome
-                  ? LocaleData.income.getString(context)
-                  : LocaleData.expense.getString(context),
+                  ? AppLocalizations.of(context)!.income
+                  : AppLocalizations.of(context)!.expense,
               style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold)),
-          const SizedBox(width: 8),
-          Expanded(
-              child: Text('(${widget.inputItem.description})',
-                  style: const TextStyle(color: Colors.white70),
-                  overflow: TextOverflow.ellipsis)),
-        ]),
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                '(${widget.inputItem.description})',
+                style: const TextStyle(color: Colors.white70),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -234,18 +272,20 @@ class _UpdateInputState extends State<UpdateInput> {
       onPressed: () {
         if (_selectedCatId != null && _moneyController.text.isNotEmpty) {
           context.read<InputCubit>().updateTransaction(
-                id: widget.inputItem.id,
-                date: DateFormat("dd/MM/yyyy")
-                    .format(_dateController.selectedDate!),
-                description: _descriptionController.text,
-                money: _moneyController.text,
-                catId: _selectedCatId!,
-                isIncome: isIncome,
-              );
+            id: widget.inputItem.id,
+            date: DateFormat(
+              "dd/MM/yyyy",
+            ).format(_dateController.selectedDate!),
+            description: _descriptionController.text,
+            money: _moneyController.text,
+            catId: _selectedCatId!,
+            isIncome: isIncome,
+            context: context,
+          );
           Navigator.pop(context);
         }
       },
-      label: Text(LocaleData.update.getString(context)),
+      label: Text(AppLocalizations.of(context)!.update),
       icon: const Icon(Icons.edit_calendar),
       backgroundColor: Colors.green,
     );

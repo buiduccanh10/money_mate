@@ -1,10 +1,9 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
-import 'package:money_mate/services/locales.dart';
+import 'package:money_mate/l10n/app_localizations.dart';
 import 'package:money_mate/bloc/schedule/schedule_cubit.dart';
 import 'package:money_mate/bloc/schedule/schedule_state.dart';
 import 'package:money_mate/widget/setting/advance_setting/fixed_in_ex/start_setup.dart';
@@ -28,11 +27,11 @@ class _SetupInExRegularState extends State<SetupInExRegular> {
   @override
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
-    final locale = FlutterLocalization.instance.currentLocale.toString();
+    final locale = Localizations.localeOf(context).toString();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(LocaleData.fixedInEx.getString(context)),
+        title: Text(AppLocalizations.of(context)!.fixedInEx),
         actions: [
           IconButton(
               onPressed: () => _confirmDeleteAll(context),
@@ -48,7 +47,7 @@ class _SetupInExRegularState extends State<SetupInExRegular> {
 
           if (state.schedules.isEmpty) {
             return Center(
-                child: Text(LocaleData.noSetUpYet.getString(context)));
+                child: Text(AppLocalizations.of(context)!.noSetUpYet));
           }
 
           return ListView.builder(
@@ -86,7 +85,7 @@ class _SetupInExRegularState extends State<SetupInExRegular> {
             },
             foregroundColor: Colors.red,
             icon: Icons.delete,
-            label: LocaleData.slideDelete.getString(context),
+            label: AppLocalizations.of(context)!.slideDelete,
           ),
         ],
       ),
@@ -122,18 +121,18 @@ class _SetupInExRegularState extends State<SetupInExRegular> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text(LocaleData.slideDelete.getString(context)),
-        content: Text(LocaleData.confirm.getString(context)),
+        title: Text(AppLocalizations.of(context)!.slideDelete),
+        content: Text(AppLocalizations.of(context)!.confirm),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text(LocaleData.cancel.getString(context))),
+              child: Text(AppLocalizations.of(context)!.cancel)),
           TextButton(
             onPressed: () {
               context.read<ScheduleCubit>().deleteAllSchedules();
               Navigator.pop(context);
             },
-            child: Text(LocaleData.confirm.getString(context),
+            child: Text(AppLocalizations.of(context)!.confirm,
                 style: const TextStyle(color: Colors.red)),
           ),
         ],

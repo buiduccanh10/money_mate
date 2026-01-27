@@ -8,6 +8,9 @@ export class TransactionResponseDto {
   @ApiProperty({ example: '2024-03-20T00:00:00.000Z' })
   date: string;
 
+  @ApiProperty({ example: '10:00' })
+  time: string;
+
   @ApiProperty({ example: 'Buy coffee', required: false })
   description?: string;
 

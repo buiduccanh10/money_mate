@@ -3,10 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localization/flutter_localization.dart';
 import 'package:intl/intl.dart';
 import 'package:money_mate/services/currency_format.dart';
-import 'package:money_mate/services/locales.dart';
+import 'package:money_mate/l10n/app_localizations.dart';
 import 'package:money_mate/bloc/category/category_cubit.dart';
 import 'package:money_mate/bloc/category/category_state.dart';
 import 'package:money_mate/bloc/schedule/schedule_cubit.dart';
@@ -53,10 +52,10 @@ class _StartSetupState extends State<StartSetup> {
   @override
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
-    final locale = FlutterLocalization.instance.currentLocale.toString();
+    final locale = Localizations.localeOf(context).toString();
 
     return Scaffold(
-      appBar: AppBar(title: Text(LocaleData.setUp.getString(context))),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.setUp)),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(12.0),
@@ -66,7 +65,7 @@ class _StartSetupState extends State<StartSetup> {
               const SizedBox(height: 16),
               _buildTextField(
                 _descriptionController,
-                LocaleData.inputDescription.getString(context),
+                AppLocalizations.of(context)!.inputDescription,
                 Icons.description,
                 Colors.blue,
                 isDark,
@@ -86,7 +85,7 @@ class _StartSetupState extends State<StartSetup> {
         backgroundColor: Colors.green,
         icon: const Icon(Icons.schedule, color: Colors.white),
         label: Text(
-          LocaleData.setUp.getString(context),
+          AppLocalizations.of(context)!.setUp,
           style: const TextStyle(color: Colors.white),
         ),
       ),
@@ -99,13 +98,16 @@ class _StartSetupState extends State<StartSetup> {
         border: Border.all(color: isDark ? Colors.orange : Colors.amber),
         borderRadius: BorderRadius.circular(10),
       ),
-      child: SfDateRangePicker(
-        showNavigationArrow: true,
-        selectionColor: Colors.deepOrangeAccent,
-        controller: _dateController,
-        headerStyle: const DateRangePickerHeaderStyle(
-          textAlign: TextAlign.center,
-          textStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: SfDateRangePicker(
+          showNavigationArrow: true,
+          selectionColor: Colors.deepOrangeAccent,
+          controller: _dateController,
+          headerStyle: const DateRangePickerHeaderStyle(
+            textAlign: TextAlign.center,
+            textStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+          ),
         ),
       ),
     );
@@ -153,7 +155,7 @@ class _StartSetupState extends State<StartSetup> {
           borderSide: const BorderSide(color: Colors.amber),
           borderRadius: BorderRadius.circular(10),
         ),
-        labelText: LocaleData.inputMoney.getString(context),
+        labelText: AppLocalizations.of(context)!.inputMoney,
         prefixIcon: const Icon(Icons.attach_money, color: Colors.green),
         suffixText: locale == 'vi' ? 'đ' : (locale == 'zh' ? '¥' : '\$'),
       ),
@@ -171,7 +173,7 @@ class _StartSetupState extends State<StartSetup> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              LocaleData.selectCategory.getString(context),
+              AppLocalizations.of(context)!.selectCategory,
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
@@ -219,7 +221,7 @@ class _StartSetupState extends State<StartSetup> {
     return Row(
       children: [
         Text(
-          LocaleData.repeat.getString(context),
+          AppLocalizations.of(context)!.repeat,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(width: 8),
@@ -254,7 +256,7 @@ class _StartSetupState extends State<StartSetup> {
   void _handleSave() {
     if (_selectedCatId == null || _moneyController.text.isEmpty) return;
 
-    final locale = FlutterLocalization.instance.currentLocale.toString();
+    final locale = Localizations.localeOf(context).toString();
     double money = 0;
     if (locale == 'vi') {
       money = double.tryParse(_moneyController.text.replaceAll('.', '')) ?? 0;

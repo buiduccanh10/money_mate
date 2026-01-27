@@ -2,14 +2,15 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localization/flutter_localization.dart';
 import 'package:money_mate/services/currency_format.dart';
-import 'package:money_mate/services/locales.dart';
+import 'package:money_mate/l10n/app_localizations.dart';
 import 'package:money_mate/bloc/input/input_cubit.dart';
 import 'package:money_mate/bloc/input/input_state.dart';
 import 'package:money_mate/widget/category/category_manage.dart';
+import 'package:money_mate/bloc/category/category_cubit.dart';
+import 'package:money_mate/bloc/category/category_state.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:cupertino_calendar_picker/cupertino_calendar_picker.dart';
 
 class InputContent extends StatefulWidget {
   final bool isIncome;
@@ -23,21 +24,33 @@ class InputContent extends StatefulWidget {
 class _InputContentState extends State<InputContent> {
   final descriptionController = TextEditingController();
   final moneyController = TextEditingController();
-  final dateCameraController = DateRangePickerController();
+  DateTime selectedDateTime = DateTime.now();
   double scale = 1.0;
+  InputCubit? _inputCubit;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _inputCubit ??= context.read<InputCubit>();
+  }
 
   @override
   void dispose() {
     descriptionController.dispose();
     moneyController.dispose();
-    dateCameraController.dispose();
+    _inputCubit?.resetSelection();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
-    final locale = FlutterLocalization.instance.currentLocale.toString();
+    final locale = Localizations.localeOf(context).toString();
 
     return BlocListener<InputCubit, InputState>(
       listener: (context, state) {
@@ -75,30 +88,20 @@ class _InputContentState extends State<InputContent> {
                         ),
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: SfDateRangePicker(
-                        showNavigationArrow: true,
-                        selectionColor: Colors.deepOrangeAccent,
-                        selectionMode: DateRangePickerSelectionMode.single,
-                        headerHeight: 60,
-                        todayHighlightColor: Colors.red,
-                        controller: dateCameraController,
-                        headerStyle: const DateRangePickerHeaderStyle(
-                          textAlign: TextAlign.center,
-                          textStyle: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 20,
-                          ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: CupertinoCalendar(
+                          minimumDateTime: DateTime(1900),
+                          maximumDateTime: DateTime(2100),
+                          initialDateTime: selectedDateTime,
+                          onDateTimeChanged: (DateTime newDate) {
+                            setState(() {
+                              selectedDateTime = newDate;
+                            });
+                          },
+                          mode: CupertinoCalendarMode.dateTime,
+                          use24hFormat: true,
                         ),
-                        monthViewSettings:
-                            const DateRangePickerMonthViewSettings(
-                              firstDayOfWeek: 1,
-                              viewHeaderStyle: DateRangePickerViewHeaderStyle(
-                                textStyle: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ),
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -119,7 +122,7 @@ class _InputContentState extends State<InputContent> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         label: Text(
-                          LocaleData.inputDescription.getString(context),
+                          AppLocalizations.of(context)!.inputDescription,
                         ),
                         labelStyle: const TextStyle(color: Colors.grey),
                         floatingLabelStyle: TextStyle(
@@ -157,7 +160,7 @@ class _InputContentState extends State<InputContent> {
                           borderSide: const BorderSide(color: Colors.amber),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        label: Text(LocaleData.inputMoney.getString(context)),
+                        label: Text(AppLocalizations.of(context)!.inputMoney),
                         labelStyle: const TextStyle(color: Colors.grey),
                         floatingLabelStyle: TextStyle(
                           color: isDark ? Colors.white : Colors.black,
@@ -180,8 +183,8 @@ class _InputContentState extends State<InputContent> {
                   children: [
                     Text(
                       widget.isIncome
-                          ? LocaleData.incomeCategory.getString(context)
-                          : LocaleData.expenseCategory.getString(context),
+                          ? AppLocalizations.of(context)!.incomeCategory
+                          : AppLocalizations.of(context)!.expenseCategory,
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
@@ -197,7 +200,7 @@ class _InputContentState extends State<InputContent> {
                           ),
                         );
                       },
-                      child: Text(LocaleData.more.getString(context)),
+                      child: Text(AppLocalizations.of(context)!.more),
                     ),
                   ],
                 ),
@@ -212,66 +215,76 @@ class _InputContentState extends State<InputContent> {
   }
 
   Widget _buildCategoryGrid(BuildContext context, bool isDark) {
-    return BlocBuilder<InputCubit, InputState>(
-      builder: (context, state) {
-        if (state.status == InputStatus.loading &&
-            state.incomeCategories.isEmpty) {
-          return _buildShimmerGrid(isDark);
-        }
+    return BlocBuilder<CategoryCubit, CategoryState>(
+      builder: (context, catState) {
+        return BlocBuilder<InputCubit, InputState>(
+          builder: (context, inputState) {
+            if (catState.status == CategoryStatus.loading &&
+                catState.incomeCategories.isEmpty) {
+              return _buildShimmerGrid(isDark);
+            }
 
-        final categories = widget.isIncome
-            ? state.incomeCategories
-            : state.expenseCategories;
+            final categories = widget.isIncome
+                ? catState.incomeCategories
+                : catState.expenseCategories;
 
-        return GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          padding: const EdgeInsets.only(left: 15, right: 15, bottom: 85),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            childAspectRatio: 16 / 10,
-            crossAxisCount: 4,
-            crossAxisSpacing: 8.0,
-            mainAxisSpacing: 8.0,
-          ),
-          itemCount: categories.length,
-          itemBuilder: (BuildContext context, int index) {
-            final catItem = categories[index];
-            bool isSelected = state.catId == catItem.id;
-            return InkWell(
-              borderRadius: BorderRadius.circular(10),
-              onTap: () {
-                context.read<InputCubit>().selectCategory(index, catItem.id);
-              },
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    width: 1.5,
-                    color: isSelected
-                        ? (isDark ? Colors.orange : Colors.amber)
-                        : Colors.transparent,
-                  ),
-                  color: Colors
-                      .primaries[Random().nextInt(Colors.primaries.length)]
-                      .shade100
-                      .withValues(alpha: 0.35),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(catItem.icon, style: const TextStyle(fontSize: 20)),
-                    Text(
-                      catItem.name,
-                      style: TextStyle(
-                        fontSize: 14,
-                        overflow: TextOverflow.ellipsis,
-                        color: isDark ? Colors.white : Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
+            return GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              padding: const EdgeInsets.only(left: 15, right: 15, bottom: 85),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                childAspectRatio: 16 / 10,
+                crossAxisCount: 4,
+                crossAxisSpacing: 8.0,
+                mainAxisSpacing: 8.0,
               ),
+              itemCount: categories.length,
+              itemBuilder: (BuildContext context, int index) {
+                final catItem = categories[index];
+                bool isSelected = inputState.catId == catItem.id;
+                return InkWell(
+                  borderRadius: BorderRadius.circular(10),
+                  onTap: () {
+                    context.read<InputCubit>().selectCategory(
+                      index,
+                      catItem.id,
+                    );
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        width: 1.5,
+                        color: isSelected
+                            ? (isDark ? Colors.orange : Colors.amber)
+                            : Colors.transparent,
+                      ),
+                      color: Colors
+                          .primaries[Random().nextInt(Colors.primaries.length)]
+                          .shade100
+                          .withValues(alpha: 0.35),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          catItem.icon,
+                          style: const TextStyle(fontSize: 20),
+                        ),
+                        Text(
+                          catItem.name,
+                          style: TextStyle(
+                            fontSize: 14,
+                            overflow: TextOverflow.ellipsis,
+                            color: isDark ? Colors.white : Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
             );
           },
         );
@@ -289,7 +302,11 @@ class _InputContentState extends State<InputContent> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           gradient: const LinearGradient(
-            colors: [Colors.green, Colors.lightGreen, Colors.lightGreenAccent],
+            colors: [
+              Color.fromARGB(255, 63, 148, 66),
+              Color.fromARGB(255, 77, 183, 80),
+              Color.fromARGB(255, 89, 206, 93),
+            ],
           ),
         ),
         child: FloatingActionButton.extended(
@@ -304,12 +321,14 @@ class _InputContentState extends State<InputContent> {
               return;
             }
             context.read<InputCubit>().addTransaction(
-              date: dateCameraController.selectedDate ?? DateTime.now(),
+              date: selectedDateTime,
+              time: TimeOfDay.fromDateTime(selectedDateTime),
               description: descriptionController.text,
               money: moneyController.text,
               catId: state.catId!,
               context: context,
             );
+            context.read<InputCubit>().resetSelection();
             setState(() {
               scale = 1.1;
             });
@@ -324,7 +343,7 @@ class _InputContentState extends State<InputContent> {
               const Icon(Icons.add, size: 35, color: Colors.white),
               const SizedBox(width: 5),
               Text(
-                LocaleData.inputVave.getString(context),
+                AppLocalizations.of(context)!.inputVave,
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w500,

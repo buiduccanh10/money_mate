@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localization/flutter_localization.dart';
-import 'package:money_mate/services/locales.dart';
+import 'package:money_mate/l10n/app_localizations.dart';
 import 'package:money_mate/bloc/setting/setting_cubit.dart';
 import 'package:money_mate/bloc/setting/setting_state.dart';
 
@@ -14,7 +13,7 @@ class LanguageSetting extends StatelessWidget {
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
-            title: Text(LocaleData.languageAppbar.getString(context)),
+            title: Text(AppLocalizations.of(context)!.languageAppbar),
           ),
           body: Column(
             children: [
@@ -25,7 +24,7 @@ class LanguageSetting extends StatelessWidget {
                     context.read<SettingCubit>().changeLanguage(value);
                   }
                 },
-                child: Text(LocaleData.opVi.getString(context)),
+                child: Text(AppLocalizations.of(context)!.opVi),
               ),
               RadioGroup<String>(
                 groupValue: state.language,
@@ -34,7 +33,7 @@ class LanguageSetting extends StatelessWidget {
                     context.read<SettingCubit>().changeLanguage(value);
                   }
                 },
-                child: Text(LocaleData.opEn.getString(context)),
+                child: Text(AppLocalizations.of(context)!.opEn),
               ),
               RadioGroup<String>(
                 groupValue: state.language,
@@ -43,7 +42,7 @@ class LanguageSetting extends StatelessWidget {
                     context.read<SettingCubit>().changeLanguage(value);
                   }
                 },
-                child: Text(LocaleData.opCn.getString(context)),
+                child: Text(AppLocalizations.of(context)!.opCn),
               ),
             ],
           ),

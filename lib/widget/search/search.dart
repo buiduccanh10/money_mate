@@ -2,10 +2,9 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localization/flutter_localization.dart';
+import 'package:money_mate/l10n/app_localizations.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
-import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/bloc/search/search_cubit.dart';
 import 'package:money_mate/bloc/search/search_state.dart';
 import 'package:money_mate/bloc/category/category_cubit.dart';
@@ -31,7 +30,7 @@ class _SearchState extends State<Search> {
   @override
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
-    final locale = FlutterLocalization.instance.currentLocale.toString();
+    final locale = Localizations.localeOf(context).toString();
 
     return Scaffold(
       body: SafeArea(
@@ -49,7 +48,7 @@ class _SearchState extends State<Search> {
                     context.read<SearchCubit>().searchTransactions(query);
                   });
                 },
-                hintText: LocaleData.typeAnyToSearch.getString(context),
+                hintText: AppLocalizations.of(context)!.typeAnyToSearch,
                 leading: const Icon(Icons.search, size: 28),
               ),
               const SizedBox(height: 20),
@@ -139,7 +138,7 @@ class _SearchState extends State<Search> {
                       },
                       foregroundColor: Colors.blue,
                       icon: Icons.edit,
-                      label: LocaleData.slideEdit.getString(context),
+                      label: AppLocalizations.of(context)!.slideEdit,
                     ),
                     SlidableAction(
                       backgroundColor: Colors.transparent,
@@ -148,7 +147,7 @@ class _SearchState extends State<Search> {
                       },
                       foregroundColor: Colors.red,
                       icon: Icons.delete,
-                      label: LocaleData.slideDelete.getString(context),
+                      label: AppLocalizations.of(context)!.slideDelete,
                     ),
                   ],
                 ),

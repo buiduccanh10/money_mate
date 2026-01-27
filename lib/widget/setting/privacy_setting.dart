@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localization/flutter_localization.dart';
-import 'package:money_mate/services/locales.dart';
+import 'package:money_mate/l10n/app_localizations.dart';
 import 'package:money_mate/bloc/setting/setting_cubit.dart';
 import 'package:money_mate/bloc/setting/setting_state.dart';
 
@@ -16,7 +15,7 @@ class PrivacySetting extends StatelessWidget {
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
-            title: Text(LocaleData.privacy.getString(context)),
+            title: Text(AppLocalizations.of(context)!.privacy),
           ),
           body: SingleChildScrollView(
             child: Column(children: [
@@ -24,11 +23,11 @@ class PrivacySetting extends StatelessWidget {
                 context: context,
                 isDark: isDark,
                 icon: Icons.folder_delete,
-                label: LocaleData.deleteAllDataAcc.getString(context),
-                subLabel: LocaleData.deleteAllDataAccDes.getString(context),
+                label: AppLocalizations.of(context)!.deleteAllDataAcc,
+                subLabel: AppLocalizations.of(context)!.deleteAllDataAccDes,
                 onTap: () => _confirmDelete(
                   context,
-                  LocaleData.deleteAllDataAcc.getString(context),
+                  AppLocalizations.of(context)!.deleteAllDataAcc,
                   () => context.read<SettingCubit>().deleteAllData(),
                 ),
               ),
@@ -37,11 +36,11 @@ class PrivacySetting extends StatelessWidget {
                 context: context,
                 isDark: isDark,
                 icon: Icons.person_off,
-                label: LocaleData.deleteAcc.getString(context),
-                subLabel: LocaleData.deleteAccDes.getString(context),
+                label: AppLocalizations.of(context)!.deleteAcc,
+                subLabel: AppLocalizations.of(context)!.deleteAccDes,
                 onTap: () => _confirmDelete(
                   context,
-                  LocaleData.deleteAcc.getString(context),
+                  AppLocalizations.of(context)!.deleteAcc,
                   () => context.read<SettingCubit>().deleteUser(),
                 ),
               ),
@@ -106,13 +105,13 @@ class PrivacySetting extends StatelessWidget {
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text(LocaleData.cancel.getString(context))),
+              child: Text(AppLocalizations.of(context)!.cancel)),
           TextButton(
             onPressed: () {
               onConfirm();
               Navigator.pop(context);
             },
-            child: Text(LocaleData.confirm.getString(context),
+            child: Text(AppLocalizations.of(context)!.confirm,
                 style: const TextStyle(color: Colors.red)),
           ),
         ],

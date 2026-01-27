@@ -1,8 +1,8 @@
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localization/flutter_localization.dart';
-import 'package:money_mate/services/locales.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:money_mate/l10n/app_localizations.dart';
 import 'package:money_mate/bloc/category/category_cubit.dart';
 
 class CatAddDialog extends StatefulWidget {
@@ -30,7 +30,7 @@ class _CatAddDialogState extends State<CatAddDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(
-        LocaleData.addCatDialogTitle.getString(context),
+        AppLocalizations.of(context)!.addCatDialogTitle,
         style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
       ),
       scrollable: true,
@@ -45,14 +45,18 @@ class _CatAddDialogState extends State<CatAddDialog> {
               decoration: InputDecoration(
                 errorText: _iconError,
                 enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.blue),
-                    borderRadius: BorderRadius.circular(10)),
+                  borderSide: const BorderSide(color: Colors.blue),
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.blue),
-                    borderRadius: BorderRadius.circular(10)),
-                label: Text(LocaleData.chooseAnIcon.getString(context)),
-                prefixIcon:
-                    const Icon(Icons.insert_emoticon, color: Colors.orange),
+                  borderSide: const BorderSide(color: Colors.blue),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                label: Text(AppLocalizations.of(context)!.chooseAnIcon),
+                prefixIcon: const Icon(
+                  Icons.insert_emoticon,
+                  color: Colors.orange,
+                ),
               ),
             ),
             const SizedBox(height: 10),
@@ -61,14 +65,18 @@ class _CatAddDialogState extends State<CatAddDialog> {
               decoration: InputDecoration(
                 errorText: _nameError,
                 enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.blue),
-                    borderRadius: BorderRadius.circular(10)),
+                  borderSide: const BorderSide(color: Colors.blue),
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.blue),
-                    borderRadius: BorderRadius.circular(10)),
-                label: Text(LocaleData.categoryName.getString(context)),
-                prefixIcon:
-                    const Icon(Icons.new_label, color: Colors.blueAccent),
+                  borderSide: const BorderSide(color: Colors.blue),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                label: Text(AppLocalizations.of(context)!.categoryName),
+                prefixIcon: const Icon(
+                  Icons.new_label,
+                  color: Colors.blueAccent,
+                ),
               ),
             ),
           ],
@@ -77,17 +85,23 @@ class _CatAddDialogState extends State<CatAddDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text(LocaleData.cancel.getString(context),
-              style: const TextStyle(color: Colors.grey)),
+          child: Text(
+            AppLocalizations.of(context)!.cancel,
+            style: const TextStyle(color: Colors.grey),
+          ),
         ),
         ElevatedButton(
           onPressed: _onSave,
           style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10))),
-          child: Text(LocaleData.inputVave.getString(context),
-              style: const TextStyle(color: Colors.white)),
+            backgroundColor: Colors.green,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          child: Text(
+            AppLocalizations.of(context)!.inputVave,
+            style: const TextStyle(color: Colors.white),
+          ),
         ),
       ],
     );
@@ -96,20 +110,29 @@ class _CatAddDialogState extends State<CatAddDialog> {
   void _onSave() {
     setState(() {
       _iconError = _iconController.text.isEmpty
-          ? LocaleData.catIconValidator.getString(context)
+          ? AppLocalizations.of(context)!.catIconValidator
           : null;
       _nameError = _nameController.text.isEmpty
-          ? LocaleData.catNameValidator.getString(context)
+          ? AppLocalizations.of(context)!.catNameValidator
           : null;
     });
 
     if (_iconError == null && _nameError == null) {
       context.read<CategoryCubit>().addCategory(
-            _iconController.text,
-            _nameController.text,
-            widget.isIncome,
-            0,
-          );
+        _iconController.text,
+        _nameController.text,
+        widget.isIncome,
+        0,
+      );
+      Fluttertoast.showToast(
+        msg: AppLocalizations.of(context)!.toastAddSuccess,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
       Navigator.pop(context);
     }
   }
@@ -117,6 +140,8 @@ class _CatAddDialogState extends State<CatAddDialog> {
   void _showEmojiPicker(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
     showModalBottomSheet(
+      useSafeArea: true,
+      useRootNavigator: true,
       context: context,
       builder: (_) => SizedBox(
         height: 300,
@@ -124,6 +149,7 @@ class _CatAddDialogState extends State<CatAddDialog> {
           textEditingController: _iconController,
           config: Config(
             checkPlatformCompatibility: true,
+            locale: Localizations.localeOf(context),
             emojiViewConfig: EmojiViewConfig(
               backgroundColor: isDark ? Colors.black : Colors.white,
               columns: 7,

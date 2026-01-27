@@ -28,7 +28,7 @@ class HomeCubit extends Cubit<HomeState> {
 
   String getMonthYearString(int month, int year) {
     final DateTime dateTime = DateTime(year, month);
-    final DateFormat formatter = DateFormat('MMMM yyyy');
+    final DateFormat formatter = DateFormat('MM/yyyy');
     return formatter.format(dateTime);
   }
 

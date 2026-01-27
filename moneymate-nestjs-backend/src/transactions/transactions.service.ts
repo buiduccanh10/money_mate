@@ -32,21 +32,56 @@ export class TransactionsService {
       queryBuilder.andWhere('transaction.isIncome = :isIncome', { isIncome });
     }
 
-    // Filter by monthYear (format: "MMMM yyyy" -> e.g., "January 2024")
     if (monthYear) {
-      queryBuilder.andWhere('transaction.date LIKE :monthYear', {
-        monthYear: `%${monthYear}%`,
-      });
+      if (monthYear.includes('/')) {
+        queryBuilder.andWhere('transaction.date LIKE :monthYear', {
+          monthYear: `%${monthYear}%`,
+        });
+      } else {
+        const months = [
+          'January',
+          'February',
+          'March',
+          'April',
+          'May',
+          'June',
+          'July',
+          'August',
+          'September',
+          'October',
+          'November',
+          'December',
+        ];
+        const parts = monthYear.split(' ');
+        if (parts.length === 2) {
+          const mIndex = months.indexOf(parts[0]);
+          if (mIndex >= 0) {
+            const mStr = (mIndex + 1).toString().padStart(2, '0');
+            const searchStr = `/${mStr}/${parts[1]}`;
+            queryBuilder.andWhere('transaction.date LIKE :searchStr', {
+              searchStr: `%${searchStr}`,
+            });
+          } else {
+            queryBuilder.andWhere('transaction.date LIKE :monthYear', {
+              monthYear: `%${monthYear}%`,
+            });
+          }
+        } else {
+          queryBuilder.andWhere('transaction.date LIKE :monthYear', {
+            monthYear: `%${monthYear}%`,
+          });
+        }
+      }
     }
 
-    // Filter by year
     if (year) {
       queryBuilder.andWhere('transaction.date LIKE :year', {
         year: `%${year}%`,
       });
     }
 
-    return queryBuilder.getMany();
+    const result = await queryBuilder.getMany();
+    return result;
   }
 
   async findOne(id: string, userId: string) {

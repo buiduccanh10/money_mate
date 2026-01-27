@@ -2,8 +2,7 @@ import 'package:custom_sliding_segmented_control/custom_sliding_segmented_contro
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localization/flutter_localization.dart';
-import 'package:money_mate/services/locales.dart';
+import 'package:money_mate/l10n/app_localizations.dart';
 import 'package:money_mate/bloc/chart/chart_cubit.dart';
 import 'package:money_mate/bloc/chart/chart_state.dart';
 import 'package:money_mate/widget/chart/chart_widget.dart';
@@ -66,7 +65,7 @@ class _ChartState extends State<Chart> {
                       height: 50,
                       children: {
                         1: Text(
-                          LocaleData.switchMonthly.getString(context),
+                          AppLocalizations.of(context)!.switchMonthly,
                           style: TextStyle(
                               color:
                                   state.isMonthly ? Colors.black : Colors.white,
@@ -74,7 +73,7 @@ class _ChartState extends State<Chart> {
                               fontSize: 16),
                         ),
                         2: Text(
-                          LocaleData.switchYearly.getString(context),
+                          AppLocalizations.of(context)!.switchYearly,
                           style: TextStyle(
                               color: !state.isMonthly
                                   ? Colors.black

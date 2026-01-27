@@ -11,6 +11,7 @@ abstract class TransactionRepository {
 
   Future<TransactionResponseDto> addTransaction(
     String date,
+    String time,
     String description,
     double money,
     String catId,
@@ -60,6 +61,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
   @override
   Future<TransactionResponseDto> addTransaction(
     String date,
+    String time,
     String description,
     double money,
     String catId,
@@ -68,6 +70,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
     final response = await _api.apiTransactionsPost(
       body: CreateTransactionDto(
         date: date,
+        time: time,
         description: description,
         money: money,
         catId: catId,

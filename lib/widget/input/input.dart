@@ -1,8 +1,7 @@
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_localization/flutter_localization.dart';
-import 'package:money_mate/services/locales.dart';
+import 'package:money_mate/l10n/app_localizations.dart';
 import 'package:money_mate/widget/input/input_content.dart';
 
 class Input extends StatefulWidget {
@@ -68,10 +67,10 @@ class _InputState extends State<Input> {
                         context,
                         Icons.arrow_downward,
                         Colors.green,
-                        LocaleData.income.getString(context),
+                        AppLocalizations.of(context)!.income,
                         isIncome),
                     2: _buildSegment(context, Icons.arrow_upward, Colors.red,
-                        LocaleData.expense.getString(context), !isIncome),
+                        AppLocalizations.of(context)!.expense, !isIncome),
                   },
                   decoration: BoxDecoration(
                     color: CupertinoColors.lightBackgroundGray,

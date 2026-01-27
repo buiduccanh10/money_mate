@@ -1,10 +1,9 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
-import 'package:money_mate/services/locales.dart';
+import 'package:money_mate/l10n/app_localizations.dart';
 import 'package:money_mate/bloc/category/category_cubit.dart';
 import 'package:money_mate/bloc/category/category_state.dart';
 import 'package:money_mate/widget/setting/advance_setting/limit_in_ex/cat_limit_dialog.dart';
@@ -28,11 +27,11 @@ class _SetupInExLimitState extends State<SetupInExLimit> {
   @override
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
-    final locale = FlutterLocalization.instance.currentLocale.toString();
+    final locale = Localizations.localeOf(context).toString();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(LocaleData.settingLimitTitle.getString(context)),
+        title: Text(AppLocalizations.of(context)!.settingLimitTitle),
         actions: [
           IconButton(
               onPressed: () => _confirmRestoreAll(context),
@@ -49,7 +48,7 @@ class _SetupInExLimitState extends State<SetupInExLimit> {
 
           if (categories.isEmpty) {
             return Center(
-                child: Text(LocaleData.noSetUpYet.getString(context)));
+                child: Text(AppLocalizations.of(context)!.noSetUpYet));
           }
 
           return ListView.builder(
@@ -78,14 +77,14 @@ class _SetupInExLimitState extends State<SetupInExLimit> {
             onPressed: (_) => _showLimitDialog(cat),
             foregroundColor: Colors.blue,
             icon: Icons.edit,
-            label: LocaleData.slideEdit.getString(context),
+            label: AppLocalizations.of(context)!.slideEdit,
           ),
           SlidableAction(
             onPressed: (_) =>
                 context.read<CategoryCubit>().restoreLimit(cat.id),
             foregroundColor: Colors.red,
             icon: Icons.restore,
-            label: LocaleData.restoreLimit.getString(context),
+            label: AppLocalizations.of(context)!.restoreLimit,
           ),
         ],
       ),
@@ -100,7 +99,7 @@ class _SetupInExLimitState extends State<SetupInExLimit> {
         title:
             Text(cat.name, style: const TextStyle(fontWeight: FontWeight.bold)),
         trailing: Text(
-          limit > 0 ? formatMoney : LocaleData.noLimit.getString(context),
+          limit > 0 ? formatMoney : AppLocalizations.of(context)!.noLimit,
           style:
               const TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
         ),
@@ -123,18 +122,18 @@ class _SetupInExLimitState extends State<SetupInExLimit> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text(LocaleData.restoreLimit.getString(context)),
-        content: Text(LocaleData.confirm.getString(context)),
+        title: Text(AppLocalizations.of(context)!.restoreLimit),
+        content: Text(AppLocalizations.of(context)!.confirm),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text(LocaleData.cancel.getString(context))),
+              child: Text(AppLocalizations.of(context)!.cancel)),
           TextButton(
             onPressed: () {
               context.read<CategoryCubit>().restoreAllLimits();
               Navigator.pop(context);
             },
-            child: Text(LocaleData.confirm.getString(context),
+            child: Text(AppLocalizations.of(context)!.confirm,
                 style: const TextStyle(color: Colors.red)),
           ),
         ],

@@ -2,9 +2,8 @@ import 'package:custom_sliding_segmented_control/custom_sliding_segmented_contro
 import 'package:datepicker_dropdown/datepicker_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localization/flutter_localization.dart';
 import 'package:intl/intl.dart';
-import 'package:money_mate/services/locales.dart';
+import 'package:money_mate/l10n/app_localizations.dart';
 import 'package:money_mate/bloc/chart/chart_cubit.dart';
 import 'package:money_mate/bloc/chart/chart_state.dart';
 import 'package:money_mate/widget/chart/chart_item_detail.dart';
@@ -18,7 +17,7 @@ class ChartWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
     final width = MediaQuery.of(context).size.width;
-    final locale = FlutterLocalization.instance.currentLocale.toString();
+    final locale = Localizations.localeOf(context).toString();
 
     return BlocBuilder<ChartCubit, ChartState>(
       builder: (context, state) {
@@ -162,19 +161,19 @@ class ChartWidget extends StatelessWidget {
       child: Column(
         children: [
           _buildRow(
-            LocaleData.income.getString(context),
+            AppLocalizations.of(context)!.income,
             inc,
             Colors.green,
             isDark,
           ),
           _buildRow(
-            LocaleData.expense.getString(context),
+            AppLocalizations.of(context)!.expense,
             exp,
             Colors.red,
             isDark,
           ),
           _buildRow(
-            LocaleData.totalSaving.getString(context),
+            AppLocalizations.of(context)!.totalSaving,
             tot,
             isDark ? Colors.white : Colors.black,
             isDark,
@@ -242,7 +241,7 @@ class ChartWidget extends StatelessWidget {
               innerPadding: EdgeInsets.zero,
               children: {
                 1: Text(
-                  LocaleData.income.getString(context),
+                  AppLocalizations.of(context)!.income,
                   style: TextStyle(
                     color: state.isIncome
                         ? (isDark ? Colors.white : Colors.black)
@@ -250,7 +249,7 @@ class ChartWidget extends StatelessWidget {
                   ),
                 ),
                 2: Text(
-                  LocaleData.expense.getString(context),
+                  AppLocalizations.of(context)!.expense,
                   style: TextStyle(
                     color: !state.isIncome
                         ? (isDark ? Colors.white : Colors.black)

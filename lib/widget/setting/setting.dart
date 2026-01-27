@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localization/flutter_localization.dart';
-import 'package:money_mate/services/locales.dart';
+import 'package:money_mate/l10n/app_localizations.dart';
 import 'package:money_mate/bloc/setting/setting_cubit.dart';
 import 'package:money_mate/bloc/setting/setting_state.dart';
 import 'package:money_mate/widget/setting/setting_content.dart';
@@ -101,14 +100,14 @@ class Setting extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          LocaleData.modify.getString(context),
+                          AppLocalizations.of(context)!.modify,
                           style: TextStyle(
                               fontWeight: FontWeight.w500,
                               color: isDark ? Colors.white : Colors.black,
                               fontSize: 16),
                         ),
                         Text(
-                          LocaleData.modifyDes.getString(context),
+                          AppLocalizations.of(context)!.modifyDes,
                           style: TextStyle(
                               color: isDark ? Colors.grey[100] : Colors.grey),
                         )

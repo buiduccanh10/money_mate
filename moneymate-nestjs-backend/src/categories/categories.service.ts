@@ -16,7 +16,11 @@ export class CategoriesService {
     if (isIncome !== undefined) {
       where.isIncome = isIncome;
     }
-    return this.categoryRepository.find({ where, order: { name: 'ASC' } });
+
+    return this.categoryRepository.find({
+      where,
+      order: { name: 'ASC' },
+    });
   }
 
   async findOne(id: string, userId: string) {

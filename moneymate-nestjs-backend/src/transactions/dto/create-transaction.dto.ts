@@ -22,4 +22,9 @@ export class CreateTransactionDto {
   @ApiProperty({ example: false })
   @IsBoolean()
   isIncome: boolean;
+
+  @ApiProperty({ example: '14:30', required: false })
+  @IsString()
+  @IsOptional()
+  time?: string;
 }

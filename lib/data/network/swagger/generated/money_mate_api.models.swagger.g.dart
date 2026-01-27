@@ -181,6 +181,7 @@ TransactionResponseDto _$TransactionResponseDtoFromJson(
 ) => TransactionResponseDto(
   id: json['id'] as String,
   date: json['date'] as String,
+  time: json['time'] as String,
   description: json['description'] as String?,
   money: (json['money'] as num).toDouble(),
   catId: json['catId'] as String,
@@ -196,6 +197,7 @@ Map<String, dynamic> _$TransactionResponseDtoToJson(
 ) => <String, dynamic>{
   'id': instance.id,
   'date': instance.date,
+  'time': instance.time,
   'description': instance.description,
   'money': instance.money,
   'catId': instance.catId,
@@ -212,6 +214,7 @@ CreateTransactionDto _$CreateTransactionDtoFromJson(
   money: (json['money'] as num).toDouble(),
   catId: json['catId'] as String,
   isIncome: json['isIncome'] as bool,
+  time: json['time'] as String?,
 );
 
 Map<String, dynamic> _$CreateTransactionDtoToJson(
@@ -222,6 +225,7 @@ Map<String, dynamic> _$CreateTransactionDtoToJson(
   'money': instance.money,
   'catId': instance.catId,
   'isIncome': instance.isIncome,
+  'time': instance.time,
 };
 
 UpdateTransactionDto _$UpdateTransactionDtoFromJson(
@@ -232,6 +236,7 @@ UpdateTransactionDto _$UpdateTransactionDtoFromJson(
   money: (json['money'] as num?)?.toDouble(),
   catId: json['catId'] as String?,
   isIncome: json['isIncome'] as bool?,
+  time: json['time'] as String?,
 );
 
 Map<String, dynamic> _$UpdateTransactionDtoToJson(
@@ -242,6 +247,7 @@ Map<String, dynamic> _$UpdateTransactionDtoToJson(
   'money': instance.money,
   'catId': instance.catId,
   'isIncome': instance.isIncome,
+  'time': instance.time,
 };
 
 TransactionSummaryDto _$TransactionSummaryDtoFromJson(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localization/flutter_localization.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:local_auth/local_auth.dart';
@@ -10,7 +9,6 @@ import 'package:money_mate/data/repository/settings_repository.dart';
 import 'package:money_mate/data/repository/transaction_repository.dart';
 import 'package:money_mate/data/repository/user_repository.dart';
 import 'package:money_mate/services/local_notification.dart';
-import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/bloc/auth/auth_bloc.dart';
 import 'package:money_mate/bloc/auth/auth_state.dart';
 import 'package:money_mate/bloc/category/category_cubit.dart';
@@ -28,16 +26,13 @@ import 'package:money_mate/widget/input/input.dart';
 import 'package:money_mate/widget/auth/login.dart';
 import 'package:money_mate/widget/search/search.dart';
 import 'package:money_mate/widget/setting/setting.dart';
-
 import 'package:money_mate/data/network/api_client.dart';
+import 'package:money_mate/l10n/app_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await FlutterLocalization.instance.ensureInitialized();
   await NotificationService.initializeNotification();
-
   ApiClient.init(baseUrl: 'http://localhost:3000');
-
   runApp(const MyApp());
 }
 
@@ -49,13 +44,9 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final localization = FlutterLocalization.instance;
-
   @override
   void initState() {
     super.initState();
-    localization.init(mapLocales: locales, initLanguageCode: 'en');
-    localization.onTranslatedLanguage = (_) => setState(() {});
   }
 
   @override
@@ -112,9 +103,9 @@ class _MyAppState extends State<MyApp> {
               },
             ),
             builder: FToastBuilder(),
-            supportedLocales: localization.supportedLocales,
-            localizationsDelegates: localization.localizationsDelegates,
-            locale: localization.currentLocale,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            locale: Locale(state.language),
           );
         },
       ),
@@ -233,23 +224,28 @@ class _MainState extends State<Main> with WidgetsBindingObserver {
             tabs: [
               GButton(
                 icon: Icons.home,
-                text: LocaleData.home.getString(context),
+                text: AppLocalizations.of(context)!.home,
+                iconSize: index == 0 ? 18 : 24,
               ),
               GButton(
                 icon: Icons.mode_edit_outline_rounded,
-                text: LocaleData.input.getString(context),
+                text: AppLocalizations.of(context)!.input,
+                iconSize: index == 1 ? 18 : 24,
               ),
               GButton(
                 icon: Icons.search_outlined,
-                text: LocaleData.search.getString(context),
+                text: AppLocalizations.of(context)!.search,
+                iconSize: index == 2 ? 18 : 24,
               ),
               GButton(
                 icon: Icons.pie_chart,
-                text: LocaleData.chart.getString(context),
+                text: AppLocalizations.of(context)!.chart,
+                iconSize: index == 3 ? 18 : 24,
               ),
               GButton(
                 icon: Icons.settings,
-                text: LocaleData.setting.getString(context),
+                text: AppLocalizations.of(context)!.setting,
+                iconSize: index == 4 ? 18 : 24,
               ),
             ],
           ),

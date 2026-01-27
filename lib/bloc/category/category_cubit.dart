@@ -6,8 +6,8 @@ class CategoryCubit extends Cubit<CategoryState> {
   final CategoryRepository _categoryRepo;
 
   CategoryCubit({required CategoryRepository categoryRepo})
-      : _categoryRepo = categoryRepo,
-        super(const CategoryState()) {
+    : _categoryRepo = categoryRepo,
+      super(const CategoryState()) {
     fetchCategories();
   }
 
@@ -16,31 +16,43 @@ class CategoryCubit extends Cubit<CategoryState> {
     try {
       final incomeTemp = await _categoryRepo.getCategories(isIncome: true);
       final expenseTemp = await _categoryRepo.getCategories(isIncome: false);
-      emit(state.copyWith(
-        status: CategoryStatus.success,
-        incomeCategories: incomeTemp,
-        expenseCategories: expenseTemp,
-      ));
+      emit(
+        state.copyWith(
+          status: CategoryStatus.success,
+          incomeCategories: incomeTemp,
+          expenseCategories: expenseTemp,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-          status: CategoryStatus.failure, errorMessage: e.toString()));
+      emit(
+        state.copyWith(
+          status: CategoryStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
   void selectCategory(int index, bool isIncome) {
     final list = isIncome ? state.incomeCategories : state.expenseCategories;
     if (index >= 0 && index < list.length) {
-      emit(state.copyWith(
-        selectedIndex: index,
-        selectedIcon: list[index].icon,
-        selectedName: list[index].name,
-        isIncome: list[index].isIncome,
-      ));
+      emit(
+        state.copyWith(
+          selectedIndex: index,
+          selectedIcon: list[index].icon,
+          selectedName: list[index].name,
+          isIncome: list[index].isIncome,
+        ),
+      );
     }
   }
 
   Future<void> addCategory(
-      String icon, String name, bool isIncome, double limit) async {
+    String icon,
+    String name,
+    bool isIncome,
+    double limit,
+  ) async {
     try {
       await _categoryRepo.addCategory(icon, name, isIncome, limit);
       fetchCategories();
@@ -50,7 +62,12 @@ class CategoryCubit extends Cubit<CategoryState> {
   }
 
   Future<void> updateCategory(
-      String id, String icon, String name, bool isIncome, double limit) async {
+    String id,
+    String icon,
+    String name,
+    bool isIncome,
+    double limit,
+  ) async {
     try {
       await _categoryRepo.updateCategory(id, icon, name, isIncome, limit);
       fetchCategories();
@@ -84,8 +101,12 @@ class CategoryCubit extends Cubit<CategoryState> {
       emit(state.copyWith(status: CategoryStatus.success));
       fetchCategories();
     } catch (e) {
-      emit(state.copyWith(
-          status: CategoryStatus.failure, errorMessage: e.toString()));
+      emit(
+        state.copyWith(
+          status: CategoryStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
@@ -96,8 +117,12 @@ class CategoryCubit extends Cubit<CategoryState> {
       emit(state.copyWith(status: CategoryStatus.success));
       fetchCategories();
     } catch (e) {
-      emit(state.copyWith(
-          status: CategoryStatus.failure, errorMessage: e.toString()));
+      emit(
+        state.copyWith(
+          status: CategoryStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
@@ -108,8 +133,12 @@ class CategoryCubit extends Cubit<CategoryState> {
       emit(state.copyWith(status: CategoryStatus.success));
       fetchCategories();
     } catch (e) {
-      emit(state.copyWith(
-          status: CategoryStatus.failure, errorMessage: e.toString()));
+      emit(
+        state.copyWith(
+          status: CategoryStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 }

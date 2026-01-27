@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_localization/flutter_localization.dart';
-import 'package:money_mate/services/locales.dart';
+import 'package:money_mate/l10n/app_localizations.dart';
 import 'package:money_mate/widget/setting/advance_setting/fixed_in_ex/setup_in_ex_regular.dart';
 import 'package:money_mate/widget/setting/advance_setting/limit_in_ex/setup_in_ex_limit.dart';
 
@@ -11,7 +10,7 @@ class AdvanceSetting extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar:
-          AppBar(title: Text(LocaleData.advancedSettings.getString(context))),
+          AppBar(title: Text(AppLocalizations.of(context)!.advancedSettings)),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -42,14 +41,14 @@ class AdvanceSetting extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                LocaleData.fixedInEx.getString(context),
+                                AppLocalizations.of(context)!.fixedInEx,
                                 style: const TextStyle(
                                     fontWeight: FontWeight.w500, fontSize: 16),
                               ),
                               SizedBox(
                                 width: 300,
                                 child: Text(
-                                  LocaleData.fixedInExDes.getString(context),
+                                  AppLocalizations.of(context)!.fixedInExDes,
                                   style: const TextStyle(color: Colors.grey),
                                 ),
                               ),
@@ -90,14 +89,14 @@ class AdvanceSetting extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                LocaleData.settingLimitTitle.getString(context),
+                                AppLocalizations.of(context)!.settingLimitTitle,
                                 style: const TextStyle(
                                     fontWeight: FontWeight.w500, fontSize: 16),
                               ),
                               SizedBox(
                                 width: 300,
                                 child: Text(
-                                  LocaleData.settingLimitDes.getString(context),
+                                  AppLocalizations.of(context)!.settingLimitDes,
                                   style: const TextStyle(color: Colors.grey),
                                 ),
                               ),

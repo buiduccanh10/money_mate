@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localization/flutter_localization.dart';
-import 'package:money_mate/services/locales.dart';
 import 'package:money_mate/bloc/auth/auth_bloc.dart';
 import 'package:money_mate/bloc/auth/auth_event.dart';
 import 'package:money_mate/bloc/auth/auth_state.dart';
+import 'package:money_mate/bloc/setting/setting_cubit.dart';
+import 'package:money_mate/bloc/setting/setting_state.dart';
+import 'package:money_mate/l10n/app_localizations.dart';
+import 'package:money_mate/main.dart';
 import 'package:money_mate/widget/auth/forgot_pass.dart';
 import 'package:money_mate/widget/auth/sign_up.dart';
 import 'package:rive/rive.dart' hide LinearGradient;
 import 'package:sign_in_button/sign_in_button.dart';
-import 'package:money_mate/main.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -60,8 +61,10 @@ class _LoginState extends State<Login> {
   }
 
   void _onInitAnimation(Artboard artboard) {
-    stateController =
-        StateMachineController.fromArtboard(artboard, "Login Machine");
+    stateController = StateMachineController.fromArtboard(
+      artboard,
+      "Login Machine",
+    );
     if (stateController == null) return;
     artboard.addController(stateController!);
     isChecking = stateController?.findInput("isChecking");
@@ -91,9 +94,10 @@ class _LoginState extends State<Login> {
           isHandsUp?.change(false);
           trigSuccess?.change(true);
           Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => Main()),
-              (route) => false);
+            context,
+            MaterialPageRoute(builder: (context) => Main()),
+            (route) => false,
+          );
         } else if (state.status == AuthStatus.failure) {
           isChecking?.change(false);
           isHandsUp?.change(false);
@@ -106,36 +110,41 @@ class _LoginState extends State<Login> {
           backgroundColor: Colors.transparent,
           automaticallyImplyLeading: false,
           actions: [
-            BlocBuilder<AuthBloc, AuthState>(
-              buildWhen: (previous, current) =>
-                  previous.currentLocale != current.currentLocale,
+            BlocBuilder<SettingCubit, SettingState>(
               builder: (context, state) {
                 return DropdownButton<String>(
                   underline: Container(),
                   borderRadius: BorderRadius.circular(10),
-                  icon:
-                      const Icon(Icons.language, color: Colors.blue, size: 28),
+                  icon: const Icon(
+                    Icons.language,
+                    color: Colors.blue,
+                    size: 28,
+                  ),
                   padding: const EdgeInsets.all(14),
-                  value: state.currentLocale,
+                  value: state.language,
                   items: [
                     DropdownMenuItem(
-                        value: 'vi',
-                        child: Text(LocaleData.opVi.getString(context))),
+                      value: 'vi',
+                      child: Text(AppLocalizations.of(context)!.opVi),
+                    ),
                     DropdownMenuItem(
-                        value: 'en',
-                        child: Text(LocaleData.opEn.getString(context))),
+                      value: 'en',
+                      child: Text(AppLocalizations.of(context)!.opEn),
+                    ),
                     DropdownMenuItem(
-                        value: 'zh',
-                        child: Text(LocaleData.opCn.getString(context))),
+                      value: 'zh',
+                      child: Text(AppLocalizations.of(context)!.opCn),
+                    ),
                   ],
                   onChanged: (value) {
                     if (value != null) {
-                      context.read<AuthBloc>().add(LocaleChanged(value));
+                      context.read<SettingCubit>().updateLanguageLocale(value);
+                      // context.read<AuthBloc>().add(LocaleChanged(value));
                     }
                   },
                 );
               },
-            )
+            ),
           ],
         ),
         body: SingleChildScrollView(
@@ -169,12 +178,14 @@ class _LoginState extends State<Login> {
                               controller: emailController,
                               onChanged: _onChangedEmail,
                               decoration: InputDecoration(
-                                label:
-                                    Text(LocaleData.email.getString(context)),
+                                label: Text(
+                                  AppLocalizations.of(context)!.email,
+                                ),
                                 hintText: 'example@gmail.com',
                                 prefixIcon: const Icon(Icons.email),
                                 border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10)),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
                               ),
                             ),
                             const SizedBox(height: 10),
@@ -190,13 +201,14 @@ class _LoginState extends State<Login> {
                                   onChanged: _onChangedPassword,
                                   decoration: InputDecoration(
                                     label: Text(
-                                        LocaleData.password.getString(context)),
+                                      AppLocalizations.of(context)!.password,
+                                    ),
                                     prefixIcon: const Icon(Icons.lock),
                                     suffixIcon: IconButton(
                                       onPressed: () {
-                                        context
-                                            .read<AuthBloc>()
-                                            .add(TogglePasswordVisibility());
+                                        context.read<AuthBloc>().add(
+                                          TogglePasswordVisibility(),
+                                        );
                                       },
                                       icon: Icon(
                                         Icons.remove_red_eye,
@@ -206,8 +218,8 @@ class _LoginState extends State<Login> {
                                       ),
                                     ),
                                     border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
                                   ),
                                 );
                               },
@@ -217,16 +229,18 @@ class _LoginState extends State<Login> {
                               children: [
                                 TextButton(
                                   child: Text(
-                                    LocaleData.forgotPass.getString(context),
+                                    AppLocalizations.of(context)!.forgotPass,
                                     style: const TextStyle(
-                                        decoration: TextDecoration.underline),
+                                      decoration: TextDecoration.underline,
+                                    ),
                                   ),
                                   onPressed: () {
                                     Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (_) =>
-                                                const ForgotPass()));
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => const ForgotPass(),
+                                      ),
+                                    );
                                   },
                                 ),
                               ],
@@ -234,19 +248,23 @@ class _LoginState extends State<Login> {
                             const SizedBox(height: 10),
                             GestureDetector(
                               onTap: () {
-                                context.read<AuthBloc>().add(LoginRequested(
-                                      emailController.text,
-                                      passwordController.text,
-                                    ));
+                                context.read<AuthBloc>().add(
+                                  LoginRequested(
+                                    emailController.text,
+                                    passwordController.text,
+                                  ),
+                                );
                                 setState(() {
                                   scale = 1.03;
                                 });
                                 Future.delayed(
-                                    const Duration(milliseconds: 200), () {
-                                  setState(() {
-                                    scale = 1.0;
-                                  });
-                                });
+                                  const Duration(milliseconds: 200),
+                                  () {
+                                    setState(() {
+                                      scale = 1.0;
+                                    });
+                                  },
+                                );
                               },
                               child: AnimatedScale(
                                 duration: const Duration(milliseconds: 200),
@@ -259,7 +277,7 @@ class _LoginState extends State<Login> {
                                       end: Alignment.bottomRight,
                                       colors: [
                                         Colors.blueAccent,
-                                        Colors.orangeAccent
+                                        Colors.orangeAccent,
                                       ],
                                     ),
                                     borderRadius: BorderRadius.circular(10),
@@ -272,14 +290,16 @@ class _LoginState extends State<Login> {
                                         if (state.status ==
                                             AuthStatus.loading) {
                                           return const CircularProgressIndicator(
-                                              color: Colors.white);
+                                            color: Colors.white,
+                                          );
                                         }
                                         return Text(
-                                          LocaleData.login.getString(context),
+                                          AppLocalizations.of(context)!.login,
                                           style: const TextStyle(
-                                              fontSize: 18,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w500),
+                                            fontSize: 18,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500,
+                                          ),
                                         );
                                       },
                                     ),
@@ -289,31 +309,35 @@ class _LoginState extends State<Login> {
                             ),
                             Row(
                               children: [
-                                Text(LocaleData.dontHaveAcc.getString(context)),
+                                Text(AppLocalizations.of(context)!.dontHaveAcc),
                                 TextButton(
                                   child: Text(
-                                    LocaleData.signUp.getString(context),
+                                    AppLocalizations.of(context)!.signUp,
                                     style: const TextStyle(
-                                        color: Colors.blue,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 15),
+                                      color: Colors.blue,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 15,
+                                    ),
                                   ),
                                   onPressed: () {
                                     Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (_) =>
-                                                const SignUpPage()));
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => const SignUpPage(),
+                                      ),
+                                    );
                                   },
-                                )
+                                ),
                               ],
                             ),
                             Center(
-                                child: Text(
-                                    LocaleData.orSignIn.getString(context))),
+                              child: Text(
+                                AppLocalizations.of(context)!.orSignIn,
+                              ),
+                            ),
                             SignInButton(
                               Buttons.google,
-                              text: LocaleData.signInGg.getString(context),
+                              text: AppLocalizations.of(context)!.signInGg,
                               onPressed: () {
                                 // context.read<AuthBloc>().add(GoogleLoginRequested());
                               },

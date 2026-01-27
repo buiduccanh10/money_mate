@@ -5,10 +5,14 @@ import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger
 abstract class AuthRepository {
   Future<AuthResponseDto> login(String email, String password);
   Future<AuthResponseDto> register(
-      String email, String password, String confirmPassword);
+    String email,
+    String password,
+    String confirmPassword,
+  );
   Future<void> logout();
   Future<void> saveTokens(String accessToken, String refreshToken);
   Future<void> forgotPassword(String email);
+  Future<AuthResponseDto> refresh();
 }
 
 class AuthRepositoryImpl implements AuthRepository {
@@ -30,7 +34,10 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<AuthResponseDto> register(
-      String email, String password, String confirmPassword) async {
+    String email,
+    String password,
+    String confirmPassword,
+  ) async {
     final response = await _api.apiAuthRegisterPost(
       body: RegisterDto(
         email: email,
@@ -71,6 +78,26 @@ class AuthRepositoryImpl implements AuthRepository {
 
     if (!response.isSuccessful) {
       throw Exception(response.error ?? 'Forgot password failed');
+    }
+  }
+
+  @override
+  Future<AuthResponseDto> refresh() async {
+    final refreshToken = await _storage.read(key: 'refreshToken');
+    if (refreshToken == null) {
+      throw Exception('No refresh token found');
+    }
+
+    final response = await _api.apiAuthRefreshPost(
+      body: RefreshTokenDto(refreshToken: refreshToken),
+    );
+
+    if (response.isSuccessful && response.body != null) {
+      await saveTokens(response.body!.accessToken, response.body!.refreshToken);
+      return response.body!;
+    } else {
+      await _storage.deleteAll();
+      throw Exception(response.error ?? 'Token refresh failed');
     }
   }
 }

@@ -1,8 +1,8 @@
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localization/flutter_localization.dart';
-import 'package:money_mate/services/locales.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:money_mate/l10n/app_localizations.dart';
 import 'package:money_mate/bloc/category/category_cubit.dart';
 import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger.dart';
 
@@ -40,7 +40,7 @@ class _CatUpdateDialogState extends State<CatUpdateDialog> {
       title: Row(
         children: [
           Text(
-            LocaleData.updateCatTitle.getString(context),
+            AppLocalizations.of(context)!.updateCatTitle,
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
           const SizedBox(width: 8),
@@ -50,7 +50,7 @@ class _CatUpdateDialogState extends State<CatUpdateDialog> {
               style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
               overflow: TextOverflow.ellipsis,
             ),
-          )
+          ),
         ],
       ),
       scrollable: true,
@@ -65,14 +65,18 @@ class _CatUpdateDialogState extends State<CatUpdateDialog> {
               decoration: InputDecoration(
                 errorText: _iconError,
                 enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.blue),
-                    borderRadius: BorderRadius.circular(10)),
+                  borderSide: const BorderSide(color: Colors.blue),
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.blue),
-                    borderRadius: BorderRadius.circular(10)),
-                label: Text(LocaleData.chooseAnIcon.getString(context)),
-                prefixIcon:
-                    const Icon(Icons.insert_emoticon, color: Colors.orange),
+                  borderSide: const BorderSide(color: Colors.blue),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                label: Text(AppLocalizations.of(context)!.chooseAnIcon),
+                prefixIcon: const Icon(
+                  Icons.insert_emoticon,
+                  color: Colors.orange,
+                ),
               ),
             ),
             const SizedBox(height: 10),
@@ -81,14 +85,18 @@ class _CatUpdateDialogState extends State<CatUpdateDialog> {
               decoration: InputDecoration(
                 errorText: _nameError,
                 enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.blue),
-                    borderRadius: BorderRadius.circular(10)),
+                  borderSide: const BorderSide(color: Colors.blue),
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.blue),
-                    borderRadius: BorderRadius.circular(10)),
-                label: Text(LocaleData.categoryName.getString(context)),
-                prefixIcon:
-                    const Icon(Icons.new_label, color: Colors.blueAccent),
+                  borderSide: const BorderSide(color: Colors.blue),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                label: Text(AppLocalizations.of(context)!.categoryName),
+                prefixIcon: const Icon(
+                  Icons.new_label,
+                  color: Colors.blueAccent,
+                ),
               ),
             ),
           ],
@@ -97,17 +105,23 @@ class _CatUpdateDialogState extends State<CatUpdateDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text(LocaleData.cancel.getString(context),
-              style: const TextStyle(color: Colors.grey)),
+          child: Text(
+            AppLocalizations.of(context)!.cancel,
+            style: const TextStyle(color: Colors.grey),
+          ),
         ),
         ElevatedButton(
           onPressed: _onUpdate,
           style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10))),
-          child: Text(LocaleData.update.getString(context),
-              style: const TextStyle(color: Colors.white)),
+            backgroundColor: Colors.green,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          child: Text(
+            AppLocalizations.of(context)!.update,
+            style: const TextStyle(color: Colors.white),
+          ),
         ),
       ],
     );
@@ -116,21 +130,30 @@ class _CatUpdateDialogState extends State<CatUpdateDialog> {
   void _onUpdate() {
     setState(() {
       _iconError = _iconController.text.isEmpty
-          ? LocaleData.catIconValidator.getString(context)
+          ? AppLocalizations.of(context)!.catIconValidator
           : null;
       _nameError = _nameController.text.isEmpty
-          ? LocaleData.catNameValidator.getString(context)
+          ? AppLocalizations.of(context)!.catNameValidator
           : null;
     });
 
     if (_iconError == null && _nameError == null) {
       context.read<CategoryCubit>().updateCategory(
-            widget.catItem.id,
-            _iconController.text,
-            _nameController.text,
-            widget.catItem.isIncome,
-            widget.catItem.limit ?? 0.0,
-          );
+        widget.catItem.id,
+        _iconController.text,
+        _nameController.text,
+        widget.catItem.isIncome,
+        widget.catItem.limit ?? 0.0,
+      );
+      Fluttertoast.showToast(
+        msg: AppLocalizations.of(context)!.toastUpdateSuccess,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
       Navigator.pop(context);
     }
   }

@@ -29,4 +29,9 @@ export class UpdateTransactionDto {
   @IsBoolean()
   @IsOptional()
   isIncome?: boolean;
+
+  @ApiProperty({ example: '14:30', required: false })
+  @IsString()
+  @IsOptional()
+  time?: string;
 }

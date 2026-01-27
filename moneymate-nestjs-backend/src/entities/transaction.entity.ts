@@ -20,11 +20,22 @@ export class Transaction {
   @Column({ nullable: true })
   description: string;
 
-  @Column({ type: 'decimal', precision: 15, scale: 2 })
+  @Column({
+    type: 'decimal',
+    precision: 15,
+    scale: 2,
+    transformer: {
+      to: (value: number) => value,
+      from: (value: string) => parseFloat(value),
+    },
+  })
   money: number;
 
   @Column()
   isIncome: boolean;
+
+  @Column({ default: '00:00' })
+  time: string;
 
   @Column()
   catId: string;

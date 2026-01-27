@@ -4,10 +4,18 @@ import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger
 abstract class CategoryRepository {
   Future<List<CategoryResponseDto>> getCategories({bool? isIncome});
   Future<CategoryResponseDto> addCategory(
-      String icon, String name, bool isIncome,
-      [double? limit]);
+    String icon,
+    String name,
+    bool isIncome, [
+    double? limit,
+  ]);
   Future<CategoryResponseDto> updateCategory(
-      String id, String icon, String name, bool isIncome, double limit);
+    String id,
+    String icon,
+    String name,
+    bool isIncome,
+    double limit,
+  );
   Future<void> deleteCategory(String id);
   Future<void> deleteAllCategories(bool isIncome);
   Future<CategoryResponseDto> getCategory(String id);
@@ -34,8 +42,11 @@ class CategoryRepositoryImpl implements CategoryRepository {
 
   @override
   Future<CategoryResponseDto> addCategory(
-      String icon, String name, bool isIncome,
-      [double? limit]) async {
+    String icon,
+    String name,
+    bool isIncome, [
+    double? limit,
+  ]) async {
     final response = await _api.apiCategoriesPost(
       body: CreateCategoryDto(
         icon: icon,
@@ -54,7 +65,12 @@ class CategoryRepositoryImpl implements CategoryRepository {
 
   @override
   Future<CategoryResponseDto> updateCategory(
-      String id, String icon, String name, bool isIncome, double limit) async {
+    String id,
+    String icon,
+    String name,
+    bool isIncome,
+    double limit,
+  ) async {
     final response = await _api.apiCategoriesIdPut(
       id: id,
       body: UpdateCategoryDto(
@@ -82,8 +98,9 @@ class CategoryRepositoryImpl implements CategoryRepository {
 
   @override
   Future<void> deleteAllCategories(bool isIncome) async {
-    final response =
-        await _api.apiCategoriesDelete(isIncome: isIncome.toString());
+    final response = await _api.apiCategoriesDelete(
+      isIncome: isIncome.toString(),
+    );
     if (!response.isSuccessful) {
       throw Exception(response.error ?? 'Failed to delete all categories');
     }

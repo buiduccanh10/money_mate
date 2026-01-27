@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localization/flutter_localization.dart';
-import 'package:money_mate/services/locales.dart';
+import 'package:money_mate/l10n/app_localizations.dart';
 import 'package:money_mate/bloc/auth/auth_bloc.dart';
 import 'package:money_mate/bloc/auth/auth_event.dart';
 import 'package:money_mate/bloc/auth/auth_state.dart';
@@ -31,7 +30,7 @@ class _ForgotPassState extends State<ForgotPass> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(title: const Text('Forgot your password')),
+        appBar: AppBar(title: Text(AppLocalizations.of(context)!.forgotPass)),
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(20.0),
@@ -41,9 +40,10 @@ class _ForgotPassState extends State<ForgotPass> {
               children: [
                 TextField(
                   decoration: InputDecoration(
-                      labelText: LocaleData.email.getString(context),
-                      prefixIcon: const Icon(Icons.email),
-                      hintText: 'example@gmail.com'),
+                    labelText: AppLocalizations.of(context)!.email,
+                    prefixIcon: const Icon(Icons.email),
+                    hintText: 'example@gmail.com',
+                  ),
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                 ),
@@ -56,15 +56,18 @@ class _ForgotPassState extends State<ForgotPass> {
                           : () {
                               if (_emailController.text.isNotEmpty) {
                                 context.read<AuthBloc>().add(
-                                    ForgotPasswordRequested(
-                                        _emailController.text));
+                                  ForgotPasswordRequested(
+                                    _emailController.text,
+                                  ),
+                                );
                               }
                             },
                       child: state.status == AuthStatus.loading
                           ? const SizedBox(
                               height: 20,
                               width: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2))
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
                           : const Text('Send request'),
                     );
                   },

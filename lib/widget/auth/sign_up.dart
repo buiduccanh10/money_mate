@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localization/flutter_localization.dart';
-import 'package:money_mate/services/locales.dart';
+import 'package:money_mate/l10n/app_localizations.dart';
 import 'package:money_mate/bloc/auth/auth_bloc.dart';
 import 'package:money_mate/bloc/auth/auth_event.dart';
 import 'package:money_mate/bloc/auth/auth_state.dart';
@@ -36,7 +35,7 @@ class _SignUpPageState extends State<SignUpPage> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(title: Text(LocaleData.signUp.getString(context))),
+        appBar: AppBar(title: Text(AppLocalizations.of(context)!.signUp)),
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(20.0),
@@ -58,7 +57,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       return null;
                     },
                     decoration: InputDecoration(
-                      labelText: LocaleData.email.getString(context),
+                      labelText: AppLocalizations.of(context)!.email,
                       hintText: 'example@gmail.com',
                       prefixIcon: const Icon(Icons.email),
                     ),
@@ -77,7 +76,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       return null;
                     },
                     decoration: InputDecoration(
-                      labelText: LocaleData.password.getString(context),
+                      labelText: AppLocalizations.of(context)!.password,
                       prefixIcon: const Icon(Icons.lock),
                     ),
                     controller: _passwordController,
@@ -124,7 +123,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                 width: 20,
                                 child:
                                     CircularProgressIndicator(strokeWidth: 2))
-                            : Text(LocaleData.signUp.getString(context)),
+                            : Text(AppLocalizations.of(context)!.signUp),
                       );
                     },
                   ),

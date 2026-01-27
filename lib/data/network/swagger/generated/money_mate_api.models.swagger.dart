@@ -942,6 +942,7 @@ class TransactionResponseDto {
   const TransactionResponseDto({
     required this.id,
     required this.date,
+    required this.time,
     this.description,
     required this.money,
     required this.catId,
@@ -960,6 +961,8 @@ class TransactionResponseDto {
   final String id;
   @JsonKey(name: 'date')
   final String date;
+  @JsonKey(name: 'time')
+  final String time;
   @JsonKey(name: 'description')
   final String? description;
   @JsonKey(name: 'money')
@@ -982,6 +985,8 @@ class TransactionResponseDto {
                 const DeepCollectionEquality().equals(other.id, id)) &&
             (identical(other.date, date) ||
                 const DeepCollectionEquality().equals(other.date, date)) &&
+            (identical(other.time, time) ||
+                const DeepCollectionEquality().equals(other.time, time)) &&
             (identical(other.description, description) ||
                 const DeepCollectionEquality().equals(
                   other.description,
@@ -1012,6 +1017,7 @@ class TransactionResponseDto {
   int get hashCode =>
       const DeepCollectionEquality().hash(id) ^
       const DeepCollectionEquality().hash(date) ^
+      const DeepCollectionEquality().hash(time) ^
       const DeepCollectionEquality().hash(description) ^
       const DeepCollectionEquality().hash(money) ^
       const DeepCollectionEquality().hash(catId) ^
@@ -1025,6 +1031,7 @@ extension $TransactionResponseDtoExtension on TransactionResponseDto {
   TransactionResponseDto copyWith({
     String? id,
     String? date,
+    String? time,
     String? description,
     double? money,
     String? catId,
@@ -1035,6 +1042,7 @@ extension $TransactionResponseDtoExtension on TransactionResponseDto {
     return TransactionResponseDto(
       id: id ?? this.id,
       date: date ?? this.date,
+      time: time ?? this.time,
       description: description ?? this.description,
       money: money ?? this.money,
       catId: catId ?? this.catId,
@@ -1047,6 +1055,7 @@ extension $TransactionResponseDtoExtension on TransactionResponseDto {
   TransactionResponseDto copyWithWrapped({
     Wrapped<String>? id,
     Wrapped<String>? date,
+    Wrapped<String>? time,
     Wrapped<String?>? description,
     Wrapped<double>? money,
     Wrapped<String>? catId,
@@ -1057,6 +1066,7 @@ extension $TransactionResponseDtoExtension on TransactionResponseDto {
     return TransactionResponseDto(
       id: (id != null ? id.value : this.id),
       date: (date != null ? date.value : this.date),
+      time: (time != null ? time.value : this.time),
       description: (description != null ? description.value : this.description),
       money: (money != null ? money.value : this.money),
       catId: (catId != null ? catId.value : this.catId),
@@ -1075,6 +1085,7 @@ class CreateTransactionDto {
     required this.money,
     required this.catId,
     required this.isIncome,
+    this.time,
   });
 
   factory CreateTransactionDto.fromJson(Map<String, dynamic> json) =>
@@ -1093,6 +1104,8 @@ class CreateTransactionDto {
   final String catId;
   @JsonKey(name: 'isIncome')
   final bool isIncome;
+  @JsonKey(name: 'time')
+  final String? time;
   static const fromJsonFactory = _$CreateTransactionDtoFromJson;
 
   @override
@@ -1114,7 +1127,9 @@ class CreateTransactionDto {
                 const DeepCollectionEquality().equals(
                   other.isIncome,
                   isIncome,
-                )));
+                )) &&
+            (identical(other.time, time) ||
+                const DeepCollectionEquality().equals(other.time, time)));
   }
 
   @override
@@ -1127,6 +1142,7 @@ class CreateTransactionDto {
       const DeepCollectionEquality().hash(money) ^
       const DeepCollectionEquality().hash(catId) ^
       const DeepCollectionEquality().hash(isIncome) ^
+      const DeepCollectionEquality().hash(time) ^
       runtimeType.hashCode;
 }
 
@@ -1137,6 +1153,7 @@ extension $CreateTransactionDtoExtension on CreateTransactionDto {
     double? money,
     String? catId,
     bool? isIncome,
+    String? time,
   }) {
     return CreateTransactionDto(
       date: date ?? this.date,
@@ -1144,6 +1161,7 @@ extension $CreateTransactionDtoExtension on CreateTransactionDto {
       money: money ?? this.money,
       catId: catId ?? this.catId,
       isIncome: isIncome ?? this.isIncome,
+      time: time ?? this.time,
     );
   }
 
@@ -1153,6 +1171,7 @@ extension $CreateTransactionDtoExtension on CreateTransactionDto {
     Wrapped<double>? money,
     Wrapped<String>? catId,
     Wrapped<bool>? isIncome,
+    Wrapped<String?>? time,
   }) {
     return CreateTransactionDto(
       date: (date != null ? date.value : this.date),
@@ -1160,6 +1179,7 @@ extension $CreateTransactionDtoExtension on CreateTransactionDto {
       money: (money != null ? money.value : this.money),
       catId: (catId != null ? catId.value : this.catId),
       isIncome: (isIncome != null ? isIncome.value : this.isIncome),
+      time: (time != null ? time.value : this.time),
     );
   }
 }
@@ -1172,6 +1192,7 @@ class UpdateTransactionDto {
     this.money,
     this.catId,
     this.isIncome,
+    this.time,
   });
 
   factory UpdateTransactionDto.fromJson(Map<String, dynamic> json) =>
@@ -1190,6 +1211,8 @@ class UpdateTransactionDto {
   final String? catId;
   @JsonKey(name: 'isIncome')
   final bool? isIncome;
+  @JsonKey(name: 'time')
+  final String? time;
   static const fromJsonFactory = _$UpdateTransactionDtoFromJson;
 
   @override
@@ -1211,7 +1234,9 @@ class UpdateTransactionDto {
                 const DeepCollectionEquality().equals(
                   other.isIncome,
                   isIncome,
-                )));
+                )) &&
+            (identical(other.time, time) ||
+                const DeepCollectionEquality().equals(other.time, time)));
   }
 
   @override
@@ -1224,6 +1249,7 @@ class UpdateTransactionDto {
       const DeepCollectionEquality().hash(money) ^
       const DeepCollectionEquality().hash(catId) ^
       const DeepCollectionEquality().hash(isIncome) ^
+      const DeepCollectionEquality().hash(time) ^
       runtimeType.hashCode;
 }
 
@@ -1234,6 +1260,7 @@ extension $UpdateTransactionDtoExtension on UpdateTransactionDto {
     double? money,
     String? catId,
     bool? isIncome,
+    String? time,
   }) {
     return UpdateTransactionDto(
       date: date ?? this.date,
@@ -1241,6 +1268,7 @@ extension $UpdateTransactionDtoExtension on UpdateTransactionDto {
       money: money ?? this.money,
       catId: catId ?? this.catId,
       isIncome: isIncome ?? this.isIncome,
+      time: time ?? this.time,
     );
   }
 
@@ -1250,6 +1278,7 @@ extension $UpdateTransactionDtoExtension on UpdateTransactionDto {
     Wrapped<double?>? money,
     Wrapped<String?>? catId,
     Wrapped<bool?>? isIncome,
+    Wrapped<String?>? time,
   }) {
     return UpdateTransactionDto(
       date: (date != null ? date.value : this.date),
@@ -1257,6 +1286,7 @@ extension $UpdateTransactionDtoExtension on UpdateTransactionDto {
       money: (money != null ? money.value : this.money),
       catId: (catId != null ? catId.value : this.catId),
       isIncome: (isIncome != null ? isIncome.value : this.isIncome),
+      time: (time != null ? time.value : this.time),
     );
   }
 }
