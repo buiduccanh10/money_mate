@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:cupertino_calendar_picker/cupertino_calendar_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,7 +11,6 @@ import 'package:money_mate/bloc/category/category_cubit.dart';
 import 'package:money_mate/bloc/category/category_state.dart';
 import 'package:money_mate/bloc/schedule/schedule_cubit.dart';
 import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger.dart';
-import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class StartSetup extends StatefulWidget {
   const StartSetup({super.key});
@@ -22,7 +22,7 @@ class StartSetup extends StatefulWidget {
 class _StartSetupState extends State<StartSetup> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _moneyController = TextEditingController();
-  final DateRangePickerController _dateController = DateRangePickerController();
+  DateTime selectedDateTime = DateTime.now();
   String? _selectedCatId;
   int _selectedOptionIndex = 0;
 
@@ -37,7 +37,6 @@ class _StartSetupState extends State<StartSetup> {
   @override
   void initState() {
     super.initState();
-    _dateController.selectedDate = DateTime.now();
     context.read<CategoryCubit>().fetchCategories();
   }
 
@@ -45,7 +44,6 @@ class _StartSetupState extends State<StartSetup> {
   void dispose() {
     _descriptionController.dispose();
     _moneyController.dispose();
-    _dateController.dispose();
     super.dispose();
   }
 
@@ -100,14 +98,18 @@ class _StartSetupState extends State<StartSetup> {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
-        child: SfDateRangePicker(
-          showNavigationArrow: true,
-          selectionColor: Colors.deepOrangeAccent,
-          controller: _dateController,
-          headerStyle: const DateRangePickerHeaderStyle(
-            textAlign: TextAlign.center,
-            textStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
-          ),
+        child: CupertinoCalendar(
+          minimumDateTime: DateTime(1900),
+          maximumDateTime: DateTime(2100),
+          initialDateTime: selectedDateTime,
+          onDateTimeChanged: (DateTime newDate) {
+            setState(() {
+              selectedDateTime = newDate;
+            });
+          },
+          monthPickerDecoration: CalendarMonthPickerDecoration(),
+          mode: CupertinoCalendarMode.dateTime,
+          use24hFormat: true,
         ),
       ),
     );
@@ -270,7 +272,7 @@ class _StartSetupState extends State<StartSetup> {
     final cat = allCats.firstWhere((c) => c.id == _selectedCatId);
 
     context.read<ScheduleCubit>().addSchedule(
-      date: DateFormat('dd/MM/yyyy').format(_dateController.selectedDate!),
+      date: DateFormat('dd/MM/yyyy').format(selectedDateTime),
       description: _descriptionController.text,
       money: money,
       catId: _selectedCatId!,

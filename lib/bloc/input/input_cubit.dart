@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:money_mate/bloc/search/search_cubit.dart';
 import 'package:money_mate/data/repository/category_repository.dart';
 import 'package:money_mate/data/repository/transaction_repository.dart';
+import 'package:money_mate/bloc/home/home_cubit.dart';
+import 'package:money_mate/bloc/chart/chart_cubit.dart';
 import 'input_state.dart';
 
 class InputCubit extends Cubit<InputState> {
@@ -128,6 +131,15 @@ class InputCubit extends Cubit<InputState> {
       );
 
       emit(state.copyWith(status: InputStatus.success));
+      if (context.mounted) {
+        context.read<HomeCubit>().fetchData();
+        context.read<SearchCubit>().refresh();
+        try {
+          final chartCubit = context.read<ChartCubit>();
+          chartCubit.fetchData();
+          chartCubit.refreshDetail();
+        } catch (_) {}
+      }
     } catch (e) {
       emit(
         state.copyWith(status: InputStatus.failure, errorMessage: e.toString()),
@@ -137,7 +149,8 @@ class InputCubit extends Cubit<InputState> {
 
   Future<void> updateTransaction({
     required String id,
-    required String date,
+    required DateTime date,
+    required TimeOfDay time,
     required bool isIncome,
     required String description,
     required String money,
@@ -152,9 +165,14 @@ class InputCubit extends Cubit<InputState> {
           : money.replaceAll(',', '.');
       double moneyFinal = double.parse(formatMoney);
 
+      String finalDate = DateFormat('yyyy-MM-dd').format(date);
+      String finalTime =
+          '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+
       await _transactionRepo.updateTransaction(
         id,
-        date,
+        finalDate,
+        finalTime,
         description,
         moneyFinal,
         catId,
@@ -162,6 +180,16 @@ class InputCubit extends Cubit<InputState> {
       );
 
       emit(state.copyWith(status: InputStatus.success));
+
+      if (context.mounted) {
+        context.read<HomeCubit>().fetchData();
+        context.read<SearchCubit>().refresh();
+        try {
+          final chartCubit = context.read<ChartCubit>();
+          chartCubit.fetchData();
+          chartCubit.refreshDetail();
+        } catch (_) {}
+      }
     } catch (e) {
       emit(
         state.copyWith(status: InputStatus.failure, errorMessage: e.toString()),

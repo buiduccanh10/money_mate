@@ -99,7 +99,15 @@ class ChartCubit extends Cubit<ChartState> {
     String? date,
     String? catId,
   }) async {
-    emit(state.copyWith(status: ChartStatus.loading));
+    emit(
+      state.copyWith(
+        status: ChartStatus.loading,
+        lastDetailIsMonthly: isMonthly,
+        lastDetailIsIncome: isIncome,
+        lastDetailDate: date,
+        lastDetailCatId: catId,
+      ),
+    );
     try {
       final data = await _transactionRepo.getTransactions(
         monthYear: isMonthly ? date : null,
@@ -111,6 +119,17 @@ class ChartCubit extends Cubit<ChartState> {
     } catch (e) {
       emit(
         state.copyWith(status: ChartStatus.failure, errorMessage: e.toString()),
+      );
+    }
+  }
+
+  Future<void> refreshDetail() async {
+    if (state.lastDetailIsMonthly != null) {
+      await fetchDetail(
+        isMonthly: state.lastDetailIsMonthly!,
+        isIncome: state.lastDetailIsIncome,
+        date: state.lastDetailDate,
+        catId: state.lastDetailCatId,
       );
     }
   }

@@ -22,7 +22,8 @@ export class TransactionsService {
       .createQueryBuilder('transaction')
       .where('transaction.userId = :userId', { userId })
       .leftJoinAndSelect('transaction.category', 'category')
-      .orderBy('transaction.date', 'DESC');
+      .orderBy('transaction.date', 'DESC')
+      .addOrderBy('transaction.time', 'DESC');
 
     if (catId) {
       queryBuilder.andWhere('transaction.catId = :catId', { catId });
@@ -34,8 +35,10 @@ export class TransactionsService {
 
     if (monthYear) {
       if (monthYear.includes('/')) {
-        queryBuilder.andWhere('transaction.date LIKE :monthYear', {
-          monthYear: `%${monthYear}%`,
+        const [month, yearPart] = monthYear.split('/');
+        const searchStr = `${yearPart}-${month}`;
+        queryBuilder.andWhere('transaction.date LIKE :searchStr', {
+          searchStr: `${searchStr}%`,
         });
       } else {
         const months = [
@@ -57,9 +60,9 @@ export class TransactionsService {
           const mIndex = months.indexOf(parts[0]);
           if (mIndex >= 0) {
             const mStr = (mIndex + 1).toString().padStart(2, '0');
-            const searchStr = `/${mStr}/${parts[1]}`;
+            const searchStr = `${parts[1]}-${mStr}`;
             queryBuilder.andWhere('transaction.date LIKE :searchStr', {
-              searchStr: `%${searchStr}`,
+              searchStr: `${searchStr}%`,
             });
           } else {
             queryBuilder.andWhere('transaction.date LIKE :monthYear', {
@@ -76,12 +79,11 @@ export class TransactionsService {
 
     if (year) {
       queryBuilder.andWhere('transaction.date LIKE :year', {
-        year: `%${year}%`,
+        year: `${year}%`,
       });
     }
 
-    const result = await queryBuilder.getMany();
-    return result;
+    return await queryBuilder.getMany();
   }
 
   async findOne(id: string, userId: string) {

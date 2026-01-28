@@ -11,11 +11,17 @@ class SearchCubit extends Cubit<SearchState> {
 
   Future<void> searchTransactions(String query) async {
     if (query.isEmpty) {
-      emit(state.copyWith(searchResults: [], query: ''));
+      emit(state.copyWith(searchResults: [], query: '', clearCatId: true));
       return;
     }
 
-    emit(state.copyWith(status: SearchStatus.loading, query: query));
+    emit(
+      state.copyWith(
+        status: SearchStatus.loading,
+        query: query,
+        clearCatId: true,
+      ),
+    );
     try {
       final results = await _transactionRepo.searchTransactions(query);
       emit(
@@ -31,8 +37,27 @@ class SearchCubit extends Cubit<SearchState> {
     }
   }
 
+  Future<void> refresh() async {
+    if (state.catId != null) {
+      await searchByCategory(state.catId!);
+    } else if (state.query.isNotEmpty) {
+      await searchTransactions(state.query);
+    }
+  }
+
+  Future<void> clearSearch() async {
+    emit(
+      state.copyWith(
+        searchResults: [],
+        query: '',
+        catId: null,
+        clearCatId: true,
+      ),
+    );
+  }
+
   Future<void> searchByCategory(String catId) async {
-    emit(state.copyWith(status: SearchStatus.loading));
+    emit(state.copyWith(status: SearchStatus.loading, catId: catId, query: ''));
     try {
       final results = await _transactionRepo.getTransactions(catId: catId);
       emit(

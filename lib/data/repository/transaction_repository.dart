@@ -21,6 +21,7 @@ abstract class TransactionRepository {
   Future<TransactionResponseDto> updateTransaction(
     String id,
     String date,
+    String time,
     String description,
     double money,
     String catId,
@@ -89,6 +90,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
   Future<TransactionResponseDto> updateTransaction(
     String id,
     String date,
+    String time,
     String description,
     double money,
     String catId,
@@ -98,6 +100,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
       id: id,
       body: UpdateTransactionDto(
         date: date,
+        time: time,
         description: description,
         money: money,
         catId: catId,

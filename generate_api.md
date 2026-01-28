@@ -17,6 +17,10 @@ Chạy lệnh sau từ thư mục gốc của project flutter:
 curl http://localhost:3000/api/docs-json -o lib/data/network/swagger/money_mate_api.json
 ```
 
+```bash
+flutter clean && flutter pub get && flutter pub run build_runner clean && flutter pub run build_runner build --delete-conflicting-outputs
+```
+
 ### Bước 2: Tạo code bằng build_runner
 
 Chạy lệnh sau để Flutter tự động tạo lại các file `.swagger.dart` và `.chopper.dart`:

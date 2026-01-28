@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,6 +10,8 @@ import 'package:money_mate/bloc/category/category_cubit.dart';
 import 'package:money_mate/bloc/category/category_state.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:cupertino_calendar_picker/cupertino_calendar_picker.dart';
+import 'package:money_mate/widget/common/gradient_animated_button.dart';
+import 'package:money_mate/widget/common/category_grid_item.dart';
 
 class InputContent extends StatefulWidget {
   final bool isIncome;
@@ -25,7 +26,6 @@ class _InputContentState extends State<InputContent> {
   final descriptionController = TextEditingController();
   final moneyController = TextEditingController();
   DateTime selectedDateTime = DateTime.now();
-  double scale = 1.0;
   InputCubit? _inputCubit;
 
   @override
@@ -99,6 +99,8 @@ class _InputContentState extends State<InputContent> {
                               selectedDateTime = newDate;
                             });
                           },
+                          monthPickerDecoration:
+                              CalendarMonthPickerDecoration(),
                           mode: CupertinoCalendarMode.dateTime,
                           use24hFormat: true,
                         ),
@@ -242,47 +244,17 @@ class _InputContentState extends State<InputContent> {
               itemBuilder: (BuildContext context, int index) {
                 final catItem = categories[index];
                 bool isSelected = inputState.catId == catItem.id;
-                return InkWell(
-                  borderRadius: BorderRadius.circular(10),
+                return CategoryGridItem(
+                  icon: catItem.icon,
+                  name: catItem.name,
+                  isSelected: isSelected,
+                  isDark: isDark,
                   onTap: () {
                     context.read<InputCubit>().selectCategory(
                       index,
                       catItem.id,
                     );
                   },
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        width: 1.5,
-                        color: isSelected
-                            ? (isDark ? Colors.orange : Colors.amber)
-                            : Colors.transparent,
-                      ),
-                      color: Colors
-                          .primaries[Random().nextInt(Colors.primaries.length)]
-                          .shade100
-                          .withValues(alpha: 0.35),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          catItem.icon,
-                          style: const TextStyle(fontSize: 20),
-                        ),
-                        Text(
-                          catItem.name,
-                          style: TextStyle(
-                            fontSize: 14,
-                            overflow: TextOverflow.ellipsis,
-                            color: isDark ? Colors.white : Colors.black,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                 );
               },
             );
@@ -293,67 +265,28 @@ class _InputContentState extends State<InputContent> {
   }
 
   Widget _buildSaveButton(BuildContext context) {
-    return AnimatedScale(
-      scale: scale,
-      duration: const Duration(milliseconds: 200),
-      child: Container(
-        width: 120,
-        height: 60,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          gradient: const LinearGradient(
-            colors: [
-              Color.fromARGB(255, 63, 148, 66),
-              Color.fromARGB(255, 77, 183, 80),
-              Color.fromARGB(255, 89, 206, 93),
-            ],
-          ),
-        ),
-        child: FloatingActionButton.extended(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          onPressed: () {
-            final state = context.read<InputCubit>().state;
-            if (state.catId == null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Select a category")),
-              );
-              return;
-            }
-            context.read<InputCubit>().addTransaction(
-              date: selectedDateTime,
-              time: TimeOfDay.fromDateTime(selectedDateTime),
-              description: descriptionController.text,
-              money: moneyController.text,
-              catId: state.catId!,
-              context: context,
-            );
-            context.read<InputCubit>().resetSelection();
-            setState(() {
-              scale = 1.1;
-            });
-            Future.delayed(const Duration(milliseconds: 200), () {
-              setState(() {
-                scale = 1.0;
-              });
-            });
-          },
-          label: Row(
-            children: [
-              const Icon(Icons.add, size: 35, color: Colors.white),
-              const SizedBox(width: 5),
-              Text(
-                AppLocalizations.of(context)!.inputVave,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+    return GradientAnimatedButton(
+      onPressed: () {
+        final state = context.read<InputCubit>().state;
+        if (state.catId == null) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text("Select a category")));
+          return;
+        }
+        context.read<InputCubit>().addTransaction(
+          date: selectedDateTime,
+          time: TimeOfDay.fromDateTime(selectedDateTime),
+          description: descriptionController.text,
+          money: moneyController.text,
+          catId: state.catId!,
+          context: context,
+        );
+        context.read<InputCubit>().resetSelection();
+      },
+      label: AppLocalizations.of(context)!.inputVave,
+      icon: Icons.add,
+      width: 120,
     );
   }
 

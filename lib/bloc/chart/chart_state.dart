@@ -14,6 +14,10 @@ class ChartState extends Equatable {
   final int month;
   final int year;
   final String? errorMessage;
+  final bool? lastDetailIsMonthly;
+  final bool? lastDetailIsIncome;
+  final String? lastDetailDate;
+  final String? lastDetailCatId;
 
   const ChartState({
     this.status = ChartStatus.initial,
@@ -26,6 +30,10 @@ class ChartState extends Equatable {
     required this.month,
     required this.year,
     this.errorMessage,
+    this.lastDetailIsMonthly,
+    this.lastDetailIsIncome,
+    this.lastDetailDate,
+    this.lastDetailCatId,
   });
 
   ChartState copyWith({
@@ -39,6 +47,10 @@ class ChartState extends Equatable {
     int? month,
     int? year,
     String? errorMessage,
+    bool? lastDetailIsMonthly,
+    bool? lastDetailIsIncome,
+    String? lastDetailDate,
+    String? lastDetailCatId,
   }) {
     return ChartState(
       status: status ?? this.status,
@@ -51,6 +63,10 @@ class ChartState extends Equatable {
       month: month ?? this.month,
       year: year ?? this.year,
       errorMessage: errorMessage ?? this.errorMessage,
+      lastDetailIsMonthly: lastDetailIsMonthly ?? this.lastDetailIsMonthly,
+      lastDetailIsIncome: lastDetailIsIncome ?? this.lastDetailIsIncome,
+      lastDetailDate: lastDetailDate ?? this.lastDetailDate,
+      lastDetailCatId: lastDetailCatId ?? this.lastDetailCatId,
     );
   }
 
@@ -66,5 +82,9 @@ class ChartState extends Equatable {
     month,
     year,
     errorMessage,
+    lastDetailIsMonthly,
+    lastDetailIsIncome,
+    lastDetailDate,
+    lastDetailCatId,
   ];
 }

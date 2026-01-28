@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -6,9 +5,11 @@ import 'package:intl/intl.dart';
 import 'package:money_mate/l10n/app_localizations.dart';
 import 'package:money_mate/bloc/chart/chart_cubit.dart';
 import 'package:money_mate/bloc/chart/chart_state.dart';
+import 'package:money_mate/utils/date_format_utils.dart';
 import 'package:money_mate/widget/input/update_input.dart';
 import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:money_mate/widget/common/transaction_item_tile.dart';
 
 class ChartItemDetail extends StatefulWidget {
   final String? catId;
@@ -80,11 +81,39 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
           );
 
         final formatter = NumberFormat.simpleCurrency(locale: locale);
+        String appBarTitle = data.isNotEmpty
+            ? (data.first.category?.name ?? '')
+            : AppLocalizations.of(context)!.noInputData;
+        if (widget.over > 0) {
+          appBarTitle +=
+              ': ${AppLocalizations.of(context)!.over} ${formatter.format(widget.over)}';
+        }
 
         return Scaffold(
+          appBar: AppBar(
+            flexibleSpace: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: isDark
+                      ? [
+                          const Color.fromARGB(255, 203, 122, 0),
+                          const Color.fromARGB(255, 0, 112, 204),
+                        ]
+                      : [Colors.orange, Colors.blue],
+                ),
+              ),
+            ),
+            leading: const BackButton(color: Colors.white),
+            title: Text(
+              appBarTitle,
+              style: const TextStyle(color: Colors.white, fontSize: 18),
+            ),
+            centerTitle: true,
+          ),
           body: Column(
             children: [
-              _buildHeader(isDark, data, formatter),
               Expanded(
                 child: state.status == ChartStatus.loading
                     ? const Center(child: CircularProgressIndicator())
@@ -94,7 +123,7 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
                       )
                     : Column(
                         children: [
-                          _buildChart(sortedDates, dateGroup, locale),
+                          _buildChart(sortedDates, dateGroup),
                           Expanded(
                             child: ListView.builder(
                               padding: const EdgeInsets.symmetric(vertical: 10),
@@ -107,7 +136,6 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
                                   isDark,
                                   date,
                                   transactions,
-                                  locale,
                                 );
                               },
                             ),
@@ -122,56 +150,18 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
     );
   }
 
-  Widget _buildHeader(
-    bool isDark,
-    List<TransactionResponseDto> data,
-    NumberFormat formatter,
-  ) {
-    String title = data.isNotEmpty
-        ? (data.first.category?.name ?? '')
-        : AppLocalizations.of(context)!.noInputData;
-    if (widget.over > 0) {
-      title +=
-          ': ${AppLocalizations.of(context)!.over} ${formatter.format(widget.over)}';
-    }
-
-    return Container(
-      height: 100,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: isDark
-              ? [Colors.blue[900]!, Colors.orange[900]!]
-              : [Colors.orange, Colors.blue],
-        ),
-      ),
-      child: SafeArea(
-        child: Row(
-          children: [
-            const BackButton(color: Colors.white),
-            Expanded(
-              child: Text(
-                title,
-                style: const TextStyle(color: Colors.white, fontSize: 18),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildChart(
     List<String> sortedDates,
     Map<String, List<TransactionResponseDto>> dateGroup,
-    String locale,
   ) {
-    final chartData = sortedDates.reversed.map((date) {
+    final List<Map<String, dynamic>> chartData = sortedDates.reversed.map((
+      date,
+    ) {
       final total = dateGroup[date]!.fold<double>(
         0,
         (prev, item) => prev + item.money,
       );
-      return {'date': date, 'money': total};
+      return <String, dynamic>{'date': date, 'money': total};
     }).toList();
 
     return SizedBox(
@@ -181,11 +171,12 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
         series: <CartesianSeries<Map<String, dynamic>, String>>[
           ColumnSeries<Map<String, dynamic>, String>(
             dataSource: chartData,
-            xValueMapper: (d, _) => d['date'],
-            yValueMapper: (d, _) => d['money'],
+            xValueMapper: (d, _) => d['date'] as String,
+            yValueMapper: (d, _) => d['money'] as double,
             dataLabelSettings: const DataLabelSettings(isVisible: true),
             pointColorMapper: (d, _) =>
-                Colors.primaries[Random().nextInt(Colors.primaries.length)],
+                Colors.primaries[chartData.indexOf(d) %
+                    Colors.primaries.length],
           ),
         ],
       ),
@@ -197,7 +188,6 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
     bool isDark,
     String date,
     List<TransactionResponseDto> transactions,
-    String locale,
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -207,13 +197,11 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
           color: isDark ? Colors.grey[800] : Colors.grey[200],
           child: Text(
-            date,
+            DateFormatUtils.formatDisplayDate(date),
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
-        ...transactions.map(
-          (tx) => _buildTransactionItem(context, isDark, tx, locale),
-        ),
+        ...transactions.map((tx) => _buildTransactionItem(context, isDark, tx)),
       ],
     );
   }
@@ -222,10 +210,9 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
     BuildContext context,
     bool isDark,
     TransactionResponseDto tx,
-    String locale,
   ) {
-    final formatter = NumberFormat.simpleCurrency(locale: locale);
     return Slidable(
+      key: ValueKey(tx.id),
       endActionPane: ActionPane(
         motion: const ScrollMotion(),
         children: [
@@ -233,6 +220,7 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
             onPressed: (_) => _editTx(tx),
             icon: Icons.edit,
             label: 'Edit',
+            backgroundColor: Colors.transparent,
             foregroundColor: Colors.blue,
           ),
           SlidableAction(
@@ -241,30 +229,15 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
             },
             icon: Icons.delete,
             label: 'Delete',
+            backgroundColor: Colors.transparent,
             foregroundColor: Colors.red,
           ),
         ],
       ),
-      child: ListTile(
+      child: TransactionItemTile(
+        transaction: tx,
+        isDark: isDark,
         onTap: () => _editTx(tx),
-        leading: CircleAvatar(
-          backgroundColor: Colors
-              .primaries[Random().nextInt(Colors.primaries.length)]
-              .withValues(alpha: 0.2),
-          child: Text(tx.category?.icon ?? '💰'),
-        ),
-        title: Text(
-          tx.description ?? '',
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Text(tx.date),
-        trailing: Text(
-          '${tx.isIncome ? '+' : '-'} ${formatter.format(tx.money)}',
-          style: TextStyle(
-            color: tx.isIncome ? Colors.green : Colors.red,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
       ),
     );
   }

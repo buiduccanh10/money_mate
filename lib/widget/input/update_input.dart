@@ -1,4 +1,4 @@
-import 'dart:math';
+import 'package:cupertino_calendar_picker/cupertino_calendar_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -9,7 +9,8 @@ import 'package:money_mate/bloc/category/category_state.dart';
 import 'package:money_mate/widget/category/category_manage.dart';
 import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:money_mate/widget/common/gradient_animated_button.dart';
+import 'package:money_mate/widget/common/category_grid_item.dart';
 
 class UpdateInput extends StatefulWidget {
   final TransactionResponseDto inputItem;
@@ -22,7 +23,7 @@ class UpdateInput extends StatefulWidget {
 class _UpdateInputState extends State<UpdateInput> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _moneyController = TextEditingController();
-  final DateRangePickerController _dateController = DateRangePickerController();
+  DateTime selectedDateTime = DateTime.now();
   String? _selectedCatId;
 
   @override
@@ -30,9 +31,20 @@ class _UpdateInputState extends State<UpdateInput> {
     super.initState();
     _descriptionController.text = widget.inputItem.description ?? '';
     _moneyController.text = widget.inputItem.money.toString();
-    _dateController.selectedDate = DateFormat(
-      "dd/MM/yyyy",
-    ).parse(widget.inputItem.date);
+    try {
+      selectedDateTime = DateFormat("yyyy-MM-dd").parse(widget.inputItem.date);
+    } catch (e) {
+      selectedDateTime = DateFormat("dd/MM/yyyy").parse(widget.inputItem.date);
+    }
+
+    if (widget.inputItem.time.contains(':')) {
+      final timeParts = widget.inputItem.time.split(':');
+      selectedDateTime = selectedDateTime.copyWith(
+        hour: int.parse(timeParts[0]),
+        minute: int.parse(timeParts[1]),
+      );
+    }
+
     _selectedCatId = widget.inputItem.catId;
   }
 
@@ -42,35 +54,71 @@ class _UpdateInputState extends State<UpdateInput> {
     final isIncome = widget.inputItem.isIncome;
 
     return Scaffold(
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 15, right: 15, top: 115),
-                  child: Column(
-                    children: [
-                      _buildDatePicker(isDark),
-                      const SizedBox(height: 10),
-                      _buildTextField(
-                        _descriptionController,
-                        AppLocalizations.of(context)!.inputDescription,
-                        Icons.description,
-                        Colors.blue,
-                        isDark,
-                      ),
-                      const SizedBox(height: 10),
-                      _buildMoneyField(isDark),
-                    ],
-                  ),
-                ),
-                _buildCategorySection(isIncome, isDark),
-              ],
+      appBar: AppBar(
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: isDark
+                  ? [
+                      const Color.fromARGB(255, 203, 122, 0),
+                      const Color.fromARGB(255, 0, 112, 204),
+                    ]
+                  : [Colors.orange, Colors.blue],
             ),
           ),
-          _buildHeader(isIncome, isDark),
-        ],
+        ),
+        leading: const BackButton(color: Colors.white),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              isIncome
+                  ? AppLocalizations.of(context)!.income
+                  : AppLocalizations.of(context)!.expense,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(
+                '(${widget.inputItem.description})',
+                style: const TextStyle(color: Colors.white70, fontSize: 18),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+        centerTitle: true,
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(15),
+              child: Column(
+                children: [
+                  _buildDatePicker(isDark),
+                  const SizedBox(height: 10),
+                  _buildTextField(
+                    _descriptionController,
+                    AppLocalizations.of(context)!.inputDescription,
+                    Icons.description,
+                    Colors.blue,
+                    isDark,
+                  ),
+                  const SizedBox(height: 10),
+                  _buildMoneyField(isDark),
+                ],
+              ),
+            ),
+            _buildCategorySection(isIncome, isDark),
+          ],
+        ),
       ),
       floatingActionButton: _buildSaveButton(isIncome),
     );
@@ -84,14 +132,18 @@ class _UpdateInputState extends State<UpdateInput> {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
-        child: SfDateRangePicker(
-          showNavigationArrow: true,
-          selectionColor: Colors.deepOrangeAccent,
-          controller: _dateController,
-          headerStyle: const DateRangePickerHeaderStyle(
-            textAlign: TextAlign.center,
-            textStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
-          ),
+        child: CupertinoCalendar(
+          minimumDateTime: DateTime(1900),
+          maximumDateTime: DateTime(2100),
+          initialDateTime: selectedDateTime,
+          onDateTimeChanged: (DateTime newDate) {
+            setState(() {
+              selectedDateTime = newDate;
+            });
+          },
+          monthPickerDecoration: CalendarMonthPickerDecoration(),
+          mode: CupertinoCalendarMode.dateTime,
+          use24hFormat: true,
         ),
       ),
     );
@@ -194,32 +246,14 @@ class _UpdateInputState extends State<UpdateInput> {
               itemBuilder: (context, index) {
                 final cat = cats[index];
                 final isSelected = _selectedCatId == cat.id;
-                return InkWell(
+                return CategoryGridItem(
+                  icon: cat.icon,
+                  name: cat.name,
+                  isSelected: isSelected,
+                  isDark: isDark,
                   onTap: () => setState(() {
                     _selectedCatId = cat.id;
                   }),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors
-                          .primaries[Random().nextInt(Colors.primaries.length)]
-                          .shade100
-                          .withValues(alpha: 0.35),
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                        color: isSelected
-                            ? (isDark ? Colors.orange : Colors.amber)
-                            : Colors.transparent,
-                        width: 2,
-                      ),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(cat.icon, style: const TextStyle(fontSize: 20)),
-                        Text(cat.name, overflow: TextOverflow.ellipsis),
-                      ],
-                    ),
-                  ),
                 );
               },
             );
@@ -229,53 +263,14 @@ class _UpdateInputState extends State<UpdateInput> {
     );
   }
 
-  Widget _buildHeader(bool isIncome, bool isDark) {
-    return Container(
-      height: 100,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: isDark
-              ? [Colors.blue[900]!, Colors.orange[900]!]
-              : [Colors.orange, Colors.blue],
-        ),
-      ),
-      child: SafeArea(
-        child: Row(
-          children: [
-            const BackButton(color: Colors.white),
-            Text(
-              isIncome
-                  ? AppLocalizations.of(context)!.income
-                  : AppLocalizations.of(context)!.expense,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                '(${widget.inputItem.description})',
-                style: const TextStyle(color: Colors.white70),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildSaveButton(bool isIncome) {
-    return FloatingActionButton.extended(
+    return GradientAnimatedButton(
       onPressed: () {
         if (_selectedCatId != null && _moneyController.text.isNotEmpty) {
           context.read<InputCubit>().updateTransaction(
             id: widget.inputItem.id,
-            date: DateFormat(
-              "dd/MM/yyyy",
-            ).format(_dateController.selectedDate!),
+            date: selectedDateTime,
+            time: TimeOfDay.fromDateTime(selectedDateTime),
             description: _descriptionController.text,
             money: _moneyController.text,
             catId: _selectedCatId!,
@@ -285,9 +280,8 @@ class _UpdateInputState extends State<UpdateInput> {
           Navigator.pop(context);
         }
       },
-      label: Text(AppLocalizations.of(context)!.update),
-      icon: const Icon(Icons.edit_calendar),
-      backgroundColor: Colors.green,
+      label: AppLocalizations.of(context)!.update,
+      icon: Icons.edit_calendar,
     );
   }
 }

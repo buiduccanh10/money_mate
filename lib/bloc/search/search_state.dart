@@ -8,12 +8,14 @@ class SearchState extends Equatable {
   final List<TransactionResponseDto> searchResults;
   final String? errorMessage;
   final String query;
+  final String? catId;
 
   const SearchState({
     this.status = SearchStatus.initial,
     this.searchResults = const [],
     this.errorMessage,
     this.query = '',
+    this.catId,
   });
 
   SearchState copyWith({
@@ -21,15 +23,24 @@ class SearchState extends Equatable {
     List<TransactionResponseDto>? searchResults,
     String? errorMessage,
     String? query,
+    String? catId,
+    bool clearCatId = false,
   }) {
     return SearchState(
       status: status ?? this.status,
       searchResults: searchResults ?? this.searchResults,
       errorMessage: errorMessage ?? this.errorMessage,
       query: query ?? this.query,
+      catId: clearCatId ? null : (catId ?? this.catId),
     );
   }
 
   @override
-  List<Object?> get props => [status, searchResults, errorMessage, query];
+  List<Object?> get props => [
+    status,
+    searchResults,
+    errorMessage,
+    query,
+    catId,
+  ];
 }

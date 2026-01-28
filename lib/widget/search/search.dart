@@ -1,15 +1,14 @@
-import 'dart:async';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:money_mate/l10n/app_localizations.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:intl/intl.dart';
 import 'package:money_mate/bloc/search/search_cubit.dart';
 import 'package:money_mate/bloc/search/search_state.dart';
 import 'package:money_mate/bloc/category/category_cubit.dart';
 import 'package:money_mate/bloc/category/category_state.dart';
 import 'package:money_mate/widget/input/update_input.dart';
+import 'package:money_mate/widget/common/transaction_item_tile.dart';
+import 'dart:async';
 
 class Search extends StatefulWidget {
   const Search({super.key});
@@ -20,6 +19,12 @@ class Search extends StatefulWidget {
 
 class _SearchState extends State<Search> {
   Timer? _debounce;
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<SearchCubit>().clearSearch();
+  }
 
   @override
   void dispose() {
@@ -64,38 +69,51 @@ class _SearchState extends State<Search> {
 
   Widget _buildCategoryChips(bool isDark) {
     return BlocBuilder<CategoryCubit, CategoryState>(
-      builder: (context, state) {
-        final categories = [
-          ...state.incomeCategories,
-          ...state.expenseCategories,
-        ];
-        return Wrap(
-          spacing: 10,
-          runSpacing: 10,
-          children: categories.map((cat) {
-            return InkWell(
-              borderRadius: BorderRadius.circular(10),
-              onTap: () => context.read<SearchCubit>().searchByCategory(cat.id),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors
-                      .primaries[Random().nextInt(Colors.primaries.length)]
-                      .shade100
-                      .withValues(alpha: 0.35),
+      builder: (context, catState) {
+        return BlocBuilder<SearchCubit, SearchState>(
+          builder: (context, searchState) {
+            final categories = [
+              ...catState.incomeCategories,
+              ...catState.expenseCategories,
+            ];
+            return Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: categories.map((cat) {
+                final isSelected = searchState.catId == cat.id;
+                return InkWell(
                   borderRadius: BorderRadius.circular(10),
-                ),
-                padding: const EdgeInsets.all(8),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(cat.icon, style: const TextStyle(fontSize: 20)),
-                    const SizedBox(width: 4),
-                    Text(cat.name),
-                  ],
-                ),
-              ),
+                  onTap: () =>
+                      context.read<SearchCubit>().searchByCategory(cat.id),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors
+                          .primaries[cat.name.hashCode %
+                              Colors.primaries.length]
+                          .shade100
+                          .withValues(alpha: 0.35),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: isSelected
+                            ? (isDark ? Colors.orange : Colors.amber)
+                            : Colors.transparent,
+                        width: 2,
+                      ),
+                    ),
+                    padding: const EdgeInsets.all(8),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(cat.icon, style: const TextStyle(fontSize: 20)),
+                        const SizedBox(width: 4),
+                        Text(cat.name),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
             );
-          }).toList(),
+          },
         );
       },
     );
@@ -119,8 +137,6 @@ class _SearchState extends State<Search> {
             itemCount: state.searchResults.length,
             itemBuilder: (context, index) {
               final result = state.searchResults[index];
-              final formatter = NumberFormat.simpleCurrency(locale: locale);
-              final String formatMoney = formatter.format(result.money);
 
               return Slidable(
                 endActionPane: ActionPane(
@@ -151,72 +167,13 @@ class _SearchState extends State<Search> {
                     ),
                   ],
                 ),
-                child: InkWell(
+                child: TransactionItemTile(
+                  transaction: result,
+                  isDark: isDark,
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (_) => UpdateInput(inputItem: result),
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 14,
-                      horizontal: 24,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            _buildIconCircle(
-                              result.category?.icon ?? '💰',
-                              isDark,
-                            ),
-                            const SizedBox(width: 12),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  result.description ?? '',
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  result.date,
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              '${result.isIncome ? '+' : '-'} $formatMoney',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: result.isIncome
-                                    ? Colors.green
-                                    : Colors.red,
-                              ),
-                            ),
-                            Text(
-                              result.category?.name ?? '',
-                              style: const TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
                     ),
                   ),
                 ),
@@ -225,32 +182,6 @@ class _SearchState extends State<Search> {
           ),
         );
       },
-    );
-  }
-
-  Widget _buildIconCircle(String icon, bool isDark) {
-    return Container(
-      decoration: BoxDecoration(
-        boxShadow: isDark
-            ? null
-            : [
-                BoxShadow(
-                  color: Colors.grey.withValues(alpha: 0.3),
-                  spreadRadius: 2,
-                  blurRadius: 7,
-                  offset: const Offset(-5, 5),
-                ),
-              ],
-        borderRadius: BorderRadius.circular(50),
-      ),
-      child: CircleAvatar(
-        backgroundColor: Colors
-            .primaries[Random().nextInt(Colors.primaries.length)]
-            .shade100
-            .withValues(alpha: 0.35),
-        radius: 28,
-        child: Text(icon, style: const TextStyle(fontSize: 38)),
-      ),
     );
   }
 }
