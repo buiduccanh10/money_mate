@@ -15,6 +15,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<TogglePasswordVisibility>(_onTogglePasswordVisibility);
     on<LocaleChanged>(_onLocaleChanged);
     on<LogoutRequested>(_onLogoutRequested);
+    on<AppStarted>(_onAppStarted);
   }
 
   Future<void> _onLogoutRequested(
@@ -84,5 +85,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void _onLocaleChanged(LocaleChanged event, Emitter<AuthState> emit) {
     emit(state.copyWith(currentLocale: event.locale));
+  }
+
+  Future<void> _onAppStarted(AppStarted event, Emitter<AuthState> emit) async {
+    final token = await _authRepo.getAccessToken();
+    if (token != null) {
+      emit(state.copyWith(status: AuthStatus.success));
+    } else {
+      emit(state.copyWith(status: AuthStatus.initial));
+    }
   }
 }

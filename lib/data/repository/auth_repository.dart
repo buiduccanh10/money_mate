@@ -13,6 +13,7 @@ abstract class AuthRepository {
   Future<void> saveTokens(String accessToken, String refreshToken);
   Future<void> forgotPassword(String email);
   Future<AuthResponseDto> refresh();
+  Future<String?> getAccessToken();
 }
 
 class AuthRepositoryImpl implements AuthRepository {
@@ -99,5 +100,10 @@ class AuthRepositoryImpl implements AuthRepository {
       await _storage.deleteAll();
       throw Exception(response.error ?? 'Token refresh failed');
     }
+  }
+
+  @override
+  Future<String?> getAccessToken() async {
+    return await _storage.read(key: 'accessToken');
   }
 }

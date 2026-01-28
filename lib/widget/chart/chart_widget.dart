@@ -1,5 +1,4 @@
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
-import 'package:datepicker_dropdown/datepicker_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -9,18 +8,26 @@ import 'package:money_mate/bloc/chart/chart_state.dart';
 import 'package:money_mate/widget/chart/chart_item_detail.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:money_mate/widget/common/month_year_picker_sheet.dart';
 
-class ChartWidget extends StatelessWidget {
+class ChartWidget extends StatefulWidget {
   const ChartWidget({super.key});
 
+  @override
+  State<ChartWidget> createState() => _ChartWidgetState();
+}
+
+class _ChartWidgetState extends State<ChartWidget> {
   @override
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
     final width = MediaQuery.of(context).size.width;
     final locale = Localizations.localeOf(context).toString();
-
     return BlocBuilder<ChartCubit, ChartState>(
       builder: (context, state) {
+        final selectedDateText = DateFormat(
+          'MM/yyyy',
+        ).format(DateTime(state.year, state.month));
         var formatter = NumberFormat.simpleCurrency(locale: locale);
 
         final currentTransactions = state.isIncome
@@ -69,7 +76,13 @@ class ChartWidget extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 70),
                     child: Column(
                       children: [
-                        _buildDatePickers(context, state, isDark, width),
+                        _buildDatePickers(
+                          context,
+                          state,
+                          isDark,
+                          width,
+                          selectedDateText,
+                        ),
                         _buildSummaryCards(
                           context,
                           state,
@@ -105,42 +118,64 @@ class ChartWidget extends StatelessWidget {
     ChartState state,
     bool isDark,
     double width,
+    String selectedDateText,
   ) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        width: width,
-        decoration: BoxDecoration(
-          border: Border.all(color: isDark ? Colors.orange : Colors.amber),
-          borderRadius: BorderRadius.circular(10),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: InkWell(
+        onTap: () => MonthYearPickerSheet.show(
+          context,
+          initialMonth: state.month,
+          initialYear: state.year,
+          onConfirm: (month, year) {
+            context.read<ChartCubit>().changeMonth(month);
+            context.read<ChartCubit>().changeYear(year);
+          },
         ),
-        child: SizedBox(
-          height: 50,
-          child: DropdownDatePicker(
-            width: state.isMonthly ? 0 : 80,
-            selectedMonth: state.month,
-            selectedYear: state.year,
-            boxDecoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: Colors.transparent,
+        child: Container(
+          width: width,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+            border: Border.all(
+              color: isDark ? Colors.orange : Colors.amber,
+              width: 1,
             ),
-            textStyle: TextStyle(color: isDark ? Colors.white : Colors.black),
-            inputDecoration: const InputDecoration(border: InputBorder.none),
-            icon: const Icon(
-              Icons.arrow_drop_down,
-              color: Colors.grey,
-              size: 30,
-            ),
-            onChangedMonth: (val) => val != null
-                ? context.read<ChartCubit>().changeMonth(int.parse(val))
-                : null,
-            onChangedYear: (val) => val != null
-                ? context.read<ChartCubit>().changeYear(int.parse(val))
-                : null,
-            showDay: false,
-            showMonth: state.isMonthly,
-            yearFlex: 2,
-            monthFlex: 3,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Icons.calendar_month,
+                    color: isDark ? Colors.orange : Colors.amber,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    selectedDateText,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.white : Colors.black87,
+                    ),
+                  ),
+                ],
+              ),
+              Icon(
+                Icons.arrow_drop_down,
+                color: isDark ? Colors.grey[400] : Colors.grey[600],
+              ),
+            ],
           ),
         ),
       ),

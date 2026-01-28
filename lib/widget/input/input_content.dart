@@ -99,6 +99,7 @@ class _InputContentState extends State<InputContent> {
                               selectedDateTime = newDate;
                             });
                           },
+                          timeLabel: 'Select time',
                           monthPickerDecoration:
                               CalendarMonthPickerDecoration(),
                           mode: CupertinoCalendarMode.dateTime,

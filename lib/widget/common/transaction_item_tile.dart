@@ -88,9 +88,9 @@ class TransactionItemTile extends StatelessWidget {
                 Text(
                   transaction.category?.name ?? '',
                   style: const TextStyle(
-                    fontSize: 13,
+                    fontSize: 14,
                     color: Colors.grey,
-                    fontWeight: FontWeight.w400,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],

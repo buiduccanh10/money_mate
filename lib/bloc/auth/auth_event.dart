@@ -49,3 +49,5 @@ class LocaleChanged extends AuthEvent {
 }
 
 class LogoutRequested extends AuthEvent {}
+
+class AppStarted extends AuthEvent {}

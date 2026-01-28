@@ -10,6 +10,7 @@ import 'package:money_mate/data/repository/transaction_repository.dart';
 import 'package:money_mate/data/repository/user_repository.dart';
 import 'package:money_mate/services/local_notification.dart';
 import 'package:money_mate/bloc/auth/auth_bloc.dart';
+import 'package:money_mate/bloc/auth/auth_event.dart';
 import 'package:money_mate/bloc/auth/auth_state.dart';
 import 'package:money_mate/bloc/category/category_cubit.dart';
 import 'package:money_mate/bloc/chart/chart_cubit.dart';
@@ -53,7 +54,10 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => AuthBloc(authRepo: AuthRepositoryImpl())),
+        BlocProvider(
+          create: (_) =>
+              AuthBloc(authRepo: AuthRepositoryImpl())..add(AppStarted()),
+        ),
         BlocProvider(
           create: (_) => HomeCubit(
             transactionRepo: TransactionRepositoryImpl(),
@@ -197,9 +201,7 @@ class _MainState extends State<Main> with WidgetsBindingObserver {
                 offset: const Offset(0, 7),
               ),
             ],
-            color: isDark
-                ? Colors.grey[500]
-                : const Color.fromARGB(255, 216, 216, 216),
+            color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
           ),
           child: GNav(
             selectedIndex: index,
@@ -209,15 +211,15 @@ class _MainState extends State<Main> with WidgetsBindingObserver {
                 extendBody = i != 1;
               });
             },
-            tabBackgroundGradient: isDark
-                ? const LinearGradient(
-                    colors: [
-                      Color.fromARGB(255, 203, 122, 0),
-                      Color.fromARGB(255, 0, 112, 204),
-                    ],
-                  )
-                : const LinearGradient(colors: [Colors.orange, Colors.blue]),
-            padding: const EdgeInsets.all(20),
+            duration: const Duration(milliseconds: 200),
+            tabBackgroundGradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: isDark
+                  ? [const Color(0xFF4364F7), const Color(0xFF6FB1FC)]
+                  : [const Color(0xFF4364F7), const Color(0xFF6FB1FC)],
+            ),
+            padding: const EdgeInsets.all(18),
             gap: width * 0.01,
             activeColor: Colors.white,
             tabBorderRadius: 20,

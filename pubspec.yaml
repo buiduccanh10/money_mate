@@ -47,7 +47,6 @@ dependencies:
   fluttertoast: ^9.0.0
   shimmer: ^3.0.0
   sign_in_button: ^4.0.1
-  datepicker_dropdown: ^1.0.1
   local_auth: ^3.0.0
   awesome_notifications: ^0.10.1
   image_picker: ^1.2.1
