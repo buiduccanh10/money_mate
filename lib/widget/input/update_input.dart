@@ -62,10 +62,15 @@ class _UpdateInputState extends State<UpdateInput> {
               end: Alignment.bottomRight,
               colors: isDark
                   ? [
-                      const Color.fromARGB(255, 203, 122, 0),
-                      const Color.fromARGB(255, 0, 112, 204),
+                      const Color(0xFF0F2027),
+                      const Color(0xFF203A43),
+                      const Color(0xFF2C5364),
                     ]
-                  : [Colors.orange, Colors.blue],
+                  : [const Color(0xFF4364F7), const Color(0xFF6FB1FC)],
+            ),
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(30),
+              bottomRight: Radius.circular(30),
             ),
           ),
         ),
@@ -100,20 +105,34 @@ class _UpdateInputState extends State<UpdateInput> {
           children: [
             Padding(
               padding: const EdgeInsets.all(15),
-              child: Column(
-                children: [
-                  _buildDatePicker(isDark),
-                  const SizedBox(height: 10),
-                  _buildTextField(
-                    _descriptionController,
-                    AppLocalizations.of(context)!.inputDescription,
-                    Icons.description,
-                    Colors.blue,
-                    isDark,
-                  ),
-                  const SizedBox(height: 10),
-                  _buildMoneyField(isDark),
-                ],
+              child: Container(
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.1),
+                      blurRadius: 15,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    _buildDatePicker(isDark),
+                    const SizedBox(height: 20),
+                    _buildTextField(
+                      _descriptionController,
+                      AppLocalizations.of(context)!.inputDescription,
+                      Icons.description_outlined,
+                      Colors.blueAccent,
+                      isDark,
+                    ),
+                    const SizedBox(height: 15),
+                    _buildMoneyField(isDark, isIncome),
+                  ],
+                ),
               ),
             ),
             _buildCategorySection(isIncome, isDark),
@@ -125,26 +144,47 @@ class _UpdateInputState extends State<UpdateInput> {
   }
 
   Widget _buildDatePicker(bool isDark) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.amber),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(10),
-        child: CupertinoCalendar(
-          minimumDateTime: DateTime(1900),
-          maximumDateTime: DateTime(2100),
-          initialDateTime: selectedDateTime,
-          onDateTimeChanged: (DateTime newDate) {
-            setState(() {
-              selectedDateTime = newDate;
-            });
-          },
-          monthPickerDecoration: CalendarMonthPickerDecoration(),
-          mode: CupertinoCalendarMode.dateTime,
-          use24hFormat: true,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(15),
+      child: CupertinoCalendar(
+        weekdayDecoration: CalendarWeekdayDecoration(
+          textStyle: TextStyle(fontSize: 12),
         ),
+        monthPickerDecoration: CalendarMonthPickerDecoration(
+          selectedCurrentDayStyle: CalendarMonthPickerSelectedCurrentDayStyle(
+            textStyle: const TextStyle(fontSize: 12),
+            mainColor: Color(0xFF4364F7),
+            backgroundCircleColor: Color(0xFF4364F7),
+          ),
+          currentDayStyle: CalendarMonthPickerCurrentDayStyle(
+            textStyle: const TextStyle(fontSize: 16, color: Colors.redAccent),
+          ),
+          selectedDayStyle: CalendarMonthPickerSelectedDayStyle(
+            textStyle: const TextStyle(fontSize: 12),
+            mainColor: Color(0xFF4364F7),
+            backgroundCircleColor: Color(0xFF4364F7),
+          ),
+          defaultDayStyle: CalendarMonthPickerDefaultDayStyle(
+            textStyle: TextStyle(
+              fontSize: 12,
+              color: isDark ? Colors.white : Colors.black,
+            ),
+          ),
+        ),
+        footerDecoration: CalendarFooterDecoration(
+          timeLabelStyle: const TextStyle(fontSize: 14),
+          timeStyle: const TextStyle(fontSize: 14, color: Color(0xFF4364F7)),
+        ),
+        minimumDateTime: DateTime(1900),
+        maximumDateTime: DateTime(2100),
+        initialDateTime: selectedDateTime,
+        onDateTimeChanged: (DateTime newDate) {
+          setState(() {
+            selectedDateTime = newDate;
+          });
+        },
+        mode: CupertinoCalendarMode.dateTime,
+        use24hFormat: true,
       ),
     );
   }
@@ -160,12 +200,14 @@ class _UpdateInputState extends State<UpdateInput> {
       controller: controller,
       decoration: InputDecoration(
         enabledBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Colors.amber),
-          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(
+            color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+          ),
+          borderRadius: BorderRadius.circular(15),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Colors.amber),
-          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.blueAccent),
+          borderRadius: BorderRadius.circular(15),
         ),
         label: Text(label),
         prefixIcon: Icon(icon, color: iconColor),
@@ -173,21 +215,26 @@ class _UpdateInputState extends State<UpdateInput> {
     );
   }
 
-  Widget _buildMoneyField(bool isDark) {
+  Widget _buildMoneyField(bool isDark, bool isIncome) {
     return TextField(
       controller: _moneyController,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
       decoration: InputDecoration(
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: isDark ? Colors.orange : Colors.amber),
-          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(
+            color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+          ),
+          borderRadius: BorderRadius.circular(15),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Colors.amber),
-          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.blueAccent),
+          borderRadius: BorderRadius.circular(15),
         ),
         label: Text(AppLocalizations.of(context)!.inputMoney),
-        prefixIcon: const Icon(Icons.attach_money, color: Colors.green),
+        prefixIcon: Icon(
+          Icons.attach_money,
+          color: isIncome ? const Color(0xFF00C853) : const Color(0xFFFF3D00),
+        ),
       ),
     );
   }

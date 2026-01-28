@@ -17,99 +17,118 @@ class _InputState extends State<Input> {
   @override
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // STYLE_GUIDE: AppBar Gradient
+    final headerGradient = LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: isDark
+          ? [
+              const Color(0xFF0F2027),
+              const Color(0xFF203A43),
+              const Color(0xFF2C5364),
+            ]
+          : [const Color(0xFF4364F7), const Color(0xFF6FB1FC)],
+    );
+
+    // STYLE_GUIDE: State Colors
+    final incomeColor = const Color(0xFF00C853);
+    final expenseColor = const Color(0xFFFF3D00);
+
     return Scaffold(
-      body: Stack(children: [
-        InputContent(isIncome: isIncome),
-        Container(
-          height: 100,
-          decoration: BoxDecoration(
-            gradient: isDark
-                ? const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Color.fromARGB(255, 203, 122, 0),
-                      Color.fromARGB(255, 0, 112, 204)
-                    ],
-                  )
-                : const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Colors.orange, Colors.blue],
-                  ),
+      body: Stack(
+        children: [
+          InputContent(isIncome: isIncome),
+          Container(
+            height: 115,
+            decoration: BoxDecoration(
+              gradient: headerGradient,
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(30),
+                bottomRight: Radius.circular(30),
+              ),
+            ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 65),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                height: 50,
-                decoration: BoxDecoration(
-                  boxShadow: isDark
-                      ? null
-                      : [
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 14),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    height: 50,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(25),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.1),
+                          spreadRadius: 2,
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: CustomSlidingSegmentedControl<int>(
+                      initialValue: isIncome ? 1 : 2,
+                      fixedWidth: 125,
+                      height: 50,
+                      children: {
+                        1: _buildSegment(
+                          context,
+                          Icons.arrow_downward,
+                          isIncome ? Colors.white : incomeColor,
+                          AppLocalizations.of(context)!.income,
+                          isIncome,
+                        ),
+                        2: _buildSegment(
+                          context,
+                          Icons.arrow_upward,
+                          !isIncome ? Colors.white : expenseColor,
+                          AppLocalizations.of(context)!.expense,
+                          !isIncome,
+                        ),
+                      },
+                      decoration: BoxDecoration(
+                        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      thumbDecoration: BoxDecoration(
+                        color: isIncome ? incomeColor : expenseColor,
+                        borderRadius: BorderRadius.circular(25),
+                        boxShadow: [
                           BoxShadow(
-                            color: Colors.grey.withValues(alpha: 0.3),
-                            spreadRadius: 6,
-                            blurRadius: 9,
-                            offset: const Offset(0, 5),
+                            color: (isIncome ? incomeColor : expenseColor)
+                                .withValues(alpha: 0.4),
+                            blurRadius: 8.0,
+                            offset: const Offset(0.0, 4.0),
                           ),
                         ],
-                ),
-                child: CustomSlidingSegmentedControl<int>(
-                  initialValue: isIncome ? 1 : 2,
-                  fixedWidth: 125,
-                  height: 50,
-                  children: {
-                    1: _buildSegment(
-                        context,
-                        Icons.arrow_downward,
-                        Colors.green,
-                        AppLocalizations.of(context)!.income,
-                        isIncome),
-                    2: _buildSegment(context, Icons.arrow_upward, Colors.red,
-                        AppLocalizations.of(context)!.expense, !isIncome),
-                  },
-                  decoration: BoxDecoration(
-                    color: CupertinoColors.lightBackgroundGray,
-                    borderRadius: BorderRadius.circular(8),
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [Colors.orange[400]!, Colors.blue[400]!],
+                      ),
+                      curve: Curves.easeOutCubic,
+                      duration: const Duration(milliseconds: 300),
+                      onValueChanged: (value) {
+                        setState(() {
+                          isIncome = (value == 1);
+                        });
+                      },
                     ),
                   ),
-                  thumbDecoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(6),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: .3),
-                        blurRadius: 4.0,
-                        spreadRadius: 1.0,
-                        offset: const Offset(0.0, 2.0),
-                      ),
-                    ],
-                  ),
-                  curve: Curves.ease,
-                  onValueChanged: (value) {
-                    setState(() {
-                      isIncome = (value == 1);
-                    });
-                  },
-                ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ]),
+        ],
+      ),
     );
   }
 
-  Widget _buildSegment(BuildContext context, IconData icon, Color iconColor,
-      String label, bool isSelected) {
+  Widget _buildSegment(
+    BuildContext context,
+    IconData icon,
+    Color iconColor,
+    String label,
+    bool isSelected,
+  ) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -117,10 +136,15 @@ class _InputState extends State<Input> {
         Text(
           label,
           style: TextStyle(
-              color: isSelected ? Colors.black : Colors.white,
-              fontWeight: FontWeight.w500,
-              fontSize: 16),
-        )
+            color: isSelected
+                ? Colors.white
+                : (Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white70
+                      : Colors.black),
+            fontWeight: FontWeight.w500,
+            fontSize: 16,
+          ),
+        ),
       ],
     );
   }

@@ -28,19 +28,26 @@ class _CategoryManageState extends State<CategoryManage> {
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
 
+    final appBarGradient = LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: isDark
+          ? [
+              const Color(0xFF0F2027),
+              const Color(0xFF203A43),
+              const Color(0xFF2C5364),
+            ]
+          : [const Color(0xFF4364F7), const Color(0xFF6FB1FC)],
+    );
+
     return Scaffold(
       appBar: AppBar(
         flexibleSpace: Container(
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: isDark
-                  ? [
-                      const Color.fromARGB(255, 203, 122, 0),
-                      const Color.fromARGB(255, 0, 112, 204),
-                    ]
-                  : [Colors.orange, Colors.blue],
+            gradient: appBarGradient,
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(30),
+              bottomRight: Radius.circular(30),
             ),
           ),
         ),
@@ -48,35 +55,36 @@ class _CategoryManageState extends State<CategoryManage> {
           widget.isIncome
               ? AppLocalizations.of(context)!.inCategoryManageAppbar
               : AppLocalizations.of(context)!.exCategoryManageAppbar,
-          style: const TextStyle(color: Colors.white, fontSize: 18),
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         leading: const BackButton(color: Colors.white),
         actions: [
           IconButton(
             onPressed: () => _confirmDeleteAll(context),
-            icon: const Icon(
-              Icons.delete_sweep,
-              color: Colors.redAccent,
-              size: 28,
-            ),
+            icon: const Icon(Icons.delete_sweep, color: Colors.white, size: 28),
           ),
         ],
         centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
       ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(right: 15),
-        child: FloatingActionButton(
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return CatAddDialog(isIncome: widget.isIncome);
-              },
-            );
-          },
-          backgroundColor: const Color.fromARGB(255, 63, 148, 66),
-          child: const Icon(Icons.add, color: Colors.white, size: 35),
-        ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return CatAddDialog(isIncome: widget.isIncome);
+            },
+          );
+        },
+        backgroundColor: const Color.fromARGB(255, 63, 148, 66),
+        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        child: const Icon(Icons.add, color: Colors.white, size: 30),
       ),
       body: BlocBuilder<CategoryCubit, CategoryState>(
         builder: (context, state) {
@@ -85,19 +93,20 @@ class _CategoryManageState extends State<CategoryManage> {
               : state.expenseCategories;
 
           if (state.status == CategoryStatus.loading && categories.isEmpty) {
-            return _buildShimmerList();
+            return _buildShimmerList(isDark);
           }
 
           if (categories.isEmpty) {
             return Center(child: Text(AppLocalizations.of(context)!.noCatYet));
           }
 
-          return ListView.builder(
-            padding: const EdgeInsets.all(8),
+          return ListView.separated(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
             itemCount: categories.length,
+            separatorBuilder: (context, index) => const SizedBox(height: 12),
             itemBuilder: (context, index) {
               final catItem = categories[index];
-              return _buildSlidableItem(catItem, context);
+              return _buildSlidableItem(catItem, context, isDark);
             },
           );
         },
@@ -105,33 +114,75 @@ class _CategoryManageState extends State<CategoryManage> {
     );
   }
 
-  Widget _buildSlidableItem(CategoryResponseDto catItem, BuildContext context) {
-    return Slidable(
-      endActionPane: ActionPane(
-        motion: const ScrollMotion(),
-        children: [
-          SlidableAction(
-            backgroundColor: Colors.transparent,
-            onPressed: (context) => _showUpdateDialog(catItem),
-            foregroundColor: Colors.blue,
-            icon: Icons.edit,
-            label: AppLocalizations.of(context)!.slideEdit,
-          ),
-          SlidableAction(
-            backgroundColor: Colors.transparent,
-            onPressed: (context) =>
-                context.read<CategoryCubit>().deleteCategory(catItem.id),
-            foregroundColor: Colors.red,
-            icon: Icons.delete,
-            label: AppLocalizations.of(context)!.slideDelete,
+  Widget _buildSlidableItem(
+    CategoryResponseDto catItem,
+    BuildContext context,
+    bool isDark,
+  ) {
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
-      child: ListTile(
-        onTap: () => _showUpdateDialog(catItem),
-        leading: Text(catItem.icon, style: const TextStyle(fontSize: 28)),
-        title: Text(catItem.name, style: const TextStyle(fontSize: 18)),
-        trailing: const Icon(Icons.navigate_next),
+      clipBehavior: Clip.hardEdge,
+      child: Slidable(
+        endActionPane: ActionPane(
+          motion: const ScrollMotion(),
+          children: [
+            SlidableAction(
+              backgroundColor: Colors.blue.withValues(alpha: 0.1),
+              onPressed: (context) => _showUpdateDialog(catItem),
+              foregroundColor: Colors.blue,
+              icon: Icons.edit,
+              // label: AppLocalizations.of(context)!.slideEdit,
+            ),
+            SlidableAction(
+              backgroundColor: Colors.red.withValues(alpha: 0.1),
+              onPressed: (context) =>
+                  context.read<CategoryCubit>().deleteCategory(catItem.id),
+              foregroundColor: Colors.red,
+              icon: Icons.delete,
+              // label: AppLocalizations.of(context)!.slideDelete,
+            ),
+          ],
+        ),
+        child: ListTile(
+          onTap: () => _showUpdateDialog(catItem),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 8,
+          ),
+          leading: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.1)
+                  : Colors.grey.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Text(catItem.icon, style: const TextStyle(fontSize: 24)),
+          ),
+          title: Text(
+            catItem.name,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: isDark ? Colors.white : Colors.black87,
+            ),
+          ),
+          trailing: Icon(
+            Icons.arrow_forward_ios,
+            size: 16,
+            color: isDark ? Colors.white54 : Colors.grey,
+          ),
+        ),
       ),
     );
   }
@@ -174,17 +225,22 @@ class _CategoryManageState extends State<CategoryManage> {
     );
   }
 
-  Widget _buildShimmerList() {
+  Widget _buildShimmerList(bool isDark) {
     return ListView.builder(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(16),
       itemCount: 10,
-      itemBuilder: (_, __) => Shimmer.fromColors(
-        baseColor: Colors.grey[300]!,
-        highlightColor: Colors.grey[100]!,
-        child: Container(
-          margin: const EdgeInsets.symmetric(vertical: 8),
-          height: 50,
-          color: Colors.white,
+      itemBuilder: (_, __) => Padding(
+        padding: const EdgeInsets.only(bottom: 12),
+        child: Shimmer.fromColors(
+          baseColor: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+          highlightColor: isDark ? Colors.grey[700]! : Colors.grey[100]!,
+          child: Container(
+            height: 70,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
         ),
       ),
     );

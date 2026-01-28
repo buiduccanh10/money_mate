@@ -78,19 +78,58 @@ class _InputContentState extends State<InputContent> {
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 15, right: 15, top: 135),
-                child: Column(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: isDark ? Colors.orange : Colors.amber,
-                        ),
-                        borderRadius: BorderRadius.circular(10),
+                padding: const EdgeInsets.only(left: 15, right: 15, top: 140),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.1),
+                        blurRadius: 15,
+                        offset: const Offset(0, 8),
                       ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
+                    ],
+                  ),
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                  child: Column(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
                         child: CupertinoCalendar(
+                          weekdayDecoration: CalendarWeekdayDecoration(
+                            textStyle: TextStyle(fontSize: 12),
+                          ),
+                          monthPickerDecoration: CalendarMonthPickerDecoration(
+                            selectedCurrentDayStyle:
+                                CalendarMonthPickerSelectedCurrentDayStyle(
+                                  textStyle: const TextStyle(fontSize: 12),
+                                  mainColor: Color(0xFF4364F7),
+                                  backgroundCircleColor: Color(0xFF4364F7),
+                                ),
+                            currentDayStyle: CalendarMonthPickerCurrentDayStyle(
+                              textStyle: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.redAccent,
+                              ),
+                            ),
+                            selectedDayStyle:
+                                CalendarMonthPickerSelectedDayStyle(
+                                  textStyle: const TextStyle(fontSize: 12),
+                                  mainColor: Color(0xFF4364F7),
+                                  backgroundCircleColor: Color(0xFF4364F7),
+                                ),
+                            defaultDayStyle: CalendarMonthPickerDefaultDayStyle(
+                              textStyle: TextStyle(
+                                fontSize: 12,
+                                color: isDark ? Colors.white : Colors.black,
+                              ),
+                            ),
+                          ),
+                          footerDecoration: CalendarFooterDecoration(
+                            timeLabelStyle: const TextStyle(fontSize: 14),
+                            timeStyle: const TextStyle(fontSize: 14, color: Color(0xFF4364F7)),
+                          ),
                           minimumDateTime: DateTime(1900),
                           maximumDateTime: DateTime(2100),
                           initialDateTime: selectedDateTime,
@@ -100,83 +139,91 @@ class _InputContentState extends State<InputContent> {
                             });
                           },
                           timeLabel: 'Select time',
-                          monthPickerDecoration:
-                              CalendarMonthPickerDecoration(),
                           mode: CupertinoCalendarMode.dateTime,
                           use24hFormat: true,
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 10),
-                    TextField(
-                      minLines: 1,
-                      maxLines: 2,
-                      keyboardType: TextInputType.text,
-                      controller: descriptionController,
-                      decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: isDark ? Colors.orange : Colors.amber,
-                          ),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.amber),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        label: Text(
-                          AppLocalizations.of(context)!.inputDescription,
-                        ),
-                        labelStyle: const TextStyle(color: Colors.grey),
-                        floatingLabelStyle: TextStyle(
-                          color: isDark ? Colors.white : Colors.black,
-                        ),
-                        prefixIcon: const Icon(Icons.description),
-                        prefixIconColor: Colors.blue,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    TextField(
-                      keyboardType: locale == 'vi'
-                          ? const TextInputType.numberWithOptions(
-                              decimal: false,
-                            )
-                          : const TextInputType.numberWithOptions(
-                              decimal: true,
+                      const SizedBox(height: 20),
+                      TextField(
+                        minLines: 1,
+                        maxLines: 2,
+                        keyboardType: TextInputType.text,
+                        controller: descriptionController,
+                        decoration: InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: isDark
+                                  ? Colors.grey[700]!
+                                  : Colors.grey[300]!,
                             ),
-                      controller: moneyController,
-                      inputFormatters: locale == 'vi'
-                          ? [
-                              FilteringTextInputFormatter.digitsOnly,
-                              CurrencyFormat(),
-                            ]
-                          : [],
-                      onTapOutside: (_) => FocusScope.of(context).unfocus(),
-                      decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: isDark ? Colors.orange : Colors.amber,
+                            borderRadius: BorderRadius.circular(15),
                           ),
-                          borderRadius: BorderRadius.circular(10),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              color: Colors.blueAccent,
+                            ),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          label: Text(
+                            AppLocalizations.of(context)!.inputDescription,
+                          ),
+                          labelStyle: const TextStyle(color: Colors.grey),
+                          floatingLabelStyle: TextStyle(
+                            color: isDark ? Colors.white : Colors.black,
+                          ),
+                          prefixIcon: const Icon(Icons.description_outlined),
+                          prefixIconColor: Colors.blueAccent,
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.amber),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        label: Text(AppLocalizations.of(context)!.inputMoney),
-                        labelStyle: const TextStyle(color: Colors.grey),
-                        floatingLabelStyle: TextStyle(
-                          color: isDark ? Colors.white : Colors.black,
-                        ),
-                        prefixIcon: const Icon(Icons.attach_money),
-                        prefixIconColor: Colors.green,
-                        suffixStyle: const TextStyle(fontSize: 20),
-                        suffixText: locale == 'vi'
-                            ? 'đ'
-                            : (locale == 'zh' ? '¥' : '\$'),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 15),
+                      TextField(
+                        keyboardType: locale == 'vi'
+                            ? const TextInputType.numberWithOptions(
+                                decimal: false,
+                              )
+                            : const TextInputType.numberWithOptions(
+                                decimal: true,
+                              ),
+                        controller: moneyController,
+                        inputFormatters: locale == 'vi'
+                            ? [
+                                FilteringTextInputFormatter.digitsOnly,
+                                CurrencyFormat(),
+                              ]
+                            : [],
+                        onTapOutside: (_) => FocusScope.of(context).unfocus(),
+                        decoration: InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: isDark
+                                  ? Colors.grey[700]!
+                                  : Colors.grey[300]!,
+                            ),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              color: Colors.blueAccent,
+                            ),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          label: Text(AppLocalizations.of(context)!.inputMoney),
+                          labelStyle: const TextStyle(color: Colors.grey),
+                          floatingLabelStyle: TextStyle(
+                            color: isDark ? Colors.white : Colors.black,
+                          ),
+                          prefixIcon: const Icon(Icons.attach_money),
+                          prefixIconColor: widget.isIncome
+                              ? const Color(0xFF00C853)
+                              : const Color(0xFFFF3D00),
+                          suffixStyle: const TextStyle(fontSize: 20),
+                          suffixText: locale == 'vi'
+                              ? 'đ'
+                              : (locale == 'zh' ? '¥' : '\$'),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               Padding(

@@ -28,10 +28,17 @@ class _CatAddDialogState extends State<CatAddDialog> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
     return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
       title: Text(
         AppLocalizations.of(context)!.addCatDialogTitle,
-        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+        style: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          color: isDark ? Colors.white : Colors.black,
+        ),
       ),
       scrollable: true,
       content: SizedBox(
@@ -45,37 +52,47 @@ class _CatAddDialogState extends State<CatAddDialog> {
               decoration: InputDecoration(
                 errorText: _iconError,
                 enabledBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.blue),
-                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(
+                    color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+                  ),
+                  borderRadius: BorderRadius.circular(15),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.blue),
-                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Color(0xFF4364F7)),
+                  borderRadius: BorderRadius.circular(15),
                 ),
                 label: Text(AppLocalizations.of(context)!.chooseAnIcon),
+                labelStyle: TextStyle(
+                  color: isDark ? Colors.grey : Colors.grey[600],
+                ),
                 prefixIcon: const Icon(
                   Icons.insert_emoticon,
                   color: Colors.orange,
                 ),
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 16),
             TextField(
               controller: _nameController,
               decoration: InputDecoration(
                 errorText: _nameError,
                 enabledBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.blue),
-                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(
+                    color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+                  ),
+                  borderRadius: BorderRadius.circular(15),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.blue),
-                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Color(0xFF4364F7)),
+                  borderRadius: BorderRadius.circular(15),
                 ),
                 label: Text(AppLocalizations.of(context)!.categoryName),
+                labelStyle: TextStyle(
+                  color: isDark ? Colors.grey : Colors.grey[600],
+                ),
                 prefixIcon: const Icon(
                   Icons.new_label,
-                  color: Colors.blueAccent,
+                  color: Color(0xFF4364F7),
                 ),
               ),
             ),
@@ -93,14 +110,18 @@ class _CatAddDialogState extends State<CatAddDialog> {
         ElevatedButton(
           onPressed: _onSave,
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green,
+            backgroundColor: const Color(0xFF4364F7),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(15),
             ),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           ),
           child: Text(
             AppLocalizations.of(context)!.inputVave,
-            style: const TextStyle(color: Colors.white),
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ],

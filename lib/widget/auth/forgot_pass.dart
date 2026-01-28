@@ -23,6 +23,20 @@ class _ForgotPassState extends State<ForgotPass> {
 
   @override
   Widget build(BuildContext context) {
+    // Check Brightness for Gradient
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final backgroundGradient = LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: isDark
+          ? [
+              const Color(0xFF0F2027),
+              const Color(0xFF203A43),
+              const Color(0xFF2C5364)
+            ]
+          : [const Color(0xFF4364F7), const Color(0xFF6FB1FC)],
+    );
+
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state.status == AuthStatus.success) {
@@ -30,49 +44,144 @@ class _ForgotPassState extends State<ForgotPass> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(title: Text(AppLocalizations.of(context)!.forgotPass)),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                TextField(
-                  decoration: InputDecoration(
-                    labelText: AppLocalizations.of(context)!.email,
-                    prefixIcon: const Icon(Icons.email),
-                    hintText: 'example@gmail.com',
-                  ),
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                const SizedBox(height: 20),
-                BlocBuilder<AuthBloc, AuthState>(
-                  builder: (context, state) {
-                    return ElevatedButton(
-                      onPressed: state.status == AuthStatus.loading
-                          ? null
-                          : () {
-                              if (_emailController.text.isNotEmpty) {
-                                context.read<AuthBloc>().add(
-                                  ForgotPasswordRequested(
-                                    _emailController.text,
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          title: Text(
+            AppLocalizations.of(context)!.forgotPass,
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          centerTitle: true,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ),
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(gradient: backgroundGradient),
+          child: SingleChildScrollView(
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 20),
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20), // STYLE_GUIDE
+                        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 15,
+                            offset: Offset(0, 8),
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            AppLocalizations.of(context)!.forgotPass,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: isDark ? Colors.white : Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            "Enter your email to receive a password reset link.",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: isDark ? Colors.grey[400] : Colors.grey[600],
+                            ),
+                          ),
+                          const SizedBox(height: 30),
+                          TextField(
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(context)!.email,
+                              prefixIcon: const Icon(Icons.email_outlined),
+                              hintText: 'example@gmail.com',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15), 
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                                borderSide: BorderSide(
+                                  color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+                                ),
+                              ),
+                            ),
+                            controller: _emailController,
+                            keyboardType: TextInputType.emailAddress,
+                          ),
+                          const SizedBox(height: 30),
+                          BlocBuilder<AuthBloc, AuthState>(
+                            builder: (context, state) {
+                              return Container(
+                                height: 54,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF4364F7), // Solid color
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFF4364F7).withValues(alpha: 0.4),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4),
+                                    )
+                                  ],
+                                ),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.transparent,
+                                    shadowColor: Colors.transparent,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
                                   ),
-                                );
-                              }
+                                  onPressed: state.status == AuthStatus.loading
+                                      ? null
+                                      : () {
+                                          if (_emailController.text.isNotEmpty) {
+                                            context.read<AuthBloc>().add(
+                                              ForgotPasswordRequested(
+                                                _emailController.text,
+                                              ),
+                                            );
+                                          }
+                                        },
+                                  child: state.status == AuthStatus.loading
+                                      ? const SizedBox(
+                                          height: 20,
+                                          width: 20,
+                                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                                        )
+                                      : const Text(
+                                          'Send request',
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                ),
+                              );
                             },
-                      child: state.status == AuthStatus.loading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Text('Send request'),
-                    );
-                  },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
