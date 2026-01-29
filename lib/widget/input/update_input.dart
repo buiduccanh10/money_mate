@@ -100,43 +100,48 @@ class _UpdateInputState extends State<UpdateInput> {
         ),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(15),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
-                      blurRadius: 15,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  children: [
-                    _buildDatePicker(isDark),
-                    const SizedBox(height: 20),
-                    _buildTextField(
-                      _descriptionController,
-                      AppLocalizations.of(context)!.inputDescription,
-                      Icons.description_outlined,
-                      Colors.blueAccent,
-                      isDark,
-                    ),
-                    const SizedBox(height: 15),
-                    _buildMoneyField(isDark, isIncome),
-                  ],
+      body: Scaffold(
+        backgroundColor: isDark
+            ? const Color(0xFF121212)
+            : const Color(0xFFF5F7FA),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(15),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.1),
+                        blurRadius: 15,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    children: [
+                      _buildDatePicker(isDark),
+                      const SizedBox(height: 20),
+                      _buildTextField(
+                        _descriptionController,
+                        AppLocalizations.of(context)!.inputDescription,
+                        Icons.description_outlined,
+                        Colors.blueAccent,
+                        isDark,
+                      ),
+                      const SizedBox(height: 15),
+                      _buildMoneyField(isDark, isIncome),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            _buildCategorySection(isIncome, isDark),
-          ],
+              _buildCategorySection(isIncome, isDark),
+            ],
+          ),
         ),
       ),
       floatingActionButton: _buildSaveButton(isIncome),

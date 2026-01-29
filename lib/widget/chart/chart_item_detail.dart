@@ -90,6 +90,9 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
         }
 
         return Scaffold(
+          backgroundColor: isDark
+              ? const Color(0xFF121212)
+              : const Color(0xFFF5F7FA),
           appBar: AppBar(
             flexibleSpace: Container(
               decoration: BoxDecoration(
@@ -98,17 +101,28 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
                   end: Alignment.bottomRight,
                   colors: isDark
                       ? [
-                          const Color.fromARGB(255, 203, 122, 0),
-                          const Color.fromARGB(255, 0, 112, 204),
+                          const Color(0xFF0F2027),
+                          const Color(0xFF203A43),
+                          const Color(0xFF2C5364),
                         ]
-                      : [Colors.orange, Colors.blue],
+                      : [const Color(0xFF4364F7), const Color(0xFF6FB1FC)],
+                ),
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(30),
+                  bottomRight: Radius.circular(30),
                 ),
               ),
             ),
+            backgroundColor: Colors.transparent,
+            elevation: 0,
             leading: const BackButton(color: Colors.white),
             title: Text(
               appBarTitle,
-              style: const TextStyle(color: Colors.white, fontSize: 18),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             centerTitle: true,
           ),
@@ -126,7 +140,10 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
                           _buildChart(sortedDates, dateGroup),
                           Expanded(
                             child: ListView.builder(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 10,
+                                horizontal: 16,
+                              ),
                               itemCount: sortedDates.length,
                               itemBuilder: (context, index) {
                                 final date = sortedDates[index];
@@ -154,6 +171,7 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
     List<String> sortedDates,
     Map<String, List<TransactionResponseDto>> dateGroup,
   ) {
+    // ... (Chart logic remains same, just ensuring padding/container)
     final List<Map<String, dynamic>> chartData = sortedDates.reversed.map((
       date,
     ) {
@@ -164,21 +182,25 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
       return <String, dynamic>{'date': date, 'money': total};
     }).toList();
 
-    return SizedBox(
-      height: 250,
-      child: SfCartesianChart(
-        primaryXAxis: const CategoryAxis(),
-        series: <CartesianSeries<Map<String, dynamic>, String>>[
-          ColumnSeries<Map<String, dynamic>, String>(
-            dataSource: chartData,
-            xValueMapper: (d, _) => d['date'] as String,
-            yValueMapper: (d, _) => d['money'] as double,
-            dataLabelSettings: const DataLabelSettings(isVisible: true),
-            pointColorMapper: (d, _) =>
-                Colors.primaries[chartData.indexOf(d) %
-                    Colors.primaries.length],
-          ),
-        ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      child: SizedBox(
+        height: 250,
+        child: SfCartesianChart(
+          primaryXAxis: const CategoryAxis(),
+          series: <CartesianSeries<Map<String, dynamic>, String>>[
+            ColumnSeries<Map<String, dynamic>, String>(
+              dataSource: chartData,
+              xValueMapper: (d, _) => d['date'] as String,
+              yValueMapper: (d, _) => d['money'] as double,
+              dataLabelSettings: const DataLabelSettings(isVisible: true),
+              pointColorMapper: (d, _) =>
+                  Colors.primaries[chartData.indexOf(d) %
+                      Colors.primaries.length],
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -192,16 +214,42 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-          color: isDark ? Colors.grey[800] : Colors.grey[200],
-          child: Text(
-            DateFormatUtils.formatDisplayDate(date),
-            style: const TextStyle(fontWeight: FontWeight.bold),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: isDark ? Colors.grey[800] : Colors.grey[200],
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              DateFormatUtils.formatDisplayDate(date),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+            ),
           ),
         ),
-        ...transactions.map((tx) => _buildTransactionItem(context, isDark, tx)),
+        ...transactions.map(
+          (tx) => Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: _buildTransactionItem(context, isDark, tx),
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }

@@ -25,9 +25,9 @@ class _ChartWidgetState extends State<ChartWidget> {
     final locale = Localizations.localeOf(context).toString();
     return BlocBuilder<ChartCubit, ChartState>(
       builder: (context, state) {
-        final selectedDateText = DateFormat(
-          'MM/yyyy',
-        ).format(DateTime(state.year, state.month));
+        final selectedDateText = state.isMonthly
+            ? DateFormat('MM/yyyy').format(DateTime(state.year, state.month))
+            : state.year.toString();
         var formatter = NumberFormat.simpleCurrency(locale: locale);
 
         final currentTransactions = state.isIncome
@@ -68,6 +68,9 @@ class _ChartWidgetState extends State<ChartWidget> {
         String formatExpense = formatter.format(totalExpense);
 
         return Scaffold(
+          backgroundColor: isDark
+              ? const Color(0xFF121212)
+              : const Color(0xFFF5F7FA),
           body: SingleChildScrollView(
             child: SafeArea(
               child: Column(
@@ -121,12 +124,13 @@ class _ChartWidgetState extends State<ChartWidget> {
     String selectedDateText,
   ) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: InkWell(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+      child: GestureDetector(
         onTap: () => MonthYearPickerSheet.show(
           context,
           initialMonth: state.month,
           initialYear: state.year,
+          isYearOnly: !state.isMonthly,
           onConfirm: (month, year) {
             context.read<ChartCubit>().changeMonth(month);
             context.read<ChartCubit>().changeYear(year);
@@ -134,19 +138,15 @@ class _ChartWidgetState extends State<ChartWidget> {
         ),
         child: Container(
           width: width,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           decoration: BoxDecoration(
             color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-            border: Border.all(
-              color: isDark ? Colors.orange : Colors.amber,
-              width: 1,
-            ),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
+                blurRadius: 15,
+                offset: const Offset(0, 5),
               ),
             ],
           ),
@@ -156,24 +156,25 @@ class _ChartWidgetState extends State<ChartWidget> {
               Row(
                 children: [
                   Icon(
-                    Icons.calendar_month,
-                    color: isDark ? Colors.orange : Colors.amber,
-                    size: 20,
+                    Icons.calendar_month_rounded,
+                    color: const Color(0xFF4364F7),
+                    size: 24,
                   ),
                   const SizedBox(width: 12),
                   Text(
                     selectedDateText,
                     style: TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.bold,
                       color: isDark ? Colors.white : Colors.black87,
                     ),
                   ),
                 ],
               ),
               Icon(
-                Icons.arrow_drop_down,
+                Icons.arrow_drop_down_rounded,
                 color: isDark ? Colors.grey[400] : Colors.grey[600],
+                size: 30,
               ),
             ],
           ),
@@ -227,26 +228,37 @@ class _ChartWidgetState extends State<ChartWidget> {
     bool isBold = false,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
       child: Container(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          border: Border.all(color: isDark ? Colors.orange : Colors.amber),
-          borderRadius: BorderRadius.circular(10),
+          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               label,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: isDark ? Colors.grey[400] : Colors.grey[700],
+              ),
             ),
             Text(
               value,
               style: TextStyle(
                 color: valColor,
-                fontSize: isBold ? 18 : 14,
-                fontWeight: FontWeight.w600,
+                fontSize: isBold ? 16 : 14,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ],
@@ -262,51 +274,55 @@ class _ChartWidgetState extends State<ChartWidget> {
     double width,
   ) {
     return Padding(
-      padding: const EdgeInsets.only(top: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            decoration: const BoxDecoration(
-              border: Border(bottom: BorderSide(color: Colors.grey)),
-            ),
-            child: CustomSlidingSegmentedControl<int>(
-              initialValue: state.isIncome ? 1 : 2,
-              fixedWidth: width * 0.45,
-              innerPadding: EdgeInsets.zero,
-              children: {
-                1: Text(
-                  AppLocalizations.of(context)!.income,
-                  style: TextStyle(
-                    color: state.isIncome
-                        ? (isDark ? Colors.white : Colors.black)
-                        : Colors.grey,
-                  ),
-                ),
-                2: Text(
-                  AppLocalizations.of(context)!.expense,
-                  style: TextStyle(
-                    color: !state.isIncome
-                        ? (isDark ? Colors.white : Colors.black)
-                        : Colors.grey,
-                  ),
-                ),
-              },
-              decoration: const BoxDecoration(color: Colors.transparent),
-              thumbDecoration: BoxDecoration(
-                color: isDark ? Colors.grey[700] : Colors.white,
-                border: Border(
-                  bottom: BorderSide(
-                    width: 1.5,
-                    color: isDark ? Colors.white : Colors.black,
-                  ),
-                ),
+      padding: const EdgeInsets.only(top: 20.0, bottom: 10),
+      child: Center(
+        child: CustomSlidingSegmentedControl<int>(
+          initialValue: state.isIncome ? 1 : 2,
+          padding: 8,
+          children: {
+            1: Text(
+              AppLocalizations.of(context)!.income,
+              style: TextStyle(
+                color: state.isIncome
+                    ? Colors.white
+                    : (isDark ? Colors.white54 : Colors.black54),
+                fontWeight: FontWeight.w600,
               ),
-              onValueChanged: (v) =>
-                  context.read<ChartCubit>().toggleIncome(v == 1),
             ),
+            2: Text(
+              AppLocalizations.of(context)!.expense,
+              style: TextStyle(
+                color: !state.isIncome
+                    ? Colors.white
+                    : (isDark ? Colors.white54 : Colors.black54),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          },
+          decoration: BoxDecoration(
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.1)
+                : Colors.grey.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(50),
           ),
-        ],
+          thumbDecoration: BoxDecoration(
+            color: state.isIncome
+                ? const Color(0xFF00C853) // Income Green
+                : const Color(0xFFFF3D00), // Expense Red
+            borderRadius: BorderRadius.circular(50),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          onValueChanged: (v) =>
+              context.read<ChartCubit>().toggleIncome(v == 1),
+        ),
       ),
     );
   }

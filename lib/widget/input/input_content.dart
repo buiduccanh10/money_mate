@@ -74,6 +74,9 @@ class _InputContentState extends State<InputContent> {
         }
       },
       child: Scaffold(
+        backgroundColor: isDark
+            ? const Color(0xFF121212)
+            : const Color(0xFFF5F7FA),
         body: SingleChildScrollView(
           child: Column(
             children: [

@@ -41,6 +41,9 @@ class _CategoryManageState extends State<CategoryManage> {
     );
 
     return Scaffold(
+      backgroundColor: isDark
+          ? const Color(0xFF121212)
+          : const Color(0xFFF5F7FA),
       appBar: AppBar(
         flexibleSpace: Container(
           decoration: BoxDecoration(

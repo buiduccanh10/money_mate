@@ -8,9 +8,22 @@ class MonthYearPickerSheet {
     required int initialMonth,
     required int initialYear,
     required Function(int month, int year) onConfirm,
+    bool isYearOnly = false,
   }) {
-    DateTime tempDate = DateTime(initialYear, initialMonth);
+    DateTime tempDate = DateTime(initialYear, isYearOnly ? 1 : initialMonth);
+    int tempYear = initialYear;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // Generate years for year-only picker
+    final int startYear = 1900;
+    final int endYear = 2100;
+    final List<int> years = List.generate(
+      endYear - startYear + 1,
+      (index) => startYear + index,
+    );
+
+    FixedExtentScrollController yearScrollController =
+        FixedExtentScrollController(initialItem: initialYear - startYear);
 
     showCupertinoModalPopup(
       context: context,
@@ -49,7 +62,11 @@ class MonthYearPickerSheet {
                       ),
                     ),
                     onPressed: () {
-                      onConfirm(tempDate.month, tempDate.year);
+                      if (isYearOnly) {
+                        onConfirm(1, tempYear);
+                      } else {
+                        onConfirm(tempDate.month, tempDate.year);
+                      }
                       Navigator.pop(context);
                     },
                   ),
@@ -58,15 +75,26 @@ class MonthYearPickerSheet {
             ),
             const Divider(height: 1),
             Expanded(
-              child: CupertinoDatePicker(
-                mode: CupertinoDatePickerMode.monthYear,
-                initialDateTime: tempDate,
-                minimumYear: 1900,
-                maximumYear: 2100,
-                onDateTimeChanged: (DateTime newDate) {
-                  tempDate = newDate;
-                },
-              ),
+              child: isYearOnly
+                  ? CupertinoPicker(
+                      scrollController: yearScrollController,
+                      itemExtent: 32,
+                      onSelectedItemChanged: (int index) {
+                        tempYear = years[index];
+                      },
+                      children: years
+                          .map((year) => Center(child: Text(year.toString())))
+                          .toList(),
+                    )
+                  : CupertinoDatePicker(
+                      mode: CupertinoDatePickerMode.monthYear,
+                      initialDateTime: tempDate,
+                      minimumYear: 1900,
+                      maximumYear: 2100,
+                      onDateTimeChanged: (DateTime newDate) {
+                        tempDate = newDate;
+                      },
+                    ),
             ),
           ],
         ),

@@ -193,7 +193,7 @@ class _HomeAppbarState extends State<HomeAppbar> {
                               formatTotal,
                               style: const TextStyle(
                                 color: Colors.white,
-                                fontSize: 32,
+                                fontSize: 30,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 1.2,
                               ),
