@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -127,6 +128,7 @@ class Main extends StatefulWidget {
 class _MainState extends State<Main> with WidgetsBindingObserver {
   int index = 0;
   bool extendBody = true;
+  bool _isNavbarVisible = true;
   final List<Widget> pages = [
     const Home(),
     const Input(),
@@ -183,71 +185,92 @@ class _MainState extends State<Main> with WidgetsBindingObserver {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final width = MediaQuery.of(context).size.width;
 
-    return Scaffold(
-      body: pages[index],
-      extendBody: extendBody,
-      bottomNavigationBar: SafeArea(
-        minimum: EdgeInsets.all(width / 20),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: isDark
-                    ? Colors.white.withValues(alpha: 0.1)
-                    : Colors.black.withValues(alpha: 0.2),
-                spreadRadius: 7,
-                blurRadius: 8,
-                offset: const Offset(0, 7),
-              ),
-            ],
-            color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-          ),
-          child: GNav(
-            selectedIndex: index,
-            onTabChange: (i) {
-              setState(() {
-                index = i;
-                extendBody = i != 1;
-              });
-            },
-            duration: const Duration(milliseconds: 200),
-            tabBackgroundGradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: isDark
-                  ? [const Color(0xFF4364F7), const Color(0xFF6FB1FC)]
-                  : [const Color(0xFF4364F7), const Color(0xFF6FB1FC)],
-            ),
-            padding: const EdgeInsets.all(18),
-            gap: width * 0.01,
-            activeColor: Colors.white,
-            tabBorderRadius: 20,
-            tabs: [
-              GButton(
-                icon: Icons.home,
-                text: AppLocalizations.of(context)!.home,
-                iconSize: index == 0 ? 18 : 24,
-              ),
-              GButton(
-                icon: Icons.mode_edit_outline_rounded,
-                text: AppLocalizations.of(context)!.input,
-                iconSize: index == 1 ? 18 : 24,
-              ),
-              GButton(
-                icon: Icons.search_outlined,
-                text: AppLocalizations.of(context)!.search,
-                iconSize: index == 2 ? 18 : 24,
-              ),
-              GButton(
-                icon: Icons.pie_chart,
-                text: AppLocalizations.of(context)!.chart,
-                iconSize: index == 3 ? 18 : 24,
-              ),
-              GButton(
-                icon: Icons.settings,
-                text: AppLocalizations.of(context)!.setting,
-                iconSize: index == 4 ? 18 : 24,
+    return NotificationListener<UserScrollNotification>(
+      onNotification: (notification) {
+        if (notification.direction == ScrollDirection.reverse) {
+          if (_isNavbarVisible) setState(() => _isNavbarVisible = false);
+        } else if (notification.direction == ScrollDirection.forward) {
+          if (!_isNavbarVisible) setState(() => _isNavbarVisible = true);
+        }
+        return true;
+      },
+      child: Scaffold(
+        body: pages[index],
+        extendBody: extendBody,
+        bottomNavigationBar: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          height: _isNavbarVisible
+              ? (60 + MediaQuery.of(context).padding.bottom + (width / 10))
+              : 0,
+          child: Wrap(
+            children: [
+              SafeArea(
+                minimum: EdgeInsets.all(width / 20),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: isDark
+                            ? Colors.black.withValues(alpha: 0.3)
+                            : Colors.black.withValues(alpha: 0.1),
+                        spreadRadius: 2,
+                        blurRadius: 15,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                    color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                  ),
+                  child: GNav(
+                    selectedIndex: index,
+                    onTabChange: (i) {
+                      setState(() {
+                        index = i;
+                        extendBody = i != 1;
+                      });
+                    },
+                    duration: const Duration(milliseconds: 200),
+                    tabBackgroundGradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        const Color(0xFF4364F7),
+                        const Color(0xFF6FB1FC),
+                      ],
+                    ),
+                    padding: const EdgeInsets.all(18),
+                    gap: width * 0.01,
+                    activeColor: Colors.white,
+                    tabBorderRadius: 20,
+                    tabs: [
+                      GButton(
+                        icon: Icons.home,
+                        text: AppLocalizations.of(context)!.home,
+                        iconSize: index == 0 ? 18 : 24,
+                      ),
+                      GButton(
+                        icon: Icons.mode_edit_outline_rounded,
+                        text: AppLocalizations.of(context)!.input,
+                        iconSize: index == 1 ? 18 : 24,
+                      ),
+                      GButton(
+                        icon: Icons.search_outlined,
+                        text: AppLocalizations.of(context)!.search,
+                        iconSize: index == 2 ? 18 : 24,
+                      ),
+                      GButton(
+                        icon: Icons.pie_chart,
+                        text: AppLocalizations.of(context)!.chart,
+                        iconSize: index == 3 ? 18 : 24,
+                      ),
+                      GButton(
+                        icon: Icons.settings,
+                        text: AppLocalizations.of(context)!.setting,
+                        iconSize: index == 4 ? 18 : 24,
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),

@@ -128,7 +128,10 @@ class _InputContentState extends State<InputContent> {
                           ),
                           footerDecoration: CalendarFooterDecoration(
                             timeLabelStyle: const TextStyle(fontSize: 14),
-                            timeStyle: const TextStyle(fontSize: 14, color: Color(0xFF4364F7)),
+                            timeStyle: const TextStyle(
+                              fontSize: 14,
+                              color: Color(0xFF4364F7),
+                            ),
                           ),
                           minimumDateTime: DateTime(1900),
                           maximumDateTime: DateTime(2100),
