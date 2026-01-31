@@ -99,6 +99,12 @@ class _UpdateInputState extends State<UpdateInput> {
           ],
         ),
         centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () => _showDeleteDialog(context),
+            icon: const Icon(Icons.delete_outline, color: Colors.white),
+          ),
+        ],
       ),
       body: Scaffold(
         backgroundColor: isDark
@@ -334,6 +340,40 @@ class _UpdateInputState extends State<UpdateInput> {
       },
       label: AppLocalizations.of(context)!.update,
       icon: Icons.edit_calendar,
+    );
+  }
+
+  void _showDeleteDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(AppLocalizations.of(context)!.confirm),
+        content: Text('${AppLocalizations.of(context)!.slideDelete} ?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(
+              AppLocalizations.of(context)!.cancel,
+              style: const TextStyle(color: Colors.grey),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              context.read<InputCubit>().deleteTransaction(
+                widget.inputItem.id,
+                context,
+              );
+              Navigator.pop(ctx);
+              Navigator.pop(context);
+            },
+            child: Text(
+              AppLocalizations.of(context)!.slideDelete,
+              style: const TextStyle(color: Colors.redAccent),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -44,7 +44,13 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
-    Object.assign(user, updateSettingsDto);
+    if (updateSettingsDto.language != null)
+      user.language = updateSettingsDto.language;
+    if (updateSettingsDto.isDark != null)
+      user.isDark = updateSettingsDto.isDark;
+    if (updateSettingsDto.isLock != null)
+      user.isLock = updateSettingsDto.isLock;
+
     await this.userRepository.save(user);
 
     return {

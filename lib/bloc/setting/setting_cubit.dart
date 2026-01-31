@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:money_mate/data/repository/settings_repository.dart';
 import 'package:money_mate/data/repository/user_repository.dart';
@@ -33,7 +34,14 @@ class SettingCubit extends Cubit<SettingState> {
           status: SettingStatus.success,
           isDark: isDark ?? false,
           isLock: isLock ?? false,
-          language: language ?? 'en',
+          language:
+              language ??
+              ([
+                    'vi',
+                    'zh',
+                  ].contains(PlatformDispatcher.instance.locale.languageCode)
+                  ? PlatformDispatcher.instance.locale.languageCode
+                  : 'en'),
         ),
       );
     } catch (e) {
@@ -61,20 +69,22 @@ class SettingCubit extends Cubit<SettingState> {
   }
 
   Future<void> toggleDarkMode(bool value) async {
+    final oldState = state.isDark;
+    emit(state.copyWith(isDark: value));
     try {
       await _settingsRepo.updateDarkMode(value);
-      emit(state.copyWith(isDark: value));
     } catch (e) {
-      emit(state.copyWith(errorMessage: e.toString()));
+      emit(state.copyWith(isDark: oldState, errorMessage: e.toString()));
     }
   }
 
   Future<void> toggleLock(bool value) async {
+    final oldState = state.isLock;
+    emit(state.copyWith(isLock: value));
     try {
       await _settingsRepo.updateIsLock(value);
-      emit(state.copyWith(isLock: value));
     } catch (e) {
-      emit(state.copyWith(errorMessage: e.toString()));
+      emit(state.copyWith(isLock: oldState, errorMessage: e.toString()));
     }
   }
 

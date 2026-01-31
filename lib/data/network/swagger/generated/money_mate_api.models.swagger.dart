@@ -15,6 +15,7 @@ class RegisterDto {
     required this.email,
     required this.password,
     required this.confirmPassword,
+    this.language,
   });
 
   factory RegisterDto.fromJson(Map<String, dynamic> json) =>
@@ -29,6 +30,8 @@ class RegisterDto {
   final String password;
   @JsonKey(name: 'confirmPassword')
   final String confirmPassword;
+  @JsonKey(name: 'language')
+  final String? language;
   static const fromJsonFactory = _$RegisterDtoFromJson;
 
   @override

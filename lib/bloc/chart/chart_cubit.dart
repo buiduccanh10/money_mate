@@ -62,7 +62,16 @@ class ChartCubit extends Cubit<ChartState> {
       final data = await _transactionRepo.getTransactions(
         year: state.year.toString(),
       );
-      emit(state.copyWith(status: ChartStatus.success, allTransactions: data));
+      final income = data.where((t) => t.isIncome).toList();
+      final expense = data.where((t) => !t.isIncome).toList();
+      emit(
+        state.copyWith(
+          status: ChartStatus.success,
+          allTransactions: data,
+          incomeTransactions: income,
+          expenseTransactions: expense,
+        ),
+      );
     } catch (e) {
       emit(
         state.copyWith(status: ChartStatus.failure, errorMessage: e.toString()),

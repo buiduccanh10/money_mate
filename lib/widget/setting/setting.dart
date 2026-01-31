@@ -19,53 +19,58 @@ class Setting extends StatelessWidget {
             children: [
               const SettingContent(),
               Container(
-                height: 230,
+                height: 260,
                 decoration: BoxDecoration(
                   borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(10),
-                      bottomRight: Radius.circular(10)),
+                    bottomLeft: Radius.circular(30),
+                    bottomRight: Radius.circular(30),
+                  ),
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: isDark
                         ? [
-                            const Color.fromARGB(255, 203, 122, 0),
-                            const Color.fromARGB(255, 0, 112, 204)
+                            const Color(0xFF0F2027),
+                            const Color(0xFF203A43),
+                            const Color(0xFF2C5364),
                           ]
-                        : [Colors.orange, Colors.blue],
+                        : [const Color(0xFF4364F7), const Color(0xFF6FB1FC)],
                   ),
                 ),
                 child: SafeArea(
                   maintainBottomViewPadding: true,
-                  child: Column(children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          CircleAvatar(
-                            radius: 40,
-                            backgroundImage: state.image == null
-                                ? const AssetImage('assets/avt.png')
-                                    as ImageProvider
-                                : NetworkImage(state.image!),
-                          ),
-                          const SizedBox(width: 20),
-                          Expanded(
-                            child: Text(
-                              state.userName ?? 'User',
-                              style: const TextStyle(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            CircleAvatar(
+                              radius: 40,
+                              backgroundImage: state.image == null
+                                  ? const AssetImage('assets/avt.png')
+                                        as ImageProvider
+                                  : NetworkImage(state.image!),
+                            ),
+                            const SizedBox(width: 20),
+                            Expanded(
+                              child: Text(
+                                state.userName ?? 'User',
+                                style: const TextStyle(
                                   fontSize: 22,
                                   color: Colors.white,
-                                  fontWeight: FontWeight.w600),
-                              overflow: TextOverflow.ellipsis,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
-                          )
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    _buildModifyCard(context, isDark),
-                  ]),
+                      _buildModifyCard(context, isDark),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -77,47 +82,65 @@ class Setting extends StatelessWidget {
 
   Widget _buildModifyCard(BuildContext context, bool isDark) {
     return Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: Material(
-        color: isDark ? Colors.grey[500] : Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(10),
-          onTap: () {},
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 14.0),
-                      child: Icon(Icons.edit_square,
-                          size: 26, color: Colors.black),
+      padding: const EdgeInsets.all(16.0),
+      child: GestureDetector(
+        onTap: () {},
+        child: Container(
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 15,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          AppLocalizations.of(context)!.modify,
-                          style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              color: isDark ? Colors.white : Colors.black,
-                              fontSize: 16),
+                    child: const Icon(Icons.edit, size: 24, color: Colors.blue),
+                  ),
+                  const SizedBox(width: 16),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.modify,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? Colors.white : Colors.black87,
+                          fontSize: 16,
                         ),
-                        Text(
-                          AppLocalizations.of(context)!.modifyDes,
-                          style: TextStyle(
-                              color: isDark ? Colors.grey[100] : Colors.grey),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-                const Icon(Icons.navigate_next)
-              ],
-            ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        AppLocalizations.of(context)!.modifyDes,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: isDark ? Colors.grey[400] : Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              Icon(
+                Icons.arrow_forward_ios_rounded,
+                size: 16,
+                color: isDark ? Colors.grey[400] : Colors.grey[400],
+              ),
+            ],
           ),
         ),
       ),

@@ -197,6 +197,28 @@ class InputCubit extends Cubit<InputState> {
     }
   }
 
+  Future<void> deleteTransaction(String id, BuildContext context) async {
+    emit(state.copyWith(status: InputStatus.loading));
+    try {
+      await _transactionRepo.deleteTransaction(id);
+      emit(state.copyWith(status: InputStatus.success));
+
+      if (context.mounted) {
+        context.read<HomeCubit>().fetchData();
+        context.read<SearchCubit>().refresh();
+        try {
+          final chartCubit = context.read<ChartCubit>();
+          chartCubit.fetchData();
+          chartCubit.refreshDetail();
+        } catch (_) {}
+      }
+    } catch (e) {
+      emit(
+        state.copyWith(status: InputStatus.failure, errorMessage: e.toString()),
+      );
+    }
+  }
+
   void resetStatus() {
     emit(
       state.copyWith(

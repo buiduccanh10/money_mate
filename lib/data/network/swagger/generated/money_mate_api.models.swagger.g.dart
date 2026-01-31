@@ -10,6 +10,7 @@ RegisterDto _$RegisterDtoFromJson(Map<String, dynamic> json) => RegisterDto(
   email: json['email'] as String,
   password: json['password'] as String,
   confirmPassword: json['confirmPassword'] as String,
+  language: json['language'] as String?,
 );
 
 Map<String, dynamic> _$RegisterDtoToJson(RegisterDto instance) =>
@@ -17,6 +18,7 @@ Map<String, dynamic> _$RegisterDtoToJson(RegisterDto instance) =>
       'email': instance.email,
       'password': instance.password,
       'confirmPassword': instance.confirmPassword,
+      'language': instance.language,
     };
 
 UserResponseDto _$UserResponseDtoFromJson(Map<String, dynamic> json) =>

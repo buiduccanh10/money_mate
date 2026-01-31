@@ -8,156 +8,151 @@ class AdvanceSetting extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      appBar:
-          AppBar(title: Text(AppLocalizations.of(context)!.advancedSettings)),
+      backgroundColor: isDark
+          ? const Color(0xFF121212)
+          : const Color(0xFFF5F7FA),
+      appBar: AppBar(
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: isDark
+                  ? [
+                      const Color(0xFF0F2027),
+                      const Color(0xFF203A43),
+                      const Color(0xFF2C5364),
+                    ]
+                  : [const Color(0xFF4364F7), const Color(0xFF6FB1FC)],
+            ),
+          ),
+        ),
+        title: Text(
+          AppLocalizations.of(context)!.advancedSettings,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
+        leading: const BackButton(color: Colors.white),
+      ),
       body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 0.0, bottom: 0),
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (builder) => SetupInExRegular()));
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.only(left: 10.0, right: 18),
-                            child: Icon(
-                              Icons.auto_awesome_motion_outlined,
-                              size: 30,
-                            ),
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                AppLocalizations.of(context)!.fixedInEx,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w500, fontSize: 16),
-                              ),
-                              SizedBox(
-                                width: 300,
-                                child: Text(
-                                  AppLocalizations.of(context)!.fixedInExDes,
-                                  style: const TextStyle(color: Colors.grey),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const Icon(Icons.navigate_next)
-                    ],
+            _buildSettingCard(
+              context,
+              isDark,
+              icon: Icons.auto_awesome_motion_outlined,
+              iconColor: Colors.orange,
+              title: AppLocalizations.of(context)!.fixedInEx,
+              subtitle: AppLocalizations.of(context)!.fixedInExDes,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (builder) => const SetupInExRegular(),
                   ),
-                ),
-              ),
+                );
+              },
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 0.0, bottom: 0),
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (builder) => SetupInExLimit()));
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.only(left: 10.0, right: 18),
-                            child: Icon(
-                              Icons.production_quantity_limits_rounded,
-                              size: 30,
-                            ),
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                AppLocalizations.of(context)!.settingLimitTitle,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w500, fontSize: 16),
-                              ),
-                              SizedBox(
-                                width: 300,
-                                child: Text(
-                                  AppLocalizations.of(context)!.settingLimitDes,
-                                  style: const TextStyle(color: Colors.grey),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const Icon(Icons.navigate_next)
-                    ],
+            const SizedBox(height: 16),
+            _buildSettingCard(
+              context,
+              isDark,
+              icon: Icons.production_quantity_limits_rounded,
+              iconColor: Colors.redAccent,
+              title: AppLocalizations.of(context)!.settingLimitTitle,
+              subtitle: AppLocalizations.of(context)!.settingLimitDes,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (builder) => const SetupInExLimit(),
                   ),
-                ),
-              ),
+                );
+              },
             ),
-            // Padding(
-            //   padding: const EdgeInsets.only(top: 0.0, bottom: 0),
-            //   child: InkWell(
-            //     onTap: () {
-            //       Navigator.push(context,
-            //           MaterialPageRoute(builder: (builder) => const ewallet()));
-            //     },
-            //     child: Padding(
-            //       padding: const EdgeInsets.all(12.0),
-            //       child: Row(
-            //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //         children: [
-            //           Row(
-            //             children: [
-            //               const Padding(
-            //                 padding: EdgeInsets.only(left: 10.0, right: 18),
-            //                 child: Icon(
-            //                   Icons.payment,
-            //                   size: 30,
-            //                 ),
-            //               ),
-            //               Column(
-            //                 crossAxisAlignment: CrossAxisAlignment.start,
-            //                 children: [
-            //                   Text(
-            //                     LocaleData.payByEWallet.getString(context),
-            //                     style: const TextStyle(
-            //                         fontWeight: FontWeight.w500, fontSize: 16),
-            //                   ),
-            //                   SizedBox(
-            //                     width: 300,
-            //                     child: Text(
-            //                       LocaleData.payByEWalletDes
-            //                           .getString(context),
-            //                       style: const TextStyle(color: Colors.grey),
-            //                     ),
-            //                   ),
-            //                 ],
-            //               ),
-            //             ],
-            //           ),
-            //           const Icon(Icons.navigate_next)
-            //         ],
-            //       ),
-            //     ),
-            //   ),
-            // ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSettingCard(
+    BuildContext context,
+    bool isDark, {
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(20),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: iconColor.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(icon, color: iconColor, size: 28),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: isDark ? Colors.white : Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        subtitle,
+                        style: TextStyle(
+                          color: isDark ? Colors.grey[400] : Colors.grey[600],
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 16,
+                  color: isDark ? Colors.grey[500] : Colors.grey[400],
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

@@ -61,9 +61,7 @@ class _ChartWidgetState extends State<ChartWidget> {
           (s, e) => s + e.money,
         );
 
-        String formatTotal = formatter.format(
-          state.isMonthly ? (totalIncome - totalExpense) : 0,
-        );
+        String formatTotal = formatter.format(totalIncome - totalExpense);
         String formatIncome = formatter.format(totalIncome);
         String formatExpense = formatter.format(totalExpense);
 
@@ -79,12 +77,11 @@ class _ChartWidgetState extends State<ChartWidget> {
                     padding: const EdgeInsets.only(top: 70),
                     child: Column(
                       children: [
-                        _buildDatePickers(
-                          context,
-                          state,
-                          isDark,
-                          width,
-                          selectedDateText,
+                        ChartDatePicker(
+                          state: state,
+                          isDark: isDark,
+                          width: width,
+                          selectedDateText: selectedDateText,
                         ),
                         _buildSummaryCards(
                           context,
@@ -113,73 +110,6 @@ class _ChartWidgetState extends State<ChartWidget> {
           ),
         );
       },
-    );
-  }
-
-  Widget _buildDatePickers(
-    BuildContext context,
-    ChartState state,
-    bool isDark,
-    double width,
-    String selectedDateText,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
-      child: GestureDetector(
-        onTap: () => MonthYearPickerSheet.show(
-          context,
-          initialMonth: state.month,
-          initialYear: state.year,
-          isYearOnly: !state.isMonthly,
-          onConfirm: (month, year) {
-            context.read<ChartCubit>().changeMonth(month);
-            context.read<ChartCubit>().changeYear(year);
-          },
-        ),
-        child: Container(
-          width: width,
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-          decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 15,
-                offset: const Offset(0, 5),
-              ),
-            ],
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    Icons.calendar_month_rounded,
-                    color: const Color(0xFF4364F7),
-                    size: 24,
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    selectedDateText,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : Colors.black87,
-                    ),
-                  ),
-                ],
-              ),
-              Icon(
-                Icons.arrow_drop_down_rounded,
-                color: isDark ? Colors.grey[400] : Colors.grey[600],
-                size: 30,
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 
@@ -338,6 +268,39 @@ class _ChartWidgetState extends State<ChartWidget> {
         child: Center(child: CircularProgressIndicator()),
       );
     }
+
+    if (data.isEmpty) {
+      final isDark = Theme.of(context).brightness == Brightness.dark;
+      return SizedBox(
+        height: 280,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Opacity(
+                opacity: 0.5,
+                child: Image.asset(
+                  'assets/search.png',
+                  width: 150,
+                  color: isDark ? Colors.white38 : null,
+                  colorBlendMode: isDark ? BlendMode.srcIn : null,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                AppLocalizations.of(context)!.noInputData,
+                style: TextStyle(
+                  color: isDark ? Colors.grey[600] : Colors.grey[400],
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return SizedBox(
       height: 280,
       child: SfCircularChart(
@@ -403,6 +366,100 @@ class _ChartWidgetState extends State<ChartWidget> {
           ),
         );
       },
+    );
+  }
+}
+
+class ChartDatePicker extends StatefulWidget {
+  final ChartState state;
+  final bool isDark;
+  final double width;
+  final String selectedDateText;
+
+  const ChartDatePicker({
+    super.key,
+    required this.state,
+    required this.isDark,
+    required this.width,
+    required this.selectedDateText,
+  });
+
+  @override
+  State<ChartDatePicker> createState() => _ChartDatePickerState();
+}
+
+class _ChartDatePickerState extends State<ChartDatePicker> {
+  @override
+  void initState() {
+    super.initState();
+    // Initialize state logic if needed
+  }
+
+  @override
+  void dispose() {
+    // Dispose resources if needed
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+      child: GestureDetector(
+        onTap: () => MonthYearPickerSheet.show(
+          context,
+          initialMonth: widget.state.month,
+          initialYear: widget.state.year,
+          isYearOnly: !widget.state.isMonthly,
+          onConfirm: (month, year) {
+            context.read<ChartCubit>().changeMonth(month);
+            context.read<ChartCubit>().changeYear(year);
+          },
+        ),
+        child: Container(
+          width: widget.width,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          decoration: BoxDecoration(
+            color: widget.isDark ? const Color(0xFF1E1E1E) : Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 15,
+                offset: const Offset(0, 5),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Icons.calendar_month_rounded,
+                    color: const Color(0xFF4364F7),
+                    size: 24,
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    widget.selectedDateText,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: widget.isDark ? Colors.white : Colors.black87,
+                    ),
+                  ),
+                ],
+              ),
+              Icon(
+                Icons.arrow_drop_down_rounded,
+                color: widget.isDark ? Colors.grey[400] : Colors.grey[600],
+                size: 30,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

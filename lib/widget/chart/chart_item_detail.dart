@@ -59,26 +59,28 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
         List<String> sortedDates = [];
 
         for (final item in data) {
-          final date = item.date;
-          final key = widget.isMonthly ? date : date.substring(3);
+          DateTime dt;
+          try {
+            dt = DateFormat('yyyy-MM-dd').parse(item.date);
+          } catch (_) {
+            dt = DateFormat('dd/MM/yyyy').parse(item.date);
+          }
+
+          final key = widget.isMonthly
+              ? DateFormat('dd/MM/yyyy').format(dt)
+              : DateFormat('MM/yyyy').format(dt);
+
           dateGroup.putIfAbsent(key, () => []);
           dateGroup[key]!.add(item);
         }
 
         sortedDates = dateGroup.keys.toList()
-          ..sort(
-            (a, b) =>
-                (widget.isMonthly
-                        ? DateFormat('dd/MM/yyyy')
-                        : DateFormat('MM/yyyy'))
-                    .parse(b)
-                    .compareTo(
-                      (widget.isMonthly
-                              ? DateFormat('dd/MM/yyyy')
-                              : DateFormat('MM/yyyy'))
-                          .parse(a),
-                    ),
-          );
+          ..sort((a, b) {
+            final formatter = widget.isMonthly
+                ? DateFormat('dd/MM/yyyy')
+                : DateFormat('MM/yyyy');
+            return formatter.parse(b).compareTo(formatter.parse(a));
+          });
 
         final formatter = NumberFormat.simpleCurrency(locale: locale);
         String appBarTitle = data.isNotEmpty

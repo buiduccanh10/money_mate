@@ -7,8 +7,9 @@ abstract class AuthRepository {
   Future<AuthResponseDto> register(
     String email,
     String password,
-    String confirmPassword,
-  );
+    String confirmPassword, {
+    String? language,
+  });
   Future<void> logout();
   Future<void> saveTokens(String accessToken, String refreshToken);
   Future<void> forgotPassword(String email);
@@ -37,13 +38,15 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<AuthResponseDto> register(
     String email,
     String password,
-    String confirmPassword,
-  ) async {
+    String confirmPassword, {
+    String? language,
+  }) async {
     final response = await _api.apiAuthRegisterPost(
       body: RegisterDto(
         email: email,
         password: password,
         confirmPassword: confirmPassword,
+        language: language,
       ),
     );
 

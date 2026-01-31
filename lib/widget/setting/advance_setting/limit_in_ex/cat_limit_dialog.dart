@@ -23,16 +23,20 @@ class CatLimitDialog extends StatefulWidget {
 
 class _CatLimitDialogState extends State<CatLimitDialog> {
   final TextEditingController _limitController = TextEditingController();
+  bool _isInitialized = false;
 
   @override
-  void initState() {
-    super.initState();
-    final locale = Localizations.localeOf(context).toString();
-    if (locale == 'vi') {
-      final formatter = NumberFormat("###,###,###", "vi_VN");
-      _limitController.text = formatter.format(widget.limit);
-    } else {
-      _limitController.text = widget.limit.toString();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isInitialized) {
+      final locale = Localizations.localeOf(context).toString();
+      if (locale == 'vi') {
+        final formatter = NumberFormat("###,###,###", "vi_VN");
+        _limitController.text = formatter.format(widget.limit);
+      } else {
+        _limitController.text = widget.limit.toString();
+      }
+      _isInitialized = true;
     }
   }
 
@@ -44,18 +48,54 @@ class _CatLimitDialogState extends State<CatLimitDialog> {
 
   @override
   Widget build(BuildContext context) {
-    // bool isDark = Theme.of(context).brightness == Brightness.dark;
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
     final locale = Localizations.localeOf(context).toString();
 
     return AlertDialog(
-      title: Text(
-        "${AppLocalizations.of(context)!.limitDialog}: ${widget.catName}",
-        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+      title: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.blue.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.money_off_rounded,
+              color: Colors.blue,
+              size: 30,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            widget.catName,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white : Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            AppLocalizations.of(context)!.limitDialog,
+            style: TextStyle(
+              fontSize: 14,
+              color: isDark ? Colors.grey[400] : Colors.grey[600],
+            ),
+          ),
+        ],
       ),
-      scrollable: true,
       content: SizedBox(
-        width: 400,
+        width: 320,
         child: TextField(
+          autofocus: true,
+          style: TextStyle(
+            color: isDark ? Colors.white : Colors.black87,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
           keyboardType: locale == 'vi'
               ? const TextInputType.numberWithOptions(decimal: false)
               : const TextInputType.numberWithOptions(decimal: true),
@@ -64,42 +104,70 @@ class _CatLimitDialogState extends State<CatLimitDialog> {
               ? [FilteringTextInputFormatter.digitsOnly, CurrencyFormat()]
               : [],
           decoration: InputDecoration(
-            enabledBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: Colors.blue),
-                borderRadius: BorderRadius.circular(10)),
-            focusedBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: Colors.blue),
-                borderRadius: BorderRadius.circular(10)),
-            label: Text(AppLocalizations.of(context)!.inputMoney),
-            prefixIcon: const Icon(Icons.money_off, color: Colors.green),
+            filled: true,
+            fillColor: isDark ? const Color(0xFF2C2C2C) : Colors.grey[100],
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+              borderSide: BorderSide.none,
+            ),
+            prefixIcon: const Icon(Icons.attach_money, color: Colors.green),
+            suffixText: locale == 'vi' ? 'đ' : '\$',
+            suffixStyle: const TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
       ),
+      actionsPadding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(AppLocalizations.of(context)!.cancel,
-              style: const TextStyle(color: Colors.grey)),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            // final locale = Localizations.localeOf(context).toString();
-            String raw = _limitController.text;
-            double limit = 0;
-            if (locale == 'vi') {
-              limit = double.tryParse(raw.replaceAll('.', '')) ?? 0;
-            } else {
-              limit = double.tryParse(raw.replaceAll(',', '.')) ?? 0;
-            }
-            context.read<CategoryCubit>().updateLimit(widget.catId, limit);
-            Navigator.pop(context);
-          },
-          style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10))),
-          child: Text(AppLocalizations.of(context)!.inputVave,
-              style: const TextStyle(color: Colors.white)),
+        Row(
+          children: [
+            Expanded(
+              child: TextButton(
+                onPressed: () => Navigator.pop(context),
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+                child: Text(
+                  AppLocalizations.of(context)!.cancel,
+                  style: const TextStyle(
+                    color: Colors.grey,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () {
+                  String raw = _limitController.text;
+                  double limit = 0;
+                  if (locale == 'vi') {
+                    limit = double.tryParse(raw.replaceAll('.', '')) ?? 0;
+                  } else {
+                    limit = double.tryParse(raw.replaceAll(',', '.')) ?? 0;
+                  }
+                  context.read<CategoryCubit>().updateLimit(
+                    widget.catId,
+                    limit,
+                  );
+                  Navigator.pop(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+                child: Text(
+                  AppLocalizations.of(context)!.inputVave,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );

@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:money_mate/data/repository/auth_repository.dart';
 import 'package:money_mate/bloc/auth/auth_event.dart';
@@ -48,10 +49,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(state.copyWith(status: AuthStatus.loading));
     try {
+      String deviceLanguage = PlatformDispatcher.instance.locale.languageCode;
+
+      if (deviceLanguage != 'vi' && deviceLanguage != 'zh') {
+        deviceLanguage = 'en';
+      }
+
       await _authRepo.register(
         event.email,
         event.password,
         event.confirmPassword,
+        language: deviceLanguage,
       );
       emit(state.copyWith(status: AuthStatus.success));
     } catch (e) {

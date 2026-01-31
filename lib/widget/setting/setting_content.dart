@@ -18,44 +18,47 @@ class SettingContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     return BlocBuilder<SettingCubit, SettingState>(
       builder: (context, state) {
-        bool isDark = state.isDark;
-        final bgColor = isDark ? Colors.grey[700] : Colors.grey[200];
-
         return Scaffold(
+          backgroundColor: isDark
+              ? const Color(0xFF121212)
+              : const Color(0xFFF5F7FA),
           body: SingleChildScrollView(
             padding: EdgeInsets.only(
               left: width * 0.04,
-              top: 250,
+              top: 280,
               right: width * 0.04,
               bottom: height * 0.15,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildSettingItem(
-                  context,
-                  icon: Icons.settings_suggest,
-                  iconColor: isDark ? Colors.brown[100]! : Colors.brown,
-                  label: AppLocalizations.of(context)!.advancedSettings,
-                  bgColor: bgColor!,
-                  onTap: () => Navigator.push(
+                _buildCardContainer(
+                  isDark,
+                  child: _buildItem(
                     context,
-                    MaterialPageRoute(builder: (_) => const AdvanceSetting()),
+                    isDark,
+                    icon: Icons.settings_suggest,
+                    iconColor: Colors.brown,
+                    label: AppLocalizations.of(context)!.advancedSettings,
+                    subLabel: '',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const AdvanceSetting()),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
-                Container(
-                  decoration: BoxDecoration(
-                    color: bgColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+                _buildCardContainer(
+                  isDark,
                   child: Column(
                     children: [
-                      _buildSubItem(
+                      _buildItem(
                         context,
+                        isDark,
                         icon: Icons.language,
                         iconColor: Colors.blue,
                         label: AppLocalizations.of(context)!.language,
@@ -67,15 +70,23 @@ class SettingContent extends StatelessWidget {
                           ),
                         ),
                       ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Divider(
+                          height: 1,
+                          color: isDark ? Colors.grey[800] : Colors.grey[200],
+                        ),
+                      ),
                       _buildSwitchItem(
                         context,
+                        isDark,
                         icon: Icons.dark_mode,
-                        iconColor: Colors.purple[700]!,
+                        iconColor: Colors.purple,
                         label: AppLocalizations.of(context)!.appearance,
-                        subLabel: isDark
+                        subLabel: state.isDark
                             ? AppLocalizations.of(context)!.darkmodeDarkDes
                             : AppLocalizations.of(context)!.darkmodeLightDes,
-                        value: isDark,
+                        value: state.isDark,
                         onChanged: (val) =>
                             context.read<SettingCubit>().toggleDarkMode(val),
                       ),
@@ -83,15 +94,13 @@ class SettingContent extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                Container(
-                  decoration: BoxDecoration(
-                    color: bgColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+                _buildCardContainer(
+                  isDark,
                   child: Column(
                     children: [
                       _buildSwitchItem(
                         context,
+                        isDark,
                         icon: Icons.lock,
                         iconColor: Colors.green,
                         label: AppLocalizations.of(context)!.applicationLock,
@@ -102,8 +111,16 @@ class SettingContent extends StatelessWidget {
                         onChanged: (val) =>
                             context.read<SettingCubit>().toggleLock(val),
                       ),
-                      _buildSubItem(
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Divider(
+                          height: 1,
+                          color: isDark ? Colors.grey[800] : Colors.grey[200],
+                        ),
+                      ),
+                      _buildItem(
                         context,
+                        isDark,
                         icon: Icons.privacy_tip,
                         iconColor: Colors.red,
                         label: AppLocalizations.of(context)!.privacy,
@@ -119,23 +136,29 @@ class SettingContent extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                Container(
-                  decoration: BoxDecoration(
-                    color: bgColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+                _buildCardContainer(
+                  isDark,
                   child: Column(
                     children: [
-                      _buildSubItem(
+                      _buildItem(
                         context,
+                        isDark,
                         icon: Icons.info,
                         iconColor: Colors.orange,
                         label: AppLocalizations.of(context)!.about,
                         subLabel: AppLocalizations.of(context)!.aboutDes,
                         onTap: () => showAboutDialog(context: context),
                       ),
-                      _buildSubItem(
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Divider(
+                          height: 1,
+                          color: isDark ? Colors.grey[800] : Colors.grey[200],
+                        ),
+                      ),
+                      _buildItem(
                         context,
+                        isDark,
                         icon: Icons.feedback,
                         iconColor: Colors.cyan,
                         label: AppLocalizations.of(context)!.sendFeedback,
@@ -146,7 +169,7 @@ class SettingContent extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
-                _buildLogoutButton(context, isDark, bgColor),
+                _buildLogoutButton(context, isDark),
               ],
             ),
           ),
@@ -155,50 +178,26 @@ class SettingContent extends StatelessWidget {
     );
   }
 
-  Widget _buildSettingItem(
-    BuildContext context, {
-    required IconData icon,
-    required Color iconColor,
-    required String label,
-    required Color bgColor,
-    required VoidCallback onTap,
-  }) {
-    return Material(
-      color: bgColor,
-      borderRadius: BorderRadius.circular(10),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(10),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 14),
-                    child: Icon(icon, color: iconColor, size: 30),
-                  ),
-                  Text(
-                    label,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
-              ),
-              const Icon(Icons.navigate_next),
-            ],
+  Widget _buildCardContainer(bool isDark, {required Widget child}) {
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
           ),
-        ),
+        ],
       ),
+      child: child,
     );
   }
 
-  Widget _buildSubItem(
-    BuildContext context, {
+  Widget _buildItem(
+    BuildContext context,
+    bool isDark, {
     required IconData icon,
     required Color iconColor,
     required String label,
@@ -207,36 +206,53 @@ class SettingContent extends StatelessWidget {
   }) {
     return InkWell(
       onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(16.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 14),
-                  child: Icon(icon, color: iconColor, size: 26),
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: iconColor.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(icon, color: iconColor, size: 24),
                 ),
+                const SizedBox(width: 16),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       label,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w500,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
                         fontSize: 16,
+                        color: isDark ? Colors.white : Colors.black87,
                       ),
                     ),
-                    Text(
-                      subLabel,
-                      style: const TextStyle(color: Colors.grey, fontSize: 12),
-                    ),
+                    if (subLabel.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        subLabel,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: isDark ? Colors.grey[400] : Colors.grey[600],
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ],
             ),
-            const Icon(Icons.navigate_next),
+            Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 16,
+              color: isDark ? Colors.grey[500] : Colors.grey[400],
+            ),
           ],
         ),
       ),
@@ -244,7 +260,8 @@ class SettingContent extends StatelessWidget {
   }
 
   Widget _buildSwitchItem(
-    BuildContext context, {
+    BuildContext context,
+    bool isDark, {
     required IconData icon,
     required Color iconColor,
     required String label,
@@ -253,31 +270,41 @@ class SettingContent extends StatelessWidget {
     required ValueChanged<bool> onChanged,
   }) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(16.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 14),
-                child: Icon(icon, color: iconColor, size: 26),
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: iconColor.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, color: iconColor, size: 24),
               ),
+              const SizedBox(width: 16),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     label,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w500,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
                       fontSize: 16,
+                      color: isDark ? Colors.white : Colors.black87,
                     ),
                   ),
+                  const SizedBox(height: 4),
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.5,
+                    width: MediaQuery.of(context).size.width * 0.45,
                     child: Text(
                       subLabel,
-                      style: const TextStyle(color: Colors.grey, fontSize: 12),
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: isDark ? Colors.grey[400] : Colors.grey[600],
+                      ),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -285,37 +312,39 @@ class SettingContent extends StatelessWidget {
               ),
             ],
           ),
-          Switch(
+          Switch.adaptive(
             value: value,
             onChanged: onChanged,
-            thumbIcon: WidgetStateProperty.resolveWith<Icon?>(
-              (states) => states.contains(WidgetState.selected)
-                  ? const Icon(Icons.check)
-                  : const Icon(Icons.close),
-            ),
+            activeColor: const Color(0xFF4364F7),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildLogoutButton(BuildContext context, bool isDark, Color bgColor) {
-    return Material(
-      color: bgColor,
-      borderRadius: BorderRadius.circular(10),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(10),
-        onTap: () => _showLogoutDialog(context),
-        child: SizedBox(
-          height: 50,
-          child: Center(
-            child: Text(
-              AppLocalizations.of(context)!.logOut,
-              style: TextStyle(
-                fontWeight: FontWeight.w500,
-                fontSize: 18,
-                color: isDark ? Colors.redAccent : Colors.red,
-              ),
+  Widget _buildLogoutButton(BuildContext context, bool isDark) {
+    return GestureDetector(
+      onTap: () => _showLogoutDialog(context),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 15,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: Center(
+          child: Text(
+            AppLocalizations.of(context)!.logOut,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+              color: Colors.redAccent,
             ),
           ),
         ),
