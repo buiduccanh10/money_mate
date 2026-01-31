@@ -20,7 +20,15 @@ class SettingContent extends StatelessWidget {
     final height = MediaQuery.of(context).size.height;
     bool isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return BlocBuilder<SettingCubit, SettingState>(
+    return BlocConsumer<SettingCubit, SettingState>(
+      listener: (context, state) {
+        if (state.errorMessage != null) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+          context.read<SettingCubit>().clearError();
+        }
+      },
       builder: (context, state) {
         return Scaffold(
           backgroundColor: isDark
@@ -109,7 +117,15 @@ class SettingContent extends StatelessWidget {
                         )!.applicationLockDes,
                         value: state.isLock,
                         onChanged: (val) =>
-                            context.read<SettingCubit>().toggleLock(val),
+                            context.read<SettingCubit>().toggleLock(
+                              val,
+                              reason: AppLocalizations.of(
+                                context,
+                              )!.localAuthTitle,
+                              notSupportError: AppLocalizations.of(
+                                context,
+                              )!.localAuthWarning,
+                            ),
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -273,50 +289,50 @@ class SettingContent extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: iconColor.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(icon, color: iconColor, size: 24),
-              ),
-              const SizedBox(width: 16),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    label,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                      color: isDark ? Colors.white : Colors.black87,
-                    ),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: iconColor.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: iconColor, size: 24),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                    color: isDark ? Colors.white : Colors.black87,
                   ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+                if (subLabel.isNotEmpty) ...[
                   const SizedBox(height: 4),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.45,
-                    child: Text(
-                      subLabel,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: isDark ? Colors.grey[400] : Colors.grey[600],
-                      ),
-                      overflow: TextOverflow.ellipsis,
+                  Text(
+                    subLabel,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: isDark ? Colors.grey[400] : Colors.grey[600],
                     ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
                   ),
                 ],
-              ),
-            ],
+              ],
+            ),
           ),
+          const SizedBox(width: 16),
           Switch.adaptive(
             value: value,
             onChanged: onChanged,
-            activeColor: const Color(0xFF4364F7),
+            activeThumbColor: const Color(0xFF4364F7),
           ),
         ],
       ),

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:money_mate/data/repository/settings_repository.dart';
 import 'package:money_mate/data/repository/user_repository.dart';
 import 'package:money_mate/data/repository/transaction_repository.dart';
@@ -80,14 +81,48 @@ class SettingCubit extends Cubit<SettingState> {
     }
   }
 
-  Future<void> toggleLock(bool value) async {
-    final oldState = state.isLock;
-    emit(state.copyWith(isLock: value));
-    try {
-      await _settingsRepo.updateIsLock(value);
-    } catch (e) {
-      emit(state.copyWith(isLock: oldState, errorMessage: e.toString()));
+  Future<void> toggleLock(
+    bool value, {
+    required String reason,
+    String? notSupportError,
+  }) async {
+    final LocalAuthentication auth = LocalAuthentication();
+
+    if (value) {
+      final bool canCheckBiometrics = await auth.canCheckBiometrics;
+      final bool isDeviceSupported = await auth.isDeviceSupported();
+
+      if (!canCheckBiometrics && !isDeviceSupported) {
+        emit(
+          state.copyWith(
+            errorMessage: notSupportError ?? 'Device security not supported',
+          ),
+        );
+        return;
+      }
     }
+
+    try {
+      final bool didAuthenticate = await auth.authenticate(
+        localizedReason: reason,
+      );
+
+      if (didAuthenticate) {
+        final oldState = state.isLock;
+        emit(state.copyWith(isLock: value, errorMessage: null));
+        try {
+          await _settingsRepo.updateIsLock(value);
+        } catch (e) {
+          emit(state.copyWith(isLock: oldState, errorMessage: e.toString()));
+        }
+      }
+    } catch (e) {
+      emit(state.copyWith(errorMessage: e.toString()));
+    }
+  }
+
+  void clearError() {
+    emit(state.copyWith(errorMessage: null));
   }
 
   Future<void> setLanguage(String lang) async {
@@ -110,7 +145,7 @@ class SettingCubit extends Cubit<SettingState> {
     String? email,
     String? password,
     File? imageFile,
-    String? avatar, // For direct URL updates if any
+    String? avatar,
   }) async {
     try {
       var currentUser = await _userRepo.getUserProfile();

@@ -432,4 +432,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get profileUpdated => 'Cập nhật hồ sơ thành công';
+
+  @override
+  String get unlock => 'Mở khoá';
 }

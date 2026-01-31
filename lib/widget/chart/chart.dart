@@ -100,11 +100,23 @@ class _ChartState extends State<Chart> {
                             borderRadius: BorderRadius.circular(25),
                           ),
                           thumbDecoration: BoxDecoration(
-                            color: activeColor,
+                            gradient: isDark
+                                ? const LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Color(0xFF0F2027),
+                                      Color(0xFF2C5364),
+                                    ],
+                                  )
+                                : null,
+                            color: isDark ? null : activeColor,
                             borderRadius: BorderRadius.circular(25),
                             boxShadow: [
                               BoxShadow(
-                                color: activeColor.withValues(alpha: 0.4),
+                                color: isDark
+                                    ? Colors.black.withValues(alpha: 0.3)
+                                    : activeColor.withValues(alpha: 0.4),
                                 blurRadius: 8.0,
                                 offset: const Offset(0.0, 4.0),
                               ),
@@ -135,19 +147,24 @@ class _ChartState extends State<Chart> {
     String label,
     bool isSelected,
   ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(icon, color: iconColor, size: 20),
+        Icon(
+          icon,
+          color: isSelected
+              ? Colors.white
+              : (isDark ? iconColor.withValues(alpha: 0.7) : iconColor),
+          size: 20,
+        ),
         const SizedBox(width: 8),
         Text(
           label,
           style: TextStyle(
             color: isSelected
                 ? Colors.white
-                : (Theme.of(context).brightness == Brightness.dark
-                      ? Colors.white70
-                      : Colors.black),
+                : (isDark ? Colors.white70 : Colors.black),
             fontWeight: FontWeight.w500,
             fontSize: 16,
           ),

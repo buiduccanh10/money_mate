@@ -181,11 +181,11 @@ class Setting extends StatelessWidget {
                   ),
                 ],
               ),
-              Icon(
-                Icons.arrow_forward_ios_rounded,
-                size: 16,
-                color: isDark ? Colors.grey[400] : Colors.grey[400],
-              ),
+              // Icon(
+              //   Icons.arrow_forward_ios_rounded,
+              //   size: 16,
+              //   color: isDark ? Colors.grey[400] : Colors.grey[400],
+              // ),
             ],
           ),
         ),

@@ -138,5 +138,6 @@
   "newPassword": "Mật khẩu mới (Không bắt buộc)",
   "avatarUpdated": "Cập nhật ảnh đại diện thành công",
   "avatarUpdateFail": "Cập nhật ảnh đại diện thất bại",
-  "profileUpdated": "Cập nhật hồ sơ thành công"
+  "profileUpdated": "Cập nhật hồ sơ thành công",
+  "unlock": "Mở khoá"
 }

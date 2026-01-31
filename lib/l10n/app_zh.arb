@@ -138,5 +138,6 @@
   "newPassword": "新密码（可选）",
   "avatarUpdated": "头像更新成功",
   "avatarUpdateFail": "头像更新失败",
-  "profileUpdated": "资料更新成功"
+  "profileUpdated": "个人资料更新成功",
+  "unlock": "解锁"
 }

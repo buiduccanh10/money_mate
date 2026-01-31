@@ -429,4 +429,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileUpdated => 'Profile updated successfully';
+
+  @override
+  String get unlock => 'Unlock';
 }

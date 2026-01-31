@@ -138,5 +138,6 @@
   "newPassword": "New Password (Optional)",
   "avatarUpdated": "Avatar updated successfully",
   "avatarUpdateFail": "Failed to update avatar",
-  "profileUpdated": "Profile updated successfully"
+  "profileUpdated": "Profile updated successfully",
+  "unlock": "Unlock"
 }

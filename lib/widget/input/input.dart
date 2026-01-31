@@ -93,12 +93,31 @@ class _InputState extends State<Input> {
                         borderRadius: BorderRadius.circular(25),
                       ),
                       thumbDecoration: BoxDecoration(
-                        color: isIncome ? incomeColor : expenseColor,
+                        gradient: isDark
+                            ? LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: isIncome
+                                    ? [
+                                        const Color(0xFF0F2027),
+                                        const Color(0xFF2C5364),
+                                      ]
+                                    : [
+                                        const Color(0xFF434343),
+                                        const Color(0xFF000000),
+                                      ],
+                              )
+                            : null,
+                        color: isDark
+                            ? null
+                            : (isIncome ? incomeColor : expenseColor),
                         borderRadius: BorderRadius.circular(25),
                         boxShadow: [
                           BoxShadow(
-                            color: (isIncome ? incomeColor : expenseColor)
-                                .withValues(alpha: 0.4),
+                            color: isDark
+                                ? Colors.black.withValues(alpha: 0.3)
+                                : (isIncome ? incomeColor : expenseColor)
+                                      .withValues(alpha: 0.4),
                             blurRadius: 8.0,
                             offset: const Offset(0.0, 4.0),
                           ),
@@ -129,18 +148,23 @@ class _InputState extends State<Input> {
     String label,
     bool isSelected,
   ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(icon, color: iconColor),
+        Icon(
+          icon,
+          color: isSelected
+              ? Colors.white
+              : (isDark ? iconColor.withValues(alpha: 0.7) : iconColor),
+        ),
+        const SizedBox(width: 8),
         Text(
           label,
           style: TextStyle(
             color: isSelected
                 ? Colors.white
-                : (Theme.of(context).brightness == Brightness.dark
-                      ? Colors.white70
-                      : Colors.black),
+                : (isDark ? Colors.white70 : Colors.black),
             fontWeight: FontWeight.w500,
             fontSize: 16,
           ),

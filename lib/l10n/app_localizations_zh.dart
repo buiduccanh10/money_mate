@@ -423,5 +423,8 @@ class AppLocalizationsZh extends AppLocalizations {
   String get avatarUpdateFail => '头像更新失败';
 
   @override
-  String get profileUpdated => '资料更新成功';
+  String get profileUpdated => '个人资料更新成功';
+
+  @override
+  String get unlock => '解锁';
 }

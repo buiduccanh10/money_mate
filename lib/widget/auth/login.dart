@@ -6,7 +6,7 @@ import 'package:money_mate/bloc/auth/auth_state.dart';
 import 'package:money_mate/bloc/setting/setting_cubit.dart';
 import 'package:money_mate/bloc/setting/setting_state.dart';
 import 'package:money_mate/l10n/app_localizations.dart';
-import 'package:money_mate/main.dart';
+import 'package:money_mate/widget/main_layout.dart';
 import 'package:money_mate/widget/auth/forgot_pass.dart';
 import 'package:money_mate/widget/auth/sign_up.dart';
 import 'package:rive/rive.dart' hide LinearGradient;
@@ -109,7 +109,7 @@ class _LoginState extends State<Login> {
           trigSuccess?.change(true);
           Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => Main()),
+            MaterialPageRoute(builder: (context) => const MainLayout()),
             (route) => false,
           );
         } else if (state.status == AuthStatus.failure) {
