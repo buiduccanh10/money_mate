@@ -49,6 +49,11 @@ class RegisterDto {
                 const DeepCollectionEquality().equals(
                   other.confirmPassword,
                   confirmPassword,
+                )) &&
+            (identical(other.language, language) ||
+                const DeepCollectionEquality().equals(
+                  other.language,
+                  language,
                 )));
   }
 
@@ -60,6 +65,7 @@ class RegisterDto {
       const DeepCollectionEquality().hash(email) ^
       const DeepCollectionEquality().hash(password) ^
       const DeepCollectionEquality().hash(confirmPassword) ^
+      const DeepCollectionEquality().hash(language) ^
       runtimeType.hashCode;
 }
 
@@ -68,11 +74,13 @@ extension $RegisterDtoExtension on RegisterDto {
     String? email,
     String? password,
     String? confirmPassword,
+    String? language,
   }) {
     return RegisterDto(
       email: email ?? this.email,
       password: password ?? this.password,
       confirmPassword: confirmPassword ?? this.confirmPassword,
+      language: language ?? this.language,
     );
   }
 
@@ -80,6 +88,7 @@ extension $RegisterDtoExtension on RegisterDto {
     Wrapped<String>? email,
     Wrapped<String>? password,
     Wrapped<String>? confirmPassword,
+    Wrapped<String?>? language,
   }) {
     return RegisterDto(
       email: (email != null ? email.value : this.email),
@@ -87,6 +96,7 @@ extension $RegisterDtoExtension on RegisterDto {
       confirmPassword: (confirmPassword != null
           ? confirmPassword.value
           : this.confirmPassword),
+      language: (language != null ? language.value : this.language),
     );
   }
 }
@@ -99,6 +109,8 @@ class UserResponseDto {
     required this.language,
     required this.isDark,
     required this.isLock,
+    this.name,
+    this.avatar,
   });
 
   factory UserResponseDto.fromJson(Map<String, dynamic> json) =>
@@ -117,6 +129,10 @@ class UserResponseDto {
   final bool isDark;
   @JsonKey(name: 'isLock')
   final bool isLock;
+  @JsonKey(name: 'name')
+  final String? name;
+  @JsonKey(name: 'avatar')
+  final String? avatar;
   static const fromJsonFactory = _$UserResponseDtoFromJson;
 
   @override
@@ -135,7 +151,11 @@ class UserResponseDto {
             (identical(other.isDark, isDark) ||
                 const DeepCollectionEquality().equals(other.isDark, isDark)) &&
             (identical(other.isLock, isLock) ||
-                const DeepCollectionEquality().equals(other.isLock, isLock)));
+                const DeepCollectionEquality().equals(other.isLock, isLock)) &&
+            (identical(other.name, name) ||
+                const DeepCollectionEquality().equals(other.name, name)) &&
+            (identical(other.avatar, avatar) ||
+                const DeepCollectionEquality().equals(other.avatar, avatar)));
   }
 
   @override
@@ -148,6 +168,8 @@ class UserResponseDto {
       const DeepCollectionEquality().hash(language) ^
       const DeepCollectionEquality().hash(isDark) ^
       const DeepCollectionEquality().hash(isLock) ^
+      const DeepCollectionEquality().hash(name) ^
+      const DeepCollectionEquality().hash(avatar) ^
       runtimeType.hashCode;
 }
 
@@ -158,6 +180,8 @@ extension $UserResponseDtoExtension on UserResponseDto {
     String? language,
     bool? isDark,
     bool? isLock,
+    String? name,
+    String? avatar,
   }) {
     return UserResponseDto(
       id: id ?? this.id,
@@ -165,6 +189,8 @@ extension $UserResponseDtoExtension on UserResponseDto {
       language: language ?? this.language,
       isDark: isDark ?? this.isDark,
       isLock: isLock ?? this.isLock,
+      name: name ?? this.name,
+      avatar: avatar ?? this.avatar,
     );
   }
 
@@ -174,6 +200,8 @@ extension $UserResponseDtoExtension on UserResponseDto {
     Wrapped<String>? language,
     Wrapped<bool>? isDark,
     Wrapped<bool>? isLock,
+    Wrapped<String?>? name,
+    Wrapped<String?>? avatar,
   }) {
     return UserResponseDto(
       id: (id != null ? id.value : this.id),
@@ -181,6 +209,8 @@ extension $UserResponseDtoExtension on UserResponseDto {
       language: (language != null ? language.value : this.language),
       isDark: (isDark != null ? isDark.value : this.isDark),
       isLock: (isLock != null ? isLock.value : this.isLock),
+      name: (name != null ? name.value : this.name),
+      avatar: (avatar != null ? avatar.value : this.avatar),
     );
   }
 }
@@ -629,6 +659,85 @@ extension $UpdateSettingsDtoExtension on UpdateSettingsDto {
       language: (language != null ? language.value : this.language),
       isDark: (isDark != null ? isDark.value : this.isDark),
       isLock: (isLock != null ? isLock.value : this.isLock),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class UpdateProfileDto {
+  const UpdateProfileDto({this.name, this.avatar, this.email, this.password});
+
+  factory UpdateProfileDto.fromJson(Map<String, dynamic> json) =>
+      _$UpdateProfileDtoFromJson(json);
+
+  static const toJsonFactory = _$UpdateProfileDtoToJson;
+  Map<String, dynamic> toJson() => _$UpdateProfileDtoToJson(this);
+
+  @JsonKey(name: 'name')
+  final String? name;
+  @JsonKey(name: 'avatar')
+  final String? avatar;
+  @JsonKey(name: 'email')
+  final String? email;
+  @JsonKey(name: 'password')
+  final String? password;
+  static const fromJsonFactory = _$UpdateProfileDtoFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is UpdateProfileDto &&
+            (identical(other.name, name) ||
+                const DeepCollectionEquality().equals(other.name, name)) &&
+            (identical(other.avatar, avatar) ||
+                const DeepCollectionEquality().equals(other.avatar, avatar)) &&
+            (identical(other.email, email) ||
+                const DeepCollectionEquality().equals(other.email, email)) &&
+            (identical(other.password, password) ||
+                const DeepCollectionEquality().equals(
+                  other.password,
+                  password,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(name) ^
+      const DeepCollectionEquality().hash(avatar) ^
+      const DeepCollectionEquality().hash(email) ^
+      const DeepCollectionEquality().hash(password) ^
+      runtimeType.hashCode;
+}
+
+extension $UpdateProfileDtoExtension on UpdateProfileDto {
+  UpdateProfileDto copyWith({
+    String? name,
+    String? avatar,
+    String? email,
+    String? password,
+  }) {
+    return UpdateProfileDto(
+      name: name ?? this.name,
+      avatar: avatar ?? this.avatar,
+      email: email ?? this.email,
+      password: password ?? this.password,
+    );
+  }
+
+  UpdateProfileDto copyWithWrapped({
+    Wrapped<String?>? name,
+    Wrapped<String?>? avatar,
+    Wrapped<String?>? email,
+    Wrapped<String?>? password,
+  }) {
+    return UpdateProfileDto(
+      name: (name != null ? name.value : this.name),
+      avatar: (avatar != null ? avatar.value : this.avatar),
+      email: (email != null ? email.value : this.email),
+      password: (password != null ? password.value : this.password),
     );
   }
 }
@@ -1722,6 +1831,51 @@ extension $CreateScheduleDtoExtension on CreateScheduleDto {
       name: (name != null ? name.value : this.name),
       isIncome: (isIncome != null ? isIncome.value : this.isIncome),
       option: (option != null ? option.value : this.option),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class ApiUsersMeAvatarPatch$RequestBody {
+  const ApiUsersMeAvatarPatch$RequestBody({this.file});
+
+  factory ApiUsersMeAvatarPatch$RequestBody.fromJson(
+    Map<String, dynamic> json,
+  ) => _$ApiUsersMeAvatarPatch$RequestBodyFromJson(json);
+
+  static const toJsonFactory = _$ApiUsersMeAvatarPatch$RequestBodyToJson;
+  Map<String, dynamic> toJson() =>
+      _$ApiUsersMeAvatarPatch$RequestBodyToJson(this);
+
+  @JsonKey(name: 'file')
+  final String? file;
+  static const fromJsonFactory = _$ApiUsersMeAvatarPatch$RequestBodyFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is ApiUsersMeAvatarPatch$RequestBody &&
+            (identical(other.file, file) ||
+                const DeepCollectionEquality().equals(other.file, file)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(file) ^ runtimeType.hashCode;
+}
+
+extension $ApiUsersMeAvatarPatch$RequestBodyExtension
+    on ApiUsersMeAvatarPatch$RequestBody {
+  ApiUsersMeAvatarPatch$RequestBody copyWith({String? file}) {
+    return ApiUsersMeAvatarPatch$RequestBody(file: file ?? this.file);
+  }
+
+  ApiUsersMeAvatarPatch$RequestBody copyWithWrapped({Wrapped<String?>? file}) {
+    return ApiUsersMeAvatarPatch$RequestBody(
+      file: (file != null ? file.value : this.file),
     );
   }
 }

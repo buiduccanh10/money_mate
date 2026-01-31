@@ -181,13 +181,12 @@ class _MainState extends State<Main> with WidgetsBindingObserver {
     }
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final width = MediaQuery.of(context).size.width;
 
     return Scaffold(
       body: pages[index],
       extendBody: extendBody,
       bottomNavigationBar: SafeArea(
-        minimum: EdgeInsets.all(width / 20),
+        minimum: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
@@ -203,53 +202,81 @@ class _MainState extends State<Main> with WidgetsBindingObserver {
             ],
             color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
           ),
-          child: GNav(
-            selectedIndex: index,
-            onTabChange: (i) {
-              setState(() {
-                index = i;
-                extendBody = i != 1;
-              });
-            },
-            duration: const Duration(milliseconds: 200),
-            tabBackgroundGradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: isDark
-                  ? [const Color(0xFF4364F7), const Color(0xFF6FB1FC)]
-                  : [const Color(0xFF4364F7), const Color(0xFF6FB1FC)],
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            child: GNav(
+              selectedIndex: index,
+              onTabChange: (i) {
+                setState(() {
+                  index = i;
+                  extendBody = i != 1;
+                });
+              },
+              duration: const Duration(milliseconds: 200),
+              tabBackgroundGradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: isDark
+                    ? [const Color(0xFF4364F7), const Color(0xFF6FB1FC)]
+                    : [const Color(0xFF4364F7), const Color(0xFF6FB1FC)],
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              gap: 8, // Fixed gap instead of relative to width
+              activeColor: Colors.white,
+              tabBorderRadius: 15,
+              tabs: [
+                GButton(
+                  icon: Icons.home,
+                  text: AppLocalizations.of(context)!.home,
+                  iconSize: 24,
+                  textStyle: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+                GButton(
+                  icon: Icons.mode_edit_outline_rounded,
+                  text: AppLocalizations.of(context)!.input,
+                  iconSize: 24,
+                  textStyle: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+                GButton(
+                  icon: Icons.search_outlined,
+                  text: AppLocalizations.of(context)!.search,
+                  iconSize: 24,
+                  textStyle: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+                GButton(
+                  icon: Icons.pie_chart,
+                  text: AppLocalizations.of(context)!.chart,
+                  iconSize: 24,
+                  textStyle: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+                GButton(
+                  icon: Icons.settings,
+                  text: AppLocalizations.of(context)!.setting,
+                  iconSize: 24,
+                  textStyle: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
             ),
-            padding: const EdgeInsets.all(18),
-            gap: width * 0.01,
-            activeColor: Colors.white,
-            tabBorderRadius: 20,
-            tabs: [
-              GButton(
-                icon: Icons.home,
-                text: AppLocalizations.of(context)!.home,
-                iconSize: index == 0 ? 18 : 24,
-              ),
-              GButton(
-                icon: Icons.mode_edit_outline_rounded,
-                text: AppLocalizations.of(context)!.input,
-                iconSize: index == 1 ? 18 : 24,
-              ),
-              GButton(
-                icon: Icons.search_outlined,
-                text: AppLocalizations.of(context)!.search,
-                iconSize: index == 2 ? 18 : 24,
-              ),
-              GButton(
-                icon: Icons.pie_chart,
-                text: AppLocalizations.of(context)!.chart,
-                iconSize: index == 3 ? 18 : 24,
-              ),
-              GButton(
-                icon: Icons.settings,
-                text: AppLocalizations.of(context)!.setting,
-                iconSize: index == 4 ? 18 : 24,
-              ),
-            ],
           ),
         ),
       ),

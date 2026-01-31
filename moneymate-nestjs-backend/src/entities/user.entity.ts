@@ -30,6 +30,12 @@ export class User {
   @Column({ default: false })
   isLock: boolean;
 
+  @Column({ nullable: true })
+  name: string;
+
+  @Column({ nullable: true })
+  avatar: string;
+
   @CreateDateColumn()
   createdAt: Date;
 

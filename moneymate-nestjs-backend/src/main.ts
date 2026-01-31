@@ -10,11 +10,13 @@ import {
 } from '@nestjs/platform-fastify';
 import path from 'path';
 import fastifyStatic from '@fastify/static';
+import multipart from '@fastify/multipart';
 
 async function bootstrap() {
   const fastifyAdapter = new FastifyAdapter({
     requestTimeout: 30000,
     connectionTimeout: 10000,
+    bodyLimit: 50 * 1024 * 1024,
   });
 
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -22,6 +24,12 @@ async function bootstrap() {
     fastifyAdapter,
     { logger: ['error', 'warn', 'log', 'debug', 'verbose'], bufferLogs: true },
   );
+
+  await app.register(multipart, {
+    limits: {
+      fileSize: 10 * 1024 * 1024, // 10MB
+    },
+  });
 
   // Global prefix
   app.setGlobalPrefix('api');

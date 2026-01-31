@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:money_mate/data/repository/settings_repository.dart';
@@ -59,8 +60,9 @@ class SettingCubit extends Cubit<SettingState> {
       final profile = await _userRepo.getUserProfile();
       emit(
         state.copyWith(
-          userName: profile.email,
-          // image: profile.image,
+          userName: profile.name ?? profile.email,
+          email: profile.email,
+          image: profile.avatar,
         ),
       );
     } catch (e) {
@@ -101,6 +103,41 @@ class SettingCubit extends Cubit<SettingState> {
 
   void updateLanguageLocale(String lang) {
     emit(state.copyWith(language: lang));
+  }
+
+  Future<void> updateUserProfile({
+    String? name,
+    String? email,
+    String? password,
+    File? imageFile,
+    String? avatar, // For direct URL updates if any
+  }) async {
+    try {
+      var currentUser = await _userRepo.getUserProfile();
+
+      if (imageFile != null) {
+        currentUser = await _userRepo.updateAvatar(imageFile);
+      }
+
+      if (name != null || email != null || password != null || avatar != null) {
+        currentUser = await _userRepo.updateProfile(
+          name: name,
+          email: email,
+          password: password,
+        );
+      }
+
+      emit(
+        state.copyWith(
+          userName: currentUser.name ?? currentUser.email,
+          email: currentUser.email,
+          image: currentUser.avatar,
+        ),
+      );
+    } catch (e) {
+      emit(state.copyWith(errorMessage: e.toString()));
+      rethrow;
+    }
   }
 
   Future<void> deleteAllData() async {

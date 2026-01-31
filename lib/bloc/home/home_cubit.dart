@@ -35,7 +35,9 @@ class HomeCubit extends Cubit<HomeState> {
   Future<void> fetchUserName() async {
     try {
       final profile = await _userRepo.getUserProfile();
-      emit(state.copyWith(userName: profile.email));
+      emit(
+        state.copyWith(userName: profile.name, userEmail: profile.email),
+      );
     } catch (e) {
       // Handle error
     }

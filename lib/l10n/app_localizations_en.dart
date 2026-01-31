@@ -405,4 +405,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get restoreAllLimitFail => 'Restore all limit fail';
+
+  @override
+  String get updateAvatar => 'Update Avatar';
+
+  @override
+  String get tapToUpload => 'Tap on the image to upload a new avatar';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get name => 'Name';
+
+  @override
+  String get newPassword => 'New Password (Optional)';
+
+  @override
+  String get avatarUpdated => 'Avatar updated successfully';
+
+  @override
+  String get avatarUpdateFail => 'Failed to update avatar';
+
+  @override
+  String get profileUpdated => 'Profile updated successfully';
 }

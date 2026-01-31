@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:money_mate/data/network/api_client.dart';
 import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger.dart';
 
@@ -5,6 +6,12 @@ abstract class UserRepository {
   Future<UserResponseDto> getUserProfile();
   Future<UserSettingsResponseDto> updateLanguage(String language);
   Future<UserSettingsResponseDto> updateDarkMode(bool isDark);
+  Future<UserResponseDto> updateAvatar(File imageFile);
+  Future<UserResponseDto> updateProfile({
+    String? name,
+    String? email,
+    String? password,
+  });
   Future<void> deleteAccount();
 }
 
@@ -42,6 +49,36 @@ class UserRepositoryImpl implements UserRepository {
       return response.body!;
     } else {
       throw Exception(response.error ?? 'Failed to update dark mode');
+    }
+  }
+
+  @override
+  Future<UserResponseDto> updateAvatar(File imageFile) async {
+    final response = await _api.apiUsersMeAvatarPatch(
+      file: await imageFile.readAsBytes(),
+    );
+
+    if (response.isSuccessful && response.body != null) {
+      return response.body!;
+    } else {
+      throw Exception(response.error ?? 'Failed to update avatar');
+    }
+  }
+
+  @override
+  Future<UserResponseDto> updateProfile({
+    String? name,
+    String? email,
+    String? password,
+  }) async {
+    final response = await _api.apiUsersMeProfilePatch(
+      body: UpdateProfileDto(name: name, email: email, password: password),
+    );
+
+    if (response.isSuccessful && response.body != null) {
+      return response.body!;
+    } else {
+      throw Exception(response.error ?? 'Failed to update profile');
     }
   }
 

@@ -130,5 +130,13 @@
   "restorelimitSuccess": "Restore limit success",
   "restorelimitFail": "Restore limit fail",
   "restoreAllLimitSuccess": "Restore all limit success",
-  "restoreAllLimitFail": "Restore all limit fail"
+  "restoreAllLimitFail": "Restore all limit fail",
+  "updateAvatar": "Update Avatar",
+  "tapToUpload": "Tap on the image to upload a new avatar",
+  "save": "Save",
+  "name": "Name",
+  "newPassword": "New Password (Optional)",
+  "avatarUpdated": "Avatar updated successfully",
+  "avatarUpdateFail": "Failed to update avatar",
+  "profileUpdated": "Profile updated successfully"
 }

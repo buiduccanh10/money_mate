@@ -885,6 +885,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Restore all limit fail'**
   String get restoreAllLimitFail;
+
+  /// No description provided for @updateAvatar.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Avatar'**
+  String get updateAvatar;
+
+  /// No description provided for @tapToUpload.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap on the image to upload a new avatar'**
+  String get tapToUpload;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @name.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get name;
+
+  /// No description provided for @newPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'New Password (Optional)'**
+  String get newPassword;
+
+  /// No description provided for @avatarUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Avatar updated successfully'**
+  String get avatarUpdated;
+
+  /// No description provided for @avatarUpdateFail.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update avatar'**
+  String get avatarUpdateFail;
+
+  /// No description provided for @profileUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile updated successfully'**
+  String get profileUpdated;
 }
 
 class _AppLocalizationsDelegate

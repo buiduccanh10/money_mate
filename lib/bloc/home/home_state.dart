@@ -15,6 +15,7 @@ class HomeState extends Equatable {
   final double totalExpense;
   final double totalSaving;
   final String? userName;
+  final String? userEmail;
   final String? errorMessage;
 
   const HomeState({
@@ -29,6 +30,7 @@ class HomeState extends Equatable {
     this.totalExpense = 0,
     this.totalSaving = 0,
     this.userName,
+    this.userEmail,
     this.errorMessage,
   });
 
@@ -44,6 +46,7 @@ class HomeState extends Equatable {
     double? totalExpense,
     double? totalSaving,
     String? userName,
+    String? userEmail,
     String? errorMessage,
   }) {
     return HomeState(
@@ -58,6 +61,7 @@ class HomeState extends Equatable {
       totalExpense: totalExpense ?? this.totalExpense,
       totalSaving: totalSaving ?? this.totalSaving,
       userName: userName ?? this.userName,
+      userEmail: userEmail ?? this.userEmail,
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }
@@ -75,6 +79,7 @@ class HomeState extends Equatable {
         totalExpense,
         totalSaving,
         userName,
+        userEmail,
         errorMessage,
       ];
 }

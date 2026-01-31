@@ -15,6 +15,16 @@ export class UserResponseDto {
 
   @ApiProperty({ example: false })
   isLock: boolean;
+
+  @ApiProperty({ example: 'John Doe', required: false, nullable: true })
+  name?: string;
+
+  @ApiProperty({
+    example: 'https://example.com/avatar.png',
+    required: false,
+    nullable: true,
+  })
+  avatar?: string;
 }
 
 export class UserSettingsResponseDto {

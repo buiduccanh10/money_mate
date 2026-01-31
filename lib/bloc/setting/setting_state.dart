@@ -8,6 +8,7 @@ class SettingState extends Equatable {
   final bool isLock;
   final String language;
   final String? userName;
+  final String? email;
   final String? image;
   final String? errorMessage;
 
@@ -17,6 +18,7 @@ class SettingState extends Equatable {
     this.isLock = false,
     this.language = 'en',
     this.userName,
+    this.email,
     this.image,
     this.errorMessage,
   });
@@ -27,6 +29,7 @@ class SettingState extends Equatable {
     bool? isLock,
     String? language,
     String? userName,
+    String? email,
     String? image,
     String? errorMessage,
   }) {
@@ -36,12 +39,21 @@ class SettingState extends Equatable {
       isLock: isLock ?? this.isLock,
       language: language ?? this.language,
       userName: userName ?? this.userName,
+      email: email ?? this.email,
       image: image ?? this.image,
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }
 
   @override
-  List<Object?> get props =>
-      [status, isDark, isLock, language, userName, image, errorMessage];
+  List<Object?> get props => [
+    status,
+    isDark,
+    isLock,
+    language,
+    userName,
+    email,
+    image,
+    errorMessage,
+  ];
 }

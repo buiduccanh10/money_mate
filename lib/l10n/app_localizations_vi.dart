@@ -408,4 +408,28 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get restoreAllLimitFail => 'Khôi phục tất cả giới hạn thất bại';
+
+  @override
+  String get updateAvatar => 'Cập nhật ảnh đại diện';
+
+  @override
+  String get tapToUpload => 'Chạm vào ảnh để tải ảnh mới';
+
+  @override
+  String get save => 'Lưu';
+
+  @override
+  String get name => 'Tên';
+
+  @override
+  String get newPassword => 'Mật khẩu mới (Không bắt buộc)';
+
+  @override
+  String get avatarUpdated => 'Cập nhật ảnh đại diện thành công';
+
+  @override
+  String get avatarUpdateFail => 'Cập nhật ảnh đại diện thất bại';
+
+  @override
+  String get profileUpdated => 'Cập nhật hồ sơ thành công';
 }

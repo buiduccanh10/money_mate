@@ -400,4 +400,28 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get restoreAllLimitFail => '恢复所有限制失败';
+
+  @override
+  String get updateAvatar => '更新头像';
+
+  @override
+  String get tapToUpload => '点击图片以上传新头像';
+
+  @override
+  String get save => '保存';
+
+  @override
+  String get name => '姓名';
+
+  @override
+  String get newPassword => '新密码（可选）';
+
+  @override
+  String get avatarUpdated => '头像更新成功';
+
+  @override
+  String get avatarUpdateFail => '头像更新失败';
+
+  @override
+  String get profileUpdated => '资料更新成功';
 }

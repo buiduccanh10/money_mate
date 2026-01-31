@@ -100,7 +100,7 @@ class _HomeAppbarState extends State<HomeAppbar> {
                                   ),
                                 ),
                                 Text(
-                                  state.userName ?? "",
+                                  state.userName ?? state.userEmail ?? '',
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 24,

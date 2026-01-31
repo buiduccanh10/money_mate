@@ -28,6 +28,8 @@ UserResponseDto _$UserResponseDtoFromJson(Map<String, dynamic> json) =>
       language: json['language'] as String,
       isDark: json['isDark'] as bool,
       isLock: json['isLock'] as bool,
+      name: json['name'] as String?,
+      avatar: json['avatar'] as String?,
     );
 
 Map<String, dynamic> _$UserResponseDtoToJson(UserResponseDto instance) =>
@@ -37,6 +39,8 @@ Map<String, dynamic> _$UserResponseDtoToJson(UserResponseDto instance) =>
       'language': instance.language,
       'isDark': instance.isDark,
       'isLock': instance.isLock,
+      'name': instance.name,
+      'avatar': instance.avatar,
     };
 
 AuthResponseDto _$AuthResponseDtoFromJson(Map<String, dynamic> json) =>
@@ -117,6 +121,22 @@ Map<String, dynamic> _$UpdateSettingsDtoToJson(UpdateSettingsDto instance) =>
       'language': instance.language,
       'isDark': instance.isDark,
       'isLock': instance.isLock,
+    };
+
+UpdateProfileDto _$UpdateProfileDtoFromJson(Map<String, dynamic> json) =>
+    UpdateProfileDto(
+      name: json['name'] as String?,
+      avatar: json['avatar'] as String?,
+      email: json['email'] as String?,
+      password: json['password'] as String?,
+    );
+
+Map<String, dynamic> _$UpdateProfileDtoToJson(UpdateProfileDto instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'avatar': instance.avatar,
+      'email': instance.email,
+      'password': instance.password,
     };
 
 CategoryResponseDto _$CategoryResponseDtoFromJson(Map<String, dynamic> json) =>
@@ -344,3 +364,11 @@ Map<String, dynamic> _$CreateScheduleDtoToJson(CreateScheduleDto instance) =>
       'isIncome': instance.isIncome,
       'option': createScheduleDtoOptionToJson(instance.option),
     };
+
+ApiUsersMeAvatarPatch$RequestBody _$ApiUsersMeAvatarPatch$RequestBodyFromJson(
+  Map<String, dynamic> json,
+) => ApiUsersMeAvatarPatch$RequestBody(file: json['file'] as String?);
+
+Map<String, dynamic> _$ApiUsersMeAvatarPatch$RequestBodyToJson(
+  ApiUsersMeAvatarPatch$RequestBody instance,
+) => <String, dynamic>{'file': instance.file};

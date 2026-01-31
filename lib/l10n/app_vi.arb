@@ -130,5 +130,13 @@
   "restorelimitSuccess": "Khôi phục giới hạn thành công",
   "restorelimitFail": "Khôi phục giới hạn thất bại",
   "restoreAllLimitSuccess": "Khôi phục tất cả giới hạn thành công",
-  "restoreAllLimitFail": "Khôi phục tất cả giới hạn thất bại"
+  "restoreAllLimitFail": "Khôi phục tất cả giới hạn thất bại",
+  "updateAvatar": "Cập nhật ảnh đại diện",
+  "tapToUpload": "Chạm vào ảnh để tải ảnh mới",
+  "save": "Lưu",
+  "name": "Tên",
+  "newPassword": "Mật khẩu mới (Không bắt buộc)",
+  "avatarUpdated": "Cập nhật ảnh đại diện thành công",
+  "avatarUpdateFail": "Cập nhật ảnh đại diện thất bại",
+  "profileUpdated": "Cập nhật hồ sơ thành công"
 }

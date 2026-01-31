@@ -4,6 +4,7 @@ import 'package:money_mate/l10n/app_localizations.dart';
 import 'package:money_mate/bloc/setting/setting_cubit.dart';
 import 'package:money_mate/bloc/setting/setting_state.dart';
 import 'package:money_mate/widget/setting/setting_content.dart';
+import 'package:money_mate/widget/setting/update_profile_sheet.dart';
 
 class Setting extends StatelessWidget {
   const Setting({super.key});
@@ -46,23 +47,66 @@ class Setting extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            CircleAvatar(
-                              radius: 40,
-                              backgroundImage: state.image == null
-                                  ? const AssetImage('assets/avt.png')
-                                        as ImageProvider
-                                  : NetworkImage(state.image!),
+                            GestureDetector(
+                              onTap: () => UpdateAvatarSheet.show(context),
+                              child: Stack(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 40,
+                                    backgroundImage: state.image == null
+                                        ? const AssetImage('assets/avt.png')
+                                              as ImageProvider
+                                        : NetworkImage(state.image!),
+                                  ),
+                                  Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(4),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: Colors.grey.withValues(
+                                            alpha: 0.5,
+                                          ),
+                                          width: 1,
+                                        ),
+                                      ),
+                                      child: const Icon(
+                                        Icons.camera_alt,
+                                        size: 16,
+                                        color: Color(0xFF4364F7),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                             const SizedBox(width: 20),
                             Expanded(
-                              child: Text(
-                                state.userName ?? 'User',
-                                style: const TextStyle(
-                                  fontSize: 22,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                overflow: TextOverflow.ellipsis,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    state.userName ?? 'User',
+                                    style: const TextStyle(
+                                      fontSize: 22,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  Text(
+                                    state.email ?? 'User',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
                               ),
                             ),
                           ],
@@ -84,7 +128,9 @@ class Setting extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: GestureDetector(
-        onTap: () {},
+        onTap: () {
+          UpdateProfileInfoSheet.show(context);
+        },
         child: Container(
           decoration: BoxDecoration(
             color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
