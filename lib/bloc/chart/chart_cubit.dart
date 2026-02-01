@@ -142,4 +142,16 @@ class ChartCubit extends Cubit<ChartState> {
       );
     }
   }
+
+  Future<void> deleteTransaction(String id) async {
+    try {
+      await _transactionRepo.deleteTransaction(id);
+      await refreshDetail();
+      await fetchData();
+    } catch (e) {
+      emit(
+        state.copyWith(status: ChartStatus.failure, errorMessage: e.toString()),
+      );
+    }
+  }
 }

@@ -9,6 +9,7 @@ import 'package:money_mate/bloc/schedule/schedule_state.dart';
 import 'package:money_mate/widget/setting/advance_setting/fixed_in_ex/start_setup.dart';
 import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:money_mate/widget/common/item_action_menu.dart';
 
 class SetupInExRegular extends StatefulWidget {
   const SetupInExRegular({super.key});
@@ -143,70 +144,86 @@ class _SetupInExRegularState extends State<SetupInExRegular> {
           ),
         ],
       ),
-      clipBehavior: Clip.hardEdge,
-      child: Slidable(
-        endActionPane: ActionPane(
-          motion: const ScrollMotion(),
-          children: [
-            SlidableAction(
-              onPressed: (_) {
-                context.read<ScheduleCubit>().deleteSchedule(
-                  schedule.id.toString(),
-                );
-              },
-              backgroundColor: Colors.red.withValues(alpha: 0.1),
-              foregroundColor: Colors.red,
-              icon: Icons.delete,
-              label: AppLocalizations.of(context)!.slideDelete,
-            ),
-          ],
-        ),
-        child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 8,
-          ),
-          leading: Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.primaries[Random().nextInt(Colors.primaries.length)]
-                  .withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Text(schedule.icon, style: const TextStyle(fontSize: 24)),
-          ),
-          title: Text(
-            '${schedule.description} (${schedule.option.name})',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-              color: isDark ? Colors.white : Colors.black87,
-            ),
-          ),
-          subtitle: Text(
-            schedule.date,
-            style: TextStyle(
-              color: isDark ? Colors.grey[400] : Colors.grey[600],
-              fontSize: 13,
-            ),
-          ),
-          trailing: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.end,
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(20),
+        clipBehavior: Clip.antiAlias,
+        child: Slidable(
+          endActionPane: ActionPane(
+            motion: const ScrollMotion(),
             children: [
-              Text(
-                '${schedule.isIncome ? '+' : '-'} $formatMoney',
-                style: TextStyle(
-                  color: schedule.isIncome ? Colors.green : Colors.red,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                ),
-              ),
-              Text(
-                schedule.name,
-                style: const TextStyle(color: Colors.grey, fontSize: 12),
+              SlidableAction(
+                onPressed: (_) {
+                  context.read<ScheduleCubit>().deleteSchedule(
+                    schedule.id.toString(),
+                  );
+                },
+                backgroundColor: Colors.red.withValues(alpha: 0.1),
+                foregroundColor: Colors.red,
+                icon: Icons.delete,
+                label: AppLocalizations.of(context)!.slideDelete,
               ),
             ],
+          ),
+          child: ListTile(
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 8,
+            ),
+            onLongPress: () {
+              ItemActionMenu.show(
+                context,
+                onEdit: () {},
+                onDelete: () {
+                  context.read<ScheduleCubit>().deleteSchedule(
+                    schedule.id.toString(),
+                  );
+                },
+              );
+            },
+            leading: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors
+                    .primaries[Random().nextInt(Colors.primaries.length)]
+                    .withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Text(schedule.icon, style: const TextStyle(fontSize: 24)),
+            ),
+            title: Text(
+              '${schedule.description} (${schedule.option.name})',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: isDark ? Colors.white : Colors.black87,
+              ),
+            ),
+            subtitle: Text(
+              schedule.date,
+              style: TextStyle(
+                color: isDark ? Colors.grey[400] : Colors.grey[600],
+                fontSize: 13,
+              ),
+            ),
+            trailing: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  '${schedule.isIncome ? '+' : '-'} $formatMoney',
+                  style: TextStyle(
+                    color: schedule.isIncome ? Colors.green : Colors.red,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
+                ),
+                Text(
+                  schedule.name,
+                  style: const TextStyle(color: Colors.grey, fontSize: 12),
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -10,6 +10,7 @@ import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger
 import 'package:shimmer/shimmer.dart';
 import 'package:money_mate/utils/date_format_utils.dart';
 import 'package:money_mate/widget/common/confirm_delete_dialog.dart';
+import 'package:money_mate/widget/common/item_action_menu.dart';
 
 class HomeListItem extends StatefulWidget {
   const HomeListItem({super.key});
@@ -160,6 +161,34 @@ class _HomeListItemState extends State<HomeListItem> {
                             builder: (BuildContext context) =>
                                 UpdateInput(inputItem: transaction),
                           ),
+                        );
+                      },
+                      onLongPress: () {
+                        ItemActionMenu.show(
+                          context,
+                          onEdit: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    UpdateInput(inputItem: transaction),
+                              ),
+                            );
+                          },
+                          onDelete: () {
+                            ConfirmDeleteDialog.show(
+                              context,
+                              title: AppLocalizations.of(context)!.slideDelete,
+                              content: AppLocalizations.of(
+                                context,
+                              )!.deleteTransactionConfirm,
+                              onConfirm: () {
+                                context.read<HomeCubit>().deleteTransaction(
+                                  transaction.id,
+                                );
+                              },
+                            );
+                          },
                         );
                       },
                     ),

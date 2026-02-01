@@ -10,6 +10,8 @@ import 'package:money_mate/widget/input/update_input.dart';
 import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:money_mate/widget/common/transaction_item_tile.dart';
+import 'package:money_mate/widget/common/confirm_delete_dialog.dart';
+import 'package:money_mate/widget/common/item_action_menu.dart';
 
 class ChartItemDetail extends StatefulWidget {
   final String? catId;
@@ -261,33 +263,76 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
     bool isDark,
     TransactionResponseDto tx,
   ) {
-    return Slidable(
-      key: ValueKey(tx.id),
-      endActionPane: ActionPane(
-        motion: const ScrollMotion(),
-        children: [
-          SlidableAction(
-            onPressed: (_) => _editTx(tx),
-            icon: Icons.edit,
-            label: 'Edit',
-            backgroundColor: Colors.transparent,
-            foregroundColor: Colors.blue,
-          ),
-          SlidableAction(
-            onPressed: (_) {
-              // Handle delete if needed
-            },
-            icon: Icons.delete,
-            label: 'Delete',
-            backgroundColor: Colors.transparent,
-            foregroundColor: Colors.red,
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
-      child: TransactionItemTile(
-        transaction: tx,
-        isDark: isDark,
-        onTap: () => _editTx(tx),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(20),
+        clipBehavior: Clip.antiAlias,
+        child: Slidable(
+          key: ValueKey(tx.id),
+          endActionPane: ActionPane(
+            motion: const ScrollMotion(),
+            children: [
+              SlidableAction(
+                onPressed: (_) => _editTx(tx),
+                icon: Icons.edit,
+                label: 'Edit',
+                backgroundColor: Colors.transparent,
+                foregroundColor: Colors.blue,
+              ),
+              SlidableAction(
+                onPressed: (_) {
+                  ConfirmDeleteDialog.show(
+                    context,
+                    title: AppLocalizations.of(context)!.slideDelete,
+                    content: AppLocalizations.of(
+                      context,
+                    )!.deleteTransactionConfirm,
+                    onConfirm: () =>
+                        context.read<ChartCubit>().deleteTransaction(tx.id),
+                  );
+                },
+                icon: Icons.delete,
+                label: 'Delete',
+                backgroundColor: Colors.transparent,
+                foregroundColor: Colors.red,
+              ),
+            ],
+          ),
+          child: TransactionItemTile(
+            transaction: tx,
+            isDark: isDark,
+            onTap: () => _editTx(tx),
+            onLongPress: () {
+              ItemActionMenu.show(
+                context,
+                onEdit: () => _editTx(tx),
+                onDelete: () {
+                  ConfirmDeleteDialog.show(
+                    context,
+                    title: AppLocalizations.of(context)!.slideDelete,
+                    content: AppLocalizations.of(
+                      context,
+                    )!.deleteTransactionConfirm,
+                    onConfirm: () =>
+                        context.read<ChartCubit>().deleteTransaction(tx.id),
+                  );
+                },
+              );
+            },
+          ),
+        ),
       ),
     );
   }

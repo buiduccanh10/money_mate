@@ -120,59 +120,64 @@ class _SetupInExLimitState extends State<SetupInExLimit> {
           ),
         ],
       ),
-      clipBehavior: Clip.hardEdge,
-      child: Slidable(
-        endActionPane: ActionPane(
-          motion: const ScrollMotion(),
-          children: [
-            SlidableAction(
-              onPressed: (_) => _showLimitDialog(cat),
-              backgroundColor: Colors.blue.withValues(alpha: 0.1),
-              foregroundColor: Colors.blue,
-              icon: Icons.edit,
-              label: AppLocalizations.of(context)!.slideEdit,
-            ),
-            SlidableAction(
-              onPressed: (_) =>
-                  context.read<CategoryCubit>().restoreLimit(cat.id),
-              backgroundColor: Colors.red.withValues(alpha: 0.1),
-              foregroundColor: Colors.red,
-              icon: Icons.restore,
-              label: AppLocalizations.of(context)!.restoreLimit,
-            ),
-          ],
-        ),
-        child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 8,
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(20),
+        clipBehavior: Clip.antiAlias,
+        child: Slidable(
+          endActionPane: ActionPane(
+            motion: const ScrollMotion(),
+            children: [
+              SlidableAction(
+                onPressed: (_) => _showLimitDialog(cat),
+                backgroundColor: Colors.blue.withValues(alpha: 0.1),
+                foregroundColor: Colors.blue,
+                icon: Icons.edit,
+                label: AppLocalizations.of(context)!.slideEdit,
+              ),
+              SlidableAction(
+                onPressed: (_) =>
+                    context.read<CategoryCubit>().restoreLimit(cat.id),
+                backgroundColor: Colors.red.withValues(alpha: 0.1),
+                foregroundColor: Colors.red,
+                icon: Icons.restore,
+                label: AppLocalizations.of(context)!.restoreLimit,
+              ),
+            ],
           ),
-          onTap: () => _showLimitDialog(cat),
-          leading: Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.primaries[Random().nextInt(Colors.primaries.length)]
-                  .withValues(alpha: 0.1),
-              shape: BoxShape.circle,
+          child: ListTile(
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 8,
             ),
-            child: Text(cat.icon, style: const TextStyle(fontSize: 24)),
-          ),
-          title: Text(
-            cat.name,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-              color: isDark ? Colors.white : Colors.black87,
+            onTap: () => _showLimitDialog(cat),
+            leading: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors
+                    .primaries[Random().nextInt(Colors.primaries.length)]
+                    .withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Text(cat.icon, style: const TextStyle(fontSize: 24)),
             ),
-          ),
-          trailing: Text(
-            limit > 0 ? formatMoney : AppLocalizations.of(context)!.noLimit,
-            style: TextStyle(
-              color: limit > 0
-                  ? (isDark ? Colors.greenAccent : Colors.green)
-                  : Colors.grey,
-              fontWeight: FontWeight.bold,
-              fontSize: 15,
+            title: Text(
+              cat.name,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: isDark ? Colors.white : Colors.black87,
+              ),
+            ),
+            trailing: Text(
+              limit > 0 ? formatMoney : AppLocalizations.of(context)!.noLimit,
+              style: TextStyle(
+                color: limit > 0
+                    ? (isDark ? Colors.greenAccent : Colors.green)
+                    : Colors.grey,
+                fontWeight: FontWeight.bold,
+                fontSize: 15,
+              ),
             ),
           ),
         ),

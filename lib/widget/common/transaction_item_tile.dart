@@ -8,12 +8,14 @@ class TransactionItemTile extends StatelessWidget {
   final TransactionResponseDto transaction;
   final bool isDark;
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
 
   const TransactionItemTile({
     super.key,
     required this.transaction,
     required this.isDark,
     this.onTap,
+    this.onLongPress,
   });
 
   @override
@@ -24,6 +26,8 @@ class TransactionItemTile extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
+      onLongPress: onLongPress,
+      borderRadius: BorderRadius.circular(20),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         child: Row(
