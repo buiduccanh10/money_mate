@@ -436,4 +436,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get deleteAccountConfirm => '您确定要删除您的帐户吗？';
+
+  @override
+  String get selectTime => '选择时间';
 }

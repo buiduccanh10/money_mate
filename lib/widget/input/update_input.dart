@@ -178,6 +178,7 @@ class _UpdateInputState extends State<UpdateInput> {
     return ClipRRect(
       borderRadius: BorderRadius.circular(15),
       child: CupertinoCalendar(
+        timeLabel: AppLocalizations.of(context)!.selectTime,
         weekdayDecoration: CalendarWeekdayDecoration(
           textStyle: TextStyle(fontSize: 12),
         ),

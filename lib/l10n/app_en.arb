@@ -143,5 +143,6 @@
   "deleteTransactionConfirm": "Are you sure you want to delete this transaction?",
   "deleteCategoryConfirm": "Are you sure you want to delete this category?",
   "deleteDataConfirm": "Are you sure you want to delete all data?",
-  "deleteAccountConfirm": "Are you sure you want to delete your account?"
+  "deleteAccountConfirm": "Are you sure you want to delete your account?",
+  "selectTime": "Select time"
 }

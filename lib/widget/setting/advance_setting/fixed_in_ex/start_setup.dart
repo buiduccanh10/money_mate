@@ -190,6 +190,7 @@ class _StartSetupState extends State<StartSetup> {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(15),
         child: CupertinoCalendar(
+          timeLabel: AppLocalizations.of(context)!.selectTime,
           minimumDateTime: DateTime(1900),
           maximumDateTime: DateTime(2100),
           initialDateTime: selectedDateTime,

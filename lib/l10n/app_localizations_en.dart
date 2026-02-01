@@ -444,4 +444,7 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get deleteAccountConfirm =>
       'Are you sure you want to delete your account?';
+
+  @override
+  String get selectTime => 'Select time';
 }

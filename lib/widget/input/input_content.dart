@@ -110,6 +110,7 @@ class _InputContentState extends State<InputContent> {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(20),
                         child: CupertinoCalendar(
+                          timeLabel: AppLocalizations.of(context)!.selectTime,
                           weekdayDecoration: CalendarWeekdayDecoration(
                             textStyle: const TextStyle(fontSize: 12),
                           ),

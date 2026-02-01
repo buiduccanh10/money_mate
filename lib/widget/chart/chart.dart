@@ -148,28 +148,32 @@ class _ChartState extends State<Chart> {
     bool isSelected,
   ) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(
-          icon,
-          color: isSelected
-              ? Colors.white
-              : (isDark ? iconColor.withValues(alpha: 0.7) : iconColor),
-          size: 20,
-        ),
-        const SizedBox(width: 8),
-        Text(
-          label,
-          style: TextStyle(
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
             color: isSelected
                 ? Colors.white
-                : (isDark ? Colors.white70 : Colors.black),
-            fontWeight: FontWeight.w500,
-            fontSize: 16,
+                : (isDark ? iconColor.withValues(alpha: 0.7) : iconColor),
+            size: 20,
           ),
-        ),
-      ],
+          const SizedBox(width: 8),
+          Text(
+            label,
+            style: TextStyle(
+              color: isSelected
+                  ? Colors.white
+                  : (isDark ? Colors.white70 : Colors.black),
+              fontWeight: FontWeight.w500,
+              fontSize: 16,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ),
     );
   }
 }

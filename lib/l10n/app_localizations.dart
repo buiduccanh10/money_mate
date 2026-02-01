@@ -957,6 +957,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Are you sure you want to delete your account?'**
   String get deleteAccountConfirm;
+
+  /// No description provided for @selectTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Select time'**
+  String get selectTime;
 }
 
 class _AppLocalizationsDelegate

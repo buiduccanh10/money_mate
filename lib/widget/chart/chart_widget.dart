@@ -213,22 +213,28 @@ class _ChartWidgetState extends State<ChartWidget> {
           initialValue: state.isIncome ? 1 : 2,
           padding: 8,
           children: {
-            1: Text(
-              AppLocalizations.of(context)!.income,
-              style: TextStyle(
-                color: state.isIncome
-                    ? Colors.white
-                    : (isDark ? Colors.white54 : Colors.black54),
-                fontWeight: FontWeight.w600,
+            1: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                AppLocalizations.of(context)!.income,
+                style: TextStyle(
+                  color: state.isIncome
+                      ? Colors.white
+                      : (isDark ? Colors.white54 : Colors.black54),
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
-            2: Text(
-              AppLocalizations.of(context)!.expense,
-              style: TextStyle(
-                color: !state.isIncome
-                    ? Colors.white
-                    : (isDark ? Colors.white54 : Colors.black54),
-                fontWeight: FontWeight.w600,
+            2: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                AppLocalizations.of(context)!.expense,
+                style: TextStyle(
+                  color: !state.isIncome
+                      ? Colors.white
+                      : (isDark ? Colors.white54 : Colors.black54),
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           },

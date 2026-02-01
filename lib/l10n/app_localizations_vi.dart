@@ -448,4 +448,7 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get deleteAccountConfirm =>
       'Bạn có chắc chắn muốn xóa tài khoản của mình không?';
+
+  @override
+  String get selectTime => 'Chọn giờ';
 }
