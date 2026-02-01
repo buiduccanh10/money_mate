@@ -144,5 +144,11 @@
   "deleteCategoryConfirm": "Are you sure you want to delete this category?",
   "deleteDataConfirm": "Are you sure you want to delete all data?",
   "deleteAccountConfirm": "Are you sure you want to delete your account?",
-  "selectTime": "Select time"
+  "selectTime": "Select time",
+  "limitPeriod": "Period",
+  "limitExceededError": "Limit exceeded! You already spent {amount} in this period.",
+  "savedCheckHome": "Saved! Check home screen.",
+  "overLimitTitle": "Over limit!",
+  "error": "Error"
 }
+

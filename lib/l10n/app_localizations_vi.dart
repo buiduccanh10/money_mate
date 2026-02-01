@@ -451,4 +451,21 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get selectTime => 'Chọn giờ';
+
+  @override
+  String get limitPeriod => 'Giai đoạn';
+
+  @override
+  String limitExceededError(Object amount) {
+    return 'Vượt quá hạn mức! Bạn đã chi tiêu $amount trong giai đoạn này.';
+  }
+
+  @override
+  String get savedCheckHome => 'Đã lưu! Kiểm tra màn hình chính.';
+
+  @override
+  String get overLimitTitle => 'Vượt quá hạn mức!';
+
+  @override
+  String get error => 'Lỗi';
 }

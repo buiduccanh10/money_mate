@@ -2,26 +2,39 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:money_mate/data/repository/transaction_repository.dart';
 import 'package:money_mate/data/repository/user_repository.dart';
+import 'package:money_mate/data/repository/schedule_repository.dart';
+import 'package:money_mate/services/schedule_service.dart';
 import 'home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
   final TransactionRepository _transactionRepo;
   final UserRepository _userRepo;
+  final ScheduleRepository _scheduleRepo;
 
   HomeCubit({
     required TransactionRepository transactionRepo,
     required UserRepository userRepo,
+    required ScheduleRepository scheduleRepo,
   }) : _transactionRepo = transactionRepo,
        _userRepo = userRepo,
+       _scheduleRepo = scheduleRepo,
        super(
          HomeState(month: DateTime.now().month, year: DateTime.now().year),
        ) {
     init();
   }
 
-  void init() {
+  Future<void> init() async {
     final formattedDate = getMonthYearString(state.month, state.year);
     emit(state.copyWith(formattedDate: formattedDate));
+
+    // Run cron job for scheduled transactions
+    final scheduleService = ScheduleService(
+      transactionRepo: _transactionRepo,
+      scheduleRepo: _scheduleRepo,
+    );
+    await scheduleService.runCronJob();
+
     fetchData();
     fetchUserName();
   }
@@ -35,9 +48,7 @@ class HomeCubit extends Cubit<HomeState> {
   Future<void> fetchUserName() async {
     try {
       final profile = await _userRepo.getUserProfile();
-      emit(
-        state.copyWith(userName: profile.name, userEmail: profile.email),
-      );
+      emit(state.copyWith(userName: profile.name, userEmail: profile.email));
     } catch (e) {
       // Handle error
     }

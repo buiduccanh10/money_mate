@@ -69,11 +69,14 @@ class MyApp extends StatelessWidget {
             create: (context) => HomeCubit(
               transactionRepo: context.read<TransactionRepository>(),
               userRepo: context.read<UserRepository>(),
+              scheduleRepo: context.read<ScheduleRepository>(),
             ),
           ),
           BlocProvider(
-            create: (context) =>
-                CategoryCubit(categoryRepo: context.read<CategoryRepository>()),
+            create: (context) => CategoryCubit(
+              categoryRepo: context.read<CategoryRepository>(),
+              transactionRepo: context.read<TransactionRepository>(),
+            ),
           ),
           BlocProvider(
             create: (context) => InputCubit(

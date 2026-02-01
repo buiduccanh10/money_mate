@@ -447,4 +447,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get selectTime => 'Select time';
+
+  @override
+  String get limitPeriod => 'Period';
+
+  @override
+  String limitExceededError(Object amount) {
+    return 'Limit exceeded! You already spent $amount in this period.';
+  }
+
+  @override
+  String get savedCheckHome => 'Saved! Check home screen.';
+
+  @override
+  String get overLimitTitle => 'Over limit!';
+
+  @override
+  String get error => 'Error';
 }

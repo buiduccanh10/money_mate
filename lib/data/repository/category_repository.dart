@@ -8,6 +8,7 @@ abstract class CategoryRepository {
     String name,
     bool isIncome, [
     double? limit,
+    CreateCategoryDtoLimitType? limitType,
   ]);
   Future<CategoryResponseDto> updateCategory(
     String id,
@@ -15,11 +16,16 @@ abstract class CategoryRepository {
     String name,
     bool isIncome,
     double limit,
+    UpdateCategoryDtoLimitType? limitType,
   );
   Future<void> deleteCategory(String id);
   Future<void> deleteAllCategories(bool isIncome);
   Future<CategoryResponseDto> getCategory(String id);
-  Future<void> updateLimit(String catId, double limit);
+  Future<void> updateLimit(
+    String catId,
+    double limit,
+    UpdateLimitDtoLimitType? limitType,
+  );
   Future<void> restoreLimit(String catId);
   Future<void> restoreAllLimit();
 }
@@ -46,6 +52,7 @@ class CategoryRepositoryImpl implements CategoryRepository {
     String name,
     bool isIncome, [
     double? limit,
+    CreateCategoryDtoLimitType? limitType,
   ]) async {
     final response = await _api.apiCategoriesPost(
       body: CreateCategoryDto(
@@ -53,6 +60,7 @@ class CategoryRepositoryImpl implements CategoryRepository {
         name: name,
         isIncome: isIncome,
         limit: limit,
+        limitType: limitType,
       ),
     );
 
@@ -70,6 +78,7 @@ class CategoryRepositoryImpl implements CategoryRepository {
     String name,
     bool isIncome,
     double limit,
+    UpdateCategoryDtoLimitType? limitType,
   ) async {
     final response = await _api.apiCategoriesIdPut(
       id: id,
@@ -78,6 +87,7 @@ class CategoryRepositoryImpl implements CategoryRepository {
         name: name,
         isIncome: isIncome,
         limit: limit,
+        limitType: limitType,
       ),
     );
 
@@ -117,10 +127,14 @@ class CategoryRepositoryImpl implements CategoryRepository {
   }
 
   @override
-  Future<void> updateLimit(String catId, double limit) async {
+  Future<void> updateLimit(
+    String catId,
+    double limit,
+    UpdateLimitDtoLimitType? limitType,
+  ) async {
     final response = await _api.apiCategoriesIdLimitPatch(
       id: catId,
-      body: UpdateLimitDto(limit: limit),
+      body: UpdateLimitDto(limit: limit, limitType: limitType),
     );
     if (!response.isSuccessful) {
       throw Exception(response.error ?? 'Failed to update limit');
@@ -129,7 +143,7 @@ class CategoryRepositoryImpl implements CategoryRepository {
 
   @override
   Future<void> restoreLimit(String catId) async {
-    await updateLimit(catId, 0);
+    await updateLimit(catId, 0, UpdateLimitDtoLimitType.monthly);
   }
 
   @override

@@ -194,32 +194,6 @@ final class _$MoneyMateApi extends MoneyMateApi {
   }
 
   @override
-  Future<Response<UserResponseDto>> _apiUsersMeProfilePatch({
-    required UpdateProfileDto? body,
-    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
-      description: '',
-      summary: 'Update current user\'s profile info',
-      operationId: 'UsersController_updateProfile',
-      consumes: [],
-      produces: [],
-      security: ["bearer"],
-      tags: ["Users"],
-      deprecated: false,
-    ),
-  }) {
-    final Uri $url = Uri.parse('/api/users/me/profile');
-    final $body = body;
-    final Request $request = Request(
-      'PATCH',
-      $url,
-      client.baseUrl,
-      body: $body,
-      tag: swaggerMetaData,
-    );
-    return client.send<UserResponseDto, UserResponseDto>($request);
-  }
-
-  @override
   Future<Response<UserResponseDto>> _apiUsersMeAvatarPatch({
     List<int>? file,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
@@ -243,6 +217,32 @@ final class _$MoneyMateApi extends MoneyMateApi {
       client.baseUrl,
       parts: $parts,
       multipart: true,
+      tag: swaggerMetaData,
+    );
+    return client.send<UserResponseDto, UserResponseDto>($request);
+  }
+
+  @override
+  Future<Response<UserResponseDto>> _apiUsersMeProfilePatch({
+    required UpdateProfileDto? body,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: 'Update current user\'s profile info',
+      operationId: 'UsersController_updateProfile',
+      consumes: [],
+      produces: [],
+      security: ["bearer"],
+      tags: ["Users"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/users/me/profile');
+    final $body = body;
+    final Request $request = Request(
+      'PATCH',
+      $url,
+      client.baseUrl,
+      body: $body,
       tag: swaggerMetaData,
     );
     return client.send<UserResponseDto, UserResponseDto>($request);

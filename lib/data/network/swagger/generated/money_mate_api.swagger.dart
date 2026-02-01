@@ -242,35 +242,6 @@ abstract class MoneyMateApi extends ChopperService {
     ),
   });
 
-  ///Update current user's profile info
-  Future<chopper.Response<UserResponseDto>> apiUsersMeProfilePatch({
-    required UpdateProfileDto? body,
-  }) {
-    generatedMapping.putIfAbsent(
-      UserResponseDto,
-      () => UserResponseDto.fromJsonFactory,
-    );
-
-    return _apiUsersMeProfilePatch(body: body);
-  }
-
-  ///Update current user's profile info
-  @PATCH(path: '/api/users/me/profile', optionalBody: true)
-  Future<chopper.Response<UserResponseDto>> _apiUsersMeProfilePatch({
-    @Body() required UpdateProfileDto? body,
-    @chopper.Tag()
-    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
-      description: '',
-      summary: 'Update current user\'s profile info',
-      operationId: 'UsersController_updateProfile',
-      consumes: [],
-      produces: [],
-      security: ["bearer"],
-      tags: ["Users"],
-      deprecated: false,
-    ),
-  });
-
   ///Update current user's avatar
   Future<chopper.Response<UserResponseDto>> apiUsersMeAvatarPatch({
     List<int>? file,
@@ -293,6 +264,35 @@ abstract class MoneyMateApi extends ChopperService {
       description: '',
       summary: 'Update current user\'s avatar',
       operationId: 'UsersController_updateAvatar',
+      consumes: [],
+      produces: [],
+      security: ["bearer"],
+      tags: ["Users"],
+      deprecated: false,
+    ),
+  });
+
+  ///Update current user's profile info
+  Future<chopper.Response<UserResponseDto>> apiUsersMeProfilePatch({
+    required UpdateProfileDto? body,
+  }) {
+    generatedMapping.putIfAbsent(
+      UserResponseDto,
+      () => UserResponseDto.fromJsonFactory,
+    );
+
+    return _apiUsersMeProfilePatch(body: body);
+  }
+
+  ///Update current user's profile info
+  @PATCH(path: '/api/users/me/profile', optionalBody: true)
+  Future<chopper.Response<UserResponseDto>> _apiUsersMeProfilePatch({
+    @Body() required UpdateProfileDto? body,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: 'Update current user\'s profile info',
+      operationId: 'UsersController_updateProfile',
       consumes: [],
       produces: [],
       security: ["bearer"],

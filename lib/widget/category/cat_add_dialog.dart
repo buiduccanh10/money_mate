@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:money_mate/l10n/app_localizations.dart';
 import 'package:money_mate/bloc/category/category_cubit.dart';
+import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger.dart';
 
 class CatAddDialog extends StatefulWidget {
   final bool isIncome;
@@ -144,6 +145,7 @@ class _CatAddDialogState extends State<CatAddDialog> {
         _nameController.text,
         widget.isIncome,
         0,
+        CreateCategoryDtoLimitType.monthly,
       );
       Fluttertoast.showToast(
         msg: AppLocalizations.of(context)!.toastAddSuccess,

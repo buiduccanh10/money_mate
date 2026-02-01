@@ -9,6 +9,13 @@ import {
 import { User } from './user.entity';
 import { Transaction } from './transaction.entity';
 
+export enum LimitType {
+  DAILY = 'DAILY',
+  WEEKLY = 'WEEKLY',
+  MONTHLY = 'MONTHLY',
+  YEARLY = 'YEARLY',
+}
+
 @Entity('categories')
 export class Category {
   @PrimaryGeneratedColumn('uuid')
@@ -34,6 +41,13 @@ export class Category {
     },
   })
   limit: number;
+
+  @Column({
+    type: 'enum',
+    enum: LimitType,
+    default: LimitType.MONTHLY,
+  })
+  limitType: LimitType;
 
   @Column()
   userId: string;

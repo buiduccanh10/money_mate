@@ -74,6 +74,9 @@ export class CategoriesService {
   ) {
     const category = await this.findOne(id, userId);
     category.limit = updateLimitDto.limit;
+    if (updateLimitDto.limitType) {
+      category.limitType = updateLimitDto.limitType;
+    }
     return this.categoryRepository.save(category);
   }
 

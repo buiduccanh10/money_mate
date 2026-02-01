@@ -439,4 +439,21 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get selectTime => '选择时间';
+
+  @override
+  String get limitPeriod => '期限';
+
+  @override
+  String limitExceededError(Object amount) {
+    return '超过限额！您在此期间已支出 $amount。';
+  }
+
+  @override
+  String get savedCheckHome => '已保存！请查看主屏幕。';
+
+  @override
+  String get overLimitTitle => '超过限额！';
+
+  @override
+  String get error => '错误';
 }

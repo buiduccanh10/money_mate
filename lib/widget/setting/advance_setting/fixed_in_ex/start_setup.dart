@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:money_mate/services/currency_format.dart';
 import 'package:money_mate/l10n/app_localizations.dart';
@@ -26,12 +25,32 @@ class _StartSetupState extends State<StartSetup> {
   String? _selectedCatId;
   int _selectedOptionIndex = 0;
 
-  final List<String> _options = ['daily', 'weekly', 'monthly', 'yearly'];
+  final List<CreateScheduleDtoOption> _options = [
+    CreateScheduleDtoOption.daily,
+    CreateScheduleDtoOption.weekly,
+    CreateScheduleDtoOption.monthly,
+    CreateScheduleDtoOption.yearly,
+  ];
   late CurrencyTextInputFormatter _formatter;
   bool _isFormatterInitialized = false;
 
   bool _moneyError = false;
   bool _categoryError = false;
+
+  String _getOptionLabel(CreateScheduleDtoOption option) {
+    switch (option) {
+      case CreateScheduleDtoOption.daily:
+        return AppLocalizations.of(context)!.daily;
+      case CreateScheduleDtoOption.weekly:
+        return AppLocalizations.of(context)!.weekly;
+      case CreateScheduleDtoOption.monthly:
+        return AppLocalizations.of(context)!.monthly;
+      case CreateScheduleDtoOption.yearly:
+        return AppLocalizations.of(context)!.yearly;
+      default:
+        return '';
+    }
+  }
 
   @override
   void initState() {
@@ -410,7 +429,7 @@ class _StartSetupState extends State<StartSetup> {
             Row(
               children: [
                 Text(
-                  _options[_selectedOptionIndex],
+                  _getOptionLabel(_options[_selectedOptionIndex]),
                   style: const TextStyle(
                     fontSize: 16,
                     color: Colors.purple,
@@ -454,7 +473,7 @@ class _StartSetupState extends State<StartSetup> {
                 .map(
                   (o) => Center(
                     child: Text(
-                      o,
+                      _getOptionLabel(o),
                       style: TextStyle(
                         color: isDark ? Colors.white : Colors.black87,
                       ),
@@ -486,16 +505,14 @@ class _StartSetupState extends State<StartSetup> {
     final cat = allCats.firstWhere((c) => c.id == _selectedCatId);
 
     context.read<ScheduleCubit>().addSchedule(
-      date: DateFormat('dd/MM/yyyy').format(selectedDateTime),
+      date: selectedDateTime.toIso8601String(),
       description: _descriptionController.text,
       money: money,
       catId: _selectedCatId!,
       icon: cat.icon,
       name: cat.name,
       isIncome: cat.isIncome,
-      option: CreateScheduleDtoOption.values.firstWhere(
-        (e) => e.name.toLowerCase() == _options[_selectedOptionIndex],
-      ),
+      option: _options[_selectedOptionIndex],
     );
     Navigator.pop(context);
   }

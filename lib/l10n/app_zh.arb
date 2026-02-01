@@ -144,5 +144,10 @@
   "deleteCategoryConfirm": "您确定要删除此类别吗？",
   "deleteDataConfirm": "您确定要删除所有数据吗？",
   "deleteAccountConfirm": "您确定要删除您的帐户吗？",
-  "selectTime": "选择时间"
+  "selectTime": "选择时间",
+  "limitPeriod": "期限",
+  "limitExceededError": "超过限额！您在此期间已支出 {amount}。",
+  "savedCheckHome": "已保存！请查看主屏幕。",
+  "overLimitTitle": "超过限额！",
+  "error": "错误"
 }

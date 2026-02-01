@@ -144,5 +144,10 @@
   "deleteCategoryConfirm": "Bạn có chắc chắn muốn xóa danh mục này không?",
   "deleteDataConfirm": "Bạn có chắc chắn muốn xóa tất cả dữ liệu không?",
   "deleteAccountConfirm": "Bạn có chắc chắn muốn xóa tài khoản của mình không?",
-  "selectTime": "Chọn giờ"
+  "selectTime": "Chọn giờ",
+  "limitPeriod": "Giai đoạn",
+  "limitExceededError": "Vượt quá hạn mức! Bạn đã chi tiêu {amount} trong giai đoạn này.",
+  "savedCheckHome": "Đã lưu! Kiểm tra màn hình chính.",
+  "overLimitTitle": "Vượt quá hạn mức!",
+  "error": "Lỗi"
 }

@@ -963,6 +963,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select time'**
   String get selectTime;
+
+  /// No description provided for @limitPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Period'**
+  String get limitPeriod;
+
+  /// No description provided for @limitExceededError.
+  ///
+  /// In en, this message translates to:
+  /// **'Limit exceeded! You already spent {amount} in this period.'**
+  String limitExceededError(Object amount);
+
+  /// No description provided for @savedCheckHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved! Check home screen.'**
+  String get savedCheckHome;
+
+  /// No description provided for @overLimitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Over limit!'**
+  String get overLimitTitle;
+
+  /// No description provided for @error.
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get error;
 }
 
 class _AppLocalizationsDelegate

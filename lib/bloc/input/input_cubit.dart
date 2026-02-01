@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger.dart';
+import 'package:money_mate/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:money_mate/bloc/search/search_cubit.dart';
 import 'package:money_mate/data/repository/category_repository.dart';
@@ -66,7 +68,7 @@ class InputCubit extends Cubit<InputState> {
 
   String getMonthYearString(int month, int year) {
     final DateTime dateTime = DateTime(year, month);
-    final DateFormat formatter = DateFormat('MMMM yyyy');
+    final DateFormat formatter = DateFormat('MM/yyyy');
     return formatter.format(dateTime);
   }
 
@@ -86,27 +88,37 @@ class InputCubit extends Cubit<InputState> {
       // Limit Check
       final category = await _categoryRepo.getCategory(catId);
       double? limit = category.limit;
-      String formatDateString = getMonthYearString(date.month, date.year);
 
-      if (limit != null && limit > 0) {
-        final categoryTransactions = await _transactionRepo.getTransactions(
-          monthYear: formatDateString,
-          isIncome: false,
-          catId: catId,
-        );
-
-        double totalSpent = categoryTransactions
-            .map<double>((item) => (item.money))
-            .fold<double>(0, (prev, amount) => prev + amount);
+      if (limit != null && limit > 0 && !category.isIncome) {
+        double totalSpent = await _calculateTotalSpent(category, date);
 
         if (totalSpent + moneyFinal > limit) {
           var formatter = NumberFormat.simpleCurrency(locale: locale);
           String limitStr = formatter.format((totalSpent + moneyFinal) - limit);
 
+          String periodLabel = '';
+          switch (category.limitType) {
+            case CategoryResponseDtoLimitType.daily:
+              periodLabel = AppLocalizations.of(context)!.daily;
+              break;
+            case CategoryResponseDtoLimitType.weekly:
+              periodLabel = AppLocalizations.of(context)!.weekly;
+              break;
+            case CategoryResponseDtoLimitType.monthly:
+              periodLabel = AppLocalizations.of(context)!.monthly;
+              break;
+            case CategoryResponseDtoLimitType.yearly:
+              periodLabel = AppLocalizations.of(context)!.yearly;
+              break;
+            default:
+              periodLabel = AppLocalizations.of(context)!.monthly;
+          }
+
           emit(
             state.copyWith(
               status: InputStatus.overLimit,
-              overLimitMessage: "${category.name}: $limitStr",
+              overLimitMessage:
+                  "${AppLocalizations.of(context)!.overLimit} ${category.name} ($periodLabel): $limitStr",
             ),
           );
           return;
@@ -156,7 +168,52 @@ class InputCubit extends Cubit<InputState> {
   }) async {
     emit(state.copyWith(status: InputStatus.loading));
     try {
+      final locale = Localizations.localeOf(context).toString();
       double moneyFinal = money;
+
+      // Limit Check
+      final category = await _categoryRepo.getCategory(catId);
+      double? limit = category.limit;
+
+      if (limit != null && limit > 0 && !isIncome) {
+        double totalSpent = await _calculateTotalSpent(
+          category,
+          date,
+          excludeId: id,
+        );
+
+        if (totalSpent + moneyFinal > limit) {
+          var formatter = NumberFormat.simpleCurrency(locale: locale);
+          String limitStr = formatter.format((totalSpent + moneyFinal) - limit);
+
+          String periodLabel = '';
+          switch (category.limitType) {
+            case CategoryResponseDtoLimitType.daily:
+              periodLabel = AppLocalizations.of(context)!.daily;
+              break;
+            case CategoryResponseDtoLimitType.weekly:
+              periodLabel = AppLocalizations.of(context)!.weekly;
+              break;
+            case CategoryResponseDtoLimitType.monthly:
+              periodLabel = AppLocalizations.of(context)!.monthly;
+              break;
+            case CategoryResponseDtoLimitType.yearly:
+              periodLabel = AppLocalizations.of(context)!.yearly;
+              break;
+            default:
+              periodLabel = AppLocalizations.of(context)!.monthly;
+          }
+
+          emit(
+            state.copyWith(
+              status: InputStatus.overLimit,
+              overLimitMessage:
+                  "${AppLocalizations.of(context)!.overLimit} ${category.name} ($periodLabel): $limitStr",
+            ),
+          );
+          return;
+        }
+      }
 
       String finalDate = DateFormat('yyyy-MM-dd').format(date);
       String finalTime =
@@ -220,5 +277,103 @@ class InputCubit extends Cubit<InputState> {
         errorMessage: null,
       ),
     );
+  }
+
+  Future<double> _calculateTotalSpent(
+    CategoryResponseDto category,
+    DateTime targetDate, {
+    String? excludeId,
+  }) async {
+    final limitType =
+        category.limitType ?? CategoryResponseDtoLimitType.monthly;
+
+    List<TransactionResponseDto> transactions;
+
+    switch (limitType) {
+      case CategoryResponseDtoLimitType.daily:
+        final monthYear = getMonthYearString(targetDate.month, targetDate.year);
+        transactions = await _transactionRepo.getTransactions(
+          monthYear: monthYear,
+          catId: category.id,
+          isIncome: false,
+        );
+        final targetDateStr = DateFormat('yyyy-MM-dd').format(targetDate);
+        transactions = transactions
+            .where((t) => t.date == targetDateStr)
+            .toList();
+        break;
+      case CategoryResponseDtoLimitType.weekly:
+        final monthYear = getMonthYearString(targetDate.month, targetDate.year);
+        transactions = await _transactionRepo.getTransactions(
+          monthYear: monthYear,
+          catId: category.id,
+          isIncome: false,
+        );
+
+        final startOfWeek = targetDate.subtract(
+          Duration(days: targetDate.weekday - 1),
+        );
+        final endOfWeek = startOfWeek.add(const Duration(days: 6));
+
+        if (startOfWeek.month != targetDate.month) {
+          final prevMonth = getMonthYearString(
+            startOfWeek.month,
+            startOfWeek.year,
+          );
+          transactions.addAll(
+            await _transactionRepo.getTransactions(
+              monthYear: prevMonth,
+              catId: category.id,
+              isIncome: false,
+            ),
+          );
+        } else if (endOfWeek.month != targetDate.month) {
+          final nextMonth = getMonthYearString(endOfWeek.month, endOfWeek.year);
+          transactions.addAll(
+            await _transactionRepo.getTransactions(
+              monthYear: nextMonth,
+              catId: category.id,
+              isIncome: false,
+            ),
+          );
+        }
+
+        transactions = transactions.where((t) {
+          final tDate = DateFormat('yyyy-MM-dd').parse(t.date);
+          return tDate.isAfter(
+                startOfWeek.subtract(const Duration(seconds: 1)),
+              ) &&
+              tDate.isBefore(endOfWeek.add(const Duration(days: 1)));
+        }).toList();
+        break;
+      case CategoryResponseDtoLimitType.monthly:
+        final monthYear = getMonthYearString(targetDate.month, targetDate.year);
+        transactions = await _transactionRepo.getTransactions(
+          monthYear: monthYear,
+          catId: category.id,
+          isIncome: false,
+        );
+        break;
+      case CategoryResponseDtoLimitType.yearly:
+        transactions = await _transactionRepo.getTransactions(
+          year: targetDate.year.toString(),
+          catId: category.id,
+          isIncome: false,
+        );
+        break;
+      default:
+        final monthYear = getMonthYearString(targetDate.month, targetDate.year);
+        transactions = await _transactionRepo.getTransactions(
+          monthYear: monthYear,
+          catId: category.id,
+          isIncome: false,
+        );
+    }
+
+    if (excludeId != null) {
+      transactions = transactions.where((t) => t.id != excludeId).toList();
+    }
+
+    return transactions.fold<double>(0, (sum, item) => sum + item.money);
   }
 }

@@ -123,6 +123,24 @@ class _SetupInExRegularState extends State<SetupInExRegular> {
     );
   }
 
+  String _getOptionLabel(
+    BuildContext context,
+    ScheduleResponseDtoOption option,
+  ) {
+    switch (option) {
+      case ScheduleResponseDtoOption.daily:
+        return AppLocalizations.of(context)!.daily;
+      case ScheduleResponseDtoOption.weekly:
+        return AppLocalizations.of(context)!.weekly;
+      case ScheduleResponseDtoOption.monthly:
+        return AppLocalizations.of(context)!.monthly;
+      case ScheduleResponseDtoOption.yearly:
+        return AppLocalizations.of(context)!.yearly;
+      default:
+        return AppLocalizations.of(context)!.daily;
+    }
+  }
+
   Widget _buildScheduleItem(
     BuildContext context,
     bool isDark,
@@ -131,6 +149,12 @@ class _SetupInExRegularState extends State<SetupInExRegular> {
   ) {
     final formatter = NumberFormat.simpleCurrency(locale: locale);
     final formatMoney = formatter.format(schedule.money);
+
+    DateTime? date = DateTime.tryParse(schedule.date);
+    String formattedDate = schedule.date;
+    if (date != null) {
+      formattedDate = DateFormat.yMMMd(locale).add_jm().format(date);
+    }
 
     return Container(
       decoration: BoxDecoration(
@@ -192,7 +216,7 @@ class _SetupInExRegularState extends State<SetupInExRegular> {
               child: Text(schedule.icon, style: const TextStyle(fontSize: 24)),
             ),
             title: Text(
-              '${schedule.description} (${schedule.option.name})',
+              '${schedule.description} (${_getOptionLabel(context, schedule.option)})',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
@@ -200,7 +224,7 @@ class _SetupInExRegularState extends State<SetupInExRegular> {
               ),
             ),
             subtitle: Text(
-              schedule.date,
+              formattedDate,
               style: TextStyle(
                 color: isDark ? Colors.grey[400] : Colors.grey[600],
                 fontSize: 13,

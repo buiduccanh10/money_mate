@@ -170,6 +170,10 @@ class _CatUpdateDialogState extends State<CatUpdateDialog> {
         _nameController.text,
         widget.catItem.isIncome,
         widget.catItem.limit ?? 0.0,
+        UpdateCategoryDtoLimitType.values.firstWhere(
+          (e) => e.value == widget.catItem.limitType?.value,
+          orElse: () => UpdateCategoryDtoLimitType.monthly,
+        ),
       );
       Fluttertoast.showToast(
         msg: AppLocalizations.of(context)!.toastUpdateSuccess,

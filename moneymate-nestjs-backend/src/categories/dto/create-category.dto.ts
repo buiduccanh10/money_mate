@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsBoolean, IsNumber, IsOptional } from 'class-validator';
+import {
+  IsString,
+  IsBoolean,
+  IsNumber,
+  IsOptional,
+  IsEnum,
+} from 'class-validator';
+import { LimitType } from '../../entities/category.entity';
 
 export class CreateCategoryDto {
   @ApiProperty({ example: '🍔' })
@@ -18,4 +25,9 @@ export class CreateCategoryDto {
   @IsNumber()
   @IsOptional()
   limit?: number;
+
+  @ApiProperty({ enum: LimitType, required: false, default: LimitType.MONTHLY })
+  @IsEnum(LimitType)
+  @IsOptional()
+  limitType?: LimitType;
 }

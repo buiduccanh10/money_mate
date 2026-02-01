@@ -524,6 +524,85 @@ extension $ForgotPasswordResponseDtoExtension on ForgotPasswordResponseDto {
 }
 
 @JsonSerializable(explicitToJson: true)
+class UpdateProfileDto {
+  const UpdateProfileDto({this.name, this.avatar, this.email, this.password});
+
+  factory UpdateProfileDto.fromJson(Map<String, dynamic> json) =>
+      _$UpdateProfileDtoFromJson(json);
+
+  static const toJsonFactory = _$UpdateProfileDtoToJson;
+  Map<String, dynamic> toJson() => _$UpdateProfileDtoToJson(this);
+
+  @JsonKey(name: 'name')
+  final String? name;
+  @JsonKey(name: 'avatar')
+  final String? avatar;
+  @JsonKey(name: 'email')
+  final String? email;
+  @JsonKey(name: 'password')
+  final String? password;
+  static const fromJsonFactory = _$UpdateProfileDtoFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is UpdateProfileDto &&
+            (identical(other.name, name) ||
+                const DeepCollectionEquality().equals(other.name, name)) &&
+            (identical(other.avatar, avatar) ||
+                const DeepCollectionEquality().equals(other.avatar, avatar)) &&
+            (identical(other.email, email) ||
+                const DeepCollectionEquality().equals(other.email, email)) &&
+            (identical(other.password, password) ||
+                const DeepCollectionEquality().equals(
+                  other.password,
+                  password,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(name) ^
+      const DeepCollectionEquality().hash(avatar) ^
+      const DeepCollectionEquality().hash(email) ^
+      const DeepCollectionEquality().hash(password) ^
+      runtimeType.hashCode;
+}
+
+extension $UpdateProfileDtoExtension on UpdateProfileDto {
+  UpdateProfileDto copyWith({
+    String? name,
+    String? avatar,
+    String? email,
+    String? password,
+  }) {
+    return UpdateProfileDto(
+      name: name ?? this.name,
+      avatar: avatar ?? this.avatar,
+      email: email ?? this.email,
+      password: password ?? this.password,
+    );
+  }
+
+  UpdateProfileDto copyWithWrapped({
+    Wrapped<String?>? name,
+    Wrapped<String?>? avatar,
+    Wrapped<String?>? email,
+    Wrapped<String?>? password,
+  }) {
+    return UpdateProfileDto(
+      name: (name != null ? name.value : this.name),
+      avatar: (avatar != null ? avatar.value : this.avatar),
+      email: (email != null ? email.value : this.email),
+      password: (password != null ? password.value : this.password),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
 class UserSettingsResponseDto {
   const UserSettingsResponseDto({
     required this.language,
@@ -664,85 +743,6 @@ extension $UpdateSettingsDtoExtension on UpdateSettingsDto {
 }
 
 @JsonSerializable(explicitToJson: true)
-class UpdateProfileDto {
-  const UpdateProfileDto({this.name, this.avatar, this.email, this.password});
-
-  factory UpdateProfileDto.fromJson(Map<String, dynamic> json) =>
-      _$UpdateProfileDtoFromJson(json);
-
-  static const toJsonFactory = _$UpdateProfileDtoToJson;
-  Map<String, dynamic> toJson() => _$UpdateProfileDtoToJson(this);
-
-  @JsonKey(name: 'name')
-  final String? name;
-  @JsonKey(name: 'avatar')
-  final String? avatar;
-  @JsonKey(name: 'email')
-  final String? email;
-  @JsonKey(name: 'password')
-  final String? password;
-  static const fromJsonFactory = _$UpdateProfileDtoFromJson;
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other is UpdateProfileDto &&
-            (identical(other.name, name) ||
-                const DeepCollectionEquality().equals(other.name, name)) &&
-            (identical(other.avatar, avatar) ||
-                const DeepCollectionEquality().equals(other.avatar, avatar)) &&
-            (identical(other.email, email) ||
-                const DeepCollectionEquality().equals(other.email, email)) &&
-            (identical(other.password, password) ||
-                const DeepCollectionEquality().equals(
-                  other.password,
-                  password,
-                )));
-  }
-
-  @override
-  String toString() => jsonEncode(this);
-
-  @override
-  int get hashCode =>
-      const DeepCollectionEquality().hash(name) ^
-      const DeepCollectionEquality().hash(avatar) ^
-      const DeepCollectionEquality().hash(email) ^
-      const DeepCollectionEquality().hash(password) ^
-      runtimeType.hashCode;
-}
-
-extension $UpdateProfileDtoExtension on UpdateProfileDto {
-  UpdateProfileDto copyWith({
-    String? name,
-    String? avatar,
-    String? email,
-    String? password,
-  }) {
-    return UpdateProfileDto(
-      name: name ?? this.name,
-      avatar: avatar ?? this.avatar,
-      email: email ?? this.email,
-      password: password ?? this.password,
-    );
-  }
-
-  UpdateProfileDto copyWithWrapped({
-    Wrapped<String?>? name,
-    Wrapped<String?>? avatar,
-    Wrapped<String?>? email,
-    Wrapped<String?>? password,
-  }) {
-    return UpdateProfileDto(
-      name: (name != null ? name.value : this.name),
-      avatar: (avatar != null ? avatar.value : this.avatar),
-      email: (email != null ? email.value : this.email),
-      password: (password != null ? password.value : this.password),
-    );
-  }
-}
-
-@JsonSerializable(explicitToJson: true)
 class CategoryResponseDto {
   const CategoryResponseDto({
     required this.id,
@@ -750,6 +750,7 @@ class CategoryResponseDto {
     required this.name,
     required this.isIncome,
     this.limit,
+    this.limitType,
     required this.userId,
   });
 
@@ -769,6 +770,12 @@ class CategoryResponseDto {
   final bool isIncome;
   @JsonKey(name: 'limit')
   final double? limit;
+  @JsonKey(
+    name: 'limitType',
+    toJson: categoryResponseDtoLimitTypeNullableToJson,
+    fromJson: categoryResponseDtoLimitTypeNullableFromJson,
+  )
+  final enums.CategoryResponseDtoLimitType? limitType;
   @JsonKey(name: 'userId')
   final String userId;
   static const fromJsonFactory = _$CategoryResponseDtoFromJson;
@@ -790,6 +797,11 @@ class CategoryResponseDto {
                 )) &&
             (identical(other.limit, limit) ||
                 const DeepCollectionEquality().equals(other.limit, limit)) &&
+            (identical(other.limitType, limitType) ||
+                const DeepCollectionEquality().equals(
+                  other.limitType,
+                  limitType,
+                )) &&
             (identical(other.userId, userId) ||
                 const DeepCollectionEquality().equals(other.userId, userId)));
   }
@@ -804,6 +816,7 @@ class CategoryResponseDto {
       const DeepCollectionEquality().hash(name) ^
       const DeepCollectionEquality().hash(isIncome) ^
       const DeepCollectionEquality().hash(limit) ^
+      const DeepCollectionEquality().hash(limitType) ^
       const DeepCollectionEquality().hash(userId) ^
       runtimeType.hashCode;
 }
@@ -815,6 +828,7 @@ extension $CategoryResponseDtoExtension on CategoryResponseDto {
     String? name,
     bool? isIncome,
     double? limit,
+    enums.CategoryResponseDtoLimitType? limitType,
     String? userId,
   }) {
     return CategoryResponseDto(
@@ -823,6 +837,7 @@ extension $CategoryResponseDtoExtension on CategoryResponseDto {
       name: name ?? this.name,
       isIncome: isIncome ?? this.isIncome,
       limit: limit ?? this.limit,
+      limitType: limitType ?? this.limitType,
       userId: userId ?? this.userId,
     );
   }
@@ -833,6 +848,7 @@ extension $CategoryResponseDtoExtension on CategoryResponseDto {
     Wrapped<String>? name,
     Wrapped<bool>? isIncome,
     Wrapped<double?>? limit,
+    Wrapped<enums.CategoryResponseDtoLimitType?>? limitType,
     Wrapped<String>? userId,
   }) {
     return CategoryResponseDto(
@@ -841,6 +857,7 @@ extension $CategoryResponseDtoExtension on CategoryResponseDto {
       name: (name != null ? name.value : this.name),
       isIncome: (isIncome != null ? isIncome.value : this.isIncome),
       limit: (limit != null ? limit.value : this.limit),
+      limitType: (limitType != null ? limitType.value : this.limitType),
       userId: (userId != null ? userId.value : this.userId),
     );
   }
@@ -853,6 +870,7 @@ class CreateCategoryDto {
     required this.name,
     required this.isIncome,
     this.limit,
+    this.limitType,
   });
 
   factory CreateCategoryDto.fromJson(Map<String, dynamic> json) =>
@@ -869,6 +887,19 @@ class CreateCategoryDto {
   final bool isIncome;
   @JsonKey(name: 'limit')
   final double? limit;
+  @JsonKey(
+    name: 'limitType',
+    toJson: createCategoryDtoLimitTypeNullableToJson,
+    fromJson: createCategoryDtoLimitTypeLimitTypeNullableFromJson,
+  )
+  final enums.CreateCategoryDtoLimitType? limitType;
+  static enums.CreateCategoryDtoLimitType?
+  createCategoryDtoLimitTypeLimitTypeNullableFromJson(Object? value) =>
+      createCategoryDtoLimitTypeNullableFromJson(
+        value,
+        enums.CreateCategoryDtoLimitType.monthly,
+      );
+
   static const fromJsonFactory = _$CreateCategoryDtoFromJson;
 
   @override
@@ -885,7 +916,12 @@ class CreateCategoryDto {
                   isIncome,
                 )) &&
             (identical(other.limit, limit) ||
-                const DeepCollectionEquality().equals(other.limit, limit)));
+                const DeepCollectionEquality().equals(other.limit, limit)) &&
+            (identical(other.limitType, limitType) ||
+                const DeepCollectionEquality().equals(
+                  other.limitType,
+                  limitType,
+                )));
   }
 
   @override
@@ -897,6 +933,7 @@ class CreateCategoryDto {
       const DeepCollectionEquality().hash(name) ^
       const DeepCollectionEquality().hash(isIncome) ^
       const DeepCollectionEquality().hash(limit) ^
+      const DeepCollectionEquality().hash(limitType) ^
       runtimeType.hashCode;
 }
 
@@ -906,12 +943,14 @@ extension $CreateCategoryDtoExtension on CreateCategoryDto {
     String? name,
     bool? isIncome,
     double? limit,
+    enums.CreateCategoryDtoLimitType? limitType,
   }) {
     return CreateCategoryDto(
       icon: icon ?? this.icon,
       name: name ?? this.name,
       isIncome: isIncome ?? this.isIncome,
       limit: limit ?? this.limit,
+      limitType: limitType ?? this.limitType,
     );
   }
 
@@ -920,19 +959,27 @@ extension $CreateCategoryDtoExtension on CreateCategoryDto {
     Wrapped<String>? name,
     Wrapped<bool>? isIncome,
     Wrapped<double?>? limit,
+    Wrapped<enums.CreateCategoryDtoLimitType?>? limitType,
   }) {
     return CreateCategoryDto(
       icon: (icon != null ? icon.value : this.icon),
       name: (name != null ? name.value : this.name),
       isIncome: (isIncome != null ? isIncome.value : this.isIncome),
       limit: (limit != null ? limit.value : this.limit),
+      limitType: (limitType != null ? limitType.value : this.limitType),
     );
   }
 }
 
 @JsonSerializable(explicitToJson: true)
 class UpdateCategoryDto {
-  const UpdateCategoryDto({this.icon, this.name, this.isIncome, this.limit});
+  const UpdateCategoryDto({
+    this.icon,
+    this.name,
+    this.isIncome,
+    this.limit,
+    this.limitType,
+  });
 
   factory UpdateCategoryDto.fromJson(Map<String, dynamic> json) =>
       _$UpdateCategoryDtoFromJson(json);
@@ -948,6 +995,12 @@ class UpdateCategoryDto {
   final bool? isIncome;
   @JsonKey(name: 'limit')
   final double? limit;
+  @JsonKey(
+    name: 'limitType',
+    toJson: updateCategoryDtoLimitTypeNullableToJson,
+    fromJson: updateCategoryDtoLimitTypeNullableFromJson,
+  )
+  final enums.UpdateCategoryDtoLimitType? limitType;
   static const fromJsonFactory = _$UpdateCategoryDtoFromJson;
 
   @override
@@ -964,7 +1017,12 @@ class UpdateCategoryDto {
                   isIncome,
                 )) &&
             (identical(other.limit, limit) ||
-                const DeepCollectionEquality().equals(other.limit, limit)));
+                const DeepCollectionEquality().equals(other.limit, limit)) &&
+            (identical(other.limitType, limitType) ||
+                const DeepCollectionEquality().equals(
+                  other.limitType,
+                  limitType,
+                )));
   }
 
   @override
@@ -976,6 +1034,7 @@ class UpdateCategoryDto {
       const DeepCollectionEquality().hash(name) ^
       const DeepCollectionEquality().hash(isIncome) ^
       const DeepCollectionEquality().hash(limit) ^
+      const DeepCollectionEquality().hash(limitType) ^
       runtimeType.hashCode;
 }
 
@@ -985,12 +1044,14 @@ extension $UpdateCategoryDtoExtension on UpdateCategoryDto {
     String? name,
     bool? isIncome,
     double? limit,
+    enums.UpdateCategoryDtoLimitType? limitType,
   }) {
     return UpdateCategoryDto(
       icon: icon ?? this.icon,
       name: name ?? this.name,
       isIncome: isIncome ?? this.isIncome,
       limit: limit ?? this.limit,
+      limitType: limitType ?? this.limitType,
     );
   }
 
@@ -999,19 +1060,21 @@ extension $UpdateCategoryDtoExtension on UpdateCategoryDto {
     Wrapped<String?>? name,
     Wrapped<bool?>? isIncome,
     Wrapped<double?>? limit,
+    Wrapped<enums.UpdateCategoryDtoLimitType?>? limitType,
   }) {
     return UpdateCategoryDto(
       icon: (icon != null ? icon.value : this.icon),
       name: (name != null ? name.value : this.name),
       isIncome: (isIncome != null ? isIncome.value : this.isIncome),
       limit: (limit != null ? limit.value : this.limit),
+      limitType: (limitType != null ? limitType.value : this.limitType),
     );
   }
 }
 
 @JsonSerializable(explicitToJson: true)
 class UpdateLimitDto {
-  const UpdateLimitDto({required this.limit});
+  const UpdateLimitDto({required this.limit, this.limitType});
 
   factory UpdateLimitDto.fromJson(Map<String, dynamic> json) =>
       _$UpdateLimitDtoFromJson(json);
@@ -1021,6 +1084,12 @@ class UpdateLimitDto {
 
   @JsonKey(name: 'limit')
   final double limit;
+  @JsonKey(
+    name: 'limitType',
+    toJson: updateLimitDtoLimitTypeNullableToJson,
+    fromJson: updateLimitDtoLimitTypeNullableFromJson,
+  )
+  final enums.UpdateLimitDtoLimitType? limitType;
   static const fromJsonFactory = _$UpdateLimitDtoFromJson;
 
   @override
@@ -1028,7 +1097,12 @@ class UpdateLimitDto {
     return identical(this, other) ||
         (other is UpdateLimitDto &&
             (identical(other.limit, limit) ||
-                const DeepCollectionEquality().equals(other.limit, limit)));
+                const DeepCollectionEquality().equals(other.limit, limit)) &&
+            (identical(other.limitType, limitType) ||
+                const DeepCollectionEquality().equals(
+                  other.limitType,
+                  limitType,
+                )));
   }
 
   @override
@@ -1036,16 +1110,30 @@ class UpdateLimitDto {
 
   @override
   int get hashCode =>
-      const DeepCollectionEquality().hash(limit) ^ runtimeType.hashCode;
+      const DeepCollectionEquality().hash(limit) ^
+      const DeepCollectionEquality().hash(limitType) ^
+      runtimeType.hashCode;
 }
 
 extension $UpdateLimitDtoExtension on UpdateLimitDto {
-  UpdateLimitDto copyWith({double? limit}) {
-    return UpdateLimitDto(limit: limit ?? this.limit);
+  UpdateLimitDto copyWith({
+    double? limit,
+    enums.UpdateLimitDtoLimitType? limitType,
+  }) {
+    return UpdateLimitDto(
+      limit: limit ?? this.limit,
+      limitType: limitType ?? this.limitType,
+    );
   }
 
-  UpdateLimitDto copyWithWrapped({Wrapped<double>? limit}) {
-    return UpdateLimitDto(limit: (limit != null ? limit.value : this.limit));
+  UpdateLimitDto copyWithWrapped({
+    Wrapped<double>? limit,
+    Wrapped<enums.UpdateLimitDtoLimitType?>? limitType,
+  }) {
+    return UpdateLimitDto(
+      limit: (limit != null ? limit.value : this.limit),
+      limitType: (limitType != null ? limitType.value : this.limitType),
+    );
   }
 }
 
@@ -1878,6 +1966,324 @@ extension $ApiUsersMeAvatarPatch$RequestBodyExtension
       file: (file != null ? file.value : this.file),
     );
   }
+}
+
+String? categoryResponseDtoLimitTypeNullableToJson(
+  enums.CategoryResponseDtoLimitType? categoryResponseDtoLimitType,
+) {
+  return categoryResponseDtoLimitType?.value;
+}
+
+String? categoryResponseDtoLimitTypeToJson(
+  enums.CategoryResponseDtoLimitType categoryResponseDtoLimitType,
+) {
+  return categoryResponseDtoLimitType.value;
+}
+
+enums.CategoryResponseDtoLimitType categoryResponseDtoLimitTypeFromJson(
+  Object? categoryResponseDtoLimitType, [
+  enums.CategoryResponseDtoLimitType? defaultValue,
+]) {
+  return enums.CategoryResponseDtoLimitType.values.firstWhereOrNull(
+        (e) => e.value == categoryResponseDtoLimitType,
+      ) ??
+      defaultValue ??
+      enums.CategoryResponseDtoLimitType.swaggerGeneratedUnknown;
+}
+
+enums.CategoryResponseDtoLimitType?
+categoryResponseDtoLimitTypeNullableFromJson(
+  Object? categoryResponseDtoLimitType, [
+  enums.CategoryResponseDtoLimitType? defaultValue,
+]) {
+  if (categoryResponseDtoLimitType == null) {
+    return null;
+  }
+  return enums.CategoryResponseDtoLimitType.values.firstWhereOrNull(
+        (e) => e.value == categoryResponseDtoLimitType,
+      ) ??
+      defaultValue;
+}
+
+String categoryResponseDtoLimitTypeExplodedListToJson(
+  List<enums.CategoryResponseDtoLimitType>? categoryResponseDtoLimitType,
+) {
+  return categoryResponseDtoLimitType?.map((e) => e.value!).join(',') ?? '';
+}
+
+List<String> categoryResponseDtoLimitTypeListToJson(
+  List<enums.CategoryResponseDtoLimitType>? categoryResponseDtoLimitType,
+) {
+  if (categoryResponseDtoLimitType == null) {
+    return [];
+  }
+
+  return categoryResponseDtoLimitType.map((e) => e.value!).toList();
+}
+
+List<enums.CategoryResponseDtoLimitType>
+categoryResponseDtoLimitTypeListFromJson(
+  List? categoryResponseDtoLimitType, [
+  List<enums.CategoryResponseDtoLimitType>? defaultValue,
+]) {
+  if (categoryResponseDtoLimitType == null) {
+    return defaultValue ?? [];
+  }
+
+  return categoryResponseDtoLimitType
+      .map((e) => categoryResponseDtoLimitTypeFromJson(e.toString()))
+      .toList();
+}
+
+List<enums.CategoryResponseDtoLimitType>?
+categoryResponseDtoLimitTypeNullableListFromJson(
+  List? categoryResponseDtoLimitType, [
+  List<enums.CategoryResponseDtoLimitType>? defaultValue,
+]) {
+  if (categoryResponseDtoLimitType == null) {
+    return defaultValue;
+  }
+
+  return categoryResponseDtoLimitType
+      .map((e) => categoryResponseDtoLimitTypeFromJson(e.toString()))
+      .toList();
+}
+
+String? createCategoryDtoLimitTypeNullableToJson(
+  enums.CreateCategoryDtoLimitType? createCategoryDtoLimitType,
+) {
+  return createCategoryDtoLimitType?.value;
+}
+
+String? createCategoryDtoLimitTypeToJson(
+  enums.CreateCategoryDtoLimitType createCategoryDtoLimitType,
+) {
+  return createCategoryDtoLimitType.value;
+}
+
+enums.CreateCategoryDtoLimitType createCategoryDtoLimitTypeFromJson(
+  Object? createCategoryDtoLimitType, [
+  enums.CreateCategoryDtoLimitType? defaultValue,
+]) {
+  return enums.CreateCategoryDtoLimitType.values.firstWhereOrNull(
+        (e) => e.value == createCategoryDtoLimitType,
+      ) ??
+      defaultValue ??
+      enums.CreateCategoryDtoLimitType.swaggerGeneratedUnknown;
+}
+
+enums.CreateCategoryDtoLimitType? createCategoryDtoLimitTypeNullableFromJson(
+  Object? createCategoryDtoLimitType, [
+  enums.CreateCategoryDtoLimitType? defaultValue,
+]) {
+  if (createCategoryDtoLimitType == null) {
+    return null;
+  }
+  return enums.CreateCategoryDtoLimitType.values.firstWhereOrNull(
+        (e) => e.value == createCategoryDtoLimitType,
+      ) ??
+      defaultValue;
+}
+
+String createCategoryDtoLimitTypeExplodedListToJson(
+  List<enums.CreateCategoryDtoLimitType>? createCategoryDtoLimitType,
+) {
+  return createCategoryDtoLimitType?.map((e) => e.value!).join(',') ?? '';
+}
+
+List<String> createCategoryDtoLimitTypeListToJson(
+  List<enums.CreateCategoryDtoLimitType>? createCategoryDtoLimitType,
+) {
+  if (createCategoryDtoLimitType == null) {
+    return [];
+  }
+
+  return createCategoryDtoLimitType.map((e) => e.value!).toList();
+}
+
+List<enums.CreateCategoryDtoLimitType> createCategoryDtoLimitTypeListFromJson(
+  List? createCategoryDtoLimitType, [
+  List<enums.CreateCategoryDtoLimitType>? defaultValue,
+]) {
+  if (createCategoryDtoLimitType == null) {
+    return defaultValue ?? [];
+  }
+
+  return createCategoryDtoLimitType
+      .map((e) => createCategoryDtoLimitTypeFromJson(e.toString()))
+      .toList();
+}
+
+List<enums.CreateCategoryDtoLimitType>?
+createCategoryDtoLimitTypeNullableListFromJson(
+  List? createCategoryDtoLimitType, [
+  List<enums.CreateCategoryDtoLimitType>? defaultValue,
+]) {
+  if (createCategoryDtoLimitType == null) {
+    return defaultValue;
+  }
+
+  return createCategoryDtoLimitType
+      .map((e) => createCategoryDtoLimitTypeFromJson(e.toString()))
+      .toList();
+}
+
+String? updateCategoryDtoLimitTypeNullableToJson(
+  enums.UpdateCategoryDtoLimitType? updateCategoryDtoLimitType,
+) {
+  return updateCategoryDtoLimitType?.value;
+}
+
+String? updateCategoryDtoLimitTypeToJson(
+  enums.UpdateCategoryDtoLimitType updateCategoryDtoLimitType,
+) {
+  return updateCategoryDtoLimitType.value;
+}
+
+enums.UpdateCategoryDtoLimitType updateCategoryDtoLimitTypeFromJson(
+  Object? updateCategoryDtoLimitType, [
+  enums.UpdateCategoryDtoLimitType? defaultValue,
+]) {
+  return enums.UpdateCategoryDtoLimitType.values.firstWhereOrNull(
+        (e) => e.value == updateCategoryDtoLimitType,
+      ) ??
+      defaultValue ??
+      enums.UpdateCategoryDtoLimitType.swaggerGeneratedUnknown;
+}
+
+enums.UpdateCategoryDtoLimitType? updateCategoryDtoLimitTypeNullableFromJson(
+  Object? updateCategoryDtoLimitType, [
+  enums.UpdateCategoryDtoLimitType? defaultValue,
+]) {
+  if (updateCategoryDtoLimitType == null) {
+    return null;
+  }
+  return enums.UpdateCategoryDtoLimitType.values.firstWhereOrNull(
+        (e) => e.value == updateCategoryDtoLimitType,
+      ) ??
+      defaultValue;
+}
+
+String updateCategoryDtoLimitTypeExplodedListToJson(
+  List<enums.UpdateCategoryDtoLimitType>? updateCategoryDtoLimitType,
+) {
+  return updateCategoryDtoLimitType?.map((e) => e.value!).join(',') ?? '';
+}
+
+List<String> updateCategoryDtoLimitTypeListToJson(
+  List<enums.UpdateCategoryDtoLimitType>? updateCategoryDtoLimitType,
+) {
+  if (updateCategoryDtoLimitType == null) {
+    return [];
+  }
+
+  return updateCategoryDtoLimitType.map((e) => e.value!).toList();
+}
+
+List<enums.UpdateCategoryDtoLimitType> updateCategoryDtoLimitTypeListFromJson(
+  List? updateCategoryDtoLimitType, [
+  List<enums.UpdateCategoryDtoLimitType>? defaultValue,
+]) {
+  if (updateCategoryDtoLimitType == null) {
+    return defaultValue ?? [];
+  }
+
+  return updateCategoryDtoLimitType
+      .map((e) => updateCategoryDtoLimitTypeFromJson(e.toString()))
+      .toList();
+}
+
+List<enums.UpdateCategoryDtoLimitType>?
+updateCategoryDtoLimitTypeNullableListFromJson(
+  List? updateCategoryDtoLimitType, [
+  List<enums.UpdateCategoryDtoLimitType>? defaultValue,
+]) {
+  if (updateCategoryDtoLimitType == null) {
+    return defaultValue;
+  }
+
+  return updateCategoryDtoLimitType
+      .map((e) => updateCategoryDtoLimitTypeFromJson(e.toString()))
+      .toList();
+}
+
+String? updateLimitDtoLimitTypeNullableToJson(
+  enums.UpdateLimitDtoLimitType? updateLimitDtoLimitType,
+) {
+  return updateLimitDtoLimitType?.value;
+}
+
+String? updateLimitDtoLimitTypeToJson(
+  enums.UpdateLimitDtoLimitType updateLimitDtoLimitType,
+) {
+  return updateLimitDtoLimitType.value;
+}
+
+enums.UpdateLimitDtoLimitType updateLimitDtoLimitTypeFromJson(
+  Object? updateLimitDtoLimitType, [
+  enums.UpdateLimitDtoLimitType? defaultValue,
+]) {
+  return enums.UpdateLimitDtoLimitType.values.firstWhereOrNull(
+        (e) => e.value == updateLimitDtoLimitType,
+      ) ??
+      defaultValue ??
+      enums.UpdateLimitDtoLimitType.swaggerGeneratedUnknown;
+}
+
+enums.UpdateLimitDtoLimitType? updateLimitDtoLimitTypeNullableFromJson(
+  Object? updateLimitDtoLimitType, [
+  enums.UpdateLimitDtoLimitType? defaultValue,
+]) {
+  if (updateLimitDtoLimitType == null) {
+    return null;
+  }
+  return enums.UpdateLimitDtoLimitType.values.firstWhereOrNull(
+        (e) => e.value == updateLimitDtoLimitType,
+      ) ??
+      defaultValue;
+}
+
+String updateLimitDtoLimitTypeExplodedListToJson(
+  List<enums.UpdateLimitDtoLimitType>? updateLimitDtoLimitType,
+) {
+  return updateLimitDtoLimitType?.map((e) => e.value!).join(',') ?? '';
+}
+
+List<String> updateLimitDtoLimitTypeListToJson(
+  List<enums.UpdateLimitDtoLimitType>? updateLimitDtoLimitType,
+) {
+  if (updateLimitDtoLimitType == null) {
+    return [];
+  }
+
+  return updateLimitDtoLimitType.map((e) => e.value!).toList();
+}
+
+List<enums.UpdateLimitDtoLimitType> updateLimitDtoLimitTypeListFromJson(
+  List? updateLimitDtoLimitType, [
+  List<enums.UpdateLimitDtoLimitType>? defaultValue,
+]) {
+  if (updateLimitDtoLimitType == null) {
+    return defaultValue ?? [];
+  }
+
+  return updateLimitDtoLimitType
+      .map((e) => updateLimitDtoLimitTypeFromJson(e.toString()))
+      .toList();
+}
+
+List<enums.UpdateLimitDtoLimitType>?
+updateLimitDtoLimitTypeNullableListFromJson(
+  List? updateLimitDtoLimitType, [
+  List<enums.UpdateLimitDtoLimitType>? defaultValue,
+]) {
+  if (updateLimitDtoLimitType == null) {
+    return defaultValue;
+  }
+
+  return updateLimitDtoLimitType
+      .map((e) => updateLimitDtoLimitTypeFromJson(e.toString()))
+      .toList();
 }
 
 String? scheduleResponseDtoOptionNullableToJson(

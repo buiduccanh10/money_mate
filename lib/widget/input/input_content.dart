@@ -68,17 +68,18 @@ class _InputContentState extends State<InputContent> {
           descriptionController.clear();
           moneyController.clear();
           ScaffoldMessenger.of(context).showToast(
-            msg: "Saved! Check home screen.",
+            msg: AppLocalizations.of(context)!.savedCheckHome,
             backgroundColor: Colors.green,
           );
         } else if (state.status == InputStatus.overLimit) {
           ScaffoldMessenger.of(context).showToast(
-            msg: "Over limit! ${state.overLimitMessage}",
+            msg:
+                "${AppLocalizations.of(context)!.overLimitTitle} ${state.overLimitMessage}",
             backgroundColor: Colors.orange,
           );
         } else if (state.status == InputStatus.failure) {
           ScaffoldMessenger.of(context).showToast(
-            msg: state.errorMessage ?? "Error",
+            msg: state.errorMessage ?? AppLocalizations.of(context)!.error,
             backgroundColor: Colors.red,
           );
         }

@@ -7,6 +7,7 @@ import 'package:currency_text_input_formatter/currency_text_input_formatter.dart
 import 'package:money_mate/services/currency_format.dart';
 import 'package:money_mate/l10n/app_localizations.dart';
 import 'package:money_mate/bloc/input/input_cubit.dart';
+import 'package:money_mate/bloc/input/input_state.dart';
 import 'package:money_mate/bloc/category/category_cubit.dart';
 import 'package:money_mate/bloc/category/category_state.dart';
 import 'package:money_mate/widget/category/category_manage.dart';
@@ -73,104 +74,125 @@ class _UpdateInputState extends State<UpdateInput> {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
     final isIncome = widget.inputItem.isIncome;
 
-    return Scaffold(
-      appBar: AppBar(
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: isDark
-                  ? [
-                      const Color(0xFF0F2027),
-                      const Color(0xFF203A43),
-                      const Color(0xFF2C5364),
-                    ]
-                  : [const Color(0xFF4364F7), const Color(0xFF6FB1FC)],
+    return BlocListener<InputCubit, InputState>(
+      listener: (context, state) {
+        if (state.status == InputStatus.success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Updated successfully!"),
+              backgroundColor: Colors.green,
             ),
-            borderRadius: const BorderRadius.only(
-              bottomLeft: Radius.circular(30),
-              bottomRight: Radius.circular(30),
+          );
+          Navigator.pop(context);
+        } else if (state.status == InputStatus.overLimit) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Over limit! ${state.overLimitMessage}"),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        } else if (state.status == InputStatus.failure) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.errorMessage ?? "Error"),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: isDark
+                    ? [
+                        const Color(0xFF0F2027),
+                        const Color(0xFF203A43),
+                        const Color(0xFF2C5364),
+                      ]
+                    : [const Color(0xFF4364F7), const Color(0xFF6FB1FC)],
+              ),
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(30),
+                bottomRight: Radius.circular(30),
+              ),
             ),
           ),
-        ),
-        leading: const BackButton(color: Colors.white),
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              isIncome
-                  ? AppLocalizations.of(context)!.income
-                  : AppLocalizations.of(context)!.expense,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+          leading: const BackButton(color: Colors.white),
+          title: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                widget.inputItem.category?.icon ?? '💰',
+                style: const TextStyle(fontSize: 24),
               ),
-            ),
-            const SizedBox(width: 8),
-            Flexible(
-              child: Text(
-                '(${widget.inputItem.description})',
-                style: const TextStyle(color: Colors.white70, fontSize: 18),
-                overflow: TextOverflow.ellipsis,
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  '(${widget.inputItem.description})',
+                  style: const TextStyle(color: Colors.white70, fontSize: 18),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
+            ],
+          ),
+          centerTitle: true,
+          actions: [
+            IconButton(
+              onPressed: () => _showDeleteDialog(context),
+              icon: const Icon(Icons.delete_outline, color: Colors.white),
             ),
           ],
         ),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            onPressed: () => _showDeleteDialog(context),
-            icon: const Icon(Icons.delete_outline, color: Colors.white),
-          ),
-        ],
-      ),
-      body: Scaffold(
-        backgroundColor: isDark
-            ? const Color(0xFF121212)
-            : const Color(0xFFF5F7FA),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(15),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 15,
-                        offset: const Offset(0, 8),
-                      ),
-                    ],
-                  ),
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    children: [
-                      _buildDatePicker(isDark),
-                      const SizedBox(height: 20),
-                      _buildTextField(
-                        _descriptionController,
-                        AppLocalizations.of(context)!.inputDescription,
-                        Icons.description_outlined,
-                        Colors.blueAccent,
-                        isDark,
-                      ),
-                      const SizedBox(height: 15),
-                      _buildMoneyField(isDark, isIncome),
-                    ],
+        body: Scaffold(
+          backgroundColor: isDark
+              ? const Color(0xFF121212)
+              : const Color(0xFFF5F7FA),
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 15,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      children: [
+                        _buildDatePicker(isDark),
+                        const SizedBox(height: 20),
+                        _buildTextField(
+                          _descriptionController,
+                          AppLocalizations.of(context)!.inputDescription,
+                          Icons.description_outlined,
+                          Colors.blueAccent,
+                          isDark,
+                        ),
+                        const SizedBox(height: 15),
+                        _buildMoneyField(isDark, isIncome),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              _buildCategorySection(isIncome, isDark),
-            ],
+                _buildCategorySection(isIncome, isDark),
+              ],
+            ),
           ),
         ),
+        floatingActionButton: _buildSaveButton(isIncome),
       ),
-      floatingActionButton: _buildSaveButton(isIncome),
     );
   }
 

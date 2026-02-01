@@ -93,6 +93,22 @@ Map<String, dynamic> _$ForgotPasswordResponseDtoToJson(
   ForgotPasswordResponseDto instance,
 ) => <String, dynamic>{'message': instance.message};
 
+UpdateProfileDto _$UpdateProfileDtoFromJson(Map<String, dynamic> json) =>
+    UpdateProfileDto(
+      name: json['name'] as String?,
+      avatar: json['avatar'] as String?,
+      email: json['email'] as String?,
+      password: json['password'] as String?,
+    );
+
+Map<String, dynamic> _$UpdateProfileDtoToJson(UpdateProfileDto instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'avatar': instance.avatar,
+      'email': instance.email,
+      'password': instance.password,
+    };
+
 UserSettingsResponseDto _$UserSettingsResponseDtoFromJson(
   Map<String, dynamic> json,
 ) => UserSettingsResponseDto(
@@ -123,22 +139,6 @@ Map<String, dynamic> _$UpdateSettingsDtoToJson(UpdateSettingsDto instance) =>
       'isLock': instance.isLock,
     };
 
-UpdateProfileDto _$UpdateProfileDtoFromJson(Map<String, dynamic> json) =>
-    UpdateProfileDto(
-      name: json['name'] as String?,
-      avatar: json['avatar'] as String?,
-      email: json['email'] as String?,
-      password: json['password'] as String?,
-    );
-
-Map<String, dynamic> _$UpdateProfileDtoToJson(UpdateProfileDto instance) =>
-    <String, dynamic>{
-      'name': instance.name,
-      'avatar': instance.avatar,
-      'email': instance.email,
-      'password': instance.password,
-    };
-
 CategoryResponseDto _$CategoryResponseDtoFromJson(Map<String, dynamic> json) =>
     CategoryResponseDto(
       id: json['id'] as String,
@@ -146,6 +146,9 @@ CategoryResponseDto _$CategoryResponseDtoFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String,
       isIncome: json['isIncome'] as bool,
       limit: (json['limit'] as num?)?.toDouble(),
+      limitType: categoryResponseDtoLimitTypeNullableFromJson(
+        json['limitType'],
+      ),
       userId: json['userId'] as String,
     );
 
@@ -157,6 +160,7 @@ Map<String, dynamic> _$CategoryResponseDtoToJson(
   'name': instance.name,
   'isIncome': instance.isIncome,
   'limit': instance.limit,
+  'limitType': categoryResponseDtoLimitTypeNullableToJson(instance.limitType),
   'userId': instance.userId,
 };
 
@@ -166,6 +170,10 @@ CreateCategoryDto _$CreateCategoryDtoFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String,
       isIncome: json['isIncome'] as bool,
       limit: (json['limit'] as num?)?.toDouble(),
+      limitType:
+          CreateCategoryDto.createCategoryDtoLimitTypeLimitTypeNullableFromJson(
+            json['limitType'],
+          ),
     );
 
 Map<String, dynamic> _$CreateCategoryDtoToJson(CreateCategoryDto instance) =>
@@ -174,6 +182,7 @@ Map<String, dynamic> _$CreateCategoryDtoToJson(CreateCategoryDto instance) =>
       'name': instance.name,
       'isIncome': instance.isIncome,
       'limit': instance.limit,
+      'limitType': createCategoryDtoLimitTypeNullableToJson(instance.limitType),
     };
 
 UpdateCategoryDto _$UpdateCategoryDtoFromJson(Map<String, dynamic> json) =>
@@ -182,6 +191,7 @@ UpdateCategoryDto _$UpdateCategoryDtoFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String?,
       isIncome: json['isIncome'] as bool?,
       limit: (json['limit'] as num?)?.toDouble(),
+      limitType: updateCategoryDtoLimitTypeNullableFromJson(json['limitType']),
     );
 
 Map<String, dynamic> _$UpdateCategoryDtoToJson(UpdateCategoryDto instance) =>
@@ -190,13 +200,20 @@ Map<String, dynamic> _$UpdateCategoryDtoToJson(UpdateCategoryDto instance) =>
       'name': instance.name,
       'isIncome': instance.isIncome,
       'limit': instance.limit,
+      'limitType': updateCategoryDtoLimitTypeNullableToJson(instance.limitType),
     };
 
 UpdateLimitDto _$UpdateLimitDtoFromJson(Map<String, dynamic> json) =>
-    UpdateLimitDto(limit: (json['limit'] as num).toDouble());
+    UpdateLimitDto(
+      limit: (json['limit'] as num).toDouble(),
+      limitType: updateLimitDtoLimitTypeNullableFromJson(json['limitType']),
+    );
 
 Map<String, dynamic> _$UpdateLimitDtoToJson(UpdateLimitDto instance) =>
-    <String, dynamic>{'limit': instance.limit};
+    <String, dynamic>{
+      'limit': instance.limit,
+      'limitType': updateLimitDtoLimitTypeNullableToJson(instance.limitType),
+    };
 
 TransactionResponseDto _$TransactionResponseDtoFromJson(
   Map<String, dynamic> json,

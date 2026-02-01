@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -114,7 +115,7 @@ class _SetupInExLimitState extends State<SetupInExLimit> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity(0.05),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -130,7 +131,7 @@ class _SetupInExLimitState extends State<SetupInExLimit> {
             children: [
               SlidableAction(
                 onPressed: (_) => _showLimitDialog(cat),
-                backgroundColor: Colors.blue.withValues(alpha: 0.1),
+                backgroundColor: Colors.blue.withOpacity(0.1),
                 foregroundColor: Colors.blue,
                 icon: Icons.edit,
                 label: AppLocalizations.of(context)!.slideEdit,
@@ -186,12 +187,20 @@ class _SetupInExLimitState extends State<SetupInExLimit> {
   }
 
   void _showLimitDialog(CategoryResponseDto cat) {
+    UpdateLimitDtoLimitType? limitType;
+    if (cat.limitType != null) {
+      limitType = UpdateLimitDtoLimitType.values.firstWhereOrNull(
+        (e) => e.value == cat.limitType!.value,
+      );
+    }
+
     showDialog(
       context: context,
       builder: (_) => CatLimitDialog(
         catId: cat.id,
         catName: cat.name,
         limit: cat.limit ?? 0.0,
+        limitType: limitType,
       ),
     );
   }

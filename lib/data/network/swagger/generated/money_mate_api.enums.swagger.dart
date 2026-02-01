@@ -4,6 +4,78 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:collection/collection.dart';
 
+enum CategoryResponseDtoLimitType {
+  @JsonValue(null)
+  swaggerGeneratedUnknown(null),
+
+  @JsonValue('DAILY')
+  daily('DAILY'),
+  @JsonValue('WEEKLY')
+  weekly('WEEKLY'),
+  @JsonValue('MONTHLY')
+  monthly('MONTHLY'),
+  @JsonValue('YEARLY')
+  yearly('YEARLY');
+
+  final String? value;
+
+  const CategoryResponseDtoLimitType(this.value);
+}
+
+enum CreateCategoryDtoLimitType {
+  @JsonValue(null)
+  swaggerGeneratedUnknown(null),
+
+  @JsonValue('DAILY')
+  daily('DAILY'),
+  @JsonValue('WEEKLY')
+  weekly('WEEKLY'),
+  @JsonValue('MONTHLY')
+  monthly('MONTHLY'),
+  @JsonValue('YEARLY')
+  yearly('YEARLY');
+
+  final String? value;
+
+  const CreateCategoryDtoLimitType(this.value);
+}
+
+enum UpdateCategoryDtoLimitType {
+  @JsonValue(null)
+  swaggerGeneratedUnknown(null),
+
+  @JsonValue('DAILY')
+  daily('DAILY'),
+  @JsonValue('WEEKLY')
+  weekly('WEEKLY'),
+  @JsonValue('MONTHLY')
+  monthly('MONTHLY'),
+  @JsonValue('YEARLY')
+  yearly('YEARLY');
+
+  final String? value;
+
+  const UpdateCategoryDtoLimitType(this.value);
+}
+
+enum UpdateLimitDtoLimitType {
+  @JsonValue(null)
+  swaggerGeneratedUnknown(null),
+
+  @JsonValue('DAILY')
+  daily('DAILY'),
+  @JsonValue('WEEKLY')
+  weekly('WEEKLY'),
+  @JsonValue('MONTHLY')
+  monthly('MONTHLY'),
+  @JsonValue('YEARLY')
+  yearly('YEARLY');
+
+  final String? value;
+
+  const UpdateLimitDtoLimitType(this.value);
+}
+
 enum ScheduleResponseDtoOption {
   @JsonValue(null)
   swaggerGeneratedUnknown(null),
