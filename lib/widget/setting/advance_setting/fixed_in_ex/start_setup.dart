@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:money_mate/services/currency_format.dart';
 import 'package:money_mate/l10n/app_localizations.dart';
 import 'package:money_mate/bloc/category/category_cubit.dart';
@@ -25,18 +26,27 @@ class _StartSetupState extends State<StartSetup> {
   String? _selectedCatId;
   int _selectedOptionIndex = 0;
 
-  final List<String> _options = [
-    'never',
-    'daily',
-    'weekly',
-    'monthly',
-    'yearly',
-  ];
+  final List<String> _options = ['daily', 'weekly', 'monthly', 'yearly'];
+  late CurrencyTextInputFormatter _formatter;
+  bool _isFormatterInitialized = false;
+
+  bool _moneyError = false;
+  bool _categoryError = false;
 
   @override
   void initState() {
     super.initState();
     context.read<CategoryCubit>().fetchCategories();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isFormatterInitialized) {
+      final locale = Localizations.localeOf(context).toString();
+      _formatter = CurrencyFormat.getFormatter(locale);
+      _isFormatterInitialized = true;
+    }
   }
 
   @override
@@ -49,7 +59,6 @@ class _StartSetupState extends State<StartSetup> {
   @override
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
-    final locale = Localizations.localeOf(context).toString();
 
     return Scaffold(
       backgroundColor: isDark
@@ -105,7 +114,7 @@ class _StartSetupState extends State<StartSetup> {
                       color: isDark ? Colors.grey[800] : Colors.grey[200],
                     ),
                   ),
-                  _buildMoneyField(isDark, locale),
+                  _buildMoneyField(isDark),
                 ],
               ),
             ),
@@ -219,30 +228,40 @@ class _StartSetupState extends State<StartSetup> {
     );
   }
 
-  Widget _buildMoneyField(bool isDark, String locale) {
+  Widget _buildMoneyField(bool isDark) {
     return TextField(
       controller: _moneyController,
-      style: TextStyle(
-        color: isDark ? Colors.white : Colors.black87,
-        fontWeight: FontWeight.bold,
-        fontSize: 16,
-      ),
-      keyboardType: locale == 'vi'
-          ? const TextInputType.numberWithOptions(decimal: false)
-          : const TextInputType.numberWithOptions(decimal: true),
-      inputFormatters: locale == 'vi'
-          ? [FilteringTextInputFormatter.digitsOnly, CurrencyFormat()]
-          : [],
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      inputFormatters: [_formatter],
+      onChanged: (value) {
+        if (_moneyError) {
+          setState(() {
+            _moneyError = false;
+          });
+        }
+      },
       decoration: InputDecoration(
-        border: InputBorder.none,
-        contentPadding: const EdgeInsets.all(16),
-        labelText: AppLocalizations.of(context)!.inputMoney,
-        labelStyle: TextStyle(
-          color: isDark ? Colors.grey[400] : Colors.grey[600],
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: _moneyError
+                ? Colors.red
+                : (isDark ? Colors.grey[700]! : Colors.grey[300]!),
+          ),
+          borderRadius: BorderRadius.circular(15),
         ),
-        prefixIcon: const Icon(Icons.attach_money, color: Colors.green),
-        suffixText: locale == 'vi' ? 'đ' : (locale == 'zh' ? '¥' : '\$'),
-        suffixStyle: TextStyle(color: isDark ? Colors.white70 : Colors.black54),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: _moneyError ? Colors.red : Colors.blueAccent,
+          ),
+          borderRadius: BorderRadius.circular(15),
+        ),
+        label: Text(AppLocalizations.of(context)!.inputMoney),
+        labelStyle: const TextStyle(color: Colors.grey),
+        floatingLabelStyle: TextStyle(
+          color: isDark ? Colors.white : Colors.black,
+        ),
+        prefixIcon: const Icon(Icons.attach_money),
+        prefixIconColor: Colors.orange,
       ),
     );
   }
@@ -276,7 +295,9 @@ class _StartSetupState extends State<StartSetup> {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : Colors.black87,
+                  color: _categoryError
+                      ? Colors.red
+                      : (isDark ? Colors.white : Colors.black87),
                 ),
               ),
               const SizedBox(height: 12),
@@ -286,7 +307,10 @@ class _StartSetupState extends State<StartSetup> {
                 children: categories.map((cat) {
                   final isSelected = _selectedCatId == cat.id;
                   return InkWell(
-                    onTap: () => setState(() => _selectedCatId = cat.id),
+                    onTap: () => setState(() {
+                      _selectedCatId = cat.id;
+                      _categoryError = false;
+                    }),
                     borderRadius: BorderRadius.circular(12),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
@@ -301,8 +325,12 @@ class _StartSetupState extends State<StartSetup> {
                             : (isDark ? Colors.grey[800] : Colors.grey[100]),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: isSelected ? Colors.blue : Colors.transparent,
-                          width: 1.5,
+                          color: isSelected
+                              ? Colors.blue
+                              : (_categoryError
+                                    ? Colors.red
+                                    : Colors.transparent),
+                          width: isSelected || _categoryError ? 1.5 : 1.0,
                         ),
                       ),
                       child: Row(
@@ -440,14 +468,15 @@ class _StartSetupState extends State<StartSetup> {
   }
 
   void _handleSave() {
-    if (_selectedCatId == null || _moneyController.text.isEmpty) return;
+    final double money = _formatter.getUnformattedValue().toDouble();
 
-    final locale = Localizations.localeOf(context).toString();
-    double money = 0;
-    if (locale == 'vi') {
-      money = double.tryParse(_moneyController.text.replaceAll('.', '')) ?? 0;
-    } else {
-      money = double.tryParse(_moneyController.text.replaceAll(',', '.')) ?? 0;
+    setState(() {
+      _categoryError = _selectedCatId == null;
+      _moneyError = money <= 0;
+    });
+
+    if (_categoryError || _moneyError) {
+      return;
     }
 
     final catCubit = context.read<CategoryCubit>();

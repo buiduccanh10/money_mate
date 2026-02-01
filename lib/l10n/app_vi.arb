@@ -12,7 +12,7 @@
   "noInputData": "Chưa có dữ liệu nhập vào !",
   "slideEdit": "Sửa",
   "slideDelete": "Xoá",
-  "inputDescription": "Mô tả",
+  "inputDescription": "Mô tả (Tùy chọn)",
   "inputMoney": "Tiền",
   "incomeCategory": "Danh mục thu nhập",
   "expenseCategory": "Danh mục chi phí",
@@ -82,7 +82,7 @@
   "toastVerifyEmail": "Tài khoản của bạn chưa được xác minh, kiểm tra liên kết trong email của bạn!",
   "toastUserNotExist": "Người dùng không tồn tại!",
   "catValidator": "Chưa có danh mục nào được chọn !",
-  "desValidator": "Trường mô tả không được để trống",
+
   "moneyValidator": "Trường số tiền không được để trống",
   "darkmodeLightDes": "Sáng",
   "darkmodeDarkDes": "Tối",

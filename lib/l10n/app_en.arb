@@ -12,7 +12,7 @@
   "noInputData": "No input data yet !",
   "slideEdit": "Edit",
   "slideDelete": "Delete",
-  "inputDescription": "Description",
+  "inputDescription": "Description (Optional)",
   "inputMoney": "Money",
   "incomeCategory": "Income category",
   "expenseCategory": "Expense category",
@@ -82,7 +82,7 @@
   "toastVerifyEmail": "Your account not verify, check the link in your email !",
   "toastUserNotExist": "User is not exist !",
   "catValidator": "No category selected yet !",
-  "desValidator": "Description field can not be blank",
+
   "moneyValidator": "Money field can not be blank",
   "darkmodeLightDes": "Light",
   "darkmodeDarkDes": "Dark",

@@ -147,23 +147,22 @@ class _CategoryManageState extends State<CategoryManage> {
             children: [
               SlidableAction(
                 backgroundColor: Colors.blue.withValues(alpha: 0.1),
-                onPressed: (context) => _showUpdateDialog(catItem),
+                onPressed: (slidableContext) => _showUpdateDialog(catItem),
                 foregroundColor: Colors.blue,
                 icon: Icons.edit,
                 // label: AppLocalizations.of(context)!.slideEdit,
               ),
               SlidableAction(
                 backgroundColor: Colors.red.withValues(alpha: 0.1),
-                onPressed: (context) {
+                onPressed: (slidableContext) {
+                  final catCubit = context.read<CategoryCubit>();
                   ConfirmDeleteDialog.show(
                     context,
                     title: AppLocalizations.of(context)!.slideDelete,
                     content: AppLocalizations.of(
                       context,
                     )!.deleteCategoryConfirm,
-                    onConfirm: () => context
-                        .read<CategoryCubit>()
-                        .deleteCategory(catItem.id),
+                    onConfirm: () => catCubit.deleteCategory(catItem.id),
                   );
                 },
                 foregroundColor: Colors.red,

@@ -45,7 +45,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get slideDelete => 'Xoá';
 
   @override
-  String get inputDescription => 'Mô tả';
+  String get inputDescription => 'Mô tả (Tùy chọn)';
 
   @override
   String get inputMoney => 'Tiền';
@@ -259,9 +259,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get catValidator => 'Chưa có danh mục nào được chọn !';
-
-  @override
-  String get desValidator => 'Trường mô tả không được để trống';
 
   @override
   String get moneyValidator => 'Trường số tiền không được để trống';

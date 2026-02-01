@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:money_mate/l10n/app_localizations.dart';
 import 'package:money_mate/services/currency_format.dart';
 import 'package:money_mate/bloc/category/category_cubit.dart';
-import 'package:intl/intl.dart';
+import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 
 class CatLimitDialog extends StatefulWidget {
   final String catId;
@@ -23,20 +23,19 @@ class CatLimitDialog extends StatefulWidget {
 
 class _CatLimitDialogState extends State<CatLimitDialog> {
   final TextEditingController _limitController = TextEditingController();
-  bool _isInitialized = false;
+  late CurrencyTextInputFormatter _formatter;
+  bool _isFormatterInitialized = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (!_isInitialized) {
+    if (!_isFormatterInitialized) {
       final locale = Localizations.localeOf(context).toString();
-      if (locale == 'vi') {
-        final formatter = NumberFormat("###,###,###", "vi_VN");
-        _limitController.text = formatter.format(widget.limit);
-      } else {
-        _limitController.text = widget.limit.toString();
+      _formatter = CurrencyFormat.getFormatter(locale);
+      if (widget.limit > 0) {
+        _limitController.text = _formatter.formatDouble(widget.limit);
       }
-      _isInitialized = true;
+      _isFormatterInitialized = true;
     }
   }
 
@@ -49,7 +48,6 @@ class _CatLimitDialogState extends State<CatLimitDialog> {
   @override
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
-    final locale = Localizations.localeOf(context).toString();
 
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -96,23 +94,27 @@ class _CatLimitDialogState extends State<CatLimitDialog> {
             fontWeight: FontWeight.bold,
             fontSize: 18,
           ),
-          keyboardType: locale == 'vi'
-              ? const TextInputType.numberWithOptions(decimal: false)
-              : const TextInputType.numberWithOptions(decimal: true),
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
           controller: _limitController,
-          inputFormatters: locale == 'vi'
-              ? [FilteringTextInputFormatter.digitsOnly, CurrencyFormat()]
-              : [],
+          inputFormatters: [_formatter],
           decoration: InputDecoration(
-            filled: true,
-            fillColor: isDark ? const Color(0xFF2C2C2C) : Colors.grey[100],
-            border: OutlineInputBorder(
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+              ),
               borderRadius: BorderRadius.circular(15),
-              borderSide: BorderSide.none,
             ),
-            prefixIcon: const Icon(Icons.attach_money, color: Colors.green),
-            suffixText: locale == 'vi' ? 'đ' : '\$',
-            suffixStyle: const TextStyle(fontWeight: FontWeight.bold),
+            focusedBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.blueAccent),
+              borderRadius: BorderRadius.circular(15),
+            ),
+            label: Text(AppLocalizations.of(context)!.inputMoney),
+            labelStyle: const TextStyle(color: Colors.grey),
+            floatingLabelStyle: TextStyle(
+              color: isDark ? Colors.white : Colors.black,
+            ),
+            prefixIcon: const Icon(Icons.attach_money),
+            prefixIconColor: Colors.orange,
           ),
         ),
       ),
@@ -139,13 +141,7 @@ class _CatLimitDialogState extends State<CatLimitDialog> {
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
-                  String raw = _limitController.text;
-                  double limit = 0;
-                  if (locale == 'vi') {
-                    limit = double.tryParse(raw.replaceAll('.', '')) ?? 0;
-                  } else {
-                    limit = double.tryParse(raw.replaceAll(',', '.')) ?? 0;
-                  }
+                  double limit = _formatter.getUnformattedValue().toDouble();
                   context.read<CategoryCubit>().updateLimit(
                     widget.catId,
                     limit,

@@ -1,7 +1,10 @@
 import 'package:cupertino_calendar_picker/cupertino_calendar_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
+import 'package:money_mate/services/currency_format.dart';
 import 'package:money_mate/l10n/app_localizations.dart';
 import 'package:money_mate/bloc/input/input_cubit.dart';
 import 'package:money_mate/bloc/category/category_cubit.dart';
@@ -26,12 +29,17 @@ class _UpdateInputState extends State<UpdateInput> {
   final TextEditingController _moneyController = TextEditingController();
   DateTime selectedDateTime = DateTime.now();
   String? _selectedCatId;
+  late CurrencyTextInputFormatter _formatter;
+  bool _isFormatterInitialized = false;
+
+  bool _moneyError = false;
+  bool _categoryError = false;
 
   @override
   void initState() {
     super.initState();
     _descriptionController.text = widget.inputItem.description ?? '';
-    _moneyController.text = widget.inputItem.money.toString();
+    // Initial value will be formatted in didChangeDependencies
     try {
       selectedDateTime = DateFormat("yyyy-MM-dd").parse(widget.inputItem.date);
     } catch (e) {
@@ -47,6 +55,17 @@ class _UpdateInputState extends State<UpdateInput> {
     }
 
     _selectedCatId = widget.inputItem.catId;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isFormatterInitialized) {
+      final locale = Localizations.localeOf(context).toString();
+      _formatter = CurrencyFormat.getFormatter(locale);
+      _moneyController.text = _formatter.formatDouble(widget.inputItem.money);
+      _isFormatterInitialized = true;
+    }
   }
 
   @override
@@ -231,22 +250,38 @@ class _UpdateInputState extends State<UpdateInput> {
     return TextField(
       controller: _moneyController,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      inputFormatters: [_formatter],
+      onChanged: (value) {
+        if (_moneyError) {
+          setState(() {
+            _moneyError = false;
+          });
+        }
+      },
       decoration: InputDecoration(
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(
-            color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+            color: _moneyError
+                ? Colors.red
+                : (isDark ? Colors.grey[700]! : Colors.grey[300]!),
           ),
           borderRadius: BorderRadius.circular(15),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Colors.blueAccent),
+          borderSide: BorderSide(
+            color: _moneyError ? Colors.red : Colors.blueAccent,
+          ),
           borderRadius: BorderRadius.circular(15),
         ),
         label: Text(AppLocalizations.of(context)!.inputMoney),
-        prefixIcon: Icon(
-          Icons.attach_money,
-          color: isIncome ? const Color(0xFF00C853) : const Color(0xFFFF3D00),
+        labelStyle: const TextStyle(color: Colors.grey),
+        floatingLabelStyle: TextStyle(
+          color: isDark ? Colors.white : Colors.black,
         ),
+        prefixIcon: const Icon(Icons.attach_money),
+        prefixIconColor: isIncome
+            ? const Color(0xFF00C853)
+            : const Color(0xFFFF3D00),
       ),
     );
   }
@@ -263,9 +298,10 @@ class _UpdateInputState extends State<UpdateInput> {
                 isIncome
                     ? AppLocalizations.of(context)!.incomeCategory
                     : AppLocalizations.of(context)!.expenseCategory,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
+                  color: _categoryError ? Colors.red : null,
                 ),
               ),
               TextButton(
@@ -310,8 +346,10 @@ class _UpdateInputState extends State<UpdateInput> {
                   name: cat.name,
                   isSelected: isSelected,
                   isDark: isDark,
+                  showError: _categoryError,
                   onTap: () => setState(() {
                     _selectedCatId = cat.id;
+                    _categoryError = false;
                   }),
                 );
               },
@@ -325,19 +363,28 @@ class _UpdateInputState extends State<UpdateInput> {
   Widget _buildSaveButton(bool isIncome) {
     return GradientAnimatedButton(
       onPressed: () {
-        if (_selectedCatId != null && _moneyController.text.isNotEmpty) {
-          context.read<InputCubit>().updateTransaction(
-            id: widget.inputItem.id,
-            date: selectedDateTime,
-            time: TimeOfDay.fromDateTime(selectedDateTime),
-            description: _descriptionController.text,
-            money: _moneyController.text,
-            catId: _selectedCatId!,
-            isIncome: isIncome,
-            context: context,
-          );
-          Navigator.pop(context);
+        final double money = _formatter.getUnformattedValue().toDouble();
+
+        setState(() {
+          _categoryError = _selectedCatId == null;
+          _moneyError = money <= 0;
+        });
+
+        if (_categoryError || _moneyError) {
+          return;
         }
+
+        context.read<InputCubit>().updateTransaction(
+          id: widget.inputItem.id,
+          date: selectedDateTime,
+          time: TimeOfDay.fromDateTime(selectedDateTime),
+          description: _descriptionController.text,
+          money: money,
+          catId: _selectedCatId!,
+          isIncome: isIncome,
+          context: context,
+        );
+        Navigator.pop(context);
       },
       label: AppLocalizations.of(context)!.update,
       icon: Icons.edit_calendar,

@@ -116,7 +116,7 @@ class _HomeListItemState extends State<HomeListItem> {
                       children: [
                         SlidableAction(
                           backgroundColor: Colors.transparent,
-                          onPressed: (context) {
+                          onPressed: (slidableContext) {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -131,7 +131,8 @@ class _HomeListItemState extends State<HomeListItem> {
                         ),
                         SlidableAction(
                           backgroundColor: Colors.transparent,
-                          onPressed: (context) {
+                          onPressed: (slidableContext) {
+                            final homeCubit = context.read<HomeCubit>();
                             ConfirmDeleteDialog.show(
                               context,
                               title: AppLocalizations.of(context)!.slideDelete,
@@ -139,9 +140,7 @@ class _HomeListItemState extends State<HomeListItem> {
                                 context,
                               )!.deleteTransactionConfirm,
                               onConfirm: () {
-                                context.read<HomeCubit>().deleteTransaction(
-                                  transaction.id,
-                                );
+                                homeCubit.deleteTransaction(transaction.id);
                               },
                             );
                           },

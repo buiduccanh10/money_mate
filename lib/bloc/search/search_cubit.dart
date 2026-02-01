@@ -45,6 +45,13 @@ class SearchCubit extends Cubit<SearchState> {
     }
   }
 
+  void removeTransaction(String id) {
+    final updatedList = state.searchResults
+        .where((transaction) => transaction.id != id)
+        .toList();
+    emit(state.copyWith(searchResults: updatedList));
+  }
+
   Future<void> clearSearch() async {
     emit(
       state.copyWith(

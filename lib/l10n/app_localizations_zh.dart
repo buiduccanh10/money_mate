@@ -45,7 +45,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get slideDelete => '删除';
 
   @override
-  String get inputDescription => '描述';
+  String get inputDescription => '描述 (可选)';
 
   @override
   String get inputMoney => '金额';
@@ -253,9 +253,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get catValidator => '尚未选择类别！';
-
-  @override
-  String get desValidator => '描述字段不能为空';
 
   @override
   String get moneyValidator => '金钱字段不能为空';

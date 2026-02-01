@@ -272,13 +272,16 @@ class _SearchState extends State<Search> {
                       children: [
                         SlidableAction(
                           backgroundColor: Colors.blue.withValues(alpha: 0.1),
-                          onPressed: (context) {
-                            Navigator.push(
+                          onPressed: (slidableContext) async {
+                            await Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (_) => UpdateInput(inputItem: result),
                               ),
                             );
+                            if (context.mounted) {
+                              context.read<SearchCubit>().refresh();
+                            }
                           },
                           foregroundColor: Colors.blue,
                           icon: Icons.edit,
@@ -286,18 +289,20 @@ class _SearchState extends State<Search> {
                         ),
                         SlidableAction(
                           backgroundColor: Colors.red.withValues(alpha: 0.1),
-                          onPressed: (context) {
+                          onPressed: (slidableContext) {
+                            final homeCubit = context.read<HomeCubit>();
+                            final searchCubit = context.read<SearchCubit>();
                             ConfirmDeleteDialog.show(
                               context,
                               title: AppLocalizations.of(context)!.slideDelete,
                               content: AppLocalizations.of(
                                 context,
                               )!.deleteTransactionConfirm,
-                              onConfirm: () {
-                                context.read<HomeCubit>().deleteTransaction(
-                                  result.id,
-                                );
-                                context.read<SearchCubit>().refresh();
+                              onConfirm: () async {
+                                final id = result.id;
+                                searchCubit.removeTransaction(id);
+                                await homeCubit.deleteTransaction(id);
+                                searchCubit.refresh();
                               },
                             );
                           },
@@ -310,33 +315,45 @@ class _SearchState extends State<Search> {
                     child: TransactionItemTile(
                       transaction: result,
                       isDark: isDark,
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => UpdateInput(inputItem: result),
-                        ),
-                      ),
+                      onTap: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => UpdateInput(inputItem: result),
+                          ),
+                        );
+                        if (context.mounted) {
+                          context.read<SearchCubit>().refresh();
+                        }
+                      },
                       onLongPress: () {
                         ItemActionMenu.show(
                           context,
-                          onEdit: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => UpdateInput(inputItem: result),
-                            ),
-                          ),
+                          onEdit: () async {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => UpdateInput(inputItem: result),
+                              ),
+                            );
+                            if (context.mounted) {
+                              context.read<SearchCubit>().refresh();
+                            }
+                          },
                           onDelete: () {
+                            final homeCubit = context.read<HomeCubit>();
+                            final searchCubit = context.read<SearchCubit>();
                             ConfirmDeleteDialog.show(
                               context,
                               title: AppLocalizations.of(context)!.slideDelete,
                               content: AppLocalizations.of(
                                 context,
                               )!.deleteTransactionConfirm,
-                              onConfirm: () {
-                                context.read<HomeCubit>().deleteTransaction(
-                                  result.id,
-                                );
-                                context.read<SearchCubit>().refresh();
+                              onConfirm: () async {
+                                final id = result.id;
+                                searchCubit.removeTransaction(id);
+                                await homeCubit.deleteTransaction(id);
+                                searchCubit.refresh();
                               },
                             );
                           },

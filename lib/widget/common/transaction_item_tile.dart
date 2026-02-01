@@ -44,7 +44,10 @@ class TransactionItemTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    transaction.description ?? '',
+                    (transaction.description == null ||
+                            transaction.description!.isEmpty)
+                        ? (transaction.category?.name ?? '')
+                        : transaction.description!,
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -89,14 +92,17 @@ class TransactionItemTile extends StatelessWidget {
                     color: transaction.isIncome ? Colors.green : Colors.red,
                   ),
                 ),
-                Text(
-                  transaction.category?.name ?? '',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+                transaction.description != null &&
+                        transaction.description!.isNotEmpty
+                    ? Text(
+                        transaction.category?.name ?? '',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      )
+                    : const SizedBox.shrink(),
               ],
             ),
           ],

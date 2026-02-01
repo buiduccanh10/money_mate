@@ -153,7 +153,7 @@ class _SetupInExRegularState extends State<SetupInExRegular> {
             motion: const ScrollMotion(),
             children: [
               SlidableAction(
-                onPressed: (_) {
+                onPressed: (slidableContext) {
                   context.read<ScheduleCubit>().deleteSchedule(
                     schedule.id.toString(),
                   );

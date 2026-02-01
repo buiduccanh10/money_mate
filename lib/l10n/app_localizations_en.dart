@@ -45,7 +45,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get slideDelete => 'Delete';
 
   @override
-  String get inputDescription => 'Description';
+  String get inputDescription => 'Description (Optional)';
 
   @override
   String get inputMoney => 'Money';
@@ -256,9 +256,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get catValidator => 'No category selected yet !';
-
-  @override
-  String get desValidator => 'Description field can not be blank';
 
   @override
   String get moneyValidator => 'Money field can not be blank';

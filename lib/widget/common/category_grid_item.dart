@@ -7,6 +7,8 @@ class CategoryGridItem extends StatelessWidget {
   final bool isDark;
   final VoidCallback onTap;
 
+  final bool showError;
+
   const CategoryGridItem({
     super.key,
     required this.icon,
@@ -14,6 +16,7 @@ class CategoryGridItem extends StatelessWidget {
     required this.isSelected,
     required this.isDark,
     required this.onTap,
+    this.showError = false,
   });
 
   @override
@@ -51,8 +54,10 @@ class CategoryGridItem extends StatelessWidget {
           border: isSelected
               ? null
               : Border.all(
-                  color: isDark ? Colors.grey[800]! : Colors.grey[200]!,
-                  width: 1,
+                  color: showError
+                      ? Colors.red
+                      : (isDark ? Colors.grey[800]! : Colors.grey[200]!),
+                  width: showError ? 1.5 : 1,
                 ),
         ),
         child: Column(

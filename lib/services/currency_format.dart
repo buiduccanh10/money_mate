@@ -1,20 +1,16 @@
-import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
+import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 
-class CurrencyFormat extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
-    if (newValue.selection.baseOffset == 0) {
-      return newValue;
+class CurrencyFormat {
+  static CurrencyTextInputFormatter getFormatter(String locale) {
+    int decimalDigits = 2;
+    if (locale.startsWith('vi')) {
+      decimalDigits = 0;
     }
-    double value = double.parse(newValue.text);
-    final money = NumberFormat("#,###", "vi_VN");
 
-    String newText = money.format(value);
-
-    return newValue.copyWith(
-        text: newText,
-        selection: TextSelection.collapsed(offset: newText.length));
+    return CurrencyTextInputFormatter.currency(
+      locale: locale,
+      decimalDigits: decimalDigits,
+      enableNegative: false,
+    );
   }
 }

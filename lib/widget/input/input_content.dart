@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:money_mate/services/currency_format.dart';
 import 'package:money_mate/l10n/app_localizations.dart';
@@ -27,6 +28,11 @@ class _InputContentState extends State<InputContent> {
   final moneyController = TextEditingController();
   DateTime selectedDateTime = DateTime.now();
   InputCubit? _inputCubit;
+  late CurrencyTextInputFormatter _formatter;
+  bool _isFormatterInitialized = false;
+
+  bool _moneyError = false;
+  bool _categoryError = false;
 
   @override
   void initState() {
@@ -37,6 +43,11 @@ class _InputContentState extends State<InputContent> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _inputCubit ??= context.read<InputCubit>();
+    if (!_isFormatterInitialized) {
+      final locale = Localizations.localeOf(context).toString();
+      _formatter = CurrencyFormat.getFormatter(locale);
+      _isFormatterInitialized = true;
+    }
   }
 
   @override
@@ -50,7 +61,6 @@ class _InputContentState extends State<InputContent> {
   @override
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
-    final locale = Localizations.localeOf(context).toString();
 
     return BlocListener<InputCubit, InputState>(
       listener: (context, state) {
@@ -98,17 +108,19 @@ class _InputContentState extends State<InputContent> {
                   child: Column(
                     children: [
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(15),
+                        borderRadius: BorderRadius.circular(20),
                         child: CupertinoCalendar(
                           weekdayDecoration: CalendarWeekdayDecoration(
-                            textStyle: TextStyle(fontSize: 12),
+                            textStyle: const TextStyle(fontSize: 12),
                           ),
                           monthPickerDecoration: CalendarMonthPickerDecoration(
                             selectedCurrentDayStyle:
                                 CalendarMonthPickerSelectedCurrentDayStyle(
                                   textStyle: const TextStyle(fontSize: 12),
-                                  mainColor: Color(0xFF4364F7),
-                                  backgroundCircleColor: Color(0xFF4364F7),
+                                  mainColor: const Color(0xFF4364F7),
+                                  backgroundCircleColor: const Color(
+                                    0xFF4364F7,
+                                  ),
                                 ),
                             currentDayStyle: CalendarMonthPickerCurrentDayStyle(
                               textStyle: const TextStyle(
@@ -119,8 +131,10 @@ class _InputContentState extends State<InputContent> {
                             selectedDayStyle:
                                 CalendarMonthPickerSelectedDayStyle(
                                   textStyle: const TextStyle(fontSize: 12),
-                                  mainColor: Color(0xFF4364F7),
-                                  backgroundCircleColor: Color(0xFF4364F7),
+                                  mainColor: const Color(0xFF4364F7),
+                                  backgroundCircleColor: const Color(
+                                    0xFF4364F7,
+                                  ),
                                 ),
                             defaultDayStyle: CalendarMonthPickerDefaultDayStyle(
                               textStyle: TextStyle(
@@ -144,7 +158,6 @@ class _InputContentState extends State<InputContent> {
                               selectedDateTime = newDate;
                             });
                           },
-                          timeLabel: 'Select time',
                           mode: CupertinoCalendarMode.dateTime,
                           use24hFormat: true,
                         ),
@@ -183,33 +196,35 @@ class _InputContentState extends State<InputContent> {
                       ),
                       const SizedBox(height: 15),
                       TextField(
-                        keyboardType: locale == 'vi'
-                            ? const TextInputType.numberWithOptions(
-                                decimal: false,
-                              )
-                            : const TextInputType.numberWithOptions(
-                                decimal: true,
-                              ),
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
                         controller: moneyController,
-                        inputFormatters: locale == 'vi'
-                            ? [
-                                FilteringTextInputFormatter.digitsOnly,
-                                CurrencyFormat(),
-                              ]
-                            : [],
+                        inputFormatters: [_formatter],
                         onTapOutside: (_) => FocusScope.of(context).unfocus(),
+                        onChanged: (value) {
+                          if (_moneyError) {
+                            setState(() {
+                              _moneyError = false;
+                            });
+                          }
+                        },
                         decoration: InputDecoration(
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
-                              color: isDark
-                                  ? Colors.grey[700]!
-                                  : Colors.grey[300]!,
+                              color: _moneyError
+                                  ? Colors.red
+                                  : (isDark
+                                        ? Colors.grey[700]!
+                                        : Colors.grey[300]!),
                             ),
                             borderRadius: BorderRadius.circular(15),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                              color: Colors.blueAccent,
+                            borderSide: BorderSide(
+                              color: _moneyError
+                                  ? Colors.red
+                                  : Colors.blueAccent,
                             ),
                             borderRadius: BorderRadius.circular(15),
                           ),
@@ -222,10 +237,6 @@ class _InputContentState extends State<InputContent> {
                           prefixIconColor: widget.isIncome
                               ? const Color(0xFF00C853)
                               : const Color(0xFFFF3D00),
-                          suffixStyle: const TextStyle(fontSize: 20),
-                          suffixText: locale == 'vi'
-                              ? 'đ'
-                              : (locale == 'zh' ? '¥' : '\$'),
                         ),
                       ),
                     ],
@@ -241,9 +252,10 @@ class _InputContentState extends State<InputContent> {
                       widget.isIncome
                           ? AppLocalizations.of(context)!.incomeCategory
                           : AppLocalizations.of(context)!.expenseCategory,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
+                        color: _categoryError ? Colors.red : null,
                       ),
                     ),
                     TextButton(
@@ -303,11 +315,15 @@ class _InputContentState extends State<InputContent> {
                   name: catItem.name,
                   isSelected: isSelected,
                   isDark: isDark,
+                  showError: _categoryError,
                   onTap: () {
                     context.read<InputCubit>().selectCategory(
                       index,
                       catItem.id,
                     );
+                    setState(() {
+                      _categoryError = false;
+                    });
                   },
                 );
               },
@@ -322,21 +338,28 @@ class _InputContentState extends State<InputContent> {
     return GradientAnimatedButton(
       onPressed: () {
         final state = context.read<InputCubit>().state;
-        if (state.catId == null) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text("Select a category")));
+        final double money = _formatter.getUnformattedValue().toDouble();
+
+        setState(() {
+          _categoryError = state.catId == null;
+          _moneyError = money <= 0;
+        });
+
+        if (_categoryError || _moneyError) {
           return;
         }
+
         context.read<InputCubit>().addTransaction(
           date: selectedDateTime,
           time: TimeOfDay.fromDateTime(selectedDateTime),
           description: descriptionController.text,
-          money: moneyController.text,
+          money: money,
           catId: state.catId!,
           context: context,
         );
         context.read<InputCubit>().resetSelection();
+        moneyController.clear();
+        descriptionController.clear();
       },
       label: AppLocalizations.of(context)!.inputVave,
       icon: Icons.add,

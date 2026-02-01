@@ -74,17 +74,14 @@ class InputCubit extends Cubit<InputState> {
     required DateTime date,
     required TimeOfDay time,
     required String description,
-    required String money,
+    required double money,
     required String catId,
     required BuildContext context,
   }) async {
     emit(state.copyWith(status: InputStatus.loading));
     try {
       final locale = Localizations.localeOf(context).toString();
-      String formatMoney = locale == 'vi'
-          ? money.replaceAll('.', '')
-          : money.replaceAll(',', '.');
-      double moneyFinal = double.parse(formatMoney);
+      double moneyFinal = money;
 
       // Limit Check
       final category = await _categoryRepo.getCategory(catId);
@@ -153,17 +150,13 @@ class InputCubit extends Cubit<InputState> {
     required TimeOfDay time,
     required bool isIncome,
     required String description,
-    required String money,
+    required double money,
     required String catId,
     required BuildContext context,
   }) async {
     emit(state.copyWith(status: InputStatus.loading));
     try {
-      final locale = Localizations.localeOf(context).toString();
-      String formatMoney = locale == 'vi'
-          ? money.replaceAll('.', '')
-          : money.replaceAll(',', '.');
-      double moneyFinal = double.parse(formatMoney);
+      double moneyFinal = money;
 
       String finalDate = DateFormat('yyyy-MM-dd').format(date);
       String finalTime =

@@ -175,7 +175,7 @@ abstract class AppLocalizations {
   /// No description provided for @inputDescription.
   ///
   /// In en, this message translates to:
-  /// **'Description'**
+  /// **'Description (Optional)'**
   String get inputDescription;
 
   /// No description provided for @inputMoney.
@@ -591,12 +591,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No category selected yet !'**
   String get catValidator;
-
-  /// No description provided for @desValidator.
-  ///
-  /// In en, this message translates to:
-  /// **'Description field can not be blank'**
-  String get desValidator;
 
   /// No description provided for @moneyValidator.
   ///

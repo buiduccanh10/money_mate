@@ -292,15 +292,15 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
                 foregroundColor: Colors.blue,
               ),
               SlidableAction(
-                onPressed: (_) {
+                onPressed: (slidableContext) {
+                  final chartCubit = context.read<ChartCubit>();
                   ConfirmDeleteDialog.show(
                     context,
                     title: AppLocalizations.of(context)!.slideDelete,
                     content: AppLocalizations.of(
                       context,
                     )!.deleteTransactionConfirm,
-                    onConfirm: () =>
-                        context.read<ChartCubit>().deleteTransaction(tx.id),
+                    onConfirm: () => chartCubit.deleteTransaction(tx.id),
                   );
                 },
                 icon: Icons.delete,
@@ -337,10 +337,14 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
     );
   }
 
-  void _editTx(TransactionResponseDto tx) {
-    Navigator.push(
+  Future<void> _editTx(TransactionResponseDto tx) async {
+    await Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => UpdateInput(inputItem: tx)),
     );
+    if (mounted) {
+      context.read<ChartCubit>().refreshDetail();
+      context.read<ChartCubit>().fetchData();
+    }
   }
 }
