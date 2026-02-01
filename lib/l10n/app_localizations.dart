@@ -939,6 +939,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unlock'**
   String get unlock;
+
+  /// No description provided for @deleteTransactionConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this transaction?'**
+  String get deleteTransactionConfirm;
+
+  /// No description provided for @deleteCategoryConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this category?'**
+  String get deleteCategoryConfirm;
+
+  /// No description provided for @deleteDataConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete all data?'**
+  String get deleteDataConfirm;
+
+  /// No description provided for @deleteAccountConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete your account?'**
+  String get deleteAccountConfirm;
 }
 
 class _AppLocalizationsDelegate

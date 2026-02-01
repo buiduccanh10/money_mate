@@ -11,6 +11,7 @@ import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger
 import 'package:shimmer/shimmer.dart';
 import 'package:money_mate/widget/common/gradient_animated_button.dart';
 import 'package:money_mate/widget/common/category_grid_item.dart';
+import 'package:money_mate/widget/common/confirm_delete_dialog.dart';
 
 class UpdateInput extends StatefulWidget {
   final TransactionResponseDto inputItem;
@@ -344,36 +345,17 @@ class _UpdateInputState extends State<UpdateInput> {
   }
 
   void _showDeleteDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text(AppLocalizations.of(context)!.confirm),
-        content: Text('${AppLocalizations.of(context)!.slideDelete} ?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(
-              AppLocalizations.of(context)!.cancel,
-              style: const TextStyle(color: Colors.grey),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              context.read<InputCubit>().deleteTransaction(
-                widget.inputItem.id,
-                context,
-              );
-              Navigator.pop(ctx);
-              Navigator.pop(context);
-            },
-            child: Text(
-              AppLocalizations.of(context)!.slideDelete,
-              style: const TextStyle(color: Colors.redAccent),
-            ),
-          ),
-        ],
-      ),
+    ConfirmDeleteDialog.show(
+      context,
+      title: AppLocalizations.of(context)!.confirm,
+      content: AppLocalizations.of(context)!.deleteTransactionConfirm,
+      onConfirm: () {
+        context.read<InputCubit>().deleteTransaction(
+          widget.inputItem.id,
+          context,
+        );
+        Navigator.pop(context);
+      },
     );
   }
 }

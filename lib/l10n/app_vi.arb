@@ -139,5 +139,9 @@
   "avatarUpdated": "Cập nhật ảnh đại diện thành công",
   "avatarUpdateFail": "Cập nhật ảnh đại diện thất bại",
   "profileUpdated": "Cập nhật hồ sơ thành công",
-  "unlock": "Mở khoá"
+  "unlock": "Mở khoá",
+  "deleteTransactionConfirm": "Bạn có chắc chắn muốn xóa giao dịch này không?",
+  "deleteCategoryConfirm": "Bạn có chắc chắn muốn xóa danh mục này không?",
+  "deleteDataConfirm": "Bạn có chắc chắn muốn xóa tất cả dữ liệu không?",
+  "deleteAccountConfirm": "Bạn có chắc chắn muốn xóa tài khoản của mình không?"
 }

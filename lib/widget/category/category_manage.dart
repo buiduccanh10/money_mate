@@ -8,6 +8,7 @@ import 'package:money_mate/widget/category/cat_update_dialog.dart';
 import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:money_mate/l10n/app_localizations.dart';
+import 'package:money_mate/widget/common/confirm_delete_dialog.dart';
 
 class CategoryManage extends StatefulWidget {
   final bool isIncome;
@@ -148,8 +149,15 @@ class _CategoryManageState extends State<CategoryManage> {
             ),
             SlidableAction(
               backgroundColor: Colors.red.withValues(alpha: 0.1),
-              onPressed: (context) =>
-                  context.read<CategoryCubit>().deleteCategory(catItem.id),
+              onPressed: (context) {
+                ConfirmDeleteDialog.show(
+                  context,
+                  title: AppLocalizations.of(context)!.slideDelete,
+                  content: AppLocalizations.of(context)!.deleteCategoryConfirm,
+                  onConfirm: () =>
+                      context.read<CategoryCubit>().deleteCategory(catItem.id),
+                );
+              },
               foregroundColor: Colors.red,
               icon: Icons.delete,
               // label: AppLocalizations.of(context)!.slideDelete,
@@ -198,33 +206,17 @@ class _CategoryManageState extends State<CategoryManage> {
   }
 
   void _confirmDeleteAll(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          widget.isIncome
-              ? AppLocalizations.of(context)!.inDeleteAllTitle
-              : AppLocalizations.of(context)!.exDeleteAllTitle,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.cancel),
-          ),
-          TextButton(
-            onPressed: () {
-              context.read<CategoryCubit>().deleteAllCategories(
-                widget.isIncome,
-              );
-              Navigator.pop(context);
-            },
-            child: Text(
-              AppLocalizations.of(context)!.confirm,
-              style: const TextStyle(color: Colors.red),
-            ),
-          ),
-        ],
-      ),
+    final title = widget.isIncome
+        ? AppLocalizations.of(context)!.inDeleteAllTitle
+        : AppLocalizations.of(context)!.exDeleteAllTitle;
+
+    ConfirmDeleteDialog.show(
+      context,
+      title: title,
+      content: title,
+      onConfirm: () {
+        context.read<CategoryCubit>().deleteAllCategories(widget.isIncome);
+      },
     );
   }
 

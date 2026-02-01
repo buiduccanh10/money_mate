@@ -156,9 +156,10 @@ class SettingCubit extends Cubit<SettingState> {
 
       if (name != null || email != null || password != null || avatar != null) {
         currentUser = await _userRepo.updateProfile(
-          name: name,
-          email: email,
+          name: name ?? currentUser.name,
+          email: email ?? currentUser.email,
           password: password,
+          avatar: avatar ?? currentUser.avatar,
         );
       }
 

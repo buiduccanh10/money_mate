@@ -9,6 +9,7 @@ import 'package:money_mate/widget/common/transaction_item_tile.dart';
 import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:money_mate/utils/date_format_utils.dart';
+import 'package:money_mate/widget/common/confirm_delete_dialog.dart';
 
 class HomeListItem extends StatefulWidget {
   const HomeListItem({super.key});
@@ -39,7 +40,7 @@ class _HomeListItemState extends State<HomeListItem> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: 340), // Space for Appbar + Cards
+                SizedBox(height: 200), // Space for Appbar + Cards
                 Icon(
                   Icons.receipt_long_rounded,
                   size: 80,
@@ -89,7 +90,7 @@ class _HomeListItemState extends State<HomeListItem> {
                         width: 4,
                         height: 16,
                         decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor,
+                          color: isDark ? Colors.white : Colors.black,
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -130,8 +131,17 @@ class _HomeListItemState extends State<HomeListItem> {
                         SlidableAction(
                           backgroundColor: Colors.transparent,
                           onPressed: (context) {
-                            context.read<HomeCubit>().deleteTransaction(
-                              transaction.id,
+                            ConfirmDeleteDialog.show(
+                              context,
+                              title: AppLocalizations.of(context)!.slideDelete,
+                              content: AppLocalizations.of(
+                                context,
+                              )!.deleteTransactionConfirm,
+                              onConfirm: () {
+                                context.read<HomeCubit>().deleteTransaction(
+                                  transaction.id,
+                                );
+                              },
                             );
                           },
                           foregroundColor: Colors.red,

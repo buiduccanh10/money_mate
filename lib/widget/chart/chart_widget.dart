@@ -9,6 +9,7 @@ import 'package:money_mate/widget/chart/chart_item_detail.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:money_mate/widget/common/month_year_picker_sheet.dart';
+import 'package:money_mate/widget/common/category_icon_circle.dart';
 
 class ChartWidget extends StatefulWidget {
   const ChartWidget({super.key});
@@ -160,15 +161,17 @@ class _ChartWidgetState extends State<ChartWidget> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(20), // STYLE_GUIDE: Radius 20
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.03),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+              color: Colors.black.withValues(
+                alpha: 0.04,
+              ), // STYLE_GUIDE: Shadow
+              blurRadius: 15,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
@@ -231,9 +234,12 @@ class _ChartWidgetState extends State<ChartWidget> {
           },
           decoration: BoxDecoration(
             color: isDark
-                ? Colors.white.withValues(alpha: 0.1)
+                ? Colors.white.withValues(alpha: 0.08)
                 : Colors.grey.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(50),
+            border: isDark
+                ? Border.all(color: Colors.white.withValues(alpha: 0.1))
+                : null,
           ),
           thumbDecoration: BoxDecoration(
             color: state.isIncome
@@ -242,9 +248,13 @@ class _ChartWidgetState extends State<ChartWidget> {
             borderRadius: BorderRadius.circular(50),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
-                blurRadius: 4,
-                offset: const Offset(0, 2),
+                color:
+                    (state.isIncome
+                            ? const Color(0xFF00C853)
+                            : const Color(0xFFFF3D00))
+                        .withValues(alpha: 0.3),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
@@ -262,28 +272,50 @@ class _ChartWidgetState extends State<ChartWidget> {
     ChartState state,
     List<Map<String, dynamic>> data,
   ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final width = MediaQuery.of(context).size.width;
+
     if (state.status == ChartStatus.loading) {
-      return const SizedBox(
-        height: 280,
-        child: Center(child: CircularProgressIndicator()),
+      return Shimmer.fromColors(
+        baseColor: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+        highlightColor: isDark ? Colors.grey[700]! : Colors.grey[100]!,
+        child: Container(
+          margin: const EdgeInsets.all(16),
+          height: 280,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+        ),
       );
     }
 
     if (data.isEmpty) {
-      final isDark = Theme.of(context).brightness == Brightness.dark;
-      return SizedBox(
+      return Container(
+        margin: const EdgeInsets.all(16),
         height: 280,
+        width: width * 0.92,
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 15,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Opacity(
-                opacity: 0.5,
-                child: Image.asset(
-                  'assets/search.png',
-                  width: 150,
-                  color: isDark ? Colors.white38 : null,
-                  colorBlendMode: isDark ? BlendMode.srcIn : null,
+                opacity: 0.3,
+                child: Icon(
+                  Icons.pie_chart_outline_rounded,
+                  size: 80,
+                  color: isDark ? Colors.white : Colors.grey,
                 ),
               ),
               const SizedBox(height: 16),
@@ -301,18 +333,56 @@ class _ChartWidgetState extends State<ChartWidget> {
       );
     }
 
-    return SizedBox(
-      height: 280,
+    return Container(
+      margin: const EdgeInsets.all(16),
+      height: 250,
+      width: width * 0.92,
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
       child: SfCircularChart(
+        palette: const <Color>[
+          Color(0xFF4364F7),
+          Color(0xFF00C853),
+          Color(0xFFFF3D00),
+          Color(0xFFFFD600),
+          Color(0xFF6FB1FC),
+          Color(0xFF7C4DFF),
+          Color(0xFF00B8D4),
+          Color(0xFF64DD17),
+        ],
         series: <CircularSeries>[
           DoughnutSeries<Map<String, dynamic>, String>(
             dataSource: data,
             xValueMapper: (d, _) => d['name'] as String,
             yValueMapper: (d, _) => d['money'] as double,
-            dataLabelSettings: const DataLabelSettings(isVisible: true),
+            innerRadius: '60%',
+            radius: '70%',
+            dataLabelSettings: DataLabelSettings(
+              isVisible: true,
+              labelPosition: ChartDataLabelPosition.outside,
+              textStyle: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: isDark ? Colors.white70 : Colors.black87,
+              ),
+            ),
             enableTooltip: true,
           ),
         ],
+        legend: const Legend(
+          isVisible: true,
+          position: LegendPosition.bottom,
+          overflowMode: LegendItemOverflowMode.wrap,
+        ),
       ),
     );
   }
@@ -325,20 +395,20 @@ class _ChartWidgetState extends State<ChartWidget> {
     NumberFormat fmt,
   ) {
     if (state.status == ChartStatus.loading) {
-      return Shimmer.fromColors(
-        baseColor: isDark ? Colors.grey[700]! : Colors.grey[300]!,
-        highlightColor: Colors.grey[100]!,
-        child: Container(height: 200, color: Colors.white),
-      );
+      return _buildDetailsShimmer(isDark);
     }
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
       itemCount: data.length,
       itemBuilder: (context, index) {
         final item = data[index];
-        return ListTile(
+        final color = state.isIncome
+            ? const Color(0xFF00C853)
+            : const Color(0xFFFF3D00);
+
+        return InkWell(
           onTap: () {
             Navigator.push(
               context,
@@ -356,13 +426,89 @@ class _ChartWidgetState extends State<ChartWidget> {
               ),
             );
           },
-          leading: Text(
-            item['icon'] as String,
-            style: const TextStyle(fontSize: 28),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            child: Row(
+              children: [
+                CategoryIconCircle(
+                  icon: item['icon'] as String,
+                  isDark: isDark,
+                  radius: 26,
+                  iconSize: 32,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    item['name'] as String,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  spacing: 4,
+                  children: [
+                    Text(
+                      '${state.isIncome ? '+' : '-'} ${fmt.format(item['money'] as double)}',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: color,
+                      ),
+                    ),
+                    const Icon(
+                      Icons.chevron_right,
+                      size: 16,
+                      color: Colors.grey,
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-          title: Text(item['name'] as String),
-          trailing: Text(
-            '${state.isIncome ? '+' : '-'} ${fmt.format(item['money'] as double)}',
+        );
+      },
+    );
+  }
+
+  Widget _buildDetailsShimmer(bool isDark) {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: 5,
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          child: Shimmer.fromColors(
+            baseColor: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+            highlightColor: isDark ? Colors.grey[700]! : Colors.grey[100]!,
+            child: Row(
+              children: [
+                Container(
+                  width: 52,
+                  height: 52,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(height: 16, color: Colors.white, width: 120),
+                      const SizedBox(height: 8),
+                      Container(height: 12, color: Colors.white, width: 80),
+                    ],
+                  ),
+                ),
+                Container(height: 16, color: Colors.white, width: 60),
+              ],
+            ),
           ),
         );
       },

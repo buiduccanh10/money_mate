@@ -432,4 +432,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unlock => 'Unlock';
+
+  @override
+  String get deleteTransactionConfirm =>
+      'Are you sure you want to delete this transaction?';
+
+  @override
+  String get deleteCategoryConfirm =>
+      'Are you sure you want to delete this category?';
+
+  @override
+  String get deleteDataConfirm => 'Are you sure you want to delete all data?';
+
+  @override
+  String get deleteAccountConfirm =>
+      'Are you sure you want to delete your account?';
 }

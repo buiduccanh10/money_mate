@@ -427,4 +427,16 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get unlock => '解锁';
+
+  @override
+  String get deleteTransactionConfirm => '您确定要删除此交易吗？';
+
+  @override
+  String get deleteCategoryConfirm => '您确定要删除此类别吗？';
+
+  @override
+  String get deleteDataConfirm => '您确定要删除所有数据吗？';
+
+  @override
+  String get deleteAccountConfirm => '您确定要删除您的帐户吗？';
 }

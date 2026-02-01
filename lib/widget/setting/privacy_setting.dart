@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:money_mate/l10n/app_localizations.dart';
 import 'package:money_mate/bloc/setting/setting_cubit.dart';
 import 'package:money_mate/bloc/setting/setting_state.dart';
+import 'package:money_mate/widget/common/confirm_delete_dialog.dart';
 
 class PrivacySetting extends StatelessWidget {
   const PrivacySetting({super.key});
@@ -56,6 +57,7 @@ class PrivacySetting extends StatelessWidget {
                   onTap: () => _confirmDelete(
                     context,
                     AppLocalizations.of(context)!.deleteAllDataAcc,
+                    AppLocalizations.of(context)!.deleteDataConfirm,
                     () => context.read<SettingCubit>().deleteAllData(),
                   ),
                 ),
@@ -69,6 +71,7 @@ class PrivacySetting extends StatelessWidget {
                   onTap: () => _confirmDelete(
                     context,
                     AppLocalizations.of(context)!.deleteAcc,
+                    AppLocalizations.of(context)!.deleteAccountConfirm,
                     () => context.read<SettingCubit>().deleteUser(),
                   ),
                 ),
@@ -151,33 +154,14 @@ class PrivacySetting extends StatelessWidget {
   void _confirmDelete(
     BuildContext context,
     String title,
+    String content,
     VoidCallback onConfirm,
   ) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text(title),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              AppLocalizations.of(context)!.cancel,
-              style: const TextStyle(color: Colors.grey),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              onConfirm();
-              Navigator.pop(context);
-            },
-            child: Text(
-              AppLocalizations.of(context)!.confirm,
-              style: const TextStyle(color: Colors.redAccent),
-            ),
-          ),
-        ],
-      ),
+    ConfirmDeleteDialog.show(
+      context,
+      title: title,
+      content: content,
+      onConfirm: onConfirm,
     );
   }
 }

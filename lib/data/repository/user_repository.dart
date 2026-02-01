@@ -11,6 +11,7 @@ abstract class UserRepository {
     String? name,
     String? email,
     String? password,
+    String? avatar,
   });
   Future<void> deleteAccount();
 }
@@ -70,9 +71,15 @@ class UserRepositoryImpl implements UserRepository {
     String? name,
     String? email,
     String? password,
+    String? avatar,
   }) async {
     final response = await _api.apiUsersMeProfilePatch(
-      body: UpdateProfileDto(name: name, email: email, password: password),
+      body: UpdateProfileDto(
+        name: name,
+        email: email,
+        password: password,
+        avatar: avatar,
+      ),
     );
 
     if (response.isSuccessful && response.body != null) {

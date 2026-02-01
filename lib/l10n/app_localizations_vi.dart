@@ -435,4 +435,20 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get unlock => 'Mở khoá';
+
+  @override
+  String get deleteTransactionConfirm =>
+      'Bạn có chắc chắn muốn xóa giao dịch này không?';
+
+  @override
+  String get deleteCategoryConfirm =>
+      'Bạn có chắc chắn muốn xóa danh mục này không?';
+
+  @override
+  String get deleteDataConfirm =>
+      'Bạn có chắc chắn muốn xóa tất cả dữ liệu không?';
+
+  @override
+  String get deleteAccountConfirm =>
+      'Bạn có chắc chắn muốn xóa tài khoản của mình không?';
 }
