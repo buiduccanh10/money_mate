@@ -456,4 +456,16 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get error => '错误';
+
+  @override
+  String get nameValidator => '姓名不能为空';
+
+  @override
+  String get confirmPassword => '确认密码';
+
+  @override
+  String get confirmPasswordEmpty => '确认密码不能为空';
+
+  @override
+  String get passMatch => '密码不匹配';
 }

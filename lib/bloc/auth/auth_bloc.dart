@@ -57,6 +57,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       await _authRepo.register(
         event.email,
+        event.name,
         event.password,
         event.confirmPassword,
         language: deviceLanguage,

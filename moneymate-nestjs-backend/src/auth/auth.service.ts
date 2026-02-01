@@ -44,6 +44,7 @@ export class AuthService {
     // Create user
     const user = this.userRepository.create({
       email,
+      name: registerDto.name,
       password: hashedPassword,
       language: registerDto.language || 'en',
     });

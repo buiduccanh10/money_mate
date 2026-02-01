@@ -149,6 +149,10 @@
   "limitExceededError": "Limit exceeded! You already spent {amount} in this period.",
   "savedCheckHome": "Saved! Check home screen.",
   "overLimitTitle": "Over limit!",
-  "error": "Error"
+  "error": "Error",
+  "nameValidator": "Name cannot be empty",
+  "confirmPassword": "Confirm password",
+  "confirmPasswordEmpty": "Confirm password cannot be empty",
+  "passMatch": "Passwords do not match"
 }
 

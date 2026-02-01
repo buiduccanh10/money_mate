@@ -468,4 +468,16 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get error => 'Lỗi';
+
+  @override
+  String get nameValidator => 'Tên không được để trống';
+
+  @override
+  String get confirmPassword => 'Xác nhận mật khẩu';
+
+  @override
+  String get confirmPasswordEmpty => 'Xác nhận mật khẩu không được để trống';
+
+  @override
+  String get passMatch => 'Mật khẩu không khớp';
 }

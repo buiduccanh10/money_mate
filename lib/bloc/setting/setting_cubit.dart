@@ -37,13 +37,12 @@ class SettingCubit extends Cubit<SettingState> {
           isDark: isDark ?? false,
           isLock: isLock ?? false,
           language:
-              language ??
-              ([
-                    'vi',
-                    'zh',
-                  ].contains(PlatformDispatcher.instance.locale.languageCode)
-                  ? PlatformDispatcher.instance.locale.languageCode
-                  : 'en'),
+              [
+                'vi',
+                'zh',
+              ].contains(PlatformDispatcher.instance.locale.languageCode)
+              ? PlatformDispatcher.instance.locale.languageCode
+              : (language ?? 'en'),
         ),
       );
     } catch (e) {

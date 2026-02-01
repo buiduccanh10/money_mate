@@ -11,6 +11,7 @@ import 'package:money_mate/widget/auth/forgot_pass.dart';
 import 'package:money_mate/widget/auth/sign_up.dart';
 import 'package:rive/rive.dart' hide LinearGradient;
 import 'package:sign_in_button/sign_in_button.dart';
+import 'dart:ui';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -88,18 +89,18 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     // Check Brightness for Gradient
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final backgroundGradient = LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-      colors: isDark
-          ? [
-              const Color(0xFF0F2027),
-              const Color(0xFF203A43),
-              const Color(0xFF2C5364),
-            ]
-          : [const Color(0xFF4364F7), const Color(0xFF6FB1FC)],
-    );
+    // final isDark = Theme.of(context).brightness == Brightness.dark;
+    // final backgroundGradient = LinearGradient(
+    //   begin: Alignment.topLeft,
+    //   end: Alignment.bottomRight,
+    //   colors: isDark
+    //       ? [
+    //           const Color(0xFF0F2027),
+    //           const Color(0xFF203A43),
+    //           const Color(0xFF2C5364),
+    //         ]
+    //       : [const Color(0xFF4364F7), const Color(0xFF6FB1FC)],
+    // );
 
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
@@ -136,21 +137,17 @@ class _LoginState extends State<Login> {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2), // Glassmorphism
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.3),
-                    ),
+                    border: Border.all(color: Colors.grey[300]!),
                   ),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
-                      dropdownColor: isDark
-                          ? const Color(0xFF203A43)
-                          : const Color(0xFF6FB1FC),
+                      dropdownColor: Colors.white,
                       borderRadius: BorderRadius.circular(20),
                       icon: const Icon(
                         Icons.language,
-                        color: Colors.white,
+                        color: Colors.black87,
                         size: 24,
                       ),
                       value: state.language,
@@ -159,21 +156,21 @@ class _LoginState extends State<Login> {
                           value: 'vi',
                           child: Text(
                             AppLocalizations.of(context)!.opVi,
-                            style: const TextStyle(color: Colors.white),
+                            style: const TextStyle(color: Colors.black87),
                           ),
                         ),
                         DropdownMenuItem(
                           value: 'en',
                           child: Text(
                             AppLocalizations.of(context)!.opEn,
-                            style: const TextStyle(color: Colors.white),
+                            style: const TextStyle(color: Colors.black87),
                           ),
                         ),
                         DropdownMenuItem(
                           value: 'zh',
                           child: Text(
                             AppLocalizations.of(context)!.opCn,
-                            style: const TextStyle(color: Colors.white),
+                            style: const TextStyle(color: Colors.black87),
                           ),
                         ),
                       ],
@@ -219,9 +216,7 @@ class _LoginState extends State<Login> {
                           borderRadius: BorderRadius.circular(
                             20,
                           ), // STYLE_GUIDE: Radius 20
-                          color: isDark
-                              ? const Color(0xFF1E1E1E)
-                              : Colors.white,
+                          color: Colors.white,
                           boxShadow: const [
                             BoxShadow(
                               color: Colors.black26,
@@ -241,7 +236,7 @@ class _LoginState extends State<Login> {
                                 style: TextStyle(
                                   fontSize: 24, // STYLE_GUIDE: Title 24
                                   fontWeight: FontWeight.bold,
-                                  color: isDark ? Colors.white : Colors.black87,
+                                  color: Colors.black87,
                                 ),
                               ),
                               const SizedBox(height: 24),
@@ -262,9 +257,7 @@ class _LoginState extends State<Login> {
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(15),
                                     borderSide: BorderSide(
-                                      color: isDark
-                                          ? Colors.grey[700]!
-                                          : Colors.grey[300]!,
+                                      color: Colors.grey[300]!,
                                     ),
                                   ),
                                 ),
@@ -296,9 +289,7 @@ class _LoginState extends State<Login> {
                                         icon: Icon(
                                           Icons.remove_red_eye_outlined,
                                           color: state.isShow
-                                              ? (isDark
-                                                    ? Colors.white70
-                                                    : Colors.black54)
+                                              ? Colors.black54
                                               : Colors.blue,
                                         ),
                                       ),
@@ -308,9 +299,7 @@ class _LoginState extends State<Login> {
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(15),
                                         borderSide: BorderSide(
-                                          color: isDark
-                                              ? Colors.grey[700]!
-                                              : Colors.grey[300]!,
+                                          color: Colors.grey[300]!,
                                         ),
                                       ),
                                     ),
@@ -324,9 +313,7 @@ class _LoginState extends State<Login> {
                                     AppLocalizations.of(context)!.forgotPass,
                                     style: TextStyle(
                                       decoration: TextDecoration.underline,
-                                      color: isDark
-                                          ? Colors.blueAccent
-                                          : Colors.blue,
+                                      color: Colors.blue,
                                     ),
                                   ),
                                   onPressed: () {
@@ -410,11 +397,7 @@ class _LoginState extends State<Login> {
                                 children: [
                                   Text(
                                     AppLocalizations.of(context)!.dontHaveAcc,
-                                    style: TextStyle(
-                                      color: isDark
-                                          ? Colors.grey[400]
-                                          : Colors.grey[700],
-                                    ),
+                                    style: TextStyle(color: Colors.grey[700]),
                                   ),
                                   TextButton(
                                     child: Text(
@@ -441,9 +424,7 @@ class _LoginState extends State<Login> {
                                 AppLocalizations.of(context)!.orSignIn,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  color: isDark
-                                      ? Colors.grey[500]
-                                      : Colors.grey,
+                                  color: Colors.grey,
                                   fontSize: 12,
                                 ),
                               ),

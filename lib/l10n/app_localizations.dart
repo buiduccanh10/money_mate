@@ -993,6 +993,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error'**
   String get error;
+
+  /// No description provided for @nameValidator.
+  ///
+  /// In en, this message translates to:
+  /// **'Name cannot be empty'**
+  String get nameValidator;
+
+  /// No description provided for @confirmPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm password'**
+  String get confirmPassword;
+
+  /// No description provided for @confirmPasswordEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm password cannot be empty'**
+  String get confirmPasswordEmpty;
+
+  /// No description provided for @passMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get passMatch;
 }
 
 class _AppLocalizationsDelegate

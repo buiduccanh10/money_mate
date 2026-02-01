@@ -6,6 +6,7 @@ abstract class AuthRepository {
   Future<AuthResponseDto> login(String email, String password);
   Future<AuthResponseDto> register(
     String email,
+    String name,
     String password,
     String confirmPassword, {
     String? language,
@@ -37,6 +38,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<AuthResponseDto> register(
     String email,
+    String name,
     String password,
     String confirmPassword, {
     String? language,
@@ -44,6 +46,7 @@ class AuthRepositoryImpl implements AuthRepository {
     final response = await _api.apiAuthRegisterPost(
       body: RegisterDto(
         email: email,
+        name: name,
         password: password,
         confirmPassword: confirmPassword,
         language: language,

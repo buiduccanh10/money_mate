@@ -464,4 +464,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get error => 'Error';
+
+  @override
+  String get nameValidator => 'Name cannot be empty';
+
+  @override
+  String get confirmPassword => 'Confirm password';
+
+  @override
+  String get confirmPasswordEmpty => 'Confirm password cannot be empty';
+
+  @override
+  String get passMatch => 'Passwords do not match';
 }

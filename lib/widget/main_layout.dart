@@ -10,6 +10,7 @@ import 'package:money_mate/widget/home/home.dart';
 import 'package:money_mate/widget/input/input.dart';
 import 'package:money_mate/widget/search/search.dart';
 import 'package:money_mate/widget/setting/setting.dart';
+import 'dart:ui';
 
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});

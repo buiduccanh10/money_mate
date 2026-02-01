@@ -16,13 +16,18 @@ class RegisterDto {
     required this.password,
     required this.confirmPassword,
     this.language,
+    this.name,
   });
 
   factory RegisterDto.fromJson(Map<String, dynamic> json) =>
       _$RegisterDtoFromJson(json);
 
   static const toJsonFactory = _$RegisterDtoToJson;
-  Map<String, dynamic> toJson() => _$RegisterDtoToJson(this);
+  Map<String, dynamic> toJson() {
+    final map = _$RegisterDtoToJson(this);
+    map['name'] = name;
+    return map;
+  }
 
   @JsonKey(name: 'email')
   final String email;
@@ -32,6 +37,8 @@ class RegisterDto {
   final String confirmPassword;
   @JsonKey(name: 'language')
   final String? language;
+  @JsonKey(name: 'name')
+  final String? name;
   static const fromJsonFactory = _$RegisterDtoFromJson;
 
   @override
@@ -54,7 +61,9 @@ class RegisterDto {
                 const DeepCollectionEquality().equals(
                   other.language,
                   language,
-                )));
+                )) &&
+            (identical(other.name, language) ||
+                const DeepCollectionEquality().equals(other.name, name)));
   }
 
   @override

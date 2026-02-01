@@ -13,6 +13,7 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+  final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -20,6 +21,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   @override
   void dispose() {
+    _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
@@ -37,7 +39,7 @@ class _SignUpPageState extends State<SignUpPage> {
           ? [
               const Color(0xFF0F2027),
               const Color(0xFF203A43),
-              const Color(0xFF2C5364)
+              const Color(0xFF2C5364),
             ]
           : [const Color(0xFF4364F7), const Color(0xFF6FB1FC)],
     );
@@ -45,7 +47,7 @@ class _SignUpPageState extends State<SignUpPage> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state.status == AuthStatus.success) {
-          Navigator.pop(context);
+          // Navigator.pop(context); // Removed to prevent conflict with Login listener
         }
       },
       child: Scaffold(
@@ -70,7 +72,10 @@ class _SignUpPageState extends State<SignUpPage> {
           child: SingleChildScrollView(
             child: SafeArea(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 20,
+                ),
                 child: Column(
                   children: [
                     const SizedBox(height: 20),
@@ -106,10 +111,39 @@ class _SignUpPageState extends State<SignUpPage> {
                             TextFormField(
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
+                                  return AppLocalizations.of(
+                                    context,
+                                  )!.nameValidator;
+                                }
+                                return null;
+                              },
+                              decoration: InputDecoration(
+                                labelText: AppLocalizations.of(context)!.name,
+                                prefixIcon: const Icon(Icons.person_outline),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                  borderSide: BorderSide(
+                                    color: isDark
+                                        ? Colors.grey[700]!
+                                        : Colors.grey[300]!,
+                                  ),
+                                ),
+                              ),
+                              controller: _nameController,
+                              keyboardType: TextInputType.name,
+                            ),
+                            const SizedBox(height: 20),
+                            TextFormField(
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
                                   return 'Email cannot be empty';
                                 }
-                                if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                                    .hasMatch(value)) {
+                                if (!RegExp(
+                                  r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                                ).hasMatch(value)) {
                                   return 'Enter a valid email';
                                 }
                                 return null;
@@ -119,12 +153,14 @@ class _SignUpPageState extends State<SignUpPage> {
                                 hintText: 'example@gmail.com',
                                 prefixIcon: const Icon(Icons.email_outlined),
                                 border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15), 
+                                  borderRadius: BorderRadius.circular(15),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(15),
                                   borderSide: BorderSide(
-                                    color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+                                    color: isDark
+                                        ? Colors.grey[700]!
+                                        : Colors.grey[300]!,
                                   ),
                                 ),
                               ),
@@ -143,15 +179,19 @@ class _SignUpPageState extends State<SignUpPage> {
                                 return null;
                               },
                               decoration: InputDecoration(
-                                labelText: AppLocalizations.of(context)!.password,
+                                labelText: AppLocalizations.of(
+                                  context,
+                                )!.password,
                                 prefixIcon: const Icon(Icons.lock_outline),
                                 border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15), 
+                                  borderRadius: BorderRadius.circular(15),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(15),
                                   borderSide: BorderSide(
-                                    color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+                                    color: isDark
+                                        ? Colors.grey[700]!
+                                        : Colors.grey[300]!,
                                   ),
                                 ),
                               ),
@@ -162,23 +202,31 @@ class _SignUpPageState extends State<SignUpPage> {
                             TextFormField(
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Confirm password cannot be empty';
+                                  return AppLocalizations.of(
+                                    context,
+                                  )!.confirmPasswordEmpty;
                                 }
                                 if (value != _passwordController.text) {
-                                  return 'Passwords do not match';
+                                  return AppLocalizations.of(
+                                    context,
+                                  )!.passMatch;
                                 }
                                 return null;
                               },
                               decoration: InputDecoration(
-                                labelText: 'Confirm password',
+                                labelText: AppLocalizations.of(
+                                  context,
+                                )!.confirmPassword,
                                 prefixIcon: const Icon(Icons.lock_reset),
                                 border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15), 
+                                  borderRadius: BorderRadius.circular(15),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(15),
                                   borderSide: BorderSide(
-                                    color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+                                    color: isDark
+                                        ? Colors.grey[700]!
+                                        : Colors.grey[300]!,
                                   ),
                                 ),
                               ),
@@ -191,14 +239,18 @@ class _SignUpPageState extends State<SignUpPage> {
                                 return Container(
                                   height: 54,
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFF4364F7), // Solid color
+                                    color: const Color(
+                                      0xFF4364F7,
+                                    ), // Solid color
                                     borderRadius: BorderRadius.circular(20),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: const Color(0xFF4364F7).withValues(alpha: 0.4),
+                                        color: const Color(
+                                          0xFF4364F7,
+                                        ).withValues(alpha: 0.4),
                                         blurRadius: 10,
                                         offset: const Offset(0, 4),
-                                      )
+                                      ),
                                     ],
                                   ),
                                   child: ElevatedButton(
@@ -209,27 +261,36 @@ class _SignUpPageState extends State<SignUpPage> {
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                     ),
-                                    onPressed: state.status == AuthStatus.loading
+                                    onPressed:
+                                        state.status == AuthStatus.loading
                                         ? null
                                         : () {
-                                            if (_formKey.currentState!.validate()) {
-                                              context
-                                                  .read<AuthBloc>()
-                                                  .add(RegisterRequested(
-                                                    _emailController.text,
-                                                    _passwordController.text,
-                                                    _confirmPasswordController.text,
-                                                  ));
+                                            if (_formKey.currentState!
+                                                .validate()) {
+                                              context.read<AuthBloc>().add(
+                                                RegisterRequested(
+                                                  _emailController.text,
+                                                  _nameController.text,
+                                                  _passwordController.text,
+                                                  _confirmPasswordController
+                                                      .text,
+                                                ),
+                                              );
                                             }
                                           },
                                     child: state.status == AuthStatus.loading
                                         ? const SizedBox(
                                             height: 20,
                                             width: 20,
-                                            child:
-                                                CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color: Colors.white,
+                                            ),
+                                          )
                                         : Text(
-                                            AppLocalizations.of(context)!.signUp,
+                                            AppLocalizations.of(
+                                              context,
+                                            )!.signUp,
                                             style: const TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.bold,

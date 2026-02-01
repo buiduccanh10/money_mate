@@ -149,5 +149,9 @@
   "limitExceededError": "Vượt quá hạn mức! Bạn đã chi tiêu {amount} trong giai đoạn này.",
   "savedCheckHome": "Đã lưu! Kiểm tra màn hình chính.",
   "overLimitTitle": "Vượt quá hạn mức!",
-  "error": "Lỗi"
+  "error": "Lỗi",
+  "nameValidator": "Tên không được để trống",
+  "confirmPassword": "Xác nhận mật khẩu",
+  "confirmPasswordEmpty": "Xác nhận mật khẩu không được để trống",
+  "passMatch": "Mật khẩu không khớp"
 }
