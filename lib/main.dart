@@ -99,6 +99,8 @@ class MyApp extends StatelessWidget {
               settingsRepo: context.read<SettingsRepository>(),
               userRepo: context.read<UserRepository>(),
               transactionRepo: context.read<TransactionRepository>(),
+              categoryRepo: context.read<CategoryRepository>(),
+              scheduleRepo: context.read<ScheduleRepository>(),
               authBloc: context.read<AuthBloc>(),
             ),
           ),

@@ -8,12 +8,16 @@ import 'package:money_mate/bloc/auth/auth_state.dart';
 import 'package:money_mate/data/repository/settings_repository.dart';
 import 'package:money_mate/data/repository/user_repository.dart';
 import 'package:money_mate/data/repository/transaction_repository.dart';
+import 'package:money_mate/data/repository/schedule_repository.dart';
+import 'package:money_mate/data/repository/category_repository.dart';
 import 'setting_state.dart';
 
 class SettingCubit extends Cubit<SettingState> {
   final SettingsRepository _settingsRepo;
   final UserRepository _userRepo;
   final TransactionRepository _transactionRepo;
+  final ScheduleRepository _scheduleRepo;
+  final CategoryRepository _categoryRepo;
   final AuthBloc? _authBloc;
   StreamSubscription<AuthState>? _authSubscription;
 
@@ -21,10 +25,14 @@ class SettingCubit extends Cubit<SettingState> {
     required SettingsRepository settingsRepo,
     required UserRepository userRepo,
     required TransactionRepository transactionRepo,
+    required ScheduleRepository scheduleRepo,
+    required CategoryRepository categoryRepo,
     AuthBloc? authBloc,
   }) : _settingsRepo = settingsRepo,
        _userRepo = userRepo,
        _transactionRepo = transactionRepo,
+       _scheduleRepo = scheduleRepo,
+       _categoryRepo = categoryRepo,
        _authBloc = authBloc,
        super(const SettingState()) {
     loadSettings();
@@ -206,7 +214,12 @@ class SettingCubit extends Cubit<SettingState> {
 
   Future<void> deleteAllData() async {
     try {
-      await _transactionRepo.deleteAllTransactions();
+      await Future.wait([
+        _transactionRepo.deleteAllTransactions(),
+        _scheduleRepo.deleteAllSchedules(),
+        _categoryRepo.deleteAllCategories(true),
+        _categoryRepo.deleteAllCategories(false),
+      ]);
     } catch (e) {
       emit(state.copyWith(errorMessage: e.toString()));
     }
