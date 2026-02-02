@@ -4,6 +4,8 @@ import 'package:money_mate/l10n/app_localizations.dart';
 import 'package:money_mate/bloc/setting/setting_cubit.dart';
 import 'package:money_mate/bloc/setting/setting_state.dart';
 import 'package:money_mate/widget/common/confirm_delete_dialog.dart';
+import 'package:money_mate/bloc/auth/auth_bloc.dart';
+import 'package:money_mate/bloc/auth/auth_event.dart';
 
 class PrivacySetting extends StatelessWidget {
   const PrivacySetting({super.key});
@@ -72,7 +74,36 @@ class PrivacySetting extends StatelessWidget {
                     context,
                     AppLocalizations.of(context)!.deleteAcc,
                     AppLocalizations.of(context)!.deleteAccountConfirm,
-                    () => context.read<SettingCubit>().deleteUser(),
+                    () async {
+                      try {
+                        await context.read<SettingCubit>().deleteUser();
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                AppLocalizations.of(
+                                  context,
+                                )!.toastDeleteSuccess,
+                              ),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                          await Future.delayed(const Duration(seconds: 2));
+                          if (context.mounted) {
+                            context.read<AuthBloc>().add(LogoutRequested());
+                          }
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(e.toString()),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                      }
+                    },
                   ),
                 ),
               ],

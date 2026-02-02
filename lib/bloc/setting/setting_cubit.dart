@@ -217,6 +217,7 @@ class SettingCubit extends Cubit<SettingState> {
       await _userRepo.deleteAccount();
     } catch (e) {
       emit(state.copyWith(errorMessage: e.toString()));
+      rethrow;
     }
   }
 }
