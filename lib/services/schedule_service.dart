@@ -31,60 +31,62 @@ class ScheduleService {
         lastExecMap = jsonDecode(lastExecJson);
       }
 
-      bool hasChanges = false;
-
       for (var schedule in schedules) {
-        final String scheduleId = schedule.id.toString();
+        try {
+          final String scheduleId = schedule.id.toString();
 
-        // Parse start date/time of the schedule
-        DateTime? scheduleDateTime = _parseDate(schedule.date);
-        if (scheduleDateTime == null) continue;
+          // Parse start date/time of the schedule
+          DateTime? scheduleDateTime = _parseDate(schedule.date);
+          if (scheduleDateTime == null) continue;
 
-        // Extract the time component from the original schedule
-        final String scheduledTime = DateFormat(
-          'HH:mm',
-        ).format(scheduleDateTime);
+          // Extract the time component from the original schedule
+          final String scheduledTime = DateFormat(
+            'HH:mm',
+          ).format(scheduleDateTime);
 
-        // Start from the base date (ignore time for the currentExecDate iteration)
-        DateTime currentExecDate = DateTime(
-          scheduleDateTime.year,
-          scheduleDateTime.month,
-          scheduleDateTime.day,
-        );
-
-        // If we have a last execution date, start from the day after that
-        if (lastExecMap.containsKey(scheduleId)) {
-          DateTime? lastDate = _parseDate(lastExecMap[scheduleId]);
-          if (lastDate != null) {
-            currentExecDate = _getNextDate(lastDate, schedule.option);
-          }
-        }
-
-        // Keep creating transactions until the next scheduled date is in the future
-        while (currentExecDate.isBefore(today) ||
-            currentExecDate.isAtSameMomentAs(today)) {
-          await _transactionRepo.addTransaction(
-            DateFormat('yyyy-MM-dd').format(currentExecDate),
-            scheduledTime, // Use the time from the setup
-            schedule.description ?? schedule.name,
-            schedule.money,
-            schedule.catId,
-            schedule.isIncome,
+          // Start from the base date (ignore time for the currentExecDate iteration)
+          DateTime currentExecDate = DateTime(
+            scheduleDateTime.year,
+            scheduleDateTime.month,
+            scheduleDateTime.day,
           );
 
-          lastExecMap[scheduleId] = DateFormat(
-            'yyyy-MM-dd',
-          ).format(currentExecDate);
-          currentExecDate = _getNextDate(currentExecDate, schedule.option);
-          hasChanges = true;
-        }
-      }
+          // If we have a last execution date, start from the day after that
+          if (lastExecMap.containsKey(scheduleId)) {
+            DateTime? lastDate = _parseDate(lastExecMap[scheduleId]);
+            if (lastDate != null) {
+              currentExecDate = _getNextDate(lastDate, schedule.option);
+            }
+          }
 
-      if (hasChanges) {
-        await _storage.write(
-          key: 'schedules_last_exec',
-          value: jsonEncode(lastExecMap),
-        );
+          // Keep creating transactions until the next scheduled date is in the future
+          while (currentExecDate.isBefore(today) ||
+              currentExecDate.isAtSameMomentAs(today)) {
+            await _transactionRepo.addTransaction(
+              DateFormat('yyyy-MM-dd').format(currentExecDate),
+              scheduledTime, // Use the time from the setup
+              schedule.description ?? schedule.name,
+              schedule.money,
+              schedule.catId,
+              schedule.isIncome,
+            );
+
+            // Update state immediately to prevent duplicates on next run if crash/error happens
+            lastExecMap[scheduleId] = DateFormat(
+              'yyyy-MM-dd',
+            ).format(currentExecDate);
+
+            await _storage.write(
+              key: 'schedules_last_exec',
+              value: jsonEncode(lastExecMap),
+            );
+
+            currentExecDate = _getNextDate(currentExecDate, schedule.option);
+          }
+        } catch (e) {
+          print('Error processing schedule ${schedule.id}: $e');
+          // Continue to next schedule
+        }
       }
     } catch (e) {
       print('Error running cron job: $e');

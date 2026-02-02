@@ -1,7 +1,10 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:money_mate/bloc/auth/auth_bloc.dart';
+import 'package:money_mate/bloc/auth/auth_state.dart';
 import 'package:money_mate/data/repository/settings_repository.dart';
 import 'package:money_mate/data/repository/user_repository.dart';
 import 'package:money_mate/data/repository/transaction_repository.dart';
@@ -11,17 +14,36 @@ class SettingCubit extends Cubit<SettingState> {
   final SettingsRepository _settingsRepo;
   final UserRepository _userRepo;
   final TransactionRepository _transactionRepo;
+  final AuthBloc? _authBloc;
+  StreamSubscription<AuthState>? _authSubscription;
 
   SettingCubit({
     required SettingsRepository settingsRepo,
     required UserRepository userRepo,
     required TransactionRepository transactionRepo,
+    AuthBloc? authBloc,
   }) : _settingsRepo = settingsRepo,
        _userRepo = userRepo,
        _transactionRepo = transactionRepo,
+       _authBloc = authBloc,
        super(const SettingState()) {
     loadSettings();
-    loadUserProfile();
+
+    _authSubscription = _authBloc?.stream.listen((authState) {
+      if (authState.status == AuthStatus.success) {
+        loadUserProfile();
+      }
+    });
+
+    if (_authBloc?.state.status == AuthStatus.success) {
+      loadUserProfile();
+    }
+  }
+
+  @override
+  Future<void> close() {
+    _authSubscription?.cancel();
+    return super.close();
   }
 
   Future<void> loadSettings() async {
@@ -63,8 +85,15 @@ class SettingCubit extends Cubit<SettingState> {
           userName: profile.name ?? profile.email,
           email: profile.email,
           image: profile.avatar,
+          language: profile.language,
+          isDark: profile.isDark,
+          isLock: profile.isLock,
         ),
       );
+
+      await _settingsRepo.updateLanguage(profile.language);
+      await _settingsRepo.updateDarkMode(profile.isDark);
+      await _settingsRepo.updateIsLock(profile.isLock);
     } catch (e) {
       // Handle error quietly or update state
     }

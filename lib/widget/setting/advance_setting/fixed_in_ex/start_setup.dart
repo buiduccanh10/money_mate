@@ -1,7 +1,6 @@
 import 'package:cupertino_calendar_picker/cupertino_calendar_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:money_mate/services/currency_format.dart';
@@ -10,9 +9,13 @@ import 'package:money_mate/bloc/category/category_cubit.dart';
 import 'package:money_mate/bloc/category/category_state.dart';
 import 'package:money_mate/bloc/schedule/schedule_cubit.dart';
 import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger.dart';
+import 'package:money_mate/widget/common/category_grid_item.dart';
+import 'package:money_mate/widget/common/gradient_animated_button.dart';
+import 'package:shimmer/shimmer.dart';
 
 class StartSetup extends StatefulWidget {
-  const StartSetup({super.key});
+  final ScheduleResponseDto? schedule;
+  const StartSetup({super.key, this.schedule});
 
   @override
   State<StartSetup> createState() => _StartSetupState();
@@ -56,6 +59,18 @@ class _StartSetupState extends State<StartSetup> {
   void initState() {
     super.initState();
     context.read<CategoryCubit>().fetchCategories();
+
+    if (widget.schedule != null) {
+      final s = widget.schedule!;
+      _descriptionController.text = s.description ?? '';
+      _selectedCatId = s.catId;
+      selectedDateTime = DateTime.tryParse(s.date) ?? DateTime.now();
+
+      final optionIndex = _options.indexWhere((o) => o.value == s.option.value);
+      if (optionIndex != -1) {
+        _selectedOptionIndex = optionIndex;
+      }
+    }
   }
 
   @override
@@ -65,6 +80,10 @@ class _StartSetupState extends State<StartSetup> {
       final locale = Localizations.localeOf(context).toString();
       _formatter = CurrencyFormat.getFormatter(locale);
       _isFormatterInitialized = true;
+
+      if (widget.schedule != null) {
+        _moneyController.text = _formatter.formatDouble(widget.schedule!.money);
+      }
     }
   }
 
@@ -110,119 +129,127 @@ class _StartSetupState extends State<StartSetup> {
         leading: const BackButton(color: Colors.white),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            _buildDatePicker(isDark),
-            const SizedBox(height: 20),
-            _buildInputCard(
-              isDark,
-              child: Column(
-                children: [
-                  _buildTextField(
-                    _descriptionController,
-                    AppLocalizations.of(context)!.inputDescription,
-                    Icons.description_outlined,
-                    Colors.blue,
-                    isDark,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Divider(
-                      height: 1,
-                      color: isDark ? Colors.grey[800] : Colors.grey[200],
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.1),
+                      blurRadius: 15,
+                      offset: const Offset(0, 8),
                     ),
-                  ),
-                  _buildMoneyField(isDark),
-                ],
+                  ],
+                ),
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                child: Column(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: CupertinoCalendar(
+                        timeLabel: AppLocalizations.of(context)!.selectTime,
+                        weekdayDecoration: CalendarWeekdayDecoration(
+                          textStyle: const TextStyle(fontSize: 12),
+                        ),
+                        monthPickerDecoration: CalendarMonthPickerDecoration(
+                          selectedCurrentDayStyle:
+                              CalendarMonthPickerSelectedCurrentDayStyle(
+                                textStyle: const TextStyle(fontSize: 12),
+                                mainColor: const Color(0xFF4364F7),
+                                backgroundCircleColor: const Color(0xFF4364F7),
+                              ),
+                          currentDayStyle: CalendarMonthPickerCurrentDayStyle(
+                            textStyle: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.redAccent,
+                            ),
+                          ),
+                          selectedDayStyle: CalendarMonthPickerSelectedDayStyle(
+                            textStyle: const TextStyle(fontSize: 12),
+                            mainColor: const Color(0xFF4364F7),
+                            backgroundCircleColor: const Color(0xFF4364F7),
+                          ),
+                          defaultDayStyle: CalendarMonthPickerDefaultDayStyle(
+                            textStyle: TextStyle(
+                              fontSize: 12,
+                              color: isDark ? Colors.white : Colors.black,
+                            ),
+                          ),
+                        ),
+                        footerDecoration: CalendarFooterDecoration(
+                          timeLabelStyle: const TextStyle(fontSize: 14),
+                          timeStyle: const TextStyle(
+                            fontSize: 14,
+                            color: Color(0xFF4364F7),
+                          ),
+                        ),
+                        minimumDateTime: DateTime(1900),
+                        maximumDateTime: DateTime(2100),
+                        initialDateTime: selectedDateTime,
+                        onDateTimeChanged: (DateTime newDate) {
+                          setState(() {
+                            selectedDateTime = newDate;
+                          });
+                        },
+                        mode: CupertinoCalendarMode.dateTime,
+                        use24hFormat: true,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    _buildTextField(
+                      _descriptionController,
+                      AppLocalizations.of(context)!.inputDescription,
+                      Icons.description_outlined,
+                      Colors.blueAccent,
+                      isDark,
+                    ),
+                    const SizedBox(height: 15),
+                    _buildMoneyField(isDark),
+                  ],
+                ),
               ),
             ),
+
+            // Repeat Section
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: _buildRepeatSection(context, isDark),
+            ),
             const SizedBox(height: 20),
-            _buildCategorySection(isDark),
-            const SizedBox(height: 20),
-            _buildRepeatSection(context, isDark),
-            const SizedBox(height: 100), // Space for FAB
+
+            // Category Section Title
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 15.0,
+                right: 15,
+                top: 10,
+                bottom: 10,
+              ),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  AppLocalizations.of(context)!.selectCategory,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: _categoryError
+                        ? Colors.red
+                        : (isDark ? Colors.white : Colors.black87),
+                  ),
+                ),
+              ),
+            ),
+
+            _buildCategoryGrid(context, isDark),
+            const SizedBox(height: 100),
           ],
         ),
       ),
-      floatingActionButton: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.green.withValues(alpha: 0.3),
-              blurRadius: 15,
-              offset: const Offset(0, 5),
-            ),
-          ],
-        ),
-        child: FloatingActionButton.extended(
-          onPressed: _handleSave,
-          backgroundColor: Colors.green,
-          elevation: 0,
-          highlightElevation: 0,
-          icon: const Icon(Icons.check_circle_outline, color: Colors.white),
-          label: Text(
-            AppLocalizations.of(context)!.setUp,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInputCard(bool isDark, {required Widget child}) {
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: child,
-    );
-  }
-
-  Widget _buildDatePicker(bool isDark) {
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(8),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(15),
-        child: CupertinoCalendar(
-          timeLabel: AppLocalizations.of(context)!.selectTime,
-          minimumDateTime: DateTime(1900),
-          maximumDateTime: DateTime(2100),
-          initialDateTime: selectedDateTime,
-          onDateTimeChanged: (DateTime newDate) {
-            setState(() {
-              selectedDateTime = newDate;
-            });
-          },
-          monthPickerDecoration: CalendarMonthPickerDecoration(),
-          mode: CupertinoCalendarMode.dateTime,
-          use24hFormat: true,
-        ),
-      ),
+      floatingActionButton: _buildSaveButton(context),
     );
   }
 
@@ -234,25 +261,38 @@ class _StartSetupState extends State<StartSetup> {
     bool isDark,
   ) {
     return TextField(
+      minLines: 1,
+      maxLines: 2,
+      keyboardType: TextInputType.text,
       controller: controller,
-      style: TextStyle(color: isDark ? Colors.white : Colors.black87),
       decoration: InputDecoration(
-        border: InputBorder.none,
-        contentPadding: const EdgeInsets.all(16),
-        labelText: label,
-        labelStyle: TextStyle(
-          color: isDark ? Colors.grey[400] : Colors.grey[600],
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+          ),
+          borderRadius: BorderRadius.circular(15),
         ),
-        prefixIcon: Icon(icon, color: iconColor),
+        focusedBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.blueAccent),
+          borderRadius: BorderRadius.circular(15),
+        ),
+        label: Text(label),
+        labelStyle: const TextStyle(color: Colors.grey),
+        floatingLabelStyle: TextStyle(
+          color: isDark ? Colors.white : Colors.black,
+        ),
+        prefixIcon: Icon(icon),
+        prefixIconColor: iconColor,
       ),
     );
   }
 
   Widget _buildMoneyField(bool isDark) {
     return TextField(
-      controller: _moneyController,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      controller: _moneyController,
       inputFormatters: [_formatter],
+      onTapOutside: (_) => FocusScope.of(context).unfocus(),
       onChanged: (value) {
         if (_moneyError) {
           setState(() {
@@ -286,97 +326,46 @@ class _StartSetupState extends State<StartSetup> {
     );
   }
 
-  Widget _buildCategorySection(bool isDark) {
+  Widget _buildCategoryGrid(BuildContext context, bool isDark) {
     return BlocBuilder<CategoryCubit, CategoryState>(
-      builder: (context, state) {
-        final categories = state.expenseCategories + state.incomeCategories;
-        if (state.status == CategoryStatus.loading && categories.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+      builder: (context, catState) {
+        if (catState.status == CategoryStatus.loading &&
+            catState.incomeCategories.isEmpty &&
+            catState.expenseCategories.isEmpty) {
+          return _buildShimmerGrid(isDark);
         }
-        return Container(
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 15,
-                offset: const Offset(0, 5),
-              ),
-            ],
+
+        final categories =
+            catState.expenseCategories + catState.incomeCategories;
+
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          padding: const EdgeInsets.only(left: 15, right: 15, bottom: 85),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            childAspectRatio: 16 / 10,
+            crossAxisCount: 4,
+            crossAxisSpacing: 8.0,
+            mainAxisSpacing: 8.0,
           ),
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                AppLocalizations.of(context)!.selectCategory,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: _categoryError
-                      ? Colors.red
-                      : (isDark ? Colors.white : Colors.black87),
-                ),
-              ),
-              const SizedBox(height: 12),
-              Wrap(
-                spacing: 10,
-                runSpacing: 10,
-                children: categories.map((cat) {
-                  final isSelected = _selectedCatId == cat.id;
-                  return InkWell(
-                    onTap: () => setState(() {
-                      _selectedCatId = cat.id;
-                      _categoryError = false;
-                    }),
-                    borderRadius: BorderRadius.circular(12),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 10,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? (isDark
-                                  ? Colors.blue.withValues(alpha: 0.2)
-                                  : Colors.blue.withValues(alpha: 0.1))
-                            : (isDark ? Colors.grey[800] : Colors.grey[100]),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: isSelected
-                              ? Colors.blue
-                              : (_categoryError
-                                    ? Colors.red
-                                    : Colors.transparent),
-                          width: isSelected || _categoryError ? 1.5 : 1.0,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(cat.icon),
-                          const SizedBox(width: 8),
-                          Text(
-                            cat.name,
-                            style: TextStyle(
-                              color: isSelected
-                                  ? Colors.blue
-                                  : (isDark ? Colors.white70 : Colors.black87),
-                              fontWeight: isSelected
-                                  ? FontWeight.w600
-                                  : FontWeight.normal,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ],
-          ),
+          itemCount: categories.length,
+          itemBuilder: (BuildContext context, int index) {
+            final catItem = categories[index];
+            bool isSelected = _selectedCatId == catItem.id;
+            return CategoryGridItem(
+              icon: catItem.icon,
+              name: catItem.name,
+              isSelected: isSelected,
+              isDark: isDark,
+              showError: _categoryError,
+              onTap: () {
+                setState(() {
+                  _selectedCatId = catItem.id;
+                  _categoryError = false;
+                });
+              },
+            );
+          },
         );
       },
     );
@@ -487,6 +476,41 @@ class _StartSetupState extends State<StartSetup> {
     );
   }
 
+  Widget _buildShimmerGrid(bool isDark) {
+    return GridView.builder(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        childAspectRatio: 16 / 10,
+        crossAxisCount: 4,
+        crossAxisSpacing: 8.0,
+        mainAxisSpacing: 8.0,
+      ),
+      padding: const EdgeInsets.only(left: 15, right: 15, bottom: 85),
+      itemCount: 8,
+      shrinkWrap: true,
+      itemBuilder: (BuildContext context, int index) {
+        return Shimmer.fromColors(
+          baseColor: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+          highlightColor: Colors.grey[100]!,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(5.0),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildSaveButton(BuildContext context) {
+    return GradientAnimatedButton(
+      onPressed: _handleSave,
+      label: AppLocalizations.of(context)!.setUp,
+      icon: Icons.check_circle_outline,
+      width: 140, // Increased width for "Set Up" or similar text
+    );
+  }
+
   void _handleSave() {
     final double money = _formatter.getUnformattedValue().toDouble();
 
@@ -504,16 +528,30 @@ class _StartSetupState extends State<StartSetup> {
         catCubit.state.incomeCategories + catCubit.state.expenseCategories;
     final cat = allCats.firstWhere((c) => c.id == _selectedCatId);
 
-    context.read<ScheduleCubit>().addSchedule(
-      date: selectedDateTime.toIso8601String(),
-      description: _descriptionController.text,
-      money: money,
-      catId: _selectedCatId!,
-      icon: cat.icon,
-      name: cat.name,
-      isIncome: cat.isIncome,
-      option: _options[_selectedOptionIndex],
-    );
+    if (widget.schedule != null) {
+      context.read<ScheduleCubit>().updateSchedule(
+        id: widget.schedule!.id.toString(),
+        date: selectedDateTime.toIso8601String(),
+        description: _descriptionController.text,
+        money: money,
+        catId: _selectedCatId!,
+        icon: cat.icon,
+        name: cat.name,
+        isIncome: cat.isIncome,
+        option: _options[_selectedOptionIndex],
+      );
+    } else {
+      context.read<ScheduleCubit>().addSchedule(
+        date: selectedDateTime.toIso8601String(),
+        description: _descriptionController.text,
+        money: money,
+        catId: _selectedCatId!,
+        icon: cat.icon,
+        name: cat.name,
+        isIncome: cat.isIncome,
+        option: _options[_selectedOptionIndex],
+      );
+    }
     Navigator.pop(context);
   }
 }

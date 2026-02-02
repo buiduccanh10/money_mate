@@ -54,6 +54,35 @@ class ScheduleCubit extends Cubit<ScheduleState> {
     }
   }
 
+  Future<void> updateSchedule({
+    required String id,
+    required String date,
+    required String description,
+    required double money,
+    required String catId,
+    required String icon,
+    required String name,
+    required bool isIncome,
+    required CreateScheduleDtoOption option,
+  }) async {
+    try {
+      await _scheduleRepo.updateSchedule(
+        id: id,
+        date: date,
+        description: description,
+        money: money,
+        catId: catId,
+        icon: icon,
+        name: name,
+        isIncome: isIncome,
+        option: option,
+      );
+      fetchSchedules();
+    } catch (e) {
+      emit(state.copyWith(errorMessage: e.toString()));
+    }
+  }
+
   Future<void> deleteSchedule(String id) async {
     try {
       await _scheduleRepo.deleteSchedule(id);

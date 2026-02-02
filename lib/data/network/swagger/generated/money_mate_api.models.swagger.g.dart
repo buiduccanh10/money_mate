@@ -8,6 +8,7 @@ part of 'money_mate_api.models.swagger.dart';
 
 RegisterDto _$RegisterDtoFromJson(Map<String, dynamic> json) => RegisterDto(
   email: json['email'] as String,
+  name: json['name'] as String?,
   password: json['password'] as String,
   confirmPassword: json['confirmPassword'] as String,
   language: json['language'] as String?,
@@ -16,6 +17,7 @@ RegisterDto _$RegisterDtoFromJson(Map<String, dynamic> json) => RegisterDto(
 Map<String, dynamic> _$RegisterDtoToJson(RegisterDto instance) =>
     <String, dynamic>{
       'email': instance.email,
+      'name': instance.name,
       'password': instance.password,
       'confirmPassword': instance.confirmPassword,
       'language': instance.language,

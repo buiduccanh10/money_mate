@@ -8,6 +8,7 @@ import {
   UseGuards,
   ParseIntPipe,
   HttpStatus,
+  Patch,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -16,7 +17,11 @@ import {
   ApiBearerAuth,
 } from '@nestjs/swagger';
 import { SchedulesService } from './schedules.service';
-import { CreateScheduleDto, ScheduleResponseDto } from './dto';
+import {
+  CreateScheduleDto,
+  ScheduleResponseDto,
+  UpdateScheduleDto,
+} from './dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { User } from '../entities';
@@ -74,5 +79,20 @@ export class SchedulesController {
   })
   async removeAll(@CurrentUser() user: User) {
     return this.schedulesService.removeAll(user.id);
+  }
+
+  @Patch(':id')
+  @ApiOperation({ summary: 'Update schedule by ID' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Schedule successfully updated',
+    type: ScheduleResponseDto,
+  })
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: User,
+    @Body() updateScheduleDto: UpdateScheduleDto,
+  ) {
+    return this.schedulesService.update(id, user.id, updateScheduleDto);
   }
 }

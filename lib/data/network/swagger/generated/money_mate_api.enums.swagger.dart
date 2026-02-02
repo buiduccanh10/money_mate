@@ -113,3 +113,23 @@ enum CreateScheduleDtoOption {
 
   const CreateScheduleDtoOption(this.value);
 }
+
+enum UpdateScheduleDtoOption {
+  @JsonValue(null)
+  swaggerGeneratedUnknown(null),
+
+  @JsonValue('Never')
+  never('Never'),
+  @JsonValue('Daily')
+  daily('Daily'),
+  @JsonValue('Weekly')
+  weekly('Weekly'),
+  @JsonValue('Monthly')
+  monthly('Monthly'),
+  @JsonValue('Yearly')
+  yearly('Yearly');
+
+  final String? value;
+
+  const UpdateScheduleDtoOption(this.value);
+}

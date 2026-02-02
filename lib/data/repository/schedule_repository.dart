@@ -13,6 +13,17 @@ abstract class ScheduleRepository {
     required bool isIncome,
     required CreateScheduleDtoOption option,
   });
+  Future<ScheduleResponseDto> updateSchedule({
+    required String id,
+    required String date,
+    required String description,
+    required double money,
+    required String catId,
+    required String icon,
+    required String name,
+    required bool isIncome,
+    required CreateScheduleDtoOption option,
+  });
   Future<void> deleteSchedule(String id);
   Future<void> deleteAllSchedules();
 }
@@ -58,6 +69,40 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
       return response.body!;
     } else {
       throw Exception(response.error ?? 'Failed to create schedule');
+    }
+  }
+
+  @override
+  Future<ScheduleResponseDto> updateSchedule({
+    required String id,
+    required String date,
+    required String description,
+    required double money,
+    required String catId,
+    required String icon,
+    required String name,
+    required bool isIncome,
+    required CreateScheduleDtoOption option,
+  }) async {
+    // Workaround: API does not support update schedule
+    final response = await _api.apiSchedulesPost(
+      body: CreateScheduleDto(
+        date: date,
+        description: description,
+        money: money,
+        catId: catId,
+        icon: icon,
+        name: name,
+        isIncome: isIncome,
+        option: option,
+      ),
+    );
+
+    if (response.isSuccessful && response.body != null) {
+      await deleteSchedule(id);
+      return response.body!;
+    } else {
+      throw Exception(response.error ?? 'Failed to update schedule');
     }
   }
 

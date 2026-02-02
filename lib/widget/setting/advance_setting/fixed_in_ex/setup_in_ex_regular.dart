@@ -197,12 +197,27 @@ class _SetupInExRegularState extends State<SetupInExRegular> {
             onLongPress: () {
               ItemActionMenu.show(
                 context,
-                onEdit: () {},
+                onEdit: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => StartSetup(schedule: schedule),
+                    ),
+                  );
+                },
                 onDelete: () {
                   context.read<ScheduleCubit>().deleteSchedule(
                     schedule.id.toString(),
                   );
                 },
+              );
+            },
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => StartSetup(schedule: schedule),
+                ),
               );
             },
             leading: Container(
