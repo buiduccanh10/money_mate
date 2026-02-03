@@ -28,6 +28,7 @@ class _HomeListItemState extends State<HomeListItem> {
   @override
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final locale = Localizations.localeOf(context).toString();
 
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) {
@@ -96,7 +97,7 @@ class _HomeListItemState extends State<HomeListItem> {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        DateFormatUtils.formatDisplayDate(date),
+                        DateFormatUtils.formatDate(locale, date),
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,

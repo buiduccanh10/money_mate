@@ -72,7 +72,10 @@ class TransactionItemTile extends StatelessWidget {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            DateFormatUtils.formatDisplayDate(transaction.date),
+                            DateFormatUtils.formatDate(
+                              locale,
+                              transaction.date,
+                            ),
                             style: const TextStyle(
                               fontSize: 12,
                               color: Colors.grey,

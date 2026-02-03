@@ -13,6 +13,7 @@ class Input extends StatefulWidget {
 
 class _InputState extends State<Input> {
   bool isIncome = false;
+  final GlobalKey<InputContentState> _inputKey = GlobalKey<InputContentState>();
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +39,7 @@ class _InputState extends State<Input> {
     return Scaffold(
       body: Stack(
         children: [
-          InputContent(isIncome: isIncome),
+          InputContent(key: _inputKey, isIncome: isIncome),
           Container(
             height: 115,
             decoration: BoxDecoration(
@@ -133,6 +134,27 @@ class _InputState extends State<Input> {
                     ),
                   ),
                 ],
+              ),
+            ),
+          ),
+          SafeArea(
+            child: Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 0, right: 16),
+                child: TextButton(
+                  onPressed: () {
+                    _inputKey.currentState?.save();
+                  },
+                  child: Text(
+                    AppLocalizations.of(context)!.inputVave,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
               ),
             ),
           ),

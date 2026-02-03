@@ -162,7 +162,7 @@ class _UpdateInputState extends State<UpdateInput> {
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Colors.black.withValues(alpha: 0.1),
                           blurRadius: 15,
                           offset: const Offset(0, 8),
                         ),
@@ -410,7 +410,17 @@ class _UpdateInputState extends State<UpdateInput> {
         Navigator.pop(context);
       },
       label: AppLocalizations.of(context)!.update,
-      icon: Icons.edit_calendar,
+      gradient: isIncome
+          ? const LinearGradient(
+              colors: [Color(0xFF00C853), Color(0xFF69F0AE)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            )
+          : const LinearGradient(
+              colors: [Color(0xFFFF3D00), Color(0xFFFF9E80)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
     );
   }
 

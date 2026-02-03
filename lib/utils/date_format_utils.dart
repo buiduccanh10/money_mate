@@ -11,4 +11,20 @@ class DateFormatUtils {
       return d;
     }
   }
+
+  static String formatFullDate(String locale, String dateStr) {
+    DateTime? date = DateTime.tryParse(dateStr);
+    if (date != null) {
+      return DateFormat.yMMMd(locale).add_jm().format(date);
+    }
+    return dateStr;
+  }
+
+  static String formatDate(String locale, String dateStr) {
+    DateTime? date = DateTime.tryParse(dateStr);
+    if (date != null) {
+      return DateFormat.yMMMd(locale).format(date);
+    }
+    return dateStr;
+  }
 }

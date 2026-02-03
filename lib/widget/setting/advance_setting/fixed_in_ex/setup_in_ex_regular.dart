@@ -6,6 +6,8 @@ import 'package:intl/intl.dart';
 import 'package:money_mate/l10n/app_localizations.dart';
 import 'package:money_mate/bloc/schedule/schedule_cubit.dart';
 import 'package:money_mate/bloc/schedule/schedule_state.dart';
+import 'package:money_mate/utils/date_format_utils.dart';
+
 import 'package:money_mate/widget/setting/advance_setting/fixed_in_ex/start_setup.dart';
 import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger.dart';
 import 'package:shimmer/shimmer.dart';
@@ -149,11 +151,10 @@ class _SetupInExRegularState extends State<SetupInExRegular> {
     final formatter = NumberFormat.simpleCurrency(locale: locale);
     final formatMoney = formatter.format(schedule.money);
 
-    DateTime? date = DateTime.tryParse(schedule.date);
-    String formattedDate = schedule.date;
-    if (date != null) {
-      formattedDate = DateFormat.yMMMd(locale).add_jm().format(date);
-    }
+    String formattedDate = DateFormatUtils.formatFullDate(
+      locale,
+      schedule.date,
+    );
 
     return Container(
       decoration: BoxDecoration(

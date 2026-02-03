@@ -11,7 +11,7 @@ import 'package:money_mate/bloc/category/category_cubit.dart';
 import 'package:money_mate/bloc/category/category_state.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:cupertino_calendar_picker/cupertino_calendar_picker.dart';
-import 'package:money_mate/widget/common/gradient_animated_button.dart';
+
 import 'package:money_mate/widget/common/category_grid_item.dart';
 
 class InputContent extends StatefulWidget {
@@ -20,10 +20,10 @@ class InputContent extends StatefulWidget {
   const InputContent({super.key, required this.isIncome});
 
   @override
-  State<InputContent> createState() => _InputContentState();
+  State<InputContent> createState() => InputContentState();
 }
 
-class _InputContentState extends State<InputContent> {
+class InputContentState extends State<InputContent> {
   final descriptionController = TextEditingController();
   final moneyController = TextEditingController();
   DateTime selectedDateTime = DateTime.now();
@@ -279,7 +279,6 @@ class _InputContentState extends State<InputContent> {
             ],
           ),
         ),
-        floatingActionButton: _buildSaveButton(context),
       ),
     );
   }
@@ -336,37 +335,30 @@ class _InputContentState extends State<InputContent> {
     );
   }
 
-  Widget _buildSaveButton(BuildContext context) {
-    return GradientAnimatedButton(
-      onPressed: () {
-        final state = context.read<InputCubit>().state;
-        final double money = _formatter.getUnformattedValue().toDouble();
+  void save() {
+    final state = context.read<InputCubit>().state;
+    final double money = _formatter.getUnformattedValue().toDouble();
 
-        setState(() {
-          _categoryError = state.catId == null;
-          _moneyError = money <= 0;
-        });
+    setState(() {
+      _categoryError = state.catId == null;
+      _moneyError = money <= 0;
+    });
 
-        if (_categoryError || _moneyError) {
-          return;
-        }
+    if (_categoryError || _moneyError) {
+      return;
+    }
 
-        context.read<InputCubit>().addTransaction(
-          date: selectedDateTime,
-          time: TimeOfDay.fromDateTime(selectedDateTime),
-          description: descriptionController.text,
-          money: money,
-          catId: state.catId!,
-          context: context,
-        );
-        context.read<InputCubit>().resetSelection();
-        moneyController.clear();
-        descriptionController.clear();
-      },
-      label: AppLocalizations.of(context)!.inputVave,
-      icon: Icons.add,
-      width: 120,
+    context.read<InputCubit>().addTransaction(
+      date: selectedDateTime,
+      time: TimeOfDay.fromDateTime(selectedDateTime),
+      description: descriptionController.text,
+      money: money,
+      catId: state.catId!,
+      context: context,
     );
+    context.read<InputCubit>().resetSelection();
+    moneyController.clear();
+    descriptionController.clear();
   }
 
   Widget _buildShimmerGrid(bool isDark) {
