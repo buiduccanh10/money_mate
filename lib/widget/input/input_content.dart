@@ -335,6 +335,17 @@ class InputContentState extends State<InputContent> {
     );
   }
 
+  void reset() {
+    descriptionController.clear();
+    moneyController.clear();
+    setState(() {
+      selectedDateTime = DateTime.now();
+      _categoryError = false;
+      _moneyError = false;
+    });
+    context.read<InputCubit>().resetSelection();
+  }
+
   void save() {
     final state = context.read<InputCubit>().state;
     final double money = _formatter.getUnformattedValue().toDouble();

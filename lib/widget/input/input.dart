@@ -139,6 +139,24 @@ class _InputState extends State<Input> {
           ),
           SafeArea(
             child: Align(
+              alignment: Alignment.topLeft,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 0, left: 16),
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.refresh,
+                    color: Colors.white,
+                    size: 28,
+                  ),
+                  onPressed: () {
+                    _inputKey.currentState?.reset();
+                  },
+                ),
+              ),
+            ),
+          ),
+          SafeArea(
+            child: Align(
               alignment: Alignment.topRight,
               child: Padding(
                 padding: const EdgeInsets.only(top: 0, right: 16),
