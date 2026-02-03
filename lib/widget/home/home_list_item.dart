@@ -74,7 +74,7 @@ class _HomeListItemState extends State<HomeListItem> {
 
         return ListView.builder(
           itemCount: sortedDates.length,
-          padding: const EdgeInsets.only(top: 340, bottom: 20),
+          padding: const EdgeInsets.only(top: 340, bottom: 110),
           itemBuilder: (BuildContext context, int index) {
             final date = sortedDates[index];
             final transactions = dateGroup[date]!;
