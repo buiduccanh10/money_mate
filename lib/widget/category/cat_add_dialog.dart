@@ -20,6 +20,9 @@ class _CatAddDialogState extends State<CatAddDialog> {
   String? _iconError;
   String? _nameError;
 
+  Color get primaryColor =>
+      widget.isIncome ? const Color(0xFF00C853) : const Color(0xFFFF3D00);
+
   @override
   void dispose() {
     _iconController.dispose();
@@ -36,8 +39,8 @@ class _CatAddDialogState extends State<CatAddDialog> {
       title: Text(
         AppLocalizations.of(context)!.addCatDialogTitle,
         style: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
           color: isDark ? Colors.white : Colors.black,
         ),
       ),
@@ -59,7 +62,7 @@ class _CatAddDialogState extends State<CatAddDialog> {
                   borderRadius: BorderRadius.circular(15),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Color(0xFF4364F7)),
+                  borderSide: BorderSide(color: primaryColor),
                   borderRadius: BorderRadius.circular(15),
                 ),
                 label: Text(AppLocalizations.of(context)!.chooseAnIcon),
@@ -84,17 +87,14 @@ class _CatAddDialogState extends State<CatAddDialog> {
                   borderRadius: BorderRadius.circular(15),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Color(0xFF4364F7)),
+                  borderSide: BorderSide(color: primaryColor),
                   borderRadius: BorderRadius.circular(15),
                 ),
                 label: Text(AppLocalizations.of(context)!.categoryName),
                 labelStyle: TextStyle(
                   color: isDark ? Colors.grey : Colors.grey[600],
                 ),
-                prefixIcon: const Icon(
-                  Icons.new_label,
-                  color: Color(0xFF4364F7),
-                ),
+                prefixIcon: Icon(Icons.new_label, color: primaryColor),
               ),
             ),
           ],
@@ -111,7 +111,7 @@ class _CatAddDialogState extends State<CatAddDialog> {
         ElevatedButton(
           onPressed: _onSave,
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF4364F7),
+            backgroundColor: primaryColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
             ),
@@ -162,21 +162,61 @@ class _CatAddDialogState extends State<CatAddDialog> {
 
   void _showEmojiPicker(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
+
     showModalBottomSheet(
       useSafeArea: true,
       useRootNavigator: true,
       context: context,
       builder: (_) => SizedBox(
-        height: 300,
-        child: EmojiPicker(
-          textEditingController: _iconController,
-          config: Config(
-            checkPlatformCompatibility: true,
-            locale: Localizations.localeOf(context),
-            emojiViewConfig: EmojiViewConfig(
-              backgroundColor: isDark ? Colors.black : Colors.white,
-              columns: 7,
-              buttonMode: ButtonMode.MATERIAL,
+        height: 320,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+          child: EmojiPicker(
+            textEditingController: _iconController,
+            config: Config(
+              checkPlatformCompatibility: true,
+              locale: Localizations.localeOf(context),
+              emojiViewConfig: EmojiViewConfig(
+                backgroundColor: isDark
+                    ? const Color(0xFF1E1E1E)
+                    : Colors.white,
+                buttonMode: ButtonMode.MATERIAL,
+                recentsLimit: 28,
+                noRecents: Text(
+                  AppLocalizations.of(context)!.noAvailable,
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: isDark ? Colors.white : Colors.black,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              categoryViewConfig: CategoryViewConfig(
+                initCategory: Category.RECENT,
+                backgroundColor: isDark
+                    ? const Color(0xFF1E1E1E)
+                    : Colors.white,
+                indicatorColor: primaryColor,
+                iconColorSelected: primaryColor,
+                iconColor: Colors.grey,
+              ),
+              searchViewConfig: SearchViewConfig(
+                backgroundColor: isDark
+                    ? const Color(0xFF1E1E1E)
+                    : Colors.white,
+                buttonIconColor: isDark ? Colors.white : Colors.black,
+                hintTextStyle: TextStyle(
+                  color: isDark ? Colors.grey : Colors.grey[600],
+                ),
+              ),
+              bottomActionBarConfig: BottomActionBarConfig(
+                enabled: true,
+                backgroundColor: isDark
+                    ? const Color(0xFF1E1E1E)
+                    : Colors.white,
+                buttonColor: Colors.transparent,
+                buttonIconColor: primaryColor,
+              ),
             ),
           ),
         ),
