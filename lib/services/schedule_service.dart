@@ -33,7 +33,7 @@ class ScheduleService {
 
       for (var schedule in schedules) {
         try {
-          final String scheduleId = schedule.id.toString();
+          final String scheduleId = schedule.id.toInt().toString();
 
           // Parse start date/time of the schedule
           DateTime? scheduleDateTime = _parseDate(schedule.date);
@@ -56,6 +56,16 @@ class ScheduleService {
             DateTime? lastDate = _parseDate(lastExecMap[scheduleId]);
             if (lastDate != null) {
               currentExecDate = _getNextDate(lastDate, schedule.option);
+            }
+          } else {
+            final cutoffDate = today.subtract(const Duration(days: 2));
+            if (currentExecDate.isBefore(cutoffDate)) {
+              while (currentExecDate.isBefore(today)) {
+                currentExecDate = _getNextDate(
+                  currentExecDate,
+                  schedule.option,
+                );
+              }
             }
           }
 
