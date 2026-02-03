@@ -37,7 +37,6 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   google_nav_bar: ^5.0.7
-  flutter_slidable: ^4.0.3
   emoji_picker_flutter: ^4.4.0
   syncfusion_flutter_charts: ^32.1.24
   custom_sliding_segmented_control: ^1.8.5

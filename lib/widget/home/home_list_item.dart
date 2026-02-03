@@ -1,7 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:money_mate/l10n/app_localizations.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:money_mate/bloc/home/home_cubit.dart';
 import 'package:money_mate/bloc/home/home_state.dart';
 import 'package:money_mate/widget/input/update_input.dart';
@@ -10,7 +10,6 @@ import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger
 import 'package:shimmer/shimmer.dart';
 import 'package:money_mate/utils/date_format_utils.dart';
 import 'package:money_mate/widget/common/confirm_delete_dialog.dart';
-import 'package:money_mate/widget/common/item_action_menu.dart';
 
 class HomeListItem extends StatefulWidget {
   const HomeListItem({super.key});
@@ -109,47 +108,43 @@ class _HomeListItemState extends State<HomeListItem> {
                   ),
                 ),
                 ...transactions.map((transaction) {
-                  return Slidable(
-                    key: ValueKey(transaction.id),
-                    endActionPane: ActionPane(
-                      motion: const ScrollMotion(),
-                      children: [
-                        SlidableAction(
-                          backgroundColor: Colors.transparent,
-                          onPressed: (slidableContext) {
-                            Navigator.push(
+                  return CupertinoContextMenu(
+                    actions: [
+                      CupertinoContextMenuAction(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  UpdateInput(inputItem: transaction),
+                            ),
+                          );
+                        },
+                        trailingIcon: Icons.edit,
+                        child: Text(AppLocalizations.of(context)!.slideEdit),
+                      ),
+                      CupertinoContextMenuAction(
+                        isDestructiveAction: true,
+                        onPressed: () {
+                          Navigator.pop(context);
+                          ConfirmDeleteDialog.show(
+                            context,
+                            title: AppLocalizations.of(context)!.slideDelete,
+                            content: AppLocalizations.of(
                               context,
-                              MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    UpdateInput(inputItem: transaction),
-                              ),
-                            );
-                          },
-                          foregroundColor: const Color(0xFF2196F3),
-                          icon: Icons.edit,
-                          label: AppLocalizations.of(context)!.slideEdit,
-                        ),
-                        SlidableAction(
-                          backgroundColor: Colors.transparent,
-                          onPressed: (slidableContext) {
-                            final homeCubit = context.read<HomeCubit>();
-                            ConfirmDeleteDialog.show(
-                              context,
-                              title: AppLocalizations.of(context)!.slideDelete,
-                              content: AppLocalizations.of(
-                                context,
-                              )!.deleteTransactionConfirm,
-                              onConfirm: () {
-                                homeCubit.deleteTransaction(transaction.id);
-                              },
-                            );
-                          },
-                          foregroundColor: Colors.red,
-                          icon: Icons.delete,
-                          label: AppLocalizations.of(context)!.slideDelete,
-                        ),
-                      ],
-                    ),
+                            )!.deleteTransactionConfirm,
+                            onConfirm: () {
+                              context.read<HomeCubit>().deleteTransaction(
+                                transaction.id,
+                              );
+                            },
+                          );
+                        },
+                        trailingIcon: Icons.delete,
+                        child: Text(AppLocalizations.of(context)!.slideDelete),
+                      ),
+                    ],
                     child: TransactionItemTile(
                       transaction: transaction,
                       isDark: isDark,
@@ -160,34 +155,6 @@ class _HomeListItemState extends State<HomeListItem> {
                             builder: (BuildContext context) =>
                                 UpdateInput(inputItem: transaction),
                           ),
-                        );
-                      },
-                      onLongPress: () {
-                        ItemActionMenu.show(
-                          context,
-                          onEdit: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    UpdateInput(inputItem: transaction),
-                              ),
-                            );
-                          },
-                          onDelete: () {
-                            ConfirmDeleteDialog.show(
-                              context,
-                              title: AppLocalizations.of(context)!.slideDelete,
-                              content: AppLocalizations.of(
-                                context,
-                              )!.deleteTransactionConfirm,
-                              onConfirm: () {
-                                context.read<HomeCubit>().deleteTransaction(
-                                  transaction.id,
-                                );
-                              },
-                            );
-                          },
                         );
                       },
                     ),

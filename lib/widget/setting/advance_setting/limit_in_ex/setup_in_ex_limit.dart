@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:money_mate/l10n/app_localizations.dart';
 import 'package:money_mate/bloc/category/category_cubit.dart';
@@ -125,59 +125,66 @@ class _SetupInExLimitState extends State<SetupInExLimit> {
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(20),
         clipBehavior: Clip.antiAlias,
-        child: Slidable(
-          endActionPane: ActionPane(
-            motion: const ScrollMotion(),
-            children: [
-              SlidableAction(
-                onPressed: (_) => _showLimitDialog(cat),
-                backgroundColor: Colors.blue.withOpacity(0.1),
-                foregroundColor: Colors.blue,
-                icon: Icons.edit,
-                label: AppLocalizations.of(context)!.slideEdit,
-              ),
-              SlidableAction(
-                onPressed: (_) =>
-                    context.read<CategoryCubit>().restoreLimit(cat.id),
-                backgroundColor: Colors.red.withValues(alpha: 0.1),
-                foregroundColor: Colors.red,
-                icon: Icons.restore,
-                label: AppLocalizations.of(context)!.restoreLimit,
-              ),
-            ],
-          ),
-          child: ListTile(
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 8,
+        child: CupertinoContextMenu(
+          actions: [
+            CupertinoContextMenuAction(
+              onPressed: () {
+                Navigator.pop(context);
+                _showLimitDialog(cat);
+              },
+              trailingIcon: Icons.edit,
+              child: Text(AppLocalizations.of(context)!.slideEdit),
             ),
-            onTap: () => _showLimitDialog(cat),
-            leading: Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors
-                    .primaries[Random().nextInt(Colors.primaries.length)]
-                    .withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Text(cat.icon, style: const TextStyle(fontSize: 24)),
+            CupertinoContextMenuAction(
+              isDestructiveAction: true,
+              onPressed: () {
+                Navigator.pop(context);
+                context.read<CategoryCubit>().restoreLimit(cat.id);
+              },
+              trailingIcon: Icons.restore,
+              child: Text(AppLocalizations.of(context)!.restoreLimit),
             ),
-            title: Text(
-              cat.name,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                color: isDark ? Colors.white : Colors.black87,
-              ),
-            ),
-            trailing: Text(
-              limit > 0 ? formatMoney : AppLocalizations.of(context)!.noLimit,
-              style: TextStyle(
-                color: limit > 0
-                    ? (isDark ? Colors.greenAccent : Colors.green)
-                    : Colors.grey,
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
+          ],
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: Material(
+              color: Colors.transparent,
+              child: ListTile(
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                onTap: () => _showLimitDialog(cat),
+                leading: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors
+                        .primaries[Random().nextInt(Colors.primaries.length)]
+                        .withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text(cat.icon, style: const TextStyle(fontSize: 24)),
+                ),
+                title: Text(
+                  cat.name,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
+                ),
+                trailing: Text(
+                  limit > 0
+                      ? formatMoney
+                      : AppLocalizations.of(context)!.noLimit,
+                  style: TextStyle(
+                    color: limit > 0
+                        ? (isDark ? Colors.greenAccent : Colors.green)
+                        : Colors.grey,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
+                ),
               ),
             ),
           ),

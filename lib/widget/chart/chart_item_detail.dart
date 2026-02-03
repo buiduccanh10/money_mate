@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:money_mate/l10n/app_localizations.dart';
 import 'package:money_mate/bloc/chart/chart_cubit.dart';
@@ -11,7 +11,6 @@ import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:money_mate/widget/common/transaction_item_tile.dart';
 import 'package:money_mate/widget/common/confirm_delete_dialog.dart';
-import 'package:money_mate/widget/common/item_action_menu.dart';
 
 class ChartItemDetail extends StatefulWidget {
   final String? catId;
@@ -279,58 +278,38 @@ class _ChartItemDetailState extends State<ChartItemDetail> {
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(20),
         clipBehavior: Clip.antiAlias,
-        child: Slidable(
-          key: ValueKey(tx.id),
-          endActionPane: ActionPane(
-            motion: const ScrollMotion(),
-            children: [
-              SlidableAction(
-                onPressed: (_) => _editTx(tx),
-                icon: Icons.edit,
-                label: 'Edit',
-                backgroundColor: Colors.transparent,
-                foregroundColor: Colors.blue,
-              ),
-              SlidableAction(
-                onPressed: (slidableContext) {
-                  final chartCubit = context.read<ChartCubit>();
-                  ConfirmDeleteDialog.show(
+        child: CupertinoContextMenu(
+          actions: [
+            CupertinoContextMenuAction(
+              onPressed: () {
+                Navigator.pop(context);
+                _editTx(tx);
+              },
+              trailingIcon: Icons.edit,
+              child: Text(AppLocalizations.of(context)!.slideEdit),
+            ),
+            CupertinoContextMenuAction(
+              isDestructiveAction: true,
+              onPressed: () {
+                Navigator.pop(context);
+                final chartCubit = context.read<ChartCubit>();
+                ConfirmDeleteDialog.show(
+                  context,
+                  title: AppLocalizations.of(context)!.slideDelete,
+                  content: AppLocalizations.of(
                     context,
-                    title: AppLocalizations.of(context)!.slideDelete,
-                    content: AppLocalizations.of(
-                      context,
-                    )!.deleteTransactionConfirm,
-                    onConfirm: () => chartCubit.deleteTransaction(tx.id),
-                  );
-                },
-                icon: Icons.delete,
-                label: 'Delete',
-                backgroundColor: Colors.transparent,
-                foregroundColor: Colors.red,
-              ),
-            ],
-          ),
+                  )!.deleteTransactionConfirm,
+                  onConfirm: () => chartCubit.deleteTransaction(tx.id),
+                );
+              },
+              trailingIcon: Icons.delete,
+              child: Text(AppLocalizations.of(context)!.slideDelete),
+            ),
+          ],
           child: TransactionItemTile(
             transaction: tx,
             isDark: isDark,
             onTap: () => _editTx(tx),
-            onLongPress: () {
-              ItemActionMenu.show(
-                context,
-                onEdit: () => _editTx(tx),
-                onDelete: () {
-                  ConfirmDeleteDialog.show(
-                    context,
-                    title: AppLocalizations.of(context)!.slideDelete,
-                    content: AppLocalizations.of(
-                      context,
-                    )!.deleteTransactionConfirm,
-                    onConfirm: () =>
-                        context.read<ChartCubit>().deleteTransaction(tx.id),
-                  );
-                },
-              );
-            },
           ),
         ),
       ),

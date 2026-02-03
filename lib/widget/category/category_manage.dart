@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:money_mate/bloc/category/category_cubit.dart';
 import 'package:money_mate/bloc/category/category_state.dart';
 import 'package:money_mate/widget/category/cat_add_dialog.dart';
@@ -9,7 +9,6 @@ import 'package:money_mate/data/network/swagger/generated/money_mate_api.swagger
 import 'package:shimmer/shimmer.dart';
 import 'package:money_mate/l10n/app_localizations.dart';
 import 'package:money_mate/widget/common/confirm_delete_dialog.dart';
-import 'package:money_mate/widget/common/item_action_menu.dart';
 
 class CategoryManage extends StatefulWidget {
   final bool isIncome;
@@ -141,85 +140,72 @@ class _CategoryManageState extends State<CategoryManage> {
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(20),
         clipBehavior: Clip.antiAlias,
-        child: Slidable(
-          endActionPane: ActionPane(
-            motion: const ScrollMotion(),
-            children: [
-              SlidableAction(
-                backgroundColor: Colors.blue.withValues(alpha: 0.1),
-                onPressed: (slidableContext) => _showUpdateDialog(catItem),
-                foregroundColor: Colors.blue,
-                icon: Icons.edit,
-                // label: AppLocalizations.of(context)!.slideEdit,
-              ),
-              SlidableAction(
-                backgroundColor: Colors.red.withValues(alpha: 0.1),
-                onPressed: (slidableContext) {
-                  final catCubit = context.read<CategoryCubit>();
-                  ConfirmDeleteDialog.show(
-                    context,
-                    title: AppLocalizations.of(context)!.slideDelete,
-                    content: AppLocalizations.of(
-                      context,
-                    )!.deleteCategoryConfirm,
-                    onConfirm: () => catCubit.deleteCategory(catItem.id),
-                  );
-                },
-                foregroundColor: Colors.red,
-                icon: Icons.delete,
-                // label: AppLocalizations.of(context)!.slideDelete,
-              ),
-            ],
-          ),
-          child: ListTile(
-            onTap: () => _showUpdateDialog(catItem),
-            onLongPress: () {
-              ItemActionMenu.show(
-                context,
-                onEdit: () => _showUpdateDialog(catItem),
-                onDelete: () {
-                  ConfirmDeleteDialog.show(
-                    context,
-                    title: AppLocalizations.of(context)!.slideDelete,
-                    content: AppLocalizations.of(
-                      context,
-                    )!.deleteCategoryConfirm,
-                    onConfirm: () => context
-                        .read<CategoryCubit>()
-                        .deleteCategory(catItem.id),
-                  );
-                },
-              );
-            },
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 20,
-              vertical: 8,
+        child: CupertinoContextMenu(
+          actions: [
+            CupertinoContextMenuAction(
+              onPressed: () {
+                Navigator.pop(context);
+                _showUpdateDialog(catItem);
+              },
+              trailingIcon: Icons.edit,
+              child: Text(AppLocalizations.of(context)!.slideEdit),
             ),
-            // shape: RoundedRectangleBorder(
-            //   borderRadius: BorderRadius.circular(20),
-            // ),
-            leading: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: isDark
-                    ? Colors.white.withValues(alpha: 0.1)
-                    : Colors.grey.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Text(catItem.icon, style: const TextStyle(fontSize: 24)),
+            CupertinoContextMenuAction(
+              isDestructiveAction: true,
+              onPressed: () {
+                Navigator.pop(context);
+                final catCubit = context.read<CategoryCubit>();
+                ConfirmDeleteDialog.show(
+                  context,
+                  title: AppLocalizations.of(context)!.slideDelete,
+                  content: AppLocalizations.of(context)!.deleteCategoryConfirm,
+                  onConfirm: () => catCubit.deleteCategory(catItem.id),
+                );
+              },
+              trailingIcon: Icons.delete,
+              child: Text(AppLocalizations.of(context)!.slideDelete),
             ),
-            title: Text(
-              catItem.name,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: isDark ? Colors.white : Colors.black87,
+          ],
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: Material(
+              color: Colors.transparent,
+              child: ListTile(
+                onTap: () => _showUpdateDialog(catItem),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 8,
+                ),
+                // shape: RoundedRectangleBorder(
+                //   borderRadius: BorderRadius.circular(20),
+                // ),
+                leading: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.1)
+                        : Colors.grey.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text(
+                    catItem.icon,
+                    style: const TextStyle(fontSize: 24),
+                  ),
+                ),
+                title: Text(
+                  catItem.name,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
+                ),
+                trailing: Icon(
+                  Icons.arrow_forward_ios,
+                  size: 16,
+                  color: isDark ? Colors.white54 : Colors.grey,
+                ),
               ),
-            ),
-            trailing: Icon(
-              Icons.arrow_forward_ios,
-              size: 16,
-              color: isDark ? Colors.white54 : Colors.grey,
             ),
           ),
         ),

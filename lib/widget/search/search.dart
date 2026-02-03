@@ -1,7 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:money_mate/l10n/app_localizations.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
+
 import 'package:money_mate/bloc/search/search_cubit.dart';
 import 'package:money_mate/bloc/search/search_state.dart';
 import 'package:money_mate/bloc/category/category_cubit.dart';
@@ -9,7 +10,7 @@ import 'package:money_mate/bloc/category/category_state.dart';
 import 'package:money_mate/widget/input/update_input.dart';
 import 'package:money_mate/widget/common/transaction_item_tile.dart';
 import 'package:money_mate/widget/common/confirm_delete_dialog.dart';
-import 'package:money_mate/widget/common/item_action_menu.dart';
+
 import 'package:money_mate/bloc/home/home_cubit.dart';
 import 'dart:async';
 
@@ -265,53 +266,48 @@ class _SearchState extends State<Search> {
                   color: Colors.transparent,
                   borderRadius: BorderRadius.circular(20),
                   clipBehavior: Clip.antiAlias,
-                  child: Slidable(
-                    key: ValueKey(result.id),
-                    endActionPane: ActionPane(
-                      motion: const ScrollMotion(),
-                      children: [
-                        SlidableAction(
-                          backgroundColor: Colors.blue.withValues(alpha: 0.1),
-                          onPressed: (slidableContext) async {
-                            await Navigator.push(
+                  child: CupertinoContextMenu(
+                    actions: [
+                      CupertinoContextMenuAction(
+                        onPressed: () async {
+                          Navigator.pop(context);
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => UpdateInput(inputItem: result),
+                            ),
+                          );
+                          if (context.mounted) {
+                            context.read<SearchCubit>().refresh();
+                          }
+                        },
+                        trailingIcon: Icons.edit,
+                        child: Text(AppLocalizations.of(context)!.slideEdit),
+                      ),
+                      CupertinoContextMenuAction(
+                        isDestructiveAction: true,
+                        onPressed: () {
+                          Navigator.pop(context);
+                          final homeCubit = context.read<HomeCubit>();
+                          final searchCubit = context.read<SearchCubit>();
+                          ConfirmDeleteDialog.show(
+                            context,
+                            title: AppLocalizations.of(context)!.slideDelete,
+                            content: AppLocalizations.of(
                               context,
-                              MaterialPageRoute(
-                                builder: (_) => UpdateInput(inputItem: result),
-                              ),
-                            );
-                            if (context.mounted) {
-                              context.read<SearchCubit>().refresh();
-                            }
-                          },
-                          foregroundColor: Colors.blue,
-                          icon: Icons.edit,
-                          // label: AppLocalizations.of(context)!.slideEdit,
-                        ),
-                        SlidableAction(
-                          backgroundColor: Colors.red.withValues(alpha: 0.1),
-                          onPressed: (slidableContext) {
-                            final homeCubit = context.read<HomeCubit>();
-                            final searchCubit = context.read<SearchCubit>();
-                            ConfirmDeleteDialog.show(
-                              context,
-                              title: AppLocalizations.of(context)!.slideDelete,
-                              content: AppLocalizations.of(
-                                context,
-                              )!.deleteTransactionConfirm,
-                              onConfirm: () async {
-                                final id = result.id;
-                                searchCubit.removeTransaction(id);
-                                await homeCubit.deleteTransaction(id);
-                                searchCubit.refresh();
-                              },
-                            );
-                          },
-                          foregroundColor: Colors.red,
-                          icon: Icons.delete,
-                          // label: AppLocalizations.of(context)!.slideDelete,
-                        ),
-                      ],
-                    ),
+                            )!.deleteTransactionConfirm,
+                            onConfirm: () async {
+                              final id = result.id;
+                              searchCubit.removeTransaction(id);
+                              await homeCubit.deleteTransaction(id);
+                              searchCubit.refresh();
+                            },
+                          );
+                        },
+                        trailingIcon: Icons.delete,
+                        child: Text(AppLocalizations.of(context)!.slideDelete),
+                      ),
+                    ],
                     child: TransactionItemTile(
                       transaction: result,
                       isDark: isDark,
@@ -325,39 +321,6 @@ class _SearchState extends State<Search> {
                         if (context.mounted) {
                           context.read<SearchCubit>().refresh();
                         }
-                      },
-                      onLongPress: () {
-                        ItemActionMenu.show(
-                          context,
-                          onEdit: () async {
-                            await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => UpdateInput(inputItem: result),
-                              ),
-                            );
-                            if (context.mounted) {
-                              context.read<SearchCubit>().refresh();
-                            }
-                          },
-                          onDelete: () {
-                            final homeCubit = context.read<HomeCubit>();
-                            final searchCubit = context.read<SearchCubit>();
-                            ConfirmDeleteDialog.show(
-                              context,
-                              title: AppLocalizations.of(context)!.slideDelete,
-                              content: AppLocalizations.of(
-                                context,
-                              )!.deleteTransactionConfirm,
-                              onConfirm: () async {
-                                final id = result.id;
-                                searchCubit.removeTransaction(id);
-                                await homeCubit.deleteTransaction(id);
-                                searchCubit.refresh();
-                              },
-                            );
-                          },
-                        );
                       },
                     ),
                   ),

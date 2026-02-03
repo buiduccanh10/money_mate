@@ -126,13 +126,13 @@ class _UpdateInputState extends State<UpdateInput> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                widget.inputItem.category?.icon ?? '💰',
+                widget.inputItem.category?.icon ?? '',
                 style: const TextStyle(fontSize: 24),
               ),
               const SizedBox(width: 8),
               Flexible(
                 child: Text(
-                  '(${widget.inputItem.description})',
+                  widget.inputItem.description ?? '',
                   style: const TextStyle(color: Colors.white70, fontSize: 18),
                   overflow: TextOverflow.ellipsis,
                 ),
