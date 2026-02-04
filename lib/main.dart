@@ -26,10 +26,12 @@ import 'package:money_mate/services/local_notification.dart';
 import 'package:money_mate/widget/auth/login.dart';
 import 'package:money_mate/widget/main_layout.dart';
 
+import 'package:money_mate/data/network/api_constants.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await NotificationService.initializeNotification();
-  ApiClient.init(baseUrl: 'http://localhost:3000');
+  ApiClient.init(baseUrl: ApiConstants.baseUrl);
   runApp(const MyApp());
 }
 
